@@ -1182,5 +1182,18 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
         
         return $extensions[$fileType] ?? $fileType;
     }
+    // function to fetch programs by college ID
+    public function fetchProgramsByCollege($college_id) {
+        $sql = "SELECT program_id, program_name 
+                FROM programs 
+                WHERE college_id = :college_id 
+                ORDER BY program_name ASC";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':college_id', $college_id, PDO::PARAM_INT);
+        $query->execute();
+        
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
 
 }

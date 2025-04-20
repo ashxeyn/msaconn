@@ -7,6 +7,8 @@ session_start();
 
 $adminObj = new Admin();
 $programs = $adminObj->fetchProgram();
+$colleges = $adminObj->fetchColleges();
+$programs = []; 
 
 // Initialize all possible variables
 $registration_type = '';
@@ -200,25 +202,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <input type="text" id="school" name="school" placeholder="Your School (Optional)" value="<?= $school ?>">
                 </div>
             <?php else: ?>
-                <!-- Onsite Specific Fields -->
-                <div class="form-section">
-                    <label for="college">College:</label>
-                    <input type="text" id="college" name="college" placeholder="Your College" value="<?= $college ?>" required>
-                    <span class="error"><?= $collegeErr ?></span>
-                </div>
-                
-                <div class="form-section">
-                    <label for="program">Program/Course:</label>
-                    <select id="program" name="program" required>
-                        <option value="">Select Program</option>
-                        <?php foreach ($programs as $prog): ?>
-                            <option value="<?= $prog['program_id'] ?>" <?= ($program == $prog['program_id']) ? 'selected' : '' ?>>
-                                <?= clean_input($prog['program_name']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                    <span class="error"><?= $programErr ?></span>
-                </div>
+         
+               <!-- Onsite Registration Section -->
+            <div class="form-section">
+                <label for="college">College:</label>
+                <select id="college" name="college" required onchange="loadPrograms(this.value)">
+                    <option value="">Select College</option>
+                    <?php foreach ($colleges as $col): ?>
+                        <option value="<?= htmlspecialchars($col['college_id']) ?>">
+                            <?= htmlspecialchars($col['college_name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="form-section">
+                <label for="program">Program/Course:</label>
+                <select id="program" name="program" required disabled>
+                    <option value="">Select College First</option>
+                    <!-- Programs will be loaded via AJAX -->
+                </select>
+            </div>
             <?php endif; ?>
 
             <!-- Common File Upload -->
