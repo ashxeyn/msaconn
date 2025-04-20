@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 20, 2025 at 02:27 PM
+-- Generation Time: Apr 20, 2025 at 02:39 PM
 -- Server version: 11.4.5-MariaDB
 -- PHP Version: 8.2.12
 
@@ -61,6 +61,15 @@ CREATE TABLE `colleges` (
   `college_name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `colleges`
+--
+
+INSERT INTO `colleges` (`college_id`, `college_name`) VALUES
+(2, 'CCSSw'),
+(3, 'CN'),
+(6, 'sd');
+
 -- --------------------------------------------------------
 
 --
@@ -109,6 +118,16 @@ CREATE TABLE `executive_officers` (
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `program_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `executive_officers`
+--
+
+INSERT INTO `executive_officers` (`officer_id`, `last_name`, `first_name`, `middle_name`, `position_id`, `image`, `school_year_id`, `created_at`, `program_id`) VALUES
+(5, 'asdaa', 'asd', 'asdasdas', 17, '1744808236_458770354_489522533909122_3192676278561574321_n.jpg', 1, '2025-02-26 05:15:20', 3),
+(6, 'Kulong', 'Ron', '', 4, '1744808526_459409453_1032098114905812_6755460979967927630_n.jpg', 2, '2025-02-26 11:07:34', 3),
+(13, 'ads', 'asdsd', 'asdasd', 14, '', 1, '2025-03-24 12:52:40', NULL),
+(14, 'sdfsddsss', 'sdfsd', 'dsfsdf', 15, 'wap.png', 2, '2025-03-25 08:12:17', 3);
 
 -- --------------------------------------------------------
 
@@ -188,6 +207,33 @@ CREATE TABLE `officer_positions` (
   `position_name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `officer_positions`
+--
+
+INSERT INTO `officer_positions` (`position_id`, `position_name`) VALUES
+(6, 'Auditor'),
+(15, 'Budget and Finance'),
+(12, 'Dahwa and Religious Instructions'),
+(20, 'Documentation'),
+(13, 'Documentation and Publication'),
+(3, 'External Vice President'),
+(2, 'Internal Vice President'),
+(14, 'Logistics and Operations'),
+(7, 'P.I.O.'),
+(11, 'P.I.O. External'),
+(10, 'P.I.O. Internal'),
+(1, 'President'),
+(8, 'Project Manager'),
+(19, 'Publication'),
+(21, 'Registration'),
+(17, 'Registration and Membership'),
+(4, 'Secretary'),
+(16, 'Statistics and Evaluations'),
+(18, 'Tahara'),
+(5, 'Treasurer'),
+(9, 'Vice President');
+
 -- --------------------------------------------------------
 
 --
@@ -200,6 +246,13 @@ CREATE TABLE `programs` (
   `college_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `programs`
+--
+
+INSERT INTO `programs` (`program_id`, `program_name`, `college_id`) VALUES
+(3, 'shheshDD', 2);
+
 -- --------------------------------------------------------
 
 --
@@ -210,6 +263,14 @@ CREATE TABLE `school_years` (
   `school_year_id` int(11) NOT NULL,
   `school_year` varchar(9) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `school_years`
+--
+
+INSERT INTO `school_years` (`school_year_id`, `school_year`) VALUES
+(1, '2023-2024'),
+(2, '2024-2025');
 
 -- --------------------------------------------------------
 
@@ -246,6 +307,20 @@ CREATE TABLE `users` (
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `position_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `users`
+--
+
+INSERT INTO `users` (`user_id`, `first_name`, `middle_name`, `last_name`, `username`, `email`, `password`, `role`, `created_at`, `position_id`) VALUES
+(1, 'admin', 'admin', 'admin', 'admin', 'admin@wmsu.edu.ph', '$2y$10$cpAg005FgxgFGWv2uauF4egLs8ONXcMUSzOPlbaF0guCcdyOLmGZi', 'admin', '2025-02-23 03:11:49', NULL),
+(2, 'Shane', 'admin', 'Jimenez', 'ashxeynx', 'HZ202300259@wmsu.edu.ph', '$2y$10$Aow.SzRWGFBga4v5153m8Oe1IDlKWewGIZ5CPrNELpEJnzOVB4OTS', 'admin', '2025-02-23 04:03:09', NULL),
+(3, 'Rone', 'admin', 'Kulong', 'ron', 'admin@gmail.com', '$2y$10$agnEQCmt8ADyI/4a2dtvlOlGkDbbxvo/50I9Av11RQjuwluVKCrOe', 'admin', '2025-02-23 04:04:44', NULL),
+(7, 'sheesh', 'admin', 'bnb', 'rronn', 'ron@wmsu.edu.ph', '$2y$10$o4peCliKj4cIXPooJOYOfu8e.MIuwvkWiuTcdMANEH4QIef1QxFO6', 'admin', '2025-02-24 07:24:44', NULL),
+(9, 'sfvf', 'admin', 'dfvf', 'manager12', 'dvd@wmsu.edu.ph', '$2y$10$c4Igsr/pEcBpW742vdBvheznDxPHt0NlHkM3K1L8gzqKBBwtaAnIq', 'admin', '2025-02-24 07:32:26', NULL),
+(16, 'asdapakingshe', 'asdasfasss', 'adfaef', 'asdfefe', 'HZ2234300259@wmsu.edu.ph', '$2y$10$9r626N9kIa2AynwspQ2qJuFF.jGWTI9eYzBuH8w4inKomC0Uizw/O', 'sub-admin', '2025-02-24 08:37:21', 1),
+(17, 'sub', 'sub', 'sub', 'sub', 'sub@wmsu.edu.ph', '$2y$10$5CO4kvwyMDftD4aDxRR3Wu1VNPcQGPIftETFGlOYJDQOcRy8x0uYi', 'sub-admin', '2025-02-24 08:51:33', 2),
+(22, 'dcasfafa', 'asdfasfSSS', 'asfaf', 'afsf', 'HZsdsd300259@wmsu.edu.ph', '$2y$10$bRmm3Z9PBKrlazrhTN024epeRX.qGVgUbFZP4VnadXiyRRlLyggMW', 'sub-admin', '2025-03-18 12:30:28', 17);
 
 -- --------------------------------------------------------
 
@@ -408,7 +483,7 @@ ALTER TABLE `calendar_activities`
 -- AUTO_INCREMENT for table `colleges`
 --
 ALTER TABLE `colleges`
-  MODIFY `college_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `college_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `downloadable_files`
@@ -426,7 +501,7 @@ ALTER TABLE `events`
 -- AUTO_INCREMENT for table `executive_officers`
 --
 ALTER TABLE `executive_officers`
-  MODIFY `officer_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `officer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `faqs`
@@ -450,19 +525,19 @@ ALTER TABLE `madrasa_enrollment`
 -- AUTO_INCREMENT for table `officer_positions`
 --
 ALTER TABLE `officer_positions`
-  MODIFY `position_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `position_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `programs`
 --
 ALTER TABLE `programs`
-  MODIFY `program_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `program_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `school_years`
 --
 ALTER TABLE `school_years`
-  MODIFY `school_year_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `school_year_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `transparency_report`
@@ -474,7 +549,7 @@ ALTER TABLE `transparency_report`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `volunteers`
