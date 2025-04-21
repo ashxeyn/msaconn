@@ -1195,5 +1195,64 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
         
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
+    // function to register a madrasa enrollment
+    public function addMadrasaEnrollment($data) {
+        $sql = "INSERT INTO madrasa_enrollment 
+                (first_name, middle_name, last_name, classification, address, 
+                 college_id, program_id, year_level, school, cor_path)
+                VALUES 
+                (:first_name, :middle_name, :last_name, :classification, :address, 
+                 :college_id, :program_id, :year_level, :school, :cor_path)";
+        
+        $query = $this->db->connect()->prepare($sql);
+        
+        $query->bindParam(':first_name', $data['first_name']);
+        $query->bindParam(':middle_name', $data['middle_name']);
+        $query->bindParam(':last_name', $data['last_name']);
+        $query->bindParam(':classification', $data['classification']);
+        $query->bindParam(':address', $data['address']);
+        $query->bindParam(':college_id', $data['college_id'], PDO::PARAM_INT);
+        $query->bindParam(':program_id', $data['program_id'], PDO::PARAM_INT);
+        $query->bindParam(':year_level', $data['year_level']);
+        $query->bindParam(':school', $data['school']);
+        $query->bindParam(':cor_path', $data['cor_path']);
+        
+        if (!$query->execute()) {
+            throw new Exception("Failed to save enrollment");
+        }
+        
+        return $this->db->connect()->lastInsertId();
+    }
+    // function to fetch pending madrasa enrollments
+    public function getPendingEnrollments() {
+        $sql = "SELECT e.*, 
+                    c.college_name,
+                    p.program_name
+                FROM madrasa_enrollment e
+                LEFT JOIN colleges c ON e.college_id = c.college_id
+                LEFT JOIN programs p ON e.program_id = p.program_id
+                WHERE e.status = 'Pending'
+                ORDER BY e.created_at DESC";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+    //function to apporve/reject madrasa enrollment
+    public function updateEnrollmentStatus($enrollmentId, $status, $adminId) {
+        if (!in_array($status, ['Enrolled', 'Rejected'])) {
+            throw new InvalidArgumentException("Invalid status");
+        }
+        
+        $sql = "UPDATE madrasa_enrollment 
+                SET status = :status
+                WHERE enrollment_id = :enrollment_id";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':status', $status);
+        $query->bindParam(':enrollment_id', $enrollmentId, PDO::PARAM_INT);
+        
+        return $query->execute();
+    }
 
 }

@@ -100,10 +100,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         if ($valid) {
-            // Process the form data here (save to database, etc.)
-            // Now you'll have $first_name, $middle_name, and $last_name available
-            header("Location: success_page.php");
-            exit;
+            try {
+                // Prepare data for database insertion
+                $data = [
+                    'first_name' => $first_name,
+                    'middle_name' => $middle_name,
+                    'last_name' => $last_name,
+                    'classification' => ($registration_type == 'online') ? 'Online' : 'On-site',
+                    'address' => ($registration_type == 'online') ? $address : null,
+                    'college_id' => ($registration_type == 'onsite') ? $college : null,
+                    'program_id' => $program ?: null,
+                    'year_level' => $year_level ?: null,
+                    'school' => $school ?: null,
+                    'cor_path' => $cor_file
+                ];
+                
+                // Insert into database (using your Admin class)
+                $enrollmentId = $adminObj->addMadrasaEnrollment($data);
+                
+                // Redirect to success page
+                $_SESSION['registration_success'] = true;
+                header("Location: Registermadrasaform.php");
+                exit;
+                
+            } catch (Exception $e) {
+                $imageErr = "Registration failed. Please try again.";
+                error_log("Registration error: " . $e->getMessage());
+            }
         }
     }
 }
@@ -143,6 +166,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <button type="submit" class="submit-button">Continue</button>
             </form>
         </div>
+            <?php if (isset($_SESSION['registration_success'])): ?>
+        <div id="successModal" class="modal">
+            <div class="modal-content">
+                <span class="close-button" onclick="closeModal()">&times;</span>
+                <h2>Registration Successful!</h2>
+                <p>You have successfully registered for Madrasa.</p>
+            </div>
+        </div>
+        <script>
+            window.onload = function() {
+                document.getElementById("successModal").style.display = "block";
+            };
+            function closeModal() {
+                document.getElementById("successModal").style.display = "none";
+            }
+        </script>
+        <?php unset($_SESSION['registration_success']); ?>
+    <?php endif; ?>
+
     <?php else: ?>
         <!-- Actual Registration Form -->
         <form action="" method="POST" enctype="multipart/form-data">
