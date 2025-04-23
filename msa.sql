@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 20, 2025 at 02:39 PM
+-- Generation Time: Apr 23, 2025 at 05:40 PM
 -- Server version: 11.4.5-MariaDB
 -- PHP Version: 8.2.12
 
@@ -119,16 +119,6 @@ CREATE TABLE `executive_officers` (
   `program_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `executive_officers`
---
-
-INSERT INTO `executive_officers` (`officer_id`, `last_name`, `first_name`, `middle_name`, `position_id`, `image`, `school_year_id`, `created_at`, `program_id`) VALUES
-(5, 'asdaa', 'asd', 'asdasdas', 17, '1744808236_458770354_489522533909122_3192676278561574321_n.jpg', 1, '2025-02-26 05:15:20', 3),
-(6, 'Kulong', 'Ron', '', 4, '1744808526_459409453_1032098114905812_6755460979967927630_n.jpg', 2, '2025-02-26 11:07:34', 3),
-(13, 'ads', 'asdsd', 'asdasd', 14, '', 1, '2025-03-24 12:52:40', NULL),
-(14, 'sdfsddsss', 'sdfsd', 'dsfsdf', 15, 'wap.png', 2, '2025-03-25 08:12:17', 3);
-
 -- --------------------------------------------------------
 
 --
@@ -187,7 +177,9 @@ CREATE TABLE `madrasa_enrollment` (
   `classification` enum('On-site','Online') NOT NULL,
   `address` varchar(255) DEFAULT NULL,
   `college_id` int(11) DEFAULT NULL,
+  `ol_college` varchar(255) DEFAULT NULL,
   `program_id` int(11) DEFAULT NULL,
+  `ol_program` varchar(255) DEFAULT NULL,
   `year_level` varchar(50) DEFAULT NULL,
   `school` varchar(255) DEFAULT NULL,
   `cor_path` varchar(255) DEFAULT NULL,
@@ -206,33 +198,6 @@ CREATE TABLE `officer_positions` (
   `position_id` int(11) NOT NULL,
   `position_name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `officer_positions`
---
-
-INSERT INTO `officer_positions` (`position_id`, `position_name`) VALUES
-(6, 'Auditor'),
-(15, 'Budget and Finance'),
-(12, 'Dahwa and Religious Instructions'),
-(20, 'Documentation'),
-(13, 'Documentation and Publication'),
-(3, 'External Vice President'),
-(2, 'Internal Vice President'),
-(14, 'Logistics and Operations'),
-(7, 'P.I.O.'),
-(11, 'P.I.O. External'),
-(10, 'P.I.O. Internal'),
-(1, 'President'),
-(8, 'Project Manager'),
-(19, 'Publication'),
-(21, 'Registration'),
-(17, 'Registration and Membership'),
-(4, 'Secretary'),
-(16, 'Statistics and Evaluations'),
-(18, 'Tahara'),
-(5, 'Treasurer'),
-(9, 'Vice President');
 
 -- --------------------------------------------------------
 
@@ -263,14 +228,6 @@ CREATE TABLE `school_years` (
   `school_year_id` int(11) NOT NULL,
   `school_year` varchar(9) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `school_years`
---
-
-INSERT INTO `school_years` (`school_year_id`, `school_year`) VALUES
-(1, '2023-2024'),
-(2, '2024-2025');
 
 -- --------------------------------------------------------
 
@@ -501,7 +458,7 @@ ALTER TABLE `events`
 -- AUTO_INCREMENT for table `executive_officers`
 --
 ALTER TABLE `executive_officers`
-  MODIFY `officer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `officer_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `faqs`
@@ -525,7 +482,7 @@ ALTER TABLE `madrasa_enrollment`
 -- AUTO_INCREMENT for table `officer_positions`
 --
 ALTER TABLE `officer_positions`
-  MODIFY `position_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `position_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `programs`
@@ -537,7 +494,7 @@ ALTER TABLE `programs`
 -- AUTO_INCREMENT for table `school_years`
 --
 ALTER TABLE `school_years`
-  MODIFY `school_year_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `school_year_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `transparency_report`

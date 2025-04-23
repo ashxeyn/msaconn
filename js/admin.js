@@ -1561,6 +1561,217 @@ function formatFileSize(bytes) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
+// ENROLLMENT FUNCTIONS
+function openEnrollmentModal(modalId, enrollmentId, action) {
+    $('.modal').modal('hide');
+    $('.modal-backdrop').remove();
+    setTimeout(() => {
+        const modal = $('#' + modalId);
+        modal.attr('aria-hidden', 'false');
+        modal.modal('show');
+        setEnrollmentId(enrollmentId, action);
+    }, 300);
+}
+
+function setEnrollmentId(enrollmentId, action) {
+    if (action === 'enroll') {
+        $('#confirmEnroll').off('click').on('click', function () {
+            processEnrollment(enrollmentId, 'enroll');
+        });
+    } else if (action === 'reject') {
+        $('#confirmReject').off('click').on('click', function () {
+            processEnrollment(enrollmentId, 'reject');
+        });
+    }
+}
+
+function processEnrollment(enrollmentId, action) {
+    $.ajax({
+        url: "../../handler/admin/enrollmentAction.php",
+        type: "POST",
+        data: { enrollment_id: enrollmentId, action: action },
+        success: function(response) {
+            console.log("Server response:", response);
+            if (response.trim() === "success") {
+                $(".modal").modal("hide");
+                $("body").removeClass("modal-open");
+                $(".modal-backdrop").remove();
+                loadEnrollmentSection   ();
+            } else {
+                console.log("Failed to process request:", response);
+                alert("Failed to process request.");
+            }
+        },
+        error: function(xhr, status, error) {
+            console.log("AJAX error:", status, error);
+            alert("An error occurred while processing the request.");
+        }
+    });
+}
+
+
+// STUDENTS FUNCTIONS
+function openStudentModal(modalId, studentId, action) {
+    $('.modal').modal('hide');
+    $('.modal-backdrop').remove();
+    setTimeout(() => {
+        const modal = $('#' + modalId);
+        modal.attr('aria-hidden', 'false');
+        modal.modal('show');
+        setStudentId(studentId, action);
+    }, 300);
+}
+
+function setStudentId(studentId, action) {
+    if (action === 'edit') {
+        $.ajax({
+            url: "../../handler/admin/getStudent.php",
+            type: "GET",
+            data: { enrollment_id: studentId },
+            success: function(response) {
+                const student = JSON.parse(response);
+                $('#enrollmentId').val(student.enrollment_id);
+                $('#firstName').val(student.first_name);
+                $('#middleName').val(student.middle_name);
+                $('#lastName').val(student.last_name);
+                $('#classification').val(student.classification);
+                $('#existing_image').val(student.cor_path);
+
+                $('#modalTitle').text('Edit Student');
+                $('#confirmSaveStudent').text('Update Student');
+
+                if (student.classification === 'On-site') {
+                    $('#onsiteFields').removeClass('d-none');
+                    $('#onlineFields').addClass('d-none');
+                    $('#college').val(student.college_id);
+                    loadPrograms(student.college_id, student.program_id);
+                    $('#yearLevel').val(student.year_level);
+                    
+                    if (student.cor_path) {
+                        $('#image-preview').show();
+                        $('#preview-img').attr('src', `../../assets/cors/${student.cor_path}`);
+                    } else {
+                        $('#image-preview').hide();
+                    }
+                } else {
+                    $('#onsiteFields').addClass('d-none');
+                    $('#onlineFields').removeClass('d-none');
+                    $('#address').val(student.address);
+                    $('#school').val(student.school);
+                    $('#collegeText').val(student.ol_college || '');
+                    $('#programText').val(student.ol_program || '');
+                }
+            },
+            error: function() {
+                alert("An error occurred while fetching the student data.");
+            }
+        });
+
+        $('#studentForm').off('submit').on('submit', function (e) {
+            e.preventDefault();
+            processStudent(studentId, 'edit');
+        });
+    } else if (action === 'delete') {
+        $('#confirmDeleteStudent').off('click').on('click', function () {
+            processStudent(studentId, 'delete');
+        });
+    } else if (action === 'add') {
+        $('#studentForm')[0].reset();
+        $('#image-preview').hide();
+        $('#modalTitle').text('Add Student');
+        $('#confirmSaveStudent').text('Add Student');
+        
+        $('#classificationStep').show();
+        $('#studentDetailsStep').hide();
+        
+        $('#studentForm').off('submit').on('submit', function (e) {
+            e.preventDefault();
+            processStudent(null, 'add');
+        });
+    }
+}
+
+function processStudent(studentId, action) {
+    const classification = $('#classification').val();
+    
+    if (action !== 'delete') {
+        if (!$('#firstName').val() || !$('#lastName').val() || !$('#classification').val()) {
+            alert("Please fill out all required fields.");
+            return;
+        }
+        
+        if (classification === 'On-site') {
+            if (!$('#college').val() || !$('#program').val() || !$('#yearLevel').val()) {
+                alert("Please fill out all required fields for On-site students.");
+                return;
+            }
+            
+            if (action === 'add' && !$('#image').val() && !$('#existing_image').val()) {
+                alert("Certificate of Registration (COR) is required for On-site students.");
+                return;
+            }
+        } else if (classification === 'Online') {
+            if (!$('#address').val()) {
+                alert("Address is required for Online students.");
+                return;
+            }
+        }
+    }
+    
+    let formData = new FormData(document.getElementById('studentForm'));
+    if (studentId) {
+        formData.append('enrollmentId', studentId);
+    }
+    formData.append('action', action);
+
+    $.ajax({
+        url: "../../handler/admin/studentAction.php",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.trim() === "success") {
+                $(".modal").modal("hide");
+                $("body").removeClass("modal-open");
+                $(".modal-backdrop").remove();
+                loadStudentsSection();
+            } else {
+                alert("An error occurred: " + response);
+            }
+        },
+        error: function(xhr, status, error) {
+            alert("An error occurred while processing the request.");
+        }
+    });
+}
+
+function loadProgramsForTarget(collegeId, targetSelector) {
+    if (!collegeId) {
+        $(targetSelector).html('<option value="">Select Program</option>');
+        return;
+    }
+    
+    $.ajax({
+        url: "../../handler/admin/getCollegeProgram.php",
+        type: "GET",
+        data: { college_id: collegeId },
+        success: function(response) {
+            const programs = JSON.parse(response);
+            let options = '<option value="">Select Program</option>';
+            
+            programs.forEach(program => {
+                options += `<option value="${program.program_id}">${program.program_name}</option>`;
+            });
+            
+            $(targetSelector).html(options);
+        },
+        error: function() {
+            alert("Error loading programs");
+        }
+    });
+}
+
 $(document).on('hidden.bs.modal', function () {
     if ($('.modal.show').length === 0) { 
         $('body').removeClass('modal-open'); 

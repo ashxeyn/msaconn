@@ -236,3 +236,31 @@ function loadStudentsSection() {
         }
     });
 }
+
+function loadOnsiteSection () {
+    $.ajax({
+        url: "../admin/students.php",
+        method: 'GET',
+        success: function (response) {
+            $('#contentArea').html(response);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error loading onsite section:', error);
+            $('#contentArea').html('<p class="text-danger">Failed to load Onsite section. Please try again.</p>');
+        }
+    });
+}
+
+function loadOnlineSection () {
+    $.ajax({
+        url: "../admin/online.php",
+        method: 'GET',
+        success: function (response) {
+            $('#contentArea').html(response);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error loading online section:', error);
+            $('#contentArea').html('<p class="text-danger">Failed to load Online section. Please try again.</p>');
+        }
+    });
+}
