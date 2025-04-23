@@ -29,6 +29,7 @@
     <!-- Bottom Section: Navigation Bar -->
     <nav class="navbar">
         <ul class="nav-links">
+            <li><a href="<?php echo $base_url; ?>views/user/landing_page" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'landing_page.php') ? 'active' : ''; ?>">Home</a></li>
             <li><a href="<?php echo $base_url; ?>views/user/volunteer" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'volunteer.php' || basename($_SERVER['PHP_SELF']) == 'regVolunteer.php') ? 'active' : ''; ?>">Be a Volunteer</a></li>
             <li class="dropdown">
                 <a href="<?php echo $base_url; ?>views/user/aboutus" class="<?php echo (basename($_SERVER['PHP_SELF']) == 'aboutus.php') ? 'active' : ''; ?>">About MSA <span class="arrow"></span></a>

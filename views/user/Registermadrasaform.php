@@ -8,7 +8,6 @@ session_start();
 $adminObj = new Admin();
 $programs = $adminObj->fetchProgram();
 $colleges = $adminObj->fetchColleges();
-$programs = []; 
 
 // Initialize all possible variables
 $registration_type = '';
@@ -59,42 +58,42 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (empty($program)) {
                 $programErr = "Please select your program/course!";
             }
-        }
-
-        // Handle file upload (common for both)
-        if (!empty($_FILES['image']['name'])) {
-            $target_dir = "../../assets/cors/";
             
-            if (!is_dir($target_dir) && !mkdir($target_dir, 0777, true)) {
-                $imageErr = "Failed to create upload directory.";
-            } else {
-                $image_name = time() . "_" . basename($_FILES['image']['name']);
-                $target_file = $target_dir . $image_name;
-                $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-                $allowed_types = ['jpg', 'jpeg', 'png'];
-                $maxFileSize = 2 * 1024 * 1024; 
-        
-                if (!in_array($imageFileType, $allowed_types)) {
-                    $imageErr = "Only JPG, JPEG, & PNG files are allowed.";
-                } elseif ($_FILES['image']['size'] > $maxFileSize) {
-                    $imageErr = "File size should not exceed 2MB.";
+            // Handle file upload ONLY for onsite registration
+            if (!empty($_FILES['image']['name'])) {
+                $target_dir = "../../assets/cors/";
+                
+                if (!is_dir($target_dir) && !mkdir($target_dir, 0777, true)) {
+                    $imageErr = "Failed to create upload directory.";
                 } else {
-                    if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
-                        $cor_file = $image_name; 
+                    $image_name = time() . "_" . basename($_FILES['image']['name']);
+                    $target_file = $target_dir . $image_name;
+                    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+                    $allowed_types = ['jpg', 'jpeg', 'png'];
+                    $maxFileSize = 2 * 1024 * 1024; 
+            
+                    if (!in_array($imageFileType, $allowed_types)) {
+                        $imageErr = "Only JPG, JPEG, & PNG files are allowed.";
+                    } elseif ($_FILES['image']['size'] > $maxFileSize) {
+                        $imageErr = "File size should not exceed 2MB.";
                     } else {
-                        $imageErr = "There was an error uploading your file.";
+                        if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
+                            $cor_file = $image_name; 
+                        } else {
+                            $imageErr = "There was an error uploading your file.";
+                        }
                     }
                 }
+            } elseif (isset($_POST['existing_image']) && !empty($_POST['existing_image'])) {
+                $cor_file = $_POST['existing_image']; 
+            } else {
+                $imageErr = "Please upload your COR screenshot!";
             }
-        } elseif (isset($_POST['existing_image']) && !empty($_POST['existing_image'])) {
-            $cor_file = $_POST['existing_image']; 
-        } else {
-            $imageErr = "Please upload your COR screenshot!";
         }
         
         // Final validation and processing
         if ($registration_type == 'online') {
-            $valid = empty($first_nameErr) && empty($last_nameErr) && empty($addressErr) && empty($imageErr);
+            $valid = empty($first_nameErr) && empty($last_nameErr) && empty($addressErr);
         } else {
             $valid = empty($first_nameErr) && empty($last_nameErr) && empty($programErr) && empty($collegeErr) && empty($imageErr);
         }
@@ -112,16 +111,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     'program_id' => $program ?: null,
                     'year_level' => $year_level ?: null,
                     'school' => $school ?: null,
-                    'cor_path' => $cor_file
+                    'cor_path' => $cor_file ?: null
                 ];
                 
-                // Insert into database (using your Admin class)
+                // Insert into database
                 $enrollmentId = $adminObj->addMadrasaEnrollment($data);
                 
-                // Redirect to success page
+                // Set success flag and redirect
                 $_SESSION['registration_success'] = true;
-                header("Location: Registermadrasaform.php");
-                exit;
+                header("Location: ".$_SERVER['PHP_SELF']);
+                exit();
                 
             } catch (Exception $e) {
                 $imageErr = "Registration failed. Please try again.";
@@ -142,6 +141,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php include '../../includes/header.php'; ?>
 </head>
 <body>
+    <?php 
+    // Show success modal if registration was successful
+    if (isset($_SESSION['registration_success'])) {
+        $modalPath = dirname(dirname(dirname(__FILE__))) . '/userModals/registrationSuccessModal.php';
+        if (file_exists($modalPath)) {
+            include $modalPath;
+        } else {
+            // Fallback modal if file not found
+            echo '<div id="successModal" class="modal" style="display: block;">
+                    <div class="modal-content">
+                        <span class="close-button" onclick="this.parentElement.parentElement.style.display=\'none\'">&times;</span>
+                        <h2>Registration Successful!</h2>
+                        <p>You have successfully registered for Madrasa.</p>
+                    </div>
+                  </div>';
+        }
+        unset($_SESSION['registration_success']);
+    }
+    ?>
+
     <?php if (empty($registration_type)): ?>
         <!-- Registration Type Selection -->
         <div class="registration-type-container">
@@ -166,28 +185,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <button type="submit" class="submit-button">Continue</button>
             </form>
         </div>
-            <?php if (isset($_SESSION['registration_success'])): ?>
-        <div id="successModal" class="modal">
-            <div class="modal-content">
-                <span class="close-button" onclick="closeModal()">&times;</span>
-                <h2>Registration Successful!</h2>
-                <p>You have successfully registered for Madrasa.</p>
-            </div>
-        </div>
-        <script>
-            window.onload = function() {
-                document.getElementById("successModal").style.display = "block";
-            };
-            function closeModal() {
-                document.getElementById("successModal").style.display = "none";
-            }
-        </script>
-        <?php unset($_SESSION['registration_success']); ?>
-    <?php endif; ?>
-
     <?php else: ?>
         <!-- Actual Registration Form -->
-        <form action="" method="POST" enctype="multipart/form-data">
+        <form action="" method="POST" enctype="<?= $registration_type == 'onsite' ? 'multipart/form-data' : 'application/x-www-form-urlencoded' ?>">
             <input type="hidden" name="registration_type" value="<?= $registration_type ?>">
             
             <!-- Common Fields -->
@@ -244,49 +244,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <input type="text" id="school" name="school" placeholder="Your School (Optional)" value="<?= $school ?>">
                 </div>
             <?php else: ?>
-         
-               <!-- Onsite Registration Section -->
-            <div class="form-section">
-                <label for="college">College:</label>
-                <select id="college" name="college" required onchange="loadPrograms(this.value)">
-                    <option value="">Select College</option>
-                    <?php foreach ($colleges as $col): ?>
-                        <option value="<?= htmlspecialchars($col['college_id']) ?>">
-                            <?= htmlspecialchars($col['college_name']) ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-
-            <div class="form-section">
-                <label for="program">Program/Course:</label>
-                <select id="program" name="program" required disabled>
-                    <option value="">Select College First</option>
-                    <!-- Programs will be loaded via AJAX -->
-                </select>
-            </div>
-            <?php endif; ?>
-
-            <!-- Common File Upload -->
-            <div class="form-section">
-                <label for="image">Upload COR (Certificate of Registration):</label>
-                <div class="upload-container">
-                    <div class="upload-area" id="upload-area" onclick="document.getElementById('image').click()">
-                        <div class="upload-placeholder" id="upload-placeholder">
-                            <img src="../../assets/icons/upload-icon.png" alt="Upload Icon" class="upload-icon">
-                            <p>Click to upload your COR screenshot</p>
-                            <p class="upload-hint">(Only JPG, JPEG, or PNG, max 2MB)</p>
-                        </div>
-                        <div class="image-preview" id="image-preview" style="display: none;">
-                            <img id="preview-img" src="#" alt="Image Preview">
-                            <button type="button" class="remove-image" onclick="removeImage()">×</button>
-                        </div>
-                    </div>
-                    <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(event)" style="display: none;">
-                    <input type="hidden" name="existing_image" value="<?= $cor_file ?>">
-                    <span class="error"><?= $imageErr ?></span>
+                <!-- Onsite Registration Section -->
+                <div class="form-section">
+                    <label for="college">College:</label>
+                    <select id="college" name="college" required onchange="loadPrograms(this.value)">
+                        <option value="">Select College</option>
+                        <?php foreach ($colleges as $col): ?>
+                            <option value="<?= htmlspecialchars($col['college_id']) ?>">
+                                <?= htmlspecialchars($col['college_name']) ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
-            </div>
+
+                <div class="form-section">
+                    <label for="program">Program/Course:</label>
+                    <select id="program" name="program" required disabled>
+                        <option value="">Select College First</option>
+                    </select>
+                </div>
+
+                <!-- COR Upload (ONLY for onsite registration) -->
+                <div class="form-section">
+                    <label for="image">Upload COR (Certificate of Registration):</label>
+                    <div class="upload-container">
+                        <div class="upload-area" id="upload-area" onclick="document.getElementById('image').click()">
+                            <div class="upload-placeholder" id="upload-placeholder">
+                                <img src="../../assets/icons/upload-icon.png" alt="Upload Icon" class="upload-icon">
+                                <p>Click to upload your COR screenshot</p>
+                                <p class="upload-hint">(Only JPG, JPEG, or PNG, max 2MB)</p>
+                            </div>
+                            <div class="image-preview" id="image-preview" style="display: none;">
+                                <img id="preview-img" src="#" alt="Image Preview">
+                                <button type="button" class="remove-image" onclick="removeImage()">×</button>
+                            </div>
+                        </div>
+                        <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(event)" style="display: none;">
+                        <input type="hidden" name="existing_image" value="<?= $cor_file ?>">
+                        <span class="error"><?= $imageErr ?></span>
+                    </div>
+                </div>
+            <?php endif; ?>
 
             <div class="button-container">
                 <button type="button" class="back-button" onclick="window.location.href='?reset=1'">Back</button>
