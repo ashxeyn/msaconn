@@ -14,7 +14,6 @@ $endDate = isset($_GET['end_date']) ? $_GET['end_date'] : '';
 
 $cashIn = $adminObj->getCashInTransactions($selectedSchoolYearId, $selectedSemester, null, $startDate, $endDate);
 $cashOut = $adminObj->getCashOutTransactions($selectedSchoolYearId, $selectedSemester, null, $startDate, $endDate);
-$totalStudents = $adminObj->getTotalStudentsPaid($selectedSchoolYearId, $selectedSemester);
 
 $totalCashIn = 0;
 foreach ($cashIn as $transaction) {

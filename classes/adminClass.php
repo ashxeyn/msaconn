@@ -967,55 +967,6 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
         return $result['total'] ?? 0;
     }
 
-    function getStudentPaidRecord($schoolYearId, $semester) {
-        $sql = "SELECT * FROM student_paid 
-                WHERE school_year_id = :school_year_id 
-                AND semester = :semester";
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':school_year_id', $schoolYearId);
-        $query->bindParam(':semester', $semester);
-        $query->execute();
-        return $query->fetch();
-    }
-
-    function updateStudentsPaid($noStudents, $schoolYearId, $semester, $paidId = null) {
-        if ($paidId) {
-            $sql = "UPDATE student_paid 
-                    SET no_students = :no_students 
-                    WHERE paid_id = :paid_id";
-            $query = $this->db->connect()->prepare($sql);
-            $query->bindParam(':no_students', $noStudents);
-            $query->bindParam(':paid_id', $paidId);
-        } else {
-            $checkSql = "SELECT paid_id FROM student_paid 
-                        WHERE school_year_id = :school_year_id 
-                        AND semester = :semester";
-            $checkQuery = $this->db->connect()->prepare($checkSql);
-            $checkQuery->bindParam(':school_year_id', $schoolYearId);
-            $checkQuery->bindParam(':semester', $semester);
-            $checkQuery->execute();
-            $existingRecord = $checkQuery->fetch();
-            
-            if ($existingRecord) {
-                $sql = "UPDATE student_paid 
-                        SET no_students = :no_students 
-                        WHERE paid_id = :paid_id";
-                $query = $this->db->connect()->prepare($sql);
-                $query->bindParam(':no_students', $noStudents);
-                $query->bindParam(':paid_id', $existingRecord['paid_id']);
-            } else {
-                $sql = "INSERT INTO student_paid 
-                        (no_students, school_year_id, semester) 
-                        VALUES (:no_students, :school_year_id, :semester)";
-                $query = $this->db->connect()->prepare($sql);
-                $query->bindParam(':no_students', $noStudents);
-                $query->bindParam(':school_year_id', $schoolYearId);
-                $query->bindParam(':semester', $semester);
-            }
-        }
-        return $query->execute();
-    }
-
     function getAllSchoolYears() {
         $sql = "SELECT * FROM school_years ORDER BY school_year DESC";
         $query = $this->db->connect()->prepare($sql);

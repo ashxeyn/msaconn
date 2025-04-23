@@ -73,7 +73,7 @@ $result = $adminObj->fetchOnsiteEnrolledStudents();
                         </td>
                         <td>
                             <?php if (!empty($row['cor_path'])): ?>
-                                <a href="#" data-bs-toggle="modal" data-bs-target="#photoModal" onclick="viewPhoto('<?= clean_input($row['cor_path']) ?>', 'cors')">
+                                <a href="#" data-bs-toggle="modal" data-bs-target="#photoModal" onclick="viewPhoto('<?= clean_input($row['cor_path']) ?>', 'enrollment')">
                                     <img src="../../assets/enrollment/<?= clean_input($row['cor_path']) ?>" alt="COR Photo" class="cor-photo">
                                 </a>
                             <?php else: ?>

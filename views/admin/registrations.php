@@ -15,7 +15,18 @@ $result = $adminObj->fetchPendingVolunteer();
     <title>Approve Volunteer Registrations</title>
     <link rel="stylesheet" href="../../css/adminregistration.css?v=<?php echo time(); ?>">
     <script src="../../js/admin.js"></script>
-    <?php include '../../includes/head.php'; ?> 
+    <?php include '../../includes/head.php'; ?>
+    
+    <style>
+        .cor-photo {
+            width: 120px;
+            height: 80px;
+            border-radius: 6px;
+            object-fit: cover;
+            background-color: #f0f0f0;
+        }
+    </style>
+
 </head>
 <body>
     <div>
@@ -49,7 +60,7 @@ $result = $adminObj->fetchPendingVolunteer();
                             <td>
                                 <?php if (!empty($row['cor'])): ?>
                                     <a href="#" data-bs-toggle="modal" data-bs-target="#photoModal" onclick="viewPhoto('<?= clean_input($row['cor']) ?>', 'cors')">
-                                <img src="../../assets/cors/<?= clean_input($row['cor']) ?>" alt="COR Photo" width="80" height="80" class="img-thumbnail">
+                                <img src="../../assets/cors/<?= clean_input($row['cor']) ?>" alt="COR Photo" class="cor-photo">
                                     </a>
                                 <?php else: ?>
                                     No photo

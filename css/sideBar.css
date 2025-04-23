@@ -31,7 +31,7 @@
 }
 
 .nav-link:hover {
-    background: linear-gradient(to right, #ce1126, #007a3d);
+    background: #007a3d;
     color: white;
     transform: translateX(5px);
 }
