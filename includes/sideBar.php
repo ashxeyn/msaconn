@@ -68,6 +68,7 @@ require_once 'head.php';
             <hr class="text-white">
             <span class="text-uppercase text-muted small fw-bold sidebar-text">Student Management</span>
         </li>
+        <?php if ($userRole === 'admin'): ?>
         <li class="nav-item">
             <a href="#" onclick="loadEnrollmentSection()" class="nav-link text-white">
                 <i class="bi bi-person-bounding-box me-2"></i> <span class="sidebar-text">Enrollment</span>
@@ -77,7 +78,8 @@ require_once 'head.php';
             <a href="#" onclick="loadStudentsSection()" class="nav-link text-white">
                 <i class="bi bi-person-vcard me-2"></i> <span class="sidebar-text">Students</span>
             </a>
-        </li>     
+        </li>    
+        <?php endif; ?> 
         <li class="nav-item">
             <a href="#" onclick="loadOfficersSection()" class="nav-link text-white">
                 <i class="bi bi-person-badge me-2"></i> <span class="sidebar-text">Officers</span>
