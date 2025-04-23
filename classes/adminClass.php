@@ -1028,32 +1028,6 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         return $query->fetch();
-}
-    
-    // Others
-    function fetchSy(){
-        $sql = "SELECT * FROM school_years ORDER BY school_year_id ASC;";
-        $query = $this->db->connect()->prepare($sql);
-        $query->execute();
-        return $query->fetchAll();
-    }
-
-    function fetchProgram() {
-        $sql = "SELECT programs.program_id, programs.program_name, colleges.college_name 
-                FROM programs 
-                INNER JOIN colleges ON programs.college_id = colleges.college_id 
-                ORDER BY programs.program_name ASC;";
-        
-        $query = $this->db->connect()->prepare($sql);
-        $query->execute();
-        return $query->fetchAll();
-    }
-    
-    function fetchColleges(){
-        $sql = "SELECT * FROM colleges ORDER BY college_name ASC;";
-        $query = $this->db->connect()->prepare($sql);
-        $query->execute();
-        return $query->fetchAll();
     }
 
     // ABOUTS Functions
@@ -1182,27 +1156,15 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
         
         return $extensions[$fileType] ?? $fileType;
     }
-    // function to fetch programs by college ID
-    public function fetchProgramsByCollege($college_id) {
-        $sql = "SELECT program_id, program_name 
-                FROM programs 
-                WHERE college_id = :college_id 
-                ORDER BY program_name ASC";
-        
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':college_id', $college_id, PDO::PARAM_INT);
-        $query->execute();
-        
-        return $query->fetchAll(PDO::FETCH_ASSOC);
-    }
-    // function to register a madrasa enrollment
-    public function addMadrasaEnrollment($data) {
+
+    // Madrasa Enrollment and Students Functions
+    function addMadrasaEnrollment($data) {
         $sql = "INSERT INTO madrasa_enrollment 
                 (first_name, middle_name, last_name, classification, address, 
-                 college_id, program_id, year_level, school, cor_path)
+                college_id, program_id, year_level, school, cor_path)
                 VALUES 
                 (:first_name, :middle_name, :last_name, :classification, :address, 
-                 :college_id, :program_id, :year_level, :school, :cor_path)";
+                :college_id, :program_id, :year_level, :school, :cor_path)";
         
         $query = $this->db->connect()->prepare($sql);
         
@@ -1223,8 +1185,8 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
         
         return $this->db->connect()->lastInsertId();
     }
-    // function to fetch pending madrasa enrollments
-    public function getPendingEnrollments() {
+
+    function getPendingEnrollments() {
         $sql = "SELECT e.*, 
                     c.college_name,
                     p.program_name
@@ -1238,8 +1200,8 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
         $query->execute();
         return $query->fetchAll();
     }
-    //function to apporve/reject madrasa enrollment
-    public function updateEnrollmentStatus($enrollmentId, $status, $adminId) {
+
+    function updateEnrollmentStatus($enrollmentId, $status, $adminId) {
         if (!in_array($status, ['Enrolled', 'Rejected'])) {
             throw new InvalidArgumentException("Invalid status");
         }
@@ -1255,4 +1217,209 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
         return $query->execute();
     }
 
+    function fetchPendingEnrollments() {
+        $sql = "SELECT e.enrollment_id, 
+                CONCAT(e.last_name, ', ', e.first_name, ' ', IFNULL(e.middle_name, '')) AS full_name, 
+                e.classification, e.address, 
+                p.program_name, c.college_name, 
+                e.year_level, e.school, 
+                e.cor_path, e.status 
+                FROM madrasa_enrollment e
+                LEFT JOIN programs p ON e.program_id = p.program_id
+                LEFT JOIN colleges c ON e.college_id = c.college_id
+                WHERE e.status = 'Pending'";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    function fetchOnsiteEnrolledStudents() {
+        $sql = "SELECT e.enrollment_id, 
+                CONCAT(e.last_name, ', ', e.first_name, ' ', IFNULL(e.middle_name, '')) AS full_name, 
+                e.classification, e.address, 
+                p.program_name, c.college_name, 
+                e.year_level, e.school, 
+                e.cor_path, e.status 
+                FROM madrasa_enrollment e
+                LEFT JOIN programs p ON e.program_id = p.program_id
+                LEFT JOIN colleges c ON e.college_id = c.college_id
+                WHERE e.status = 'Enrolled' AND e.classification = 'On-site'";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    function fetchOnlineEnrolledStudents() {
+        $sql = "SELECT e.enrollment_id, 
+                CONCAT(e.last_name, ', ', e.first_name, ' ', IFNULL(e.middle_name, '')) AS full_name, 
+                e.classification, e.address, 
+                e.ol_college, e.ol_program, 
+                e.year_level, e.school, 
+                e.cor_path, e.status 
+                FROM madrasa_enrollment e
+                LEFT JOIN programs p ON e.program_id = p.program_id
+                LEFT JOIN colleges c ON e.college_id = c.college_id
+                WHERE e.status = 'Enrolled' AND e.classification = 'Online'";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    function getEnrollmentById($enrollmentId) {
+        $sql = "SELECT e.*, 
+                p.program_name, c.college_name, e.ol_college, e.ol_program
+                FROM madrasa_enrollment e
+                LEFT JOIN programs p ON e.program_id = p.program_id
+                LEFT JOIN colleges c ON e.college_id = c.college_id
+                WHERE e.enrollment_id = :enrollment_id";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':enrollment_id', $enrollmentId);
+        $query->execute();
+        return $query->fetch();
+    }
+
+    function enrollStudent($enrollmentId, $adminUserId) {
+        $sql = "UPDATE madrasa_enrollment SET status = 'Enrolled', updated_at = NOW() WHERE enrollment_id = :enrollment_id";
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':enrollment_id', $enrollmentId);
+        if (!$query->execute()) {
+            return false;
+        }
+        return true;
+    }
+
+    function rejectEnrollment($enrollmentId, $adminUserId) {
+        $sql = "UPDATE madrasa_enrollment SET status = 'Rejected', updated_at = NOW() WHERE enrollment_id = :enrollment_id";
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':enrollment_id', $enrollmentId);
+        if (!$query->execute()) {
+            return false;
+        }
+        return true;
+    }
+
+    function fetchAllColleges() {
+        $sql = "SELECT * FROM colleges ORDER BY college_name";
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    function fetchProgramsByCollege($collegeId) {
+        $sql = "SELECT * FROM programs WHERE college_id = :college_id ORDER BY program_name";
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':college_id', $collegeId);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $classification, 
+            $address, $collegeId, $programId, $yearLevel, $school, $corPath, 
+            $collegeText = null, $programText = null) {
+        $sql = "UPDATE madrasa_enrollment SET 
+        first_name = :first_name, 
+        middle_name = :middle_name, 
+        last_name = :last_name, 
+        classification = :classification, 
+        address = :address, 
+        college_id = :college_id, 
+        program_id = :program_id, 
+        year_level = :year_level, 
+        school = :school,
+        ol_college = :ol_college,
+        ol_program = :ol_program";
+
+        if (!empty($corPath)) {
+        $sql .= ", cor_path = :cor_path";
+        }
+
+        $sql .= ", updated_at = NOW() WHERE enrollment_id = :enrollment_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':first_name', $firstName);
+        $query->bindParam(':middle_name', $middleName);
+        $query->bindParam(':last_name', $lastName);
+        $query->bindParam(':classification', $classification);
+        $query->bindParam(':address', $address);
+        $query->bindParam(':college_id', $collegeId);
+        $query->bindParam(':program_id', $programId);
+        $query->bindParam(':year_level', $yearLevel);
+        $query->bindParam(':school', $school);
+        $query->bindParam(':ol_college', $collegeText);
+        $query->bindParam(':ol_program', $programText);
+
+        if (!empty($corPath)) {
+        $query->bindParam(':cor_path', $corPath);
+        }
+
+        $query->bindParam(':enrollment_id', $enrollmentId);
+
+        return $query->execute();
+        }
+
+        function addStudent($firstName, $middleName, $lastName, $classification, 
+        $address, $collegeId, $programId, $yearLevel, $school, $corPath,
+        $collegeText = null, $programText = null) {
+        $sql = "INSERT INTO madrasa_enrollment (
+        first_name, middle_name, last_name, classification, address, 
+        college_id, program_id, year_level, school, cor_path, 
+        ol_college, ol_program, status) 
+        VALUES (
+        :first_name, :middle_name, :last_name, :classification, :address, 
+        :college_id, :program_id, :year_level, :school, :cor_path,
+        :ol_college, :ol_program, 'Enrolled')";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':first_name', $firstName);
+        $query->bindParam(':middle_name', $middleName);
+        $query->bindParam(':last_name', $lastName);
+        $query->bindParam(':classification', $classification);
+        $query->bindParam(':address', $address);
+        $query->bindParam(':college_id', $collegeId);
+        $query->bindParam(':program_id', $programId);
+        $query->bindParam(':year_level', $yearLevel);
+        $query->bindParam(':school', $school);
+        $query->bindParam(':cor_path', $corPath);
+        $query->bindParam(':ol_college', $collegeText);
+        $query->bindParam(':ol_program', $programText);
+
+        return $query->execute();
+        }
+
+    function deleteStudent($enrollmentId) {
+        $sql = "DELETE FROM madrasa_enrollment WHERE enrollment_id = :enrollment_id";
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':enrollment_id', $enrollmentId);
+        return $query->execute();
+    }
+    
+    // Others
+    function fetchSy(){
+        $sql = "SELECT * FROM school_years ORDER BY school_year_id ASC;";
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    function fetchProgram() {
+        $sql = "SELECT programs.program_id, programs.program_name, colleges.college_name 
+                FROM programs 
+                INNER JOIN colleges ON programs.college_id = colleges.college_id 
+                ORDER BY programs.program_name ASC;";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+    
+    function fetchColleges(){
+        $sql = "SELECT * FROM colleges ORDER BY college_name ASC;";
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
 }

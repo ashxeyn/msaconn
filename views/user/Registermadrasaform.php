@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Handle file upload (common for both)
         if (!empty($_FILES['image']['name'])) {
-            $target_dir = "../../assets/cors/";
+            $target_dir = "../../assets/enrollment/";
             
             if (!is_dir($target_dir) && !mkdir($target_dir, 0777, true)) {
                 $imageErr = "Failed to create upload directory.";
