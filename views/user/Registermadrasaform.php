@@ -13,6 +13,8 @@ $colleges = $adminObj->fetchColleges();
 $registration_type = '';
 $first_name = $middle_name = $last_name = $address = $program = $year_level = $school = $college = $cor_file = '';
 $first_nameErr = $last_nameErr = $addressErr = $programErr = $collegeErr = $imageErr = '';
+$email = $contact_number = '';
+$emailErr = $contactNumberErr = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Handle the registration type selection
@@ -43,6 +45,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (empty($address)) {
                 $addressErr = "Address is required!";
             }
+            $email = clean_input($_POST['email']);
+            if (empty($email)) {
+                $emailErr = "Email is required!";
+            }
+            $contact_number = clean_input($_POST['contact_number']);
+            if (empty($contact_number)) {
+                $contactNumberErr = "Contact number is required!";
+            }
             $program = clean_input($_POST['program']);
             $year_level = clean_input($_POST['year_level']);
             $school = clean_input($_POST['school']);
@@ -57,6 +67,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
             if (empty($program)) {
                 $programErr = "Please select your program/course!";
+            }
+            $email = clean_input($_POST['email']);
+            if (empty($email)) {
+                $emailErr = "WMSU Email is required!";
+            }
+            $contact_number = clean_input($_POST['contact_number']);
+            if (empty($contact_number)) {
+                $contactNumberErr = "Contact number is required!";
             }
         }
 
@@ -93,9 +111,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         // Final validation and processing
         if ($registration_type == 'online') {
-            $valid = empty($first_nameErr) && empty($last_nameErr) && empty($addressErr);
+            $valid = empty($first_nameErr) && empty($last_nameErr) && empty($addressErr) && empty($emailErr) && empty($contactNumberErr);
         } else {
-            $valid = empty($first_nameErr) && empty($last_nameErr) && empty($programErr) && empty($collegeErr) && empty($imageErr);
+            $valid = empty($first_nameErr) && empty($last_nameErr) && empty($programErr) && empty($collegeErr) && empty($imageErr) && empty($emailErr) && empty($contactNumberErr);
         }
         
         if ($valid) {
@@ -111,7 +129,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     'program_id' => $program ?: null,
                     'year_level' => $year_level ?: null,
                     'school' => $school ?: null,
-                    'cor_path' => $cor_file ?: null
+                    'cor_path' => $cor_file ?: null,
+                    'email' => $email,
+                    'contact_number' => $contact_number
                 ];
                 
                 // Insert into database
@@ -217,10 +237,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <input type="text" id="address" name="address" placeholder="Your Complete Address" value="<?= $address ?>" required>
                     <span class="error"><?= $addressErr ?></span>
                 </div>
-                
+
+                <div class="form-section">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" placeholder="Your Email" value="<?= $email ?>" required>
+                    <span class="error"><?= $emailErr ?></span>
+                </div>
+
+                <div class="form-section">
+                    <label for="contact_number">Contact Number:</label>
+                    <input type="tel" id="contact_number" name="contact_number" placeholder="Your Contact Number" value="<?= $contact_number ?>" required>
+                    <span class="error"><?= $contactNumberErr ?></span>
+                </div>
+
                 <div class="form-section optional-section">
                     <h3>Optional Information (For Students)</h3>
-                    
+
                     <label for="program">Program:</label>
                     <select id="program" name="program">
                         <option value="">Select Program (Optional)</option>
@@ -230,7 +262,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </option>
                         <?php endforeach; ?>
                     </select>
-                    
+
                     <label for="year_level">Year Level:</label>
                     <select id="year_level" name="year_level">
                         <option value="">Select Year Level (Optional)</option>
@@ -239,7 +271,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <option value="3rd Year" <?= ($year_level == "3rd Year") ? 'selected' : '' ?>>3rd Year</option>
                         <option value="4th Year" <?= ($year_level == "4th Year") ? 'selected' : '' ?>>4th Year</option>
                     </select>
-                    
+
                     <label for="school">School:</label>
                     <input type="text" id="school" name="school" placeholder="Your School (Optional)" value="<?= $school ?>">
                 </div>
@@ -262,6 +294,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <select id="program" name="program" required disabled>
                         <option value="">Select College First</option>
                     </select>
+                </div>
+
+                <div class="form-section">
+                    <label for="email">WMSU Email:</label>
+                    <input type="email" id="email" name="email" placeholder="Your WMSU Email" value="<?= $email ?>" required>
+                    <span class="error"><?= $emailErr ?></span>
+                </div>
+
+                <div class="form-section">
+                    <label for="contact_number">Contact Number:</label>
+                    <input type="tel" id="contact_number" name="contact_number" placeholder="Your Contact Number" value="<?= $contact_number ?>" required>
+                    <span class="error"><?= $contactNumberErr ?></span>
                 </div>
 
                 <!-- COR Upload (ONLY for onsite registration) -->
