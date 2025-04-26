@@ -1112,10 +1112,10 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
     function addMadrasaEnrollment($data) {
         $sql = "INSERT INTO madrasa_enrollment 
                 (first_name, middle_name, last_name, classification, address, 
-                college_id, program_id, year_level, school, cor_path)
+                college_id, program_id, year_level, school, cor_path, email, contact_number)
                 VALUES 
                 (:first_name, :middle_name, :last_name, :classification, :address, 
-                :college_id, :program_id, :year_level, :school, :cor_path)";
+                :college_id, :program_id, :year_level, :school, :cor_path, :email, :contact_number)";
         
         $query = $this->db->connect()->prepare($sql);
         
@@ -1129,6 +1129,8 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
         $query->bindParam(':year_level', $data['year_level']);
         $query->bindParam(':school', $data['school']);
         $query->bindParam(':cor_path', $data['cor_path']);
+        $query->bindParam(':email', $data['email']);
+        $query->bindParam(':contact_number', $data['contact_number']);
         
         if (!$query->execute()) {
             throw new Exception("Failed to save enrollment");
@@ -1221,7 +1223,8 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
 
     function getEnrollmentById($enrollmentId) {
         $sql = "SELECT e.*, 
-                p.program_name, c.college_name, e.ol_college, e.ol_program
+                p.program_name, c.college_name, e.ol_college, e.ol_program, 
+                e.email, e.contact_number
                 FROM madrasa_enrollment e
                 LEFT JOIN programs p ON e.program_id = p.program_id
                 LEFT JOIN colleges c ON e.college_id = c.college_id
@@ -1270,7 +1273,7 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
 
     function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $classification, 
             $address, $collegeId, $programId, $yearLevel, $school, $corPath, 
-            $collegeText = null, $programText = null) {
+            $email, $contactNumber, $collegeText = null, $programText = null) {
         $sql = "UPDATE madrasa_enrollment SET 
         first_name = :first_name, 
         middle_name = :middle_name, 
@@ -1281,6 +1284,8 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
         program_id = :program_id, 
         year_level = :year_level, 
         school = :school,
+        email = :email,
+        contact_number = :contact_number,
         ol_college = :ol_college,
         ol_program = :ol_program";
 
@@ -1300,6 +1305,8 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
         $query->bindParam(':program_id', $programId);
         $query->bindParam(':year_level', $yearLevel);
         $query->bindParam(':school', $school);
+        $query->bindParam(':email', $email);
+        $query->bindParam(':contact_number', $contactNumber);
         $query->bindParam(':ol_college', $collegeText);
         $query->bindParam(':ol_program', $programText);
 
@@ -1373,4 +1380,46 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
         $query->execute();
         return $query->fetchAll();
     }
+     // Fetch all FAQs
+     function fetchUserFaqs() {
+        $sql = "SELECT * FROM faqs ORDER BY category ASC, created_at DESC";
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Fetch a single FAQ by ID for the user side
+    function getUserFaqById($faqId) {
+        $sql = "SELECT * FROM faqs WHERE faq_id = :faq_id";
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':faq_id', $faqId, PDO::PARAM_INT);
+        $query->execute();
+        return $query->fetch(PDO::FETCH_ASSOC);
+    }
+        // In your Admin class
+    public function fetchAllFiles() {
+        $sql = "SELECT f.file_id, f.file_name, f.file_path, f.file_type, f.file_size, 
+                    f.created_at, u.username 
+                FROM downloadable_files f
+                LEFT JOIN users u ON f.user_id = u.user_id
+                ORDER BY f.file_id DESC";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getAboutMSAData() {
+        $query = "SELECT mission, vision, description FROM about_msa ORDER BY id DESC LIMIT 1";
+        $stmt = $this->db->connect()->prepare($query);
+        
+        if (!$stmt) {
+            throw new Exception("Database error: " . $this->db->connect()->error);
+        }
+        
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    
 }
