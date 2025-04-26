@@ -80,9 +80,9 @@ body {
   border-radius: 10px;
 }
 
-/* Mission and Vision Sections */
-.mission-section,
-.vision-section {
+/* Mission and Vision Sections - UPDATED SELECTORS ONLY */
+.about-section .mission, 
+.about-section .vision {
   width: 90%;
   max-width: 3000px;
   margin: 30px auto;
@@ -96,18 +96,19 @@ body {
   border: 1px solid #e0e0e0;
 }
 
-.mission-section h3,
-.vision-section h3 {
+.about-section .mission h3,
+.about-section .vision h3 {
   font-size: 20px;
   margin-bottom: 15px;
   color: #1a541c;
 }
 
-.mission-section p,
-.vision-section p {
+.about-section .mission p,
+.about-section .vision p {
   font-size: 16px;
   line-height: 1.6;
 }
+
 
 /* ===== Modern Organizational Chart ===== */
 .org-chart {
@@ -296,19 +297,68 @@ body {
   color: #666;
 }
 
+.downloads-section {
+  padding: 2rem;
+  background-color: #f9f9f9;
+  margin: 2rem 0;
+}
+
+.downloads-list {
+  margin-top: 1.5rem;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin-bottom: 1rem;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.file-icon {
+  font-size: 1.5rem;
+}
+
+.file-details h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+.file-details p {
+  margin: 0.25rem 0 0;
+  font-size: 0.875rem;
+  color: #666;
+}
+
 .download-link {
   padding: 0.5rem 1rem;
-  background: #d72f2f;
+  background-color: #4CAF50;
   color: white;
   text-decoration: none;
   border-radius: 4px;
-  font-size: 0.9rem;
-  flex-shrink: 0;
-  transition: background 0.2s ease;
+  font-weight: 500;
+  transition: background-color 0.3s;
 }
 
 .download-link:hover {
-  background: #333;
+  background-color: #3e8e41;
+}
+
+.no-files {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  padding: 2rem;
 }
 
 /* Media Queries for Responsiveness */

@@ -1396,6 +1396,30 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
         $query->execute();
         return $query->fetch(PDO::FETCH_ASSOC);
     }
+        // In your Admin class
+    public function fetchAllFiles() {
+        $sql = "SELECT f.file_id, f.file_name, f.file_path, f.file_type, f.file_size, 
+                    f.created_at, u.username 
+                FROM downloadable_files f
+                LEFT JOIN users u ON f.user_id = u.user_id
+                ORDER BY f.file_id DESC";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getAboutMSAData() {
+        $query = "SELECT mission, vision, description FROM about_msa ORDER BY id DESC LIMIT 1";
+        $stmt = $this->db->connect()->prepare($query);
+        
+        if (!$stmt) {
+            throw new Exception("Database error: " . $this->db->connect()->error);
+        }
+        
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 
     
 }

@@ -1,3 +1,34 @@
+<?php
+// At the VERY TOP of the file
+require_once __DIR__.'/../../classes/adminClass.php';
+require_once __DIR__.'/../../includes/helpers.php';
+
+// Initialize Admin class
+$admin = new Admin();
+
+
+try {
+  // Get about data using the class method
+  $about_data = $admin->getAboutMSAData();
+  
+  // Set default values if no data exists
+  $mission = $about_data['mission'] ?? "Default mission text if none in database";
+  $vision = $about_data['vision'] ?? "Default vision text if none in database";
+  $description = $about_data['description'] ?? "Our website is dedicated to connecting volunteers...";
+} catch (Exception $e) {
+  // Handle the error gracefully
+  error_log($e->getMessage());
+  $mission = "Our mission statement";
+  $vision = "Our vision statement";
+  $description = "Our website is dedicated to connecting volunteers...";
+}
+
+// Get base_url from header.php or define it here if not available
+if(!isset($base_url)) {
+  $base_url = 'http://' . $_SERVER['HTTP_HOST'] . '/msaconnect/';
+}
+?>
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,37 +38,34 @@
 </head>
 <body>
   <?php include '../../includes/header.php'; ?>
+  
+
   <link rel="stylesheet" href="<?php echo $base_url; ?>css/aboutus.css">
 
   <!-- Hero Section -->
-  <div class="hero">
+  <section class="hero">
     <div class="hero-background"></div>
     <div class="hero-content">
-      <h2>About Us</h2>
-      <p>
-        Our website is dedicated to connecting volunteers with opportunities to make a difference in their communities. 
-        We believe in the power of volunteering to bring people together and create positive change.
-      </p>
+        <h2>About Us</h2>
+        <p><?php echo htmlspecialchars($description); ?></p>
     </div>
-  </div>
+</section>
 
-  <!-- Mission Section -->
-  <div class="mission-section">
-    <h3>Our Mission</h3>
-    <p>
-    Our mission is to empower individuals from all walks of life to contribute their time, talents, and passion toward meaningful causes that foster lasting,
-     positive change. We believe that everyone has something valuable to offer, and by connecting people with opportunities to serve, we help ignite a spirit of purpose, community, and shared impact. 
-    Through volunteering, we strive to create a more compassionate, connected, and resilient world—one action at a time. </p>
-  </div>
-
-  <!-- Vision Section -->
-  <div class="vision-section">
-    <h3>Our Vision</h3>
-    <p>
-    We envision a world where every individual is inspired to take part in volunteering—where acts of kindness, empathy, and support are not only encouraged but celebrated.
-     In this world, the simple decision to give one’s time or lend a helping hand creates a powerful ripple effect that extends far beyond a single moment or act.
-     It builds bridges across communities, strengthens social bonds, and inspires others to do the same. We believe that when people come together with the shared goal of making a difference, the impact can be transformative—reaching across neighborhoods, generations, and even borders.
-  </div>
+<!-- Mission and Vision Section -->
+<section id="about" class="about-section">
+    <div class="container">
+        <div class="mission-vision">
+            <div class="mission">
+                <h3>Our Mission</h3>
+                <p><?php echo htmlspecialchars($mission); ?></p>
+            </div>
+            <div class="vision">
+                <h3>Our Vision</h3>
+                <p><?php echo htmlspecialchars($vision); ?></p>
+            </div>
+        </div>
+    </div>
+</section>
 
   <!-- Executive Team Section -->
   <section class="org-chart">
@@ -147,38 +175,40 @@
     </div>
   </section>
 
-  <!-- Downloads Section -->
   <section class="downloads-section">
     <div class="content-wrapper">
         <h2 class="section-title">Downloadable Files</h2>
         
         <div class="downloads-list">
-            <!-- File 1 -->
-            <div class="file-item">
-                <div class="file-info">
-                    <span class="file-icon">📄</span>
-                    <div class="file-details">
-                        <h3>User Guide.pdf</h3>
-                        <p>2.4 MB • Updated 12/05/2023</p>
-                    </div>
-                </div>
-                <a href="#" class="download-link">Download</a>
-            </div>
+            <?php
+            // Fetch downloadable files from the database
+            $files = $admin->fetchDownloadableFiles();
             
-            <!-- File 2 -->
-            <div class="file-item">
-                <div class="file-info">
-                    <span class="file-icon">🗂️</span>
-                    <div class="file-details">
-                        <h3>Resources.zip</h3>
-                        <p>156 MB • Updated 04/02/2024</p>
+            if (empty($files)): ?>
+                <p class="no-files">No downloadable files available yet.</p>
+            <?php else: 
+                foreach ($files as $file): 
+                    $fileSize = formatFileSize($file['file_size']);
+                    $uploadDate = date('m/d/Y', strtotime($file['created_at']));
+                    $fileIcon = getFileIcon($file['file_type']); // Use the getFileIcon function
+                    $downloadUrl = htmlspecialchars($base_url . 'assets/downloadables/' . $file['file_path']);
+                    $fileName = htmlspecialchars($file['file_name']);
+                    ?>
+                    <div class="file-item">
+                        <div class="file-info">
+                            <span class="file-icon"><?= $fileIcon ?></span>
+                            <div class="file-details">
+                                <h3><?= $fileName ?></h3>
+                                <p><?= $fileSize ?> • Updated <?= $uploadDate ?></p>
+                            </div>
+                        </div>
+                        <a href="<?= $downloadUrl ?>" class="download-link" download>Download</a>
                     </div>
-                </div>
-                <a href="#" class="download-link">Download</a>
-            </div>
+                <?php endforeach;
+            endif; ?>
         </div>
     </div>
-  </section>
+</section>
 
   <?php include '../../includes/footer.php'; ?>
 </body>
