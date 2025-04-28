@@ -7,8 +7,8 @@ $adminObj = new Admin();
 $schoolYears = $adminObj->getAllSchoolYears();
 $currentSchoolYear = $adminObj->getCurrentSchoolYear();
 
-$selectedSchoolYearId = isset($_GET['school_year_id']) ? $_GET['school_year_id'] : $currentSchoolYear['school_year_id'];
-$selectedSemester = isset($_GET['semester']) ? $_GET['semester'] : '1st';
+$selectedSchoolYearId = isset($_GET['school_year_id']) ? $_GET['school_year_id'] : null;
+$selectedSemester = isset($_GET['semester']) ? $_GET['semester'] : null;
 $startDate = isset($_GET['start_date']) ? $_GET['start_date'] : '';
 $endDate = isset($_GET['end_date']) ? $_GET['end_date'] : '';
 
@@ -34,8 +34,8 @@ $totalFunds = $totalCashIn - $totalCashOut;
     <meta charset="UTF-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>Transparency Report</title> 
-    <link rel="stylesheet" href="../../css/admintransparency.css?v=<?php echo time(); ?>"> 
-    <?php include '../../includes/head.php'; ?> 
+    <!-- <link rel="stylesheet" href="../../css/admintransparency.css?v=<?php echo time(); ?>">  -->
+    <!-- <?php include '../../includes/head.php'; ?>  -->
     <script src="../../js/admin.js"></script>
 </head> 
 <body> 
@@ -46,9 +46,10 @@ $totalFunds = $totalCashIn - $totalCashOut;
             <div class="col-md-4">
                 <label for="schoolYearSelect" class="form-label">School Year:</label>
                 <select id="schoolYearSelect" class="form-select filter-control">
+                    <option value="">All School Years</option>
                     <?php foreach ($schoolYears as $year): ?>
                         <option value="<?= $year['school_year_id'] ?>" 
-                            <?= $year['school_year_id'] == $selectedSchoolYearId ? 'selected' : '' ?>>
+                            <?= isset($_GET['school_year_id']) && $year['school_year_id'] == $selectedSchoolYearId ? 'selected' : '' ?>>
                             <?= clean_input($year['school_year']) ?>
                         </option>
                     <?php endforeach; ?>
@@ -58,8 +59,9 @@ $totalFunds = $totalCashIn - $totalCashOut;
             <div class="col-md-4">
                 <label for="semesterSelect" class="form-label">Semester:</label>
                 <select id="semesterSelect" class="form-select filter-control">
-                    <option value="1st" <?= $selectedSemester == '1st' ? 'selected' : '' ?>>1st Semester</option>
-                    <option value="2nd" <?= $selectedSemester == '2nd' ? 'selected' : '' ?>>2nd Semester</option>
+                    <option value="">All Semesters</option>
+                    <option value="1st" <?= isset($_GET['semester']) && $selectedSemester == '1st' ? 'selected' : '' ?>>1st Semester</option>
+                    <option value="2nd" <?= isset($_GET['semester']) && $selectedSemester == '2nd' ? 'selected' : '' ?>>2nd Semester</option>
                 </select>
             </div>
         </div>
@@ -92,15 +94,6 @@ $totalFunds = $totalCashIn - $totalCashOut;
                 </div>
             </div>
         </div>
-        
-        <!-- <div class="mb-4">
-            <h5>Total No. of Students who paid the Collection Fee: 
-                <span id="totalStudents"><?= $totalStudents ?></span>
-            </h5>
-            <button class="btn btn-primary btn-sm" onclick="openUpdateStudentsModal()">
-                Update No. of Students
-            </button>
-        </div> -->
  
         <div class="mb-4">
             <h3>Cash-In Transactions</h3>
@@ -226,7 +219,6 @@ $totalFunds = $totalCashIn - $totalCashOut;
     include '../adminModals/addEditCashOut.html'; 
     include '../adminModals/deleteCashIn.html'; 
     include '../adminModals/deleteCashOut.html'; 
-    include '../adminModals/updateStudents.html';
     ?> 
 </body> 
 </html>

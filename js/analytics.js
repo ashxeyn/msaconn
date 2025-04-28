@@ -30,10 +30,14 @@ $(document).ready(function() {
     }
 });
 
-$(document).ready(function() {
+function loadCashFlowData(startDate = '', endDate = '') {
     $.ajax({
         url: "../../handler/admin/getCashFlow.php",
         type: "GET",
+        data: {
+            start_date: startDate,
+            end_date: endDate
+        },
         success: function(response) {
             console.log("API Response:", response); 
             try {
@@ -44,8 +48,12 @@ $(document).ready(function() {
                 const netMoney = data.map(item => item.net_money);
 
                 const ctx = document.getElementById('transparencyChart').getContext('2d');
+                
+                if (window.transparencyChartInstance) {
+                    window.transparencyChartInstance.destroy();
+                }
 
-                new Chart(ctx, {
+                window.transparencyChartInstance = new Chart(ctx, {
                     type: 'bar',
                     data: {
                         labels: months,
@@ -102,25 +110,28 @@ $(document).ready(function() {
             alert("An error occurred while fetching cash flow data.");
         }
     });
-});
+}
 
-// let chartInstance = {};
-function loadVolunteerStats() {
+function loadVolunteerStats(startDate = '', endDate = '') {
     $.ajax({
         url: "../../handler/admin/getStats.php",
         type: "GET",
         dataType: "json",
+        data: {
+            start_date: startDate,
+            end_date: endDate
+        },
         success: function(response) {
             let months = response.map(item => item.month);
             let totals = response.map(item => item.total);
 
             let ctx = document.getElementById('volunteersChart').getContext('2d');
             
-          //  if(chartInstance["volunteersChart"]) {
-             //   chartInstance["volunteersChart"].destroy();
-           // }
+            if (window.volunteersChartInstance) {
+                window.volunteersChartInstance.destroy();
+            }
 
-            new Chart(ctx, {
+            window.volunteersChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: months,
@@ -151,6 +162,32 @@ function loadVolunteerStats() {
     }); 
 }
 
+function loadDashboardStats(startDate = '', endDate = '') {
+    $.ajax({
+        url: "../../handler/admin/getDashboardStats.php",
+        type: "GET",
+        data: {
+            start_date: startDate,
+            end_date: endDate
+        },
+        success: function(response) {
+            try {
+                const data = JSON.parse(response);
+                $('#analyticsContent .stats-container .stat-card:nth-child(1) .stat-number').text(data.volunteers);
+                $('#analyticsContent .stats-container .stat-card:nth-child(2) .stat-number').text(data.pending);
+                $('#analyticsContent .stats-container .stat-card:nth-child(3) .stat-number').text(data.moderators);
+            } catch (e) {
+                console.error("Invalid JSON response for dashboard stats:", e);
+            }
+        },
+        error: function() {
+            console.error("Failed to load dashboard stats.");
+        }
+    });
+}
+
 $(document).ready(function() {
+    loadCashFlowData();
     loadVolunteerStats();
+    loadDashboardStats();
 });

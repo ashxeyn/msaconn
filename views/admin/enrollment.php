@@ -15,7 +15,7 @@ $result = $adminObj->fetchPendingEnrollments();
     <title>Approve Madrasa Enrollments</title>
     <link rel="stylesheet" href="../../css/adminenrollment.css?v=<?php echo time(); ?>">
     <script src="../../js/admin.js"></script>
-    <?php include '../../includes/head.php'; ?> 
+    <!-- <?php include '../../includes/head.php'; ?>  -->
 </head>
 <body>
     <div>

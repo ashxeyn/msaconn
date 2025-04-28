@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 26, 2025 at 09:23 PM
+-- Generation Time: Apr 28, 2025 at 07:38 PM
 -- Server version: 11.4.5-MariaDB
 -- PHP Version: 8.2.12
 
@@ -34,7 +34,8 @@ CREATE TABLE `about_msa` (
   `description` text NOT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
-  `reason` varchar(255) DEFAULT NULL
+  `reason` varchar(255) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -51,7 +52,8 @@ CREATE TABLE `calendar_activities` (
   `created_by` int(11) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
-  `reason` varchar(255) DEFAULT NULL
+  `reason` varchar(255) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -64,17 +66,21 @@ CREATE TABLE `colleges` (
   `college_id` int(11) NOT NULL,
   `college_name` varchar(255) NOT NULL,
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
-  `reason` varchar(255) DEFAULT NULL
+  `reason` varchar(255) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `colleges`
 --
 
-INSERT INTO `colleges` (`college_id`, `college_name`, `is_deleted`, `reason`) VALUES
-(2, 'CCSSws', 0, NULL),
-(3, 'CN', 0, NULL),
-(6, 'sd', 0, NULL);
+INSERT INTO `colleges` (`college_id`, `college_name`, `is_deleted`, `reason`, `deleted_at`) VALUES
+(2, 'CCSSws', 0, NULL, NULL),
+(3, 'CNss', 0, NULL, NULL),
+(6, 'sd', 1, 'as', '2025-04-28 17:22:04'),
+(8, 'sads', 0, NULL, NULL),
+(9, 'sadsa', 1, 'sad', '2025-04-28 16:56:56'),
+(10, 'asddddddddddd', 1, 'w', '2025-04-28 17:03:22');
 
 -- --------------------------------------------------------
 
@@ -92,17 +98,9 @@ CREATE TABLE `downloadable_files` (
   `created_at` datetime DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
-  `reason` varchar(255) DEFAULT NULL
+  `reason` varchar(255) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `downloadable_files`
---
-
-INSERT INTO `downloadable_files` (`file_id`, `user_id`, `file_name`, `file_path`, `file_type`, `file_size`, `created_at`, `updated_at`, `is_deleted`, `reason`) VALUES
-(4, 1, 'dsd', '1744977207_Automobile-metadata.docx', 'application/vnd.openxmlformats-officedocument.word', 17267, '2025-04-18 19:53:27', '2025-04-18 19:53:27', 0, NULL),
-(5, 1, 'adas', '1744978038_00 Course Content Notes for CC105 - Application Development and Emerging Technologies.pdf', 'application/pdf', 360836, '2025-04-18 20:07:18', '2025-04-18 20:07:18', 0, NULL),
-(6, 1, 'njakfs', '1745644019_The-Philippine-Drug-War-A-Failed-Experiment-in-Violence.pdf', 'application/pdf', 3633211, '2025-04-26 13:06:59', '2025-04-26 13:06:59', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -117,7 +115,8 @@ CREATE TABLE `events` (
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `uploaded_by` int(11) NOT NULL,
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
-  `reason` varchar(255) DEFAULT NULL
+  `reason` varchar(255) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -137,7 +136,8 @@ CREATE TABLE `executive_officers` (
   `school_year_id` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
-  `reason` varchar(255) DEFAULT NULL
+  `reason` varchar(255) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -153,7 +153,8 @@ CREATE TABLE `faqs` (
   `category` enum('General Questions','Events and Activities','Donation and Support','Contact and Support') NOT NULL DEFAULT 'General Questions',
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
-  `reason` varchar(255) DEFAULT NULL
+  `reason` varchar(255) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -171,7 +172,8 @@ CREATE TABLE `friday_prayers` (
   `created_by` int(11) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
-  `reason` varchar(255) DEFAULT NULL
+  `reason` varchar(255) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -198,7 +200,8 @@ CREATE TABLE `madrasa_enrollment` (
   `created_at` datetime DEFAULT current_timestamp(),
   `updated_at` datetime DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
-  `reason` varchar(255) DEFAULT NULL
+  `reason` varchar(255) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -211,35 +214,9 @@ CREATE TABLE `officer_positions` (
   `position_id` int(11) NOT NULL,
   `position_name` varchar(255) NOT NULL,
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
-  `reason` varchar(255) DEFAULT NULL
+  `reason` varchar(255) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `officer_positions`
---
-
-INSERT INTO `officer_positions` (`position_id`, `position_name`, `is_deleted`, `reason`) VALUES
-(1, 'President', 0, NULL),
-(2, 'Internal Vice President', 0, NULL),
-(3, 'External Vice President', 0, NULL),
-(4, 'Secretary', 0, NULL),
-(5, 'Treasurer', 0, NULL),
-(6, 'Auditor', 0, NULL),
-(7, 'P.I.O.', 0, NULL),
-(8, 'Project Manager', 0, NULL),
-(9, 'Vice President', 0, NULL),
-(10, 'P.I.O. Internal', 0, NULL),
-(11, 'P.I.O. External', 0, NULL),
-(12, 'Dahwa and Religious Instructions', 0, NULL),
-(13, 'Documentation and Publication', 0, NULL),
-(14, 'Logistics and Operations', 0, NULL),
-(15, 'Budget and Finance', 0, NULL),
-(16, 'Statistics and Evaluations', 0, NULL),
-(17, 'Registration and Membership', 0, NULL),
-(18, 'Tahara', 0, NULL),
-(19, 'Publication', 0, NULL),
-(20, 'Documentation', 0, NULL),
-(21, 'Registration', 0, NULL);
 
 -- --------------------------------------------------------
 
@@ -252,15 +229,17 @@ CREATE TABLE `programs` (
   `program_name` varchar(255) NOT NULL,
   `college_id` int(11) NOT NULL,
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
-  `reason` varchar(255) DEFAULT NULL
+  `reason` varchar(255) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `programs`
 --
 
-INSERT INTO `programs` (`program_id`, `program_name`, `college_id`, `is_deleted`, `reason`) VALUES
-(3, 'shheshDDd', 2, 0, NULL);
+INSERT INTO `programs` (`program_id`, `program_name`, `college_id`, `is_deleted`, `reason`, `deleted_at`) VALUES
+(3, 'shheshDDd', 2, 0, NULL, NULL),
+(6, 'asdssasdasdads', 2, 1, 'sad', '2025-04-28 17:13:42');
 
 -- --------------------------------------------------------
 
@@ -272,16 +251,17 @@ CREATE TABLE `school_years` (
   `school_year_id` int(11) NOT NULL,
   `school_year` varchar(9) NOT NULL,
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
-  `reason` varchar(255) DEFAULT NULL
+  `reason` varchar(255) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `school_years`
 --
 
-INSERT INTO `school_years` (`school_year_id`, `school_year`, `is_deleted`, `reason`) VALUES
-(1, '2023-2024', 0, NULL),
-(2, '2024-2025', 0, NULL);
+INSERT INTO `school_years` (`school_year_id`, `school_year`, `is_deleted`, `reason`, `deleted_at`) VALUES
+(1, '2023-2024', 0, NULL, NULL),
+(2, '2024-2025', 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -296,7 +276,8 @@ CREATE TABLE `system_updates` (
   `created_by` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
-  `reason` varchar(255) DEFAULT NULL
+  `reason` varchar(255) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -315,7 +296,8 @@ CREATE TABLE `transparency_report` (
   `semester` enum('1st','2nd') NOT NULL,
   `school_year_id` int(11) NOT NULL,
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
-  `reason` varchar(255) DEFAULT NULL
+  `reason` varchar(255) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -349,22 +331,23 @@ CREATE TABLE `users` (
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `position_id` int(11) DEFAULT NULL,
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
-  `reason` varchar(255) DEFAULT NULL
+  `reason` varchar(255) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`user_id`, `first_name`, `middle_name`, `last_name`, `username`, `email`, `password`, `role`, `created_at`, `position_id`, `is_deleted`, `reason`) VALUES
-(1, 'admin', 'admin', 'admin', 'admin', 'admin@wmsu.edu.ph', '$2y$10$cpAg005FgxgFGWv2uauF4egLs8ONXcMUSzOPlbaF0guCcdyOLmGZi', 'admin', '2025-02-23 03:11:49', NULL, 0, NULL),
-(2, 'Shane', 'admin', 'Jimenez', 'ashxeynx', 'HZ202300259@wmsu.edu.ph', '$2y$10$Aow.SzRWGFBga4v5153m8Oe1IDlKWewGIZ5CPrNELpEJnzOVB4OTS', 'admin', '2025-02-23 04:03:09', NULL, 0, NULL),
-(3, 'Rone', 'admin', 'Kulong', 'ron', 'admin@gmail.com', '$2y$10$agnEQCmt8ADyI/4a2dtvlOlGkDbbxvo/50I9Av11RQjuwluVKCrOe', 'admin', '2025-02-23 04:04:44', NULL, 0, NULL),
-(7, 'sheesh', 'admin', 'bnb', 'rronn', 'ron@wmsu.edu.ph', '$2y$10$o4peCliKj4cIXPooJOYOfu8e.MIuwvkWiuTcdMANEH4QIef1QxFO6', 'admin', '2025-02-24 07:24:44', NULL, 0, NULL),
-(9, 'sfvf', 'admin', 'dfvf', 'manager12', 'dvd@wmsu.edu.ph', '$2y$10$c4Igsr/pEcBpW742vdBvheznDxPHt0NlHkM3K1L8gzqKBBwtaAnIq', 'admin', '2025-02-24 07:32:26', NULL, 0, NULL),
-(16, 'asdapakingshe', 'asdasfasss', 'adfaef', 'asdfefe', 'HZ2234300259@wmsu.edu.ph', '$2y$10$9r626N9kIa2AynwspQ2qJuFF.jGWTI9eYzBuH8w4inKomC0Uizw/O', 'sub-admin', '2025-02-24 08:37:21', 1, 0, NULL),
-(17, 'sub', 'sub', 'sub', 'sub', 'sub@wmsu.edu.ph', '$2y$10$5CO4kvwyMDftD4aDxRR3Wu1VNPcQGPIftETFGlOYJDQOcRy8x0uYi', 'sub-admin', '2025-02-24 08:51:33', 2, 0, NULL),
-(22, 'dcasfafa', 'asdfasfSSS', 'asfaf', 'afsf', 'HZsdsd300259@wmsu.edu.ph', '$2y$10$bRmm3Z9PBKrlazrhTN024epeRX.qGVgUbFZP4VnadXiyRRlLyggMW', 'sub-admin', '2025-03-18 12:30:28', 17, 0, NULL);
+INSERT INTO `users` (`user_id`, `first_name`, `middle_name`, `last_name`, `username`, `email`, `password`, `role`, `created_at`, `position_id`, `is_deleted`, `reason`, `deleted_at`) VALUES
+(1, 'admin', 'admin', 'admin', 'admin', 'admin@wmsu.edu.ph', '$2y$10$cpAg005FgxgFGWv2uauF4egLs8ONXcMUSzOPlbaF0guCcdyOLmGZi', 'admin', '2025-02-23 03:11:49', NULL, 0, NULL, NULL),
+(2, 'Shane', 'admin', 'Jimenez', 'ashxeynx', 'HZ202300259@wmsu.edu.ph', '$2y$10$Aow.SzRWGFBga4v5153m8Oe1IDlKWewGIZ5CPrNELpEJnzOVB4OTS', 'admin', '2025-02-23 04:03:09', NULL, 0, NULL, NULL),
+(3, 'Rone', 'admin', 'Kulong', 'ron', 'admin@gmail.com', '$2y$10$agnEQCmt8ADyI/4a2dtvlOlGkDbbxvo/50I9Av11RQjuwluVKCrOe', 'admin', '2025-02-23 04:04:44', NULL, 0, NULL, NULL),
+(7, 'sheesh', 'admin', 'bnb', 'rronn', 'ron@wmsu.edu.ph', '$2y$10$o4peCliKj4cIXPooJOYOfu8e.MIuwvkWiuTcdMANEH4QIef1QxFO6', 'admin', '2025-02-24 07:24:44', NULL, 0, NULL, NULL),
+(9, 'sfvf', 'admin', 'dfvf', 'manager12', 'dvd@wmsu.edu.ph', '$2y$10$c4Igsr/pEcBpW742vdBvheznDxPHt0NlHkM3K1L8gzqKBBwtaAnIq', 'admin', '2025-02-24 07:32:26', NULL, 0, NULL, NULL),
+(16, 'asdapakingshe', 'asdasfasss', 'adfaef', 'asdfefe', 'HZ2234300259@wmsu.edu.ph', '$2y$10$9r626N9kIa2AynwspQ2qJuFF.jGWTI9eYzBuH8w4inKomC0Uizw/O', 'sub-admin', '2025-02-24 08:37:21', 1, 0, NULL, NULL),
+(17, 'sub', 'sub', 'sub', 'sub', 'sub@wmsu.edu.ph', '$2y$10$5CO4kvwyMDftD4aDxRR3Wu1VNPcQGPIftETFGlOYJDQOcRy8x0uYi', 'sub-admin', '2025-02-24 08:51:33', 2, 0, NULL, NULL),
+(22, 'dcasfafa', 'asdfasfSSS', 'asfaf', 'afsf', 'HZsdsd300259@wmsu.edu.ph', '$2y$10$bRmm3Z9PBKrlazrhTN024epeRX.qGVgUbFZP4VnadXiyRRlLyggMW', 'sub-admin', '2025-03-18 12:30:28', 17, 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -387,7 +370,8 @@ CREATE TABLE `volunteers` (
   `user_id` int(11) DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
-  `reason` varchar(255) DEFAULT NULL
+  `reason` varchar(255) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -537,13 +521,13 @@ ALTER TABLE `calendar_activities`
 -- AUTO_INCREMENT for table `colleges`
 --
 ALTER TABLE `colleges`
-  MODIFY `college_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `college_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `downloadable_files`
 --
 ALTER TABLE `downloadable_files`
-  MODIFY `file_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `file_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `events`
@@ -579,13 +563,13 @@ ALTER TABLE `madrasa_enrollment`
 -- AUTO_INCREMENT for table `officer_positions`
 --
 ALTER TABLE `officer_positions`
-  MODIFY `position_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `position_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `programs`
 --
 ALTER TABLE `programs`
-  MODIFY `program_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `program_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `school_years`

@@ -1,18 +1,19 @@
 <?php
 require_once '../../classes/adminClass.php';
-require_once '../../tools/function.php';
 
 $adminObj = new Admin();
+$startDate = isset($_GET['start_date']) ? $_GET['start_date'] : null;
+$endDate = isset($_GET['end_date']) ? $_GET['end_date'] : null;
 
-$sDate = isset($_GET['start_date']) ? $_GET['start_date'] : '';
-$eDate = isset($_GET['end_date']) ? $_GET['end_date'] : '';
+$totalVolunteers = $adminObj->getApprovedVolunteers($startDate, $endDate);
+$pendingRegistrations = $adminObj->getPedingVolunteers($startDate, $endDate);
+$moderators = $adminObj->getModerators($startDate, $endDate);
 
-$stats = [
-    'totalVolunteers' => $adminObj->getApprovedVolunteers($sDate, $eDate),
-    'pendingRegistrations' => $adminObj->getPedingVolunteers($sDate, $eDate),
-    'moderators' => $adminObj->getModerators()
+$data = [
+    'volunteers' => $totalVolunteers,
+    'pending' => $pendingRegistrations,
+    'moderators' => $moderators
 ];
 
-header('Content-Type: application/json');
-echo json_encode($stats);
+echo json_encode($data);
 ?>

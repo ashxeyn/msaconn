@@ -7,6 +7,10 @@ $colleges = $adminObj->fetchColleges();
 
 $programId = $_GET['program_id'] ?? null;
 $program = null;
+
+if ($programId) {
+    $program = $adminObj->getProgramById($programId);
+}
 ?>
 
 <div class="modal fade" id="addEditProgramModal" tabindex="-1">
@@ -31,11 +35,13 @@ $program = null;
                                 </option>
                             <?php endforeach; ?>
                         </select>
+                        <div id="collegeSelectError" class="text-danger error-message"></div>
                     </div>
 
                     <div class="mb-3">
                         <label for="programName" class="form-label">Program Name</label>
                         <input type="text" class="form-control" id="programName" name="programName" value="<?= $program ? clean_input($program['program_name']) : '' ?>" required>
+                        <div id="programNameError" class="text-danger error-message"></div>
                     </div>
 
                     <div class="modal-footer">

@@ -4,7 +4,7 @@ require_once '../../classes/adminClass.php';
 require_once '../../tools/function.php';
 
 $adminObj = new Admin();
-$programs = $adminObj->fetchProgram();
+$programs = $adminObj->fetchAllPrograms();
 ?>
 
 <!DOCTYPE html>
@@ -15,7 +15,8 @@ $programs = $adminObj->fetchProgram();
     <title>Programs</title>
     <link rel="stylesheet" href="../../css/adminregistration.css?v=<?php echo time(); ?>">
     <script src="../../js/admin.js"></script>
-    <?php include '../../includes/head.php'; ?> 
+    <script src="../../js/sideBar.js"></script>
+    <!-- <?php include '../../includes/head.php'; ?>  -->
 </head>
 <body>
 <div>

@@ -16,7 +16,7 @@ $result = $adminObj->fetchSubAdmins();
     <link rel="stylesheet" href="../../css/adminregistration.css?v=<?php echo time(); ?>">
     <!-- <script src="../../testing/testing.js"></script> -->
     <script src="../../js/admin.js"></script>
-    <?php include '../../includes/head.php'; ?> 
+    <!-- <?php include '../../includes/head.php'; ?>  -->
 </head>
 <body>
 

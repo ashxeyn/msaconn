@@ -3,7 +3,6 @@ session_start();
 require_once '../../tools/function.php'; 
 
 $userRole = $_SESSION['role'] ?? '';
-require_once 'head.php'; 
 ?>
 
 <head>
@@ -11,9 +10,10 @@ require_once 'head.php';
 </head>
 
 <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark sidebar" id="sidebar">
-    <a href="#" class="d-flex align-items-center mb-3 text-white text-decoration-none logo-container">
+    <a href="#" class="d-flex align-items-center mb-3 text-white sidebar-header text-decoration-none logo-container">
         <img src="../../assets/images/msa_logo.png" alt="MSA Logo" width="40" height="50" class="me-2 logo">
-        <b><span class="fs-4 sidebar-text">MSA</span></b>
+        <span class="sidebar-title">Muslim Student Assoc.</span>
+        <hr class="sidebar-divider">
     </a>
     <hr class="text-white">
 
@@ -32,7 +32,6 @@ require_once 'head.php';
 
         <li>
             <hr class="text-white">
-            <span class="text-uppercase text-muted small fw-bold sidebar-text">MSA Management</span>
         </li>
         <li class="nav-item">
             <a href="#" onclick="loadEventsSection()" class="nav-link text-white">
@@ -66,7 +65,6 @@ require_once 'head.php';
 
         <li>
             <hr class="text-white">
-            <span class="text-uppercase text-muted small fw-bold sidebar-text">Student Management</span>
         </li>
         <?php if ($userRole === 'admin'): ?>
         <li class="nav-item">
@@ -95,16 +93,16 @@ require_once 'head.php';
                 <i class="bi bi-person-plus me-2"></i> <span class="sidebar-text">Registrations</span>
             </a>
         </li>
-        <li class="nav-item">
+        <!-- <li class="nav-item">
             <a href="#" onclick="loadDonationSection()" class="nav-link text-white">
                 <i class="bi bi-collection me-2"></i> <span class="sidebar-text">Donations</span>
             </a>
-        </li>
+        </li> -->
 
         <?php if ($userRole === 'admin'): ?>
         <li>
             <hr class="text-white">
-            <span class="text-uppercase text-muted small fw-bold sidebar-text">Access Management</span>
+            <!-- <span class="text-uppercase text-muted small fw-bold sidebar-text">Access Management</span> -->
         </li>
         <li class="nav-item">
             <a href="#" onclick="loadModeratorsSection()" class="nav-link text-white">
@@ -113,11 +111,5 @@ require_once 'head.php';
         </li>
         <?php endif; ?>
     </ul>
-    <div class="text-center">
-        <a href="../../accounts/logout" class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center">
-            <i class="bi bi-box-arrow-right me-2"></i> <span class="sidebar-text">Logout</span>
-        </a>
-    </div>
 
-    <hr class="text-white">
 </div>

@@ -20,7 +20,7 @@ $moderators = $adminObj->getModerators();
     <title>Dashboard</title>
     <link rel="stylesheet" href="../../css/analytics.css">
     <script src="../../js/analytics.js"></script>
-    <?php include '../../includes/head.php'; ?> 
+    <!-- <?php include '../../includes/head.php'; ?>  -->
 </head>
 <body>
 

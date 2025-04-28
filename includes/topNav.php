@@ -17,24 +17,28 @@ function generateColor($username) {
 $profileColor = generateColor($username);
 ?>
 
-<nav class="admin-navbar">
-    <div class="nav-items">
-        <button class="icon-btn">
-            <i class="bi bi-bell"></i>
-            <span class="notification-dot"></span>
-        </button>
-
-        <div class="dropdown">
-            <button class="profile-box" data-bs-toggle="dropdown">
-                <div class="profile-letter" style="background-color: <?= $profileColor ?>;">
-                    <?= $firstLetter ?>
-                </div>
-                <span class="username"><?= clean_input($username) ?></span>
-                <!-- <i class="bi bi-chevron-down"></i> -->
-            </button>
-            <!-- <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="../../accounts/logout"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
-            </ul> -->
+<head>
+    <link rel="stylesheet" href="../../css/topNav.css"> 
+    <!-- <?php include 'head.php'; ?>  -->
+</head>
+<div class="admin-topbar">
+        <div class="d-flex align-items-center">
+            <div class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                    <div class="user-avatar" style="background-color: <?= $profileColor ?>;"><?= $firstLetter ?></div>
+                    <span><?= clean_input($username) ?></span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><h6 class="dropdown-header">Signed in as</h6></li>
+                    <li><a class="dropdown-item disabled"><strong><?= clean_input($username) ?></strong></a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i> Profile</a></li>
+                    <li><a class="dropdown-item" href="#"><i class="bi bi-palette me-2"></i> Web Personalization</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="loadArchives()"><i class="bi bi-archive me-2"></i> Archives </a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="../../accounts/logout"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+                </ul>
+            </div>
         </div>
     </div>
-</nav>
+

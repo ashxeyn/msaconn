@@ -15,7 +15,7 @@ $downloadableFiles = $adminObj->fetchDownloadableFiles();
     <title>Manage Downloadable Files</title>
     <link rel="stylesheet" href="../../css/adminRegistration.css?v=<?php echo time(); ?>">
     <script src="../../js/admin.js"></script>
-    <?php include '../../includes/head.php'; ?> 
+    <!-- <?php include '../../includes/head.php'; ?>  -->
 
     <style>
         .file-icon {

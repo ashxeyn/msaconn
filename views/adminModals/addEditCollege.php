@@ -6,6 +6,10 @@ $adminObj = new Admin();
 
 $collegeId = $_GET['college_id'] ?? null;
 $college = null;
+
+if ($collegeId) {
+    $college = $adminObj->getCollegeById($collegeId);
+}
 ?>
 
 <div class="modal fade" id="addEditCollegeModal" tabindex="-1">
@@ -22,6 +26,7 @@ $college = null;
                     <div class="mb-3">
                         <label for="collegeName" class="form-label">College Name</label>
                         <input type="text" class="form-control" id="collegeName" name="collegeName" value="<?= $college ? clean_input($college['college_name']) : '' ?>" required>
+                        <div id="collegeNameError" class="text-danger error-message"></div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

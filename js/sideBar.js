@@ -264,3 +264,18 @@ function loadOnlineSection () {
         }
     });
 }
+
+//TOP NAVIGATION 
+function loadArchives () {
+    $.ajax({
+        url: "../admin/archives.php",
+        method: 'GET',
+        success: function (response) {
+            $('#contentArea').html(response);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error loading school architecture section:', error);
+            $('#contentArea').html('<p class="text-danger">Failed to load School Architecture section. Please try again.</p>');
+        }
+    });
+}

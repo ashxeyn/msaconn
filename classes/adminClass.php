@@ -49,7 +49,7 @@ class Admin {
             if (!empty($data['image']['tmp_name'])) {
                 move_uploaded_file($data['image']['tmp_name'], "../../assets/officers/" . $data['image']['name']);
             }
-            return true;
+            return 1;
         } else {
             return "Failed to add officer.";
         }
@@ -103,7 +103,7 @@ class Admin {
         $query->bindParam(':officer_id', $officerId);
             
         if ($query->execute()) {
-            return true;
+            return 1;
         } else {
             return "Failed to delete officer.";
         }
@@ -205,9 +205,9 @@ class Admin {
         }
     
         if (!$query->execute()) {
-            return false;
+            return 0;
         }
-        return true;
+        return 1;
     }
     
 
@@ -275,7 +275,7 @@ class Admin {
         if (!$query->execute()) {
             return "Sad di magawa";
         }
-        return true;
+        return 1;
     }
     
     function rejectVolunteer($volunteerId, $adminUserId) {
@@ -286,7 +286,7 @@ class Admin {
         if (!$query->execute()) {
             return "Sad di magawa";
         }
-        return true;
+        return 1;
     }
     
     function deleteVolunteer($volunteerId) {
@@ -337,7 +337,7 @@ class Admin {
         if (!$query->execute()) {
             return "Failed to update moderator.";
         }
-        return true;
+        return 1;
     }
 
     function getModeratorById($moderatorId) {
@@ -411,8 +411,62 @@ class Admin {
         return $query->fetch();
     }
 
+    function fetchColleges() {
+        $sql = "SELECT * FROM colleges WHERE is_deleted = 0 ORDER BY college_name";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        
+        return $query->fetchAll();
+    }
+
+    function fetchArchivedColleges() {
+        $sql = "SELECT * FROM colleges WHERE is_deleted = 1 ORDER BY college_name";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        
+        return $query->fetchAll();
+    }
+
+    function fetchProgramsByCollege($collegeId) {
+        $sql = "SELECT * FROM programs WHERE college_id = :college_id AND is_deleted = 0 ORDER BY program_name";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':college_id', $collegeId);
+        $query->execute();
+        
+        return $query->fetchAll();
+    }
+
+    function fetchAllPrograms() {
+        $sql = "SELECT p.*, c.college_name 
+                FROM programs p 
+                JOIN colleges c ON p.college_id = c.college_id 
+                WHERE p.is_deleted = 0 
+                ORDER BY c.college_name, p.program_name";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        
+        return $query->fetchAll();
+    }
+
+    function fetchArchivedPrograms() {
+        $sql = "SELECT p.*, c.college_name 
+                FROM programs p 
+                JOIN colleges c ON p.college_id = c.college_id 
+                WHERE p.is_deleted = 1 
+                ORDER BY c.college_name, p.program_name";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        
+        return $query->fetchAll();
+    }
+
     function addProgram($programName, $collegeId) {
-        $sql = "INSERT INTO programs (program_name, college_id) VALUES (:program_name, :college_id)";
+        $sql = "INSERT INTO programs (program_name, college_id, is_deleted) VALUES (:program_name, :college_id, 0)";
         
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':program_name', $programName);
@@ -435,8 +489,26 @@ class Admin {
         return $query->execute();
     }
 
-    function deleteProgram($programId) {
-        $sql = "DELETE FROM programs WHERE program_id = :program_id";
+    function softDeleteProgram($programId, $reason) {
+        $sql = "UPDATE programs 
+                SET is_deleted = 1, 
+                    reason = :reason,
+                    deleted_at = NOW()
+                WHERE program_id = :program_id";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':program_id', $programId);
+        $query->bindParam(':reason', $reason);
+        
+        return $query->execute();
+    }
+
+    function restoreProgram($programId) {
+        $sql = "UPDATE programs 
+                SET is_deleted = 0, 
+                    reason = NULL,
+                    deleted_at = NULL
+                WHERE program_id = :program_id";
         
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':program_id', $programId);
@@ -445,7 +517,7 @@ class Admin {
     }
 
     function addCollege($collegeName) {
-        $sql = "INSERT INTO colleges (college_name) VALUES (:college_name)";
+        $sql = "INSERT INTO colleges (college_name, is_deleted) VALUES (:college_name, 0)";
         
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':college_name', $collegeName);
@@ -465,8 +537,26 @@ class Admin {
         return $query->execute();
     }
 
-    function deleteCollege($collegeId) {
-        $sql = "DELETE FROM colleges WHERE college_id = :college_id";
+    function softDeleteCollege($collegeId, $reason) {
+        $sql = "UPDATE colleges 
+                SET is_deleted = 1, 
+                    reason = :reason,
+                    deleted_at = NOW() 
+                WHERE college_id = :college_id";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':college_id', $collegeId);
+        $query->bindParam(':reason', $reason);
+        
+        return $query->execute();
+    }
+
+    function restoreCollege($collegeId) {
+        $sql = "UPDATE colleges 
+                SET is_deleted = 0, 
+                    reason = NULL,
+                    deleted_at = NULL
+                WHERE college_id = :college_id";
         
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':college_id', $collegeId);
@@ -1241,9 +1331,9 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':enrollment_id', $enrollmentId);
         if (!$query->execute()) {
-            return false;
+            return 0;
         }
-        return true;
+        return 1;
     }
 
     function rejectEnrollment($enrollmentId, $adminUserId) {
@@ -1251,9 +1341,9 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':enrollment_id', $enrollmentId);
         if (!$query->execute()) {
-            return false;
+            return 0;
         }
-        return true;
+        return 1;
     }
 
     function fetchAllColleges() {
@@ -1263,13 +1353,13 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
         return $query->fetchAll();
     }
 
-    function fetchProgramsByCollege($collegeId) {
-        $sql = "SELECT * FROM programs WHERE college_id = :college_id ORDER BY program_name";
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':college_id', $collegeId);
-        $query->execute();
-        return $query->fetchAll();
-    }
+    // function fetchProgramsByCollege($collegeId) {
+    //     $sql = "SELECT * FROM programs WHERE college_id = :college_id ORDER BY program_name";
+    //     $query = $this->db->connect()->prepare($sql);
+    //     $query->bindParam(':college_id', $collegeId);
+    //     $query->execute();
+    //     return $query->fetchAll();
+    // }
 
     function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $classification, 
             $address, $collegeId, $programId, $yearLevel, $school, $corPath, 
@@ -1363,63 +1453,23 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
         return $query->fetchAll();
     }
 
-    function fetchProgram() {
-        $sql = "SELECT programs.program_id, programs.program_name, colleges.college_name 
-                FROM programs 
-                INNER JOIN colleges ON programs.college_id = colleges.college_id 
-                ORDER BY programs.program_name ASC;";
+    // function fetchProgram() {
+    //     $sql = "SELECT programs.program_id, programs.program_name, colleges.college_name 
+    //             FROM programs 
+    //             INNER JOIN colleges ON programs.college_id = colleges.college_id 
+    //             ORDER BY programs.program_name ASC;";
         
-        $query = $this->db->connect()->prepare($sql);
-        $query->execute();
-        return $query->fetchAll();
-    }
+    //     $query = $this->db->connect()->prepare($sql);
+    //     $query->execute();
+    //     return $query->fetchAll();
+    // }
     
-    function fetchColleges(){
-        $sql = "SELECT * FROM colleges ORDER BY college_name ASC;";
-        $query = $this->db->connect()->prepare($sql);
-        $query->execute();
-        return $query->fetchAll();
-    }
-     // Fetch all FAQs
-     function fetchUserFaqs() {
-        $sql = "SELECT * FROM faqs ORDER BY category ASC, created_at DESC";
-        $query = $this->db->connect()->prepare($sql);
-        $query->execute();
-        return $query->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    // Fetch a single FAQ by ID for the user side
-    function getUserFaqById($faqId) {
-        $sql = "SELECT * FROM faqs WHERE faq_id = :faq_id";
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':faq_id', $faqId, PDO::PARAM_INT);
-        $query->execute();
-        return $query->fetch(PDO::FETCH_ASSOC);
-    }
-        // In your Admin class
-    public function fetchAllFiles() {
-        $sql = "SELECT f.file_id, f.file_name, f.file_path, f.file_type, f.file_size, 
-                    f.created_at, u.username 
-                FROM downloadable_files f
-                LEFT JOIN users u ON f.user_id = u.user_id
-                ORDER BY f.file_id DESC";
-        
-        $query = $this->db->connect()->prepare($sql);
-        $query->execute();
-        return $query->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getAboutMSAData() {
-        $query = "SELECT mission, vision, description FROM about_msa ORDER BY id DESC LIMIT 1";
-        $stmt = $this->db->connect()->prepare($query);
-        
-        if (!$stmt) {
-            throw new Exception("Database error: " . $this->db->connect()->error);
-        }
-        
-        $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
+    // function fetchColleges(){
+    //     $sql = "SELECT * FROM colleges ORDER BY college_name ASC;";
+    //     $query = $this->db->connect()->prepare($sql);
+    //     $query->execute();
+    //     return $query->fetchAll();
+    // }
 
     
 }

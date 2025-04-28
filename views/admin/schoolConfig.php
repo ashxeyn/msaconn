@@ -15,7 +15,7 @@ $colleges = $adminObj->fetchColleges();
     <title>Colleges</title>
     <link rel="stylesheet" href="../../css/adminregistration.css?v=<?php echo time(); ?>">
     <script src="../../js/admin.js"></script>
-    <?php include '../../includes/head.php'; ?> 
+    <!-- <?php include '../../includes/head.php'; ?>  -->
 </head>
 <body>
 <div>
