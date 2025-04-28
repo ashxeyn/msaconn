@@ -1,4 +1,9 @@
-<?php include '../../includes/header.php'; ?>
+<?php include '../../includes/header.php';
+require_once '../../classes/userClass.php';
+
+$userObj = new User();
+$prayerSchedules = $userObj->fetchPrayerSchedules();
+?>
 
 <link rel="stylesheet" href="<?php echo $base_url; ?>css/user.landingpage.css">
 
@@ -40,7 +45,6 @@
     <button class="carousel-button prev" onclick="prevSlide()">&#10094;</button>
     <button class="carousel-button next" onclick="nextSlide()">&#10095;</button>
 </section>
-
 <section id="latest-updates" class="latest-updates">
     <h2>LATEST UPDATES</h2>
     <div class="updates-container">
@@ -89,40 +93,25 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>October 15, 2023</td>
-                    <td>Sunday</td>
-                    <td>Dr. Ahmed Ali</td>
-                    <td>The Importance of Patience in Islam</td>
-                    <td>Main Prayer Hall</td>
-                </tr>
-                <tr>
-                    <td>October 22, 2023</td>
-                    <td>Sunday</td>
-                    <td>Sheikh Mohammed Hassan</td>
-                    <td>Building Strong Family Ties in Islam</td>
-                    <td>Community Center</td>
-                </tr>
-                <tr>
-                    <td>October 29, 2023</td>
-                    <td>Sunday</td>
-                    <td>Ustadha Fatima Khan</td>
-                    <td>Women's Rights in Islam</td>
-                    <td>Prayer Room B</td>
-                </tr>
-                <tr>
-                    <td>November 5, 2023</td>
-                    <td>Sunday</td>
-                    <td>Brother Yusuf Ahmed</td>
-                    <td>Balancing Work and Worship</td>
-                    <td>Main Prayer Hall</td>
-                </tr>
-                
+                <?php if (!empty($prayerSchedules)): ?>
+                    <?php foreach ($prayerSchedules as $schedule): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars(date('F d, Y', strtotime($schedule['khutbah_date']))); ?></td>
+                            <td><?php echo htmlspecialchars(date('l', strtotime($schedule['khutbah_date']))); ?></td>
+                            <td><?php echo htmlspecialchars($schedule['speaker']); ?></td>
+                            <td><?php echo htmlspecialchars($schedule['topic']); ?></td>
+                            <td><?php echo htmlspecialchars($schedule['location']); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="5">No prayer schedules available at the moment.</td>
+                    </tr>
+                <?php endif; ?>
             </tbody>
         </table>
     </div>
 </section>
-
 <section id="volunteer" class="volunteer">
     <div class="volunteer-content">
         <h2>Join our Volunteers!</h2>
@@ -132,5 +121,4 @@
 </section>
 
 <?php include '../../includes/footer.php'; ?>
-
 <script src="<?php echo $base_url; ?>js/landingpage.js"></script>

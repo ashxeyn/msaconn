@@ -9,7 +9,6 @@ html, body {
   min-height: 100vh;
   overflow-x: hidden; /* Prevent horizontal overflow */
 }
-
 /* Content Wrapper */
 .content {
   flex: 1;
@@ -20,7 +19,7 @@ html, body {
   box-sizing: border-box; /* Include padding in width calculation */
 }
 
-/* Carousel Styles */
+/* Carousel Styles */ 
 .carousel {
   position: relative;
   width: 100%;

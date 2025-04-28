@@ -1,15 +1,15 @@
 <?php
 // At the VERY TOP of the file
-require_once __DIR__.'/../../classes/adminClass.php';
+require_once __DIR__.'/../../classes/userClass.php';
 require_once __DIR__.'/../../includes/helpers.php';
 
 // Initialize Admin class
-$admin = new Admin();
+$user = new user();
 
 
 try {
-  // Get about data using the class method
-  $about_data = $admin->getAboutMSAData();
+  // Get about data using the User class method
+  $about_data = $user->getAboutMSAData();
   
   // Set default values if no data exists
   $mission = $about_data['mission'] ?? "Default mission text if none in database";
@@ -27,7 +27,6 @@ try {
 if(!isset($base_url)) {
   $base_url = 'http://' . $_SERVER['HTTP_HOST'] . '/msaconnect/';
 }
-?>
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -182,7 +181,7 @@ if(!isset($base_url)) {
         <div class="downloads-list">
             <?php
             // Fetch downloadable files from the database
-            $files = $admin->fetchDownloadableFiles();
+            $files = $user->fetchDownloadableFiles();
             
             if (empty($files)): ?>
                 <p class="no-files">No downloadable files available yet.</p>

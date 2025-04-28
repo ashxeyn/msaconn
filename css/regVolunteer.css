@@ -24,7 +24,17 @@
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
         overflow: hidden; /* Prevent overflow */
     }
-
+    .modal-content {
+        background-color: #fff;
+        margin: 15% auto;
+        padding: 20px 30px;
+        border-radius: 10px;
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+        position: relative;
+        animation: fadeIn 0.3s ease-in-out;
+      }
     /* Form Labels */
     label {
         display: block;
