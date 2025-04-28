@@ -1,13 +1,17 @@
+<?php
+session_start();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Volunteering</title>
+    <title>Volunteer</title>
+    <link rel="stylesheet" href="../../css/volunteering.css">
 </head>
 <body>
     <?php include '../../includes/header.php'; ?>
-    <link rel="stylesheet" href="<?php echo $base_url; ?>css/volunteering.css">
     
     <!-- Hero Section -->
     <div class="hero">
@@ -71,5 +75,13 @@
     </div>
 
     <?php include '../../includes/footer.php'; ?>
+
+    <!-- Include the modal at the end of the body -->
+    <?php
+    if (isset($_SESSION['registration_success'])) {
+        include '../usermodals/registrationforvolunteermodal.php';
+        unset($_SESSION['registration_success']); // Clear the flag
+    }
+    ?>
 </body>
 </html>

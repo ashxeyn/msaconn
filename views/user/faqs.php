@@ -1,9 +1,9 @@
 <?php
-require_once '../../classes/adminClass.php';
-$adminObj = new Admin();
+require_once '../../classes/userClass.php';
+$user = new User();
 
 // Fetch FAQs from the database
-$faqs = $adminObj->fetchUserFaqs();
+$faqs = $user->fetchUserFaqs();
 ?>
 
 <!DOCTYPE html>
@@ -14,7 +14,6 @@ $faqs = $adminObj->fetchUserFaqs();
     <title>FAQs</title>
     <?php include '../../includes/header.php'; ?>
     <link rel="stylesheet" href="<?php echo $base_url; ?>css/faqs.css">
-
 </head>
 <body>
     <!-- Hero Section -->

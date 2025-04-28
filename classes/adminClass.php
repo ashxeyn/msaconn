@@ -1354,72 +1354,8 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
         $query->bindParam(':enrollment_id', $enrollmentId);
         return $query->execute();
     }
-    
-    // Others
-    function fetchSy(){
-        $sql = "SELECT * FROM school_years ORDER BY school_year_id ASC;";
-        $query = $this->db->connect()->prepare($sql);
-        $query->execute();
-        return $query->fetchAll();
-    }
 
-    function fetchProgram() {
-        $sql = "SELECT programs.program_id, programs.program_name, colleges.college_name 
-                FROM programs 
-                INNER JOIN colleges ON programs.college_id = colleges.college_id 
-                ORDER BY programs.program_name ASC;";
-        
-        $query = $this->db->connect()->prepare($sql);
-        $query->execute();
-        return $query->fetchAll();
-    }
-    
-    function fetchColleges(){
-        $sql = "SELECT * FROM colleges ORDER BY college_name ASC;";
-        $query = $this->db->connect()->prepare($sql);
-        $query->execute();
-        return $query->fetchAll();
-    }
-     // Fetch all FAQs
-     function fetchUserFaqs() {
-        $sql = "SELECT * FROM faqs ORDER BY category ASC, created_at DESC";
-        $query = $this->db->connect()->prepare($sql);
-        $query->execute();
-        return $query->fetchAll(PDO::FETCH_ASSOC);
-    }
 
-    // Fetch a single FAQ by ID for the user side
-    function getUserFaqById($faqId) {
-        $sql = "SELECT * FROM faqs WHERE faq_id = :faq_id";
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':faq_id', $faqId, PDO::PARAM_INT);
-        $query->execute();
-        return $query->fetch(PDO::FETCH_ASSOC);
-    }
-        // In your Admin class
-    public function fetchAllFiles() {
-        $sql = "SELECT f.file_id, f.file_name, f.file_path, f.file_type, f.file_size, 
-                    f.created_at, u.username 
-                FROM downloadable_files f
-                LEFT JOIN users u ON f.user_id = u.user_id
-                ORDER BY f.file_id DESC";
-        
-        $query = $this->db->connect()->prepare($sql);
-        $query->execute();
-        return $query->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function getAboutMSAData() {
-        $query = "SELECT mission, vision, description FROM about_msa ORDER BY id DESC LIMIT 1";
-        $stmt = $this->db->connect()->prepare($query);
-        
-        if (!$stmt) {
-            throw new Exception("Database error: " . $this->db->connect()->error);
-        }
-        
-        $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
-    }
 
     
 }

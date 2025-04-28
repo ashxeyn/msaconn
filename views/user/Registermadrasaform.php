@@ -1,13 +1,14 @@
 <?php
 require_once '../../tools/function.php';
 require_once '../../classes/accountClass.php';
-require_once '../../classes/adminClass.php';
+require_once '../../classes/userClass.php'; // Corrected the file name
 
 session_start();
 
-$adminObj = new Admin();
-$programs = $adminObj->fetchProgram();
-$colleges = $adminObj->fetchColleges();
+// Initialize User class
+$userObj = new User(); // Use the User class instead of Admin
+$programs = $userObj->fetchProgram(); // Fetch programs using User class
+$colleges = $userObj->fetchColleges(); // Fetch colleges using User class
 
 // Initialize all possible variables
 $registration_type = '';
@@ -135,7 +136,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 ];
                 
                 // Insert into database
-                $enrollmentId = $adminObj->addMadrasaEnrollment($data);
+                $enrollmentId = $userObj->addMadrasaEnrollment($data);
                 
                 // Set success flag and redirect
                 $_SESSION['registration_success'] = true;
@@ -144,7 +145,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 
             } catch (Exception $e) {
                 $imageErr = "Registration failed. Please try again.";
-                error_log("Registration error: " . $e->getMessage());
+                error_log("Registration error: " . $e->getMessage()); // Log the error message
+                echo "<pre>Error: " . $e->getMessage() . "</pre>"; // Display the error for debugging
             }
         }
     }

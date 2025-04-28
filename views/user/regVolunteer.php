@@ -1,13 +1,12 @@
 <?php
 require_once '../../tools/function.php';
-require_once '../../classes/accountClass.php';
-require_once '../../classes/adminClass.php';
+require_once '../../classes/userClass.php';
 
 session_start();
 
 $username = $password = '';
-$adminObj = new Admin();
-$programs = $adminObj->fetchProgram();
+$userObj = new User(); // Use the User class instead of Admin
+$programs = $userObj->fetchProgram(); // Fetch programs using User class
 $first_name = $last_name = $middle_name = $year = $section = $program = $cor_file = $contact = $email = '';
 $first_nameErr = $last_nameErr = $yearErr = $sectionErr = $programErr = $imageErr = $contactErr = $emailErr = '';
 
@@ -20,16 +19,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $contact = clean_input($_POST['contact']);
     $email = clean_input($_POST['email']);
     $program = clean_input($_POST['program']);
-    $year = clean_input($_POST['year']);
 
     if (empty($first_name)) {
         $first_nameErr = "First name is required!";
     }
     if (empty($last_name)) {
         $last_nameErr = "Last name is required!";
-    }
-    if (empty($position)) {
-        $positionErr = "Please enter officer's position!";
     }
     if (empty($program)) {
         $programErr = "Please enter course!";
@@ -77,21 +72,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $imageErr = "Please upload your COR screenshot!";
     }
     
-    $adminObj->cor_file = $cor_file; 
-
     if (empty($first_nameErr) && empty($last_nameErr) && empty($contactErr) && empty($emailErr) && empty($sectionErr) && empty($programErr) && empty($yearErr) && empty($imageErr)) {
-        $adminObj->first_name = $first_name;
-        $adminObj->last_name = $last_name;
-        $adminObj->middle_name = $middle_name;
-        $adminObj->year = $year;
-        $adminObj->section = $section;
-        $adminObj->program = $program;
-        $adminObj->contact = $contact;
-        $adminObj->email = $email;
-        $adminObj->cor_file = $cor_file;
+        $userObj->first_name = $first_name;
+        $userObj->last_name = $last_name;
+        $userObj->middle_name = $middle_name;
+        $userObj->year = $year;
+        $userObj->section = $section;
+        $userObj->program = $program;
+        $userObj->contact = $contact;
+        $userObj->email = $email;
+        $userObj->cor_file = $cor_file;
 
-        $adminObj->addVolunteer();
-        header("Location: landing_page.php");
+        $userObj->addVolunteer(); // Use the User class method
+        $_SESSION['registration_success'] = true; // Set success flag
+        header("Location: volunteer.php");
         exit;
     }
 }
