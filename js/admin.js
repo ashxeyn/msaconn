@@ -342,7 +342,6 @@ function processProgram(programId, action) {
     });
 }
 
-
 // EVENT FUNCTIONS
 function openEventModal(modalId, eventId, action) {
     $('.modal').modal('hide');
@@ -484,6 +483,169 @@ function processEvent(eventId, action) {
                     action === 'delete' ? 'Event has been archived.' :
                     action === 'restore' ? 'Event has been restored.' :
                     'Event has been ' + (action === 'edit' ? 'updated' : 'added') + '.', 
+                    'success');
+            } else {
+                alert("Failed to process request: " + response);
+            }
+        },
+        error: function() {
+            alert("An error occurred while processing the request.");
+        }
+    });
+}
+
+// CALENDAR FUNCTIONS
+function openCalendarModal(modalId, activityId, action) {
+    $('.modal').modal('hide');
+    $('.modal-backdrop').remove(); 
+    setTimeout(() => {
+        const modal = $('#' + modalId);
+        modal.modal('show'); 
+        setCalendarId(activityId, action);
+    }, 300);
+}
+
+function setCalendarId(activityId, action) {
+    if (action === 'edit') {
+        $.ajax({
+            url: "../../handler/admin/getCalendarEvents.php",
+            type: "GET",
+            data: { activity_id: activityId },
+            success: function(response) {
+                try {
+                    const activity = JSON.parse(response);
+                    $('#editActivityId').val(activity.activity_id);
+                    $('#editActivityDate').val(activity.activity_date);
+                    $('#editTitle').val(activity.title);
+                    $('#editDescription').val(activity.description);
+                    $('#editCalendarModal .modal-title').text('Edit Activity');
+                    $('#editCalendarFormSubmit').text('Update Activity');
+                    clearCalendarValidationErrors();
+                    $('#editCalendarModal').modal('show');
+                } catch (e) {
+                    console.error("Invalid JSON:", response);
+                    alert("Failed to load activity details.");
+                }
+            },
+            error: function() {
+                alert("Failed to load activity details.");
+            }
+        });
+
+        $('#editCalendarForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateCalendarForm()) {
+                processCalendar(activityId, 'edit');
+            }
+        });
+    } else if (action === 'add') {
+        $('#editCalendarForm')[0].reset();
+        clearCalendarValidationErrors();
+        $('#editCalendarModal .modal-title').text('Add Activity');
+        $('#editCalendarFormSubmit').text('Add Activity');
+        $('#editCalendarModal').modal('show');
+
+        $('#editCalendarForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateCalendarForm()) {
+                processCalendar(null, 'add');
+            }
+        });
+    } else if (action === 'delete') {
+        $('#archiveActivityId').val(activityId);
+        $('#archiveCalendarModal').modal('show');
+    
+        $('#confirmArchiveActivity').off('click').on('click', function () {
+            const reason = $('#calendarArchiveReason').val().trim();
+            if (reason === '') {
+                $('#calendarArchiveReasonError').text('Please provide a reason for archiving');
+                return;
+            }
+            $('#calendarArchiveReasonError').text('');
+            processCalendar(activityId, 'delete');
+        });    
+    } else if (action === 'restore') {
+        $('#restoreActivityId').val(activityId);
+        $('#restoreCalendarModal').modal('show');
+
+        $('#restoreCalendarForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            processCalendar(activityId, 'restore');
+        });
+    }
+}
+
+function validateCalendarForm() {
+    let isValid = true;
+    clearCalendarValidationErrors();
+
+    const activityDate = $('#editActivityDate').val().trim();
+    const title = $('#editTitle').val().trim();
+    const description = $('#editDescription').val().trim();
+
+    if (activityDate === '') {
+        $('#editActivityDateError').text('Activity date is required');
+        isValid = false;
+    }
+
+    if (title === '') {
+        $('#editTitleError').text('Title is required');
+        isValid = false;
+    }
+
+    if (description === '') {
+        $('#editDescriptionError').text('Description is required');
+        isValid = false;
+    }
+
+    return isValid;
+}
+
+function clearCalendarValidationErrors() {
+    $('#editActivityDateError').text('');
+    $('#editTitleError').text('');
+    $('#editDescriptionError').text('');
+    $('#calendarArchiveReasonError').text('');
+}
+
+function processCalendar(activityId, action) {
+    let formData = new FormData();
+
+    if (action === 'add' || action === 'edit') {
+        formData = new FormData(document.getElementById('editCalendarForm'));
+    } else if (action === 'delete') {
+        formData.append('reason', $('#calendarArchiveReason').val());
+    } else if (action === 'restore') {
+        formData.append('activity_id', $('#restoreActivityId').val());
+    }
+
+    if (activityId) {
+        formData.append('activity_id', activityId);
+    }
+    formData.append('action', action);
+
+    $.ajax({
+        url: "../../handler/admin/calendarAction.php",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.trim() === "success") {
+                $(".modal").modal("hide");
+                $("body").removeClass("modal-open");
+                $(".modal-backdrop").remove();
+
+                if (action === 'restore') {
+                    loadCalendarArchives(); 
+                } else {
+                    loadCalendarSection(); 
+                }
+
+                showToast('Success', 
+                    action === 'delete' ? 'Activity has been archived.' :
+                    action === 'restore' ? 'Activity has been restored.' :
+                    'Activity has been ' + (action === 'edit' ? 'updated' : 'added') + '.', 
                     'success');
             } else {
                 alert("Failed to process request: " + response);
@@ -929,98 +1091,6 @@ function processFaq(faqId, action) {
         error: function(xhr, status, error) {
             console.error("AJAX Error:", status, error);
             alert("Failed to save. Check console for details.");
-        }
-    });
-}
-
-
-// CALENDAR FUNCTIONS
-function openCalendarModal(modalId, activityId, action) {
-    $('.modal').modal('hide');
-    $('.modal-backdrop').remove();
-
-    setTimeout(() => {
-        const modal = $('#' + modalId);
-        modal.attr('aria-hidden', 'false');
-        modal.modal('show');
-        setCalendarId(modalId, activityId, action);
-    }, 300);
-}
-
-function setCalendarId(modalId, activityId, action) {
-    if (action === 'edit' && activityId) {
-        $.ajax({
-            url: "../../handler/admin/getCalendarEvents.php",
-            type: "GET",
-            data: { activity_id: activityId },
-            success: function(response) {
-                try {
-                    const activity = JSON.parse(response);
-                    $('#activityId').val(activity.activity_id);
-                    $('#activityDate').val(activity.activity_date);
-                    $('#title').val(activity.title);
-                    $('#description').val(activity.description);
-                    $('#calendarModalTitle').text('Edit Activity');
-                    $('#confirmSaveActivity').text('Update Activity');
-
-                    $('#confirmSaveActivity').off('click').on('click', function(e) {
-                        e.preventDefault();
-                        processCalendar(activity.activity_id, 'edit');
-                    });
-                } catch (e) {
-                    console.error("JSON Parse Error:", response);
-                    alert("Failed to fetch event data.");
-                }
-            },
-            error: function() {
-                alert("An error occurred while fetching event.");
-            }
-        });
-
-    } else if (action === 'delete' && activityId) {
-        $('#activityIdToDelete').val(activityId);
-        $('#confirmDeleteActivity').off('click').on('click', function () {
-            processCalendar(activityId, 'delete');
-        });
-
-    } else if (action === 'add') {
-        $('#calendarForm')[0].reset();
-        $('#activityId').val('');
-        $('#calendarModalTitle').text('Add Activity');
-        $('#confirmSaveActivity').text('Add Activity');
-
-        $('#confirmSaveActivity').off('click').on('click', function(e) {
-            e.preventDefault();
-            processCalendar(null, 'add');
-        });
-    }
-}
-
-function processCalendar(activityId, action) {
-    let formData = new FormData(document.getElementById('calendarForm'));
-    formData.append('action', action);
-    if (activityId) {
-        formData.append('activity_id', activityId);
-    }
-
-    $.ajax({
-        url: "../../handler/admin/calendarAction.php",
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            if (response.trim() === "success") {
-                $(".modal").modal("hide");
-                $("body").removeClass("modal-open");
-                $(".modal-backdrop").remove();
-                loadCalendarSection();
-            } else {
-                alert("Request failed: " + response);
-            }
-        },
-        error: function() {
-            alert("An error occurred.");
         }
     });
 }

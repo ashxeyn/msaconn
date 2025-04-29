@@ -6,6 +6,7 @@ $adminObj = new Admin();
 $archivedColleges = $adminObj->fetchArchivedColleges();
 $archivedPrograms = $adminObj->fetchArchivedPrograms();
 $archivedEvents = $adminObj->fetchArchivedEvents();
+$archivedCalendar = $adminObj->fetchArchivedCalendar();
 ?>
 
 <head>
@@ -33,6 +34,12 @@ $archivedEvents = $adminObj->fetchArchivedEvents();
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="archived-events-tab" data-bs-toggle="tab" data-bs-target="#archived-events" type="button" role="tab" aria-controls="archived-events" aria-selected="false">
                                 Events
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="calendar-tab" data-bs-toggle="tab" data-bs-target="#calendar" 
+                                    type="button" role="tab" aria-controls="calendar" aria-selected="false">
+                                Calendar Activities
                             </button>
                         </li>
                     </ul>
@@ -146,6 +153,44 @@ $archivedEvents = $adminObj->fetchArchivedEvents();
                                 </table>
                             </div>
                         </div>
+                        <div class="tab-pane fade" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
+                            <div class="table-responsive">
+                                <table id="calendarTab" class="table align-items-center mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Description</th>
+                                            <th>Date</th>
+                                            <th>Reason</th>
+                                            <th>Archived At</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if (empty($archivedCalendar)): ?>
+                                            <tr>
+                                                <td colspan="7" class="text-center">No archived calendar activities</td>
+                                            </tr>
+                                        <?php else: ?>
+                                            <?php foreach ($archivedCalendar as $activity): ?>
+                                                <tr>
+                                                    <td><?= clean_input($activity['title']) ?></td>
+                                                    <td><?= clean_input($activity['description']) ?></td>
+                                                    <td><?= $activity['activity_date'] ? date('M d, Y', strtotime($activity['activity_date'])) : 'N/A' ?></td>
+                                                    <td><?= clean_input($activity['reason']) ?></td>
+                                                    <td><?= $activity['deleted_at'] ? date('M d, Y h:i A', strtotime($activity['deleted_at'])) : 'N/A' ?></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-success" onclick="setActivityId(<?= $activity['activity_id'] ?>, 'restore')">
+                                                            <i class="fas fa-undo"></i> Restore
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -156,6 +201,7 @@ $archivedEvents = $adminObj->fetchArchivedEvents();
 <?php include_once '../adminModals/restoreCollege.html'; ?>
 <?php include_once '../adminModals/restoreProgram.html'; ?>
 <?php include_once '../adminModals/restoreEvent.html'; ?>
+<?php include_once '../adminModals/restoreCalendar.html'; ?>
 
 <script>
     $(document).ready(function() {

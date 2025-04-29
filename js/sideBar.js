@@ -279,3 +279,31 @@ function loadArchives () {
         }
     });
 }
+
+function loadPersonalization () {
+    $.ajax({
+        url: "../admin/personalization.php",
+        method: 'GET',
+        success: function (response) {
+            $('#contentArea').html(response);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error loading personalization section:', error);
+            $('#contentArea').html('<p class="text-danger">Failed to load Personalization section. Please try again.</p>');
+        }
+    });
+}
+
+function loadProfile () {
+    $.ajax({
+        url: "../admin/profile.php",
+        method: 'GET',
+        success: function (response) {
+            $('#contentArea').html(response);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error loading profile section:', error);
+            $('#contentArea').html('<p class="text-danger">Failed to load Profile section. Please try again.</p>');
+        }
+    });
+}
