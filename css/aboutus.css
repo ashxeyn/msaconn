@@ -1,9 +1,28 @@
-* {
-  box-sizing: border-box;
+/* Add this at the TOP of your CSS file */
+.hero-content,
+.about-section,
+.mission, 
+.vision,
+.mission p, 
+.vision p,
+.org-chart,
+.org-node,
+.org-name,
+.org-position,
+.downloads-section,
+.file-item,
+.file-details h3,
+.file-details p,
+.download-link,
+.content p, 
+.content span, 
+.content li {
+  font-family: 'Noto Naskh Arabic', serif !important;
 }
 
+
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Noto Naskh Arabic', Arial, sans-serif; /* Use Noto Naskh Arabic as the primary font */
   margin: 0;
   padding: 0;
   display: flex;

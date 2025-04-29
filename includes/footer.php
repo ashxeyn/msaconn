@@ -6,8 +6,7 @@
     <title>Footer with Logo</title>
     <link rel="stylesheet" href="<?php echo $base_url; ?>css/footer.css">
     <!-- Add Font Awesome for social media icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-</head>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet"></head>
 <body>
     <footer>
         <div class="footer-content">

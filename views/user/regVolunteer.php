@@ -98,8 +98,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Volunteer Registration</title>
     <script src="../../js/admin.js"></script>
-    <link rel="stylesheet" href="../../css/RegVolunteer.css">
+    <link rel="stylesheet" href="../../css/regVolunteer.css">
     <?php include '../../includes/header.php'; ?>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
 </head>
 <body>
     <form action="" method="POST" enctype="multipart/form-data">

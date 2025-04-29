@@ -15,7 +15,7 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?php echo $base_url; ?>css/calendar.css">
 </head>
-<body>
+<body class="calendar-page">
 <?php include '../../includes/header.php'; ?>
     <!-- Hero Section -->
     <div class="hero">
@@ -38,7 +38,6 @@
                 <h2 id="current-month-year" class="month-year mb-0 fs-3 fw-bold"></h2>
                 <button id="next-month" class="btn btn-light">Next Month →</button>
             </div>
-
             <!-- Calendar Grid -->
             <div id="calendar-grid" class="calendar-grid row row-cols-7 g-2"></div>
         </div>

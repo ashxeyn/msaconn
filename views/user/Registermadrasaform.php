@@ -161,6 +161,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Madrasa Registration</title>
     <link rel="stylesheet" href="../../css/registermadrasa.css">
     <?php include '../../includes/header.php'; ?>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
 </head>
 <body>
     <?php 

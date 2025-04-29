@@ -61,7 +61,11 @@ class User {
 
     // Fetch about data for the "About Us" page
     public function getAboutMSAData() {
-        $sql = "SELECT mission, vision, description FROM about_msa LIMIT 1";
+        $sql = "SELECT mission, vision, description 
+                FROM about_msa 
+                WHERE is_deleted = 0 
+                ORDER BY created_at DESC 
+                LIMIT 1";
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         return $query->fetch(PDO::FETCH_ASSOC);
@@ -110,14 +114,31 @@ class User {
 
         $query->execute();
     }
+    
     public function fetchPrayerSchedules() {
         $sql = "SELECT khutbah_date, speaker, topic, location 
                 FROM friday_prayers 
+                WHERE khutbah_date >= CURDATE() 
                 ORDER BY khutbah_date ASC";
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         return $query->fetchAll(PDO::FETCH_ASSOC);
-    }
-    
+}
+    public function fetchCalendarActivities() {
+        $sql = "SELECT activity_id, title, description, activity_date FROM calendar_activities WHERE is_deleted = 0 ORDER BY activity_date ASC";
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        $result = $query->fetchAll(PDO::FETCH_ASSOC);
 
+        // Log or print the result to ensure it’s being fetched
+        error_log(print_r($result, true)); // This logs to the PHP error log
+        
+        return $result;
+    }
+    public function fetchVolunteers() {
+        $sql = "SELECT first_name, last_name FROM volunteers WHERE is_deleted = 0 ORDER BY created_at DESC";
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

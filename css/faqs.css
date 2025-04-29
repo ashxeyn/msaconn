@@ -4,25 +4,27 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Noto Naskh Arabic', serif;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #ffffff; /* Solid white background instead of gradient */
+  background-color: #ffffff;
   overflow-x: hidden;
   color: #333;
 }
 
 /* Content Wrapper */
 .content {
+  font-family: 'Noto Naskh Arabic', serif;
   flex: 1;
   padding: 20px;
 }
 
 /* Updated Hero Section */
 .hero {
+  font-family: 'Noto Naskh Arabic', serif;
   position: relative;
   width: 100%;
   min-height: 400px;
@@ -59,25 +61,29 @@ body {
 }
 
 .hero-content {
+  font-family: 'Noto Naskh Arabic', serif;
   position: relative;
   z-index: 3;
   max-width: 800px;
   padding: 20px;
-  background-color: rgba(0, 0, 0, 0.7); /* 30% BLACK (Contrast) */
+  background-color: rgba(0, 0, 0, 0.7);
   border-radius: 10px;
 }
 
 .hero h2 {
+  font-family: 'Noto Naskh Arabic', serif;
   font-size: 24px;
   margin-bottom: 10px;
 }
 
 .hero p {
+  font-family: 'Noto Naskh Arabic', serif;
   font-size: 16px;
   line-height: 1.6;
 }
 
 .hero a {
+  font-family: 'Noto Naskh Arabic', serif;
   color: #fff;
   text-decoration: underline;
 }
@@ -88,22 +94,25 @@ body {
 
 /* FAQs Content */
 .faqs-content {
-  width: 100%; /* Stretch FAQs content to full width */
-  max-width: 100%; /* Remove max-width restriction */
-  margin: 0; /* Remove margin to eliminate white spaces */
-  padding: 20px; /* Add padding for spacing */
-  background-color: #ffffff; /* Set background to white */
+  font-family: 'Noto Naskh Arabic', serif;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 20px;
+  background-color: #ffffff;
   box-sizing: border-box;
 }
 
 .faqs-content h3 {
+  font-family: 'Noto Naskh Arabic', serif;
   font-size: 20px;
   margin-bottom: 10px;
-  color: #1a541c; /* Dark green accent (10%) */
+  color: #1a541c;
 }
 
 /* FAQ Item Styling - KEEPING THESE ANIMATIONS */
 .faq-item {
+  font-family: 'Noto Naskh Arabic', serif;
   margin-bottom: 20px;
   padding: 10px;
   background-color: #f9f9f9;
@@ -112,36 +121,39 @@ body {
 }
 
 .faq-question {
+  font-family: 'Noto Naskh Arabic', serif;
   font-weight: bold;
   cursor: pointer;
   padding: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: background-color 0.3s ease; /* Keeping this transition */
+  transition: background-color 0.3s ease;
 }
 
 .faq-question:hover {
-  background-color: #1a541c; /* Dark green accent (10%) */
+  background-color: #1a541c;
   color: #fff;
 }
 
 .faq-question .arrow {
+  font-family: 'Noto Naskh Arabic', serif;
   font-size: 14px;
-  transition: transform 0.3s ease; /* Keeping this animation */
+  transition: transform 0.3s ease;
   color: #9f2626;
-
 }
+
 .faq-question.open .arrow {
-  transform: rotate(180deg); /* Keeping this transform */
+  transform: rotate(180deg);
   color: #9f2626;
 }
 
 .faq-answer {
+  font-family: 'Noto Naskh Arabic', serif;
   max-height: 0;
   overflow: hidden;
   padding: 0 10px;
-  transition: max-height 0.5s ease, padding 0.5s ease; /* Keeping this transition */
+  transition: max-height 0.5s ease, padding 0.5s ease;
 }
 
 .faq-answer.open {
@@ -150,12 +162,13 @@ body {
 }
 
 .faq-answer a {
-  color: #1a541c; /* Dark green accent (10%) */
+  font-family: 'Noto Naskh Arabic', serif;
+  color: #1a541c;
   text-decoration: underline;
 }
 
 .faq-answer a:hover {
-  color: #134015; /* Darker green */
+  color: #134015;
 }
 
 /* Media Queries */

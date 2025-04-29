@@ -3,29 +3,28 @@ html, body {
   background-color: #e6dfdf;
   margin: 0;
   padding: 0;
-  font-family: Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
+  font-family: 'Noto Naskh Arabic', serif;
   min-height: 100vh;
-  overflow-x: hidden; /* Prevent horizontal overflow */
 }
+
 /* Content Wrapper */
 .content {
+  font-family: 'Noto Naskh Arabic', serif;
   flex: 1;
   padding: 20px;
   width: 100%;
-  max-width: 1200px; /* Limit maximum width for larger screens */
-  margin: 0 auto; /* Center the content */
-  box-sizing: border-box; /* Include padding in width calculation */
+  max-width: 1200px;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 /* Carousel Styles */ 
 .carousel {
   position: relative;
   width: 100%;
-  height: 300px; /* Default height for larger screens */
+  height: 300px;
   background-color: #e6dfdf;
-  overflow: hidden; /* Ensure nothing overflows */
+  overflow: hidden;
 }
 
 .carousel-slide {
@@ -65,29 +64,30 @@ html, body {
 }
 
 .hero-content {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  position: relative;
   text-align: center;
   color: #fff;
   z-index: 3;
   max-width: 800px;
-  width: 90%; /* Ensure it doesn't overflow on smaller screens */
+  width: 90%;
   padding: 20px;
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: 10px;
-  box-sizing: border-box; /* Include padding in width calculation */
+  box-sizing: border-box;
+  margin: 0 auto;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 .hero-content h2 {
   font-size: 36px;
   margin-bottom: 20px;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 .hero-content p {
   font-size: 16px;
   margin-bottom: 30px;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 /* Carousel Navigation Buttons */
@@ -102,6 +102,7 @@ html, body {
   cursor: pointer;
   font-size: 24px;
   z-index: 4;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 .carousel-button.prev {
@@ -121,13 +122,15 @@ html, body {
   padding: 40px 20px;
   background-color: #e6dfdf;
   text-align: center;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 .latest-updates h2 {
   font-size: 2rem;
   margin-bottom: 20px;
-  color: #1a541c; /* Dark green */
+  color: #1a541c;
   font-weight: bold;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 .updates-container {
@@ -142,15 +145,16 @@ html, body {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  width: calc(25% - 20px); /* 4 items per row on larger screens */
+  width: calc(25% - 20px);
   text-align: left;
-  box-sizing: border-box; /* Include padding in width calculation */
+  box-sizing: border-box;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 .update-item img {
   width: 100%;
-  height: 200px; /* Fixed height for consistency */
-  object-fit: cover; /* Ensure images cover the area */
+  height: 200px;
+  object-fit: cover;
 }
 
 .update-details {
@@ -161,52 +165,58 @@ html, body {
   font-size: 0.9rem;
   color: #888;
   margin-bottom: 10px;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 .update-title {
   font-size: 1.2rem;
   color: #333;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 /* Prayer Schedule Section */
 .prayer-schedule {
   text-align: center;
-  padding: 40px 0; /* Adjust padding for better spacing */
-    width: 100%; /* Stretch background to full width */
+  padding: 40px 0;
+  width: 100%;
   box-sizing: border-box;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 .prayer-schedule h2 {
-  color: #1a541c; /* Dark green */
+  color: #1a541c;
   font-size: 2rem;
   margin-bottom: 20px;
   font-weight: bold;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 .table-container {
-  width: 100%; /* Stretch table container to full width */
-  max-width: 1400px; /* Increase max width for larger screens */
-  margin: 0 auto; /* Center the table container */
-  overflow-x: auto; /* Allow horizontal scrolling on small screens */
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  overflow-x: auto;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .prayer-schedule table {
-  width: 100%; /* Stretch table to fill the container */
+  width: 100%;
   border-collapse: collapse;
-  font-size: 1rem; /* Slightly increase font size for better readability */
+  font-size: 1rem;
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 .prayer-schedule th, .prayer-schedule td {
-  padding: 15px 20px; /* Increase padding for better spacing */
-  text-align: center; /* Center-align text */
+  padding: 15px 20px;
+  text-align: center;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 .prayer-schedule th {
-  background-color: #1a541c; /* Dark green for header */
+  background-color: #1a541c;
   color: #ffffff;
   font-weight: 600;
   text-transform: uppercase;
@@ -228,28 +238,31 @@ html, body {
 /* Volunteer Section */
 .volunteer {
   text-align: center;
-  padding: 40px 0; /* Adjust padding for better spacing */
-  background-color: #ffffff; /* Set background to white */
-  width: 100%; /* Stretch background to full width */
+  padding: 40px 0;
+  background-color: #ffffff;
+  width: 100%;
   box-sizing: border-box;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 .volunteer-content {
-  max-width: 1200px; /* Limit content width */
-  margin: 0 auto; /* Center the content */
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .volunteer h2 {
   font-size: 2rem;
   margin-bottom: 20px;
-  color: #1a541c; /* Dark green for the heading */
+  color: #1a541c;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 .volunteer p {
   font-size: 1.1rem;
   line-height: 1.6;
   margin-bottom: 20px;
-  color: #333333; /* Slightly darker text for readability */
+  color: #333333;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 .volunteer .cta-button {
@@ -257,22 +270,23 @@ html, body {
   padding: 10px 20px;
   font-size: 1rem;
   color: #fff;
-  background-color: #9f2626; /* Dark green for the button */
+  background-color: #9f2626;
   border-radius: 5px;
   text-decoration: none;
   transition: background-color 0.3s ease;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 /* Media Queries for Responsiveness */
 @media (max-width: 1024px) {
   .update-item {
-    width: calc(33.33% - 20px); /* 3 items per row on tablets */
+    width: calc(33.33% - 20px);
   }
 }
 
 @media (max-width: 768px) {
   .carousel {
-    height: 250px; /* Adjust height for tablets */
+    height: 250px;
   }
 
   .hero-content h2 {
@@ -284,7 +298,7 @@ html, body {
   }
 
   .update-item {
-    width: calc(50% - 20px); /* 2 items per row on smaller tablets */
+    width: calc(50% - 20px);
   }
 
   .table-container {
@@ -294,7 +308,7 @@ html, body {
 
 @media (max-width: 480px) {
   .carousel {
-    height: 200px; /* Adjust height for mobile devices */
+    height: 200px;
   }
 
   .hero-content h2 {
@@ -306,7 +320,7 @@ html, body {
   }
 
   .update-item {
-    width: 100%; /* 1 item per row on mobile */
+    width: 100%;
   }
 
   .table-container {

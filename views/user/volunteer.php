@@ -1,5 +1,9 @@
 <?php
 session_start();
+require_once '../../classes/userClass.php';
+
+$user = new User();
+$volunteers = $user->fetchVolunteers();
 ?>
 
 <!DOCTYPE html>
@@ -9,6 +13,8 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Volunteer</title>
     <link rel="stylesheet" href="../../css/volunteering.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">  
+
 </head>
 <body>
     <?php include '../../includes/header.php'; ?>
@@ -35,42 +41,15 @@ session_start();
     <div class="volunteer-section">
         <h3>VOLUNTEERS</h3>
         <div class="volunteer-grid">
-            <!-- Volunteer 1 -->
-            <div class="volunteer">
-                <p class="name">John Doe</p>
-            </div>
-            <!-- Volunteer 2 -->
-            <div class="volunteer">
-                <p class="name">Jane Smith</p>
-            </div>
-            <!-- Volunteer 3 -->
-            <div class="volunteer">
-                <p class="name">Mike Johnson</p>
-            </div>
-            <!-- Volunteer 4 -->
-            <div class="volunteer">
-                <p class="name">Sarah Brown</p>
-            </div>
-            <!-- Volunteer 5 -->
-            <div class="volunteer">
-                <p class="name">Chris Green</p>
-            </div>
-            <!-- Volunteer 6 -->
-            <div class="volunteer">
-                <p class="name">Emily White</p>
-            </div>
-            <!-- Volunteer 7 -->
-            <div class="volunteer">
-                <p class="name">David Black</p>
-            </div>
-            <!-- Volunteer 8 -->
-            <div class="volunteer">
-                <p class="name">Laura Blue</p>
-            </div>
-            <!-- Volunteer 9 -->
-            <div class="volunteer">
-                <p class="name">Kevin Yellow</p>
-            </div>
+            <?php if (!empty($volunteers)): ?>
+                <?php foreach ($volunteers as $volunteer): ?>
+                    <div class="volunteer">
+                        <p class="name"><?= htmlspecialchars($volunteer['first_name'] . ' ' . $volunteer['last_name']); ?></p>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>No volunteers have registered yet.</p>
+            <?php endif; ?>
         </div>
     </div>
 

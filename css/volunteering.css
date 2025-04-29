@@ -3,21 +3,23 @@
 }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Noto Naskh Arabic', serif;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #ffffff; /* 60% WHITE (Dominant) */
-  color: #000000; /* 30% BLACK (Text) */
+  background-color: #ffffff;
+  color: #000000;
 }
 
 .content {
+  font-family: 'Noto Naskh Arabic', serif;
   flex: 1;
   padding: 20px;
-  background-color: #ffffff; /* 60% WHITE */
+  background-color: #ffffff;
 }
+
 .modal {
   display: none;
   position: fixed;
@@ -30,6 +32,7 @@ body {
 }
 
 .modal-content {
+  font-family: 'Noto Naskh Arabic', serif;
   background-color: #fff;
   margin: 15% auto;
   padding: 20px 30px;
@@ -42,6 +45,7 @@ body {
 }
 
 .close-button {
+  font-family: 'Noto Naskh Arabic', serif;
   position: absolute;
   top: 10px;
   right: 15px;
@@ -57,15 +61,17 @@ body {
 
 @keyframes fadeIn {
   from {
-      opacity: 0;
-      transform: scale(0.95);
+    opacity: 0;
+    transform: scale(0.95);
   }
   to {
-      opacity: 1;
-      transform: scale(1);
+    opacity: 1;
+    transform: scale(1);
   }
 }
+
 .hero {
+  font-family: 'Noto Naskh Arabic', serif;
   position: relative;
   width: 100%;
   min-height: 400px;
@@ -103,21 +109,24 @@ body {
 }
 
 .hero-content {
+  font-family: 'Noto Naskh Arabic', serif;
   position: relative;
   z-index: 3;
   max-width: 800px;
   padding: 20px;
-  background-color: rgba(0, 0, 0, 0.7); /* 30% BLACK (Contrast) */
+  background-color: rgba(0, 0, 0, 0.7);
   border-radius: 10px;
 }
 
 .volunteer-button-container {
+  font-family: 'Noto Naskh Arabic', serif;
   text-align: center;
   margin: 20px 0;
 }
 
 .volunteer-button {
-  background-color: #9f2626; 
+  font-family: 'Noto Naskh Arabic', serif;
+  background-color: #9f2626;
   color: white;
   border: none;
   padding: 10px 20px;
@@ -128,52 +137,57 @@ body {
 }
 
 .volunteer-section {
+  font-family: 'Noto Naskh Arabic', serif;
   width: 80%;
   max-width: 1200px;
   margin: 40px auto;
   text-align: center;
-  padding: 10px; /* Reduced from default (e.g., 20px) to minimize white space */
+  padding: 10px;
 }
 
 .volunteer-section h3 {
+  font-family: 'Noto Naskh Arabic', serif;
   font-size: 24px;
   margin-bottom: 20px;
-  color: #000000; /* 30% BLACK */
+  color: #000000;
 }
 
 .volunteer-grid {
+  font-family: 'Noto Naskh Arabic', serif;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
 
 .volunteer {
-  background-color: #ffffff; /* 60% WHITE */
+  font-family: 'Noto Naskh Arabic', serif;
+  background-color: #ffffff;
   border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 30% BLACK (Subtle shadow) */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 15px;
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid #e0e0e0; /* Light gray border */
+  border: 1px solid #e0e0e0;
 }
 
 .volunteer .name {
+  font-family: 'Noto Naskh Arabic', serif;
   font-size: 18px;
   font-weight: bold;
   margin: 0;
-  color: #000000; /* 30% BLACK */
+  color: #000000;
 }
 
 @media (max-width: 768px) {
   .volunteer-grid {
-      grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 }
 
 @media (max-width: 480px) {
   .volunteer-grid {
-      grid-template-columns: 1fr;
+    grid-template-columns: 1fr;
   }
 }

@@ -4,7 +4,7 @@ require_once '../../classes/userClass.php';
 $userObj = new User();
 $prayerSchedules = $userObj->fetchPrayerSchedules();
 ?>
-
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="<?php echo $base_url; ?>css/user.landingpage.css">
 
 <section id="home" class="carousel">

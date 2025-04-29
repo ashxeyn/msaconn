@@ -1,71 +1,70 @@
 <?php
-// At the VERY TOP of the file
+// Include necessary files
 require_once __DIR__.'/../../classes/userClass.php';
 require_once __DIR__.'/../../includes/helpers.php';
 
-// Initialize Admin class
-$user = new user();
-
+// Initialize User class
+$user = new User();
 
 try {
-  // Get about data using the User class method
-  $about_data = $user->getAboutMSAData();
-  
-  // Set default values if no data exists
-  $mission = $about_data['mission'] ?? "Default mission text if none in database";
-  $vision = $about_data['vision'] ?? "Default vision text if none in database";
-  $description = $about_data['description'] ?? "Our website is dedicated to connecting volunteers...";
+    // Fetch the latest about data
+    $about_data = $user->getAboutMSAData();
+
+    // Set default values if no data exists
+    $mission = $about_data['mission'] ?? "Default mission text if none in database";
+    $vision = $about_data['vision'] ?? "Default vision text if none in database";
+    $description = $about_data['description'] ?? "Our website is dedicated to connecting volunteers...";
 } catch (Exception $e) {
-  // Handle the error gracefully
-  error_log($e->getMessage());
-  $mission = "Our mission statement";
-  $vision = "Our vision statement";
-  $description = "Our website is dedicated to connecting volunteers...";
+    // Handle the error gracefully
+    error_log($e->getMessage());
+    $mission = "Our mission statement";
+    $vision = "Our vision statement";
+    $description = "Our website is dedicated to connecting volunteers...";
 }
 
 // Get base_url from header.php or define it here if not available
-if(!isset($base_url)) {
-  $base_url = 'http://' . $_SERVER['HTTP_HOST'] . '/msaconnect/';
+if (!isset($base_url)) {
+    $base_url = 'http://' . $_SERVER['HTTP_HOST'] . '/msaconnect/';
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>About Us</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    <link rel="stylesheet" href="<?php echo $base_url; ?>css/aboutus.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+
 </head>
 <body>
-  <?php include '../../includes/header.php'; ?>
-  
+    <?php include '../../includes/header.php'; ?>
 
-  <link rel="stylesheet" href="<?php echo $base_url; ?>css/aboutus.css">
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-background"></div>
+        <div class="hero-content">
+            <h2>About Us</h2>
+            <p><?php echo htmlspecialchars($description); ?></p>
+        </div>
+    </section>
 
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="hero-background"></div>
-    <div class="hero-content">
-        <h2>About Us</h2>
-        <p><?php echo htmlspecialchars($description); ?></p>
-    </div>
-</section>
-
-<!-- Mission and Vision Section -->
-<section id="about" class="about-section">
-    <div class="container">
-        <div class="mission-vision">
-            <div class="mission">
-                <h3>Our Mission</h3>
-                <p><?php echo htmlspecialchars($mission); ?></p>
-            </div>
-            <div class="vision">
-                <h3>Our Vision</h3>
-                <p><?php echo htmlspecialchars($vision); ?></p>
+    <!-- Mission and Vision Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="mission-vision">
+                <div class="mission">
+                    <h3>Our Mission</h3>
+                    <p><?php echo htmlspecialchars($mission); ?></p>
+                </div>
+                <div class="vision">
+                    <h3>Our Vision</h3>
+                    <p><?php echo htmlspecialchars($vision); ?></p>
+                </div>
             </div>
         </div>
-    </div>
-</section>
-
+    </section>
   <!-- Executive Team Section -->
   <section class="org-chart">
     <h2>Executive Officers</h2>

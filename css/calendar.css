@@ -1,14 +1,42 @@
 /* General Styles */
 body {
-  font-family: 'Poppins', sans-serif;
-  background-color: #ffffff; /* Background remains white */
-  color: #000000; /* Text remains black */
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  font-family: 'Noto Naskh Arabic', serif;
+  background-color: #ffffff;
+  color: #000000;
   overflow-x: hidden;
+}
+
+/* General Styles */
+.calendar-page body {
+  font-family: 'Noto Naskh Arabic', serif;
+  background-color: #ffffff;
+  color: #000000;
+  overflow-x: hidden;
+}
+.hero,
+.calendar-page .hero,
+.hero-content,
+.calendar-page .hero-content,
+.hero h2,
+.hero p {
+  font-family: 'Noto Naskh Arabic', serif;
+}
+/* Calendar Components */
+.calendar-container,
+.calendar-page .calendar-container,
+.calendar-grid,
+.calendar-page .calendar-grid,
+#current-month-year,
+.calendar-grid .col,
+.date-text,
+.event-badge,
+.calendar-header,
+.calendar-title,
+.calendar-navigation,
+.calendar-page .calendar-navigation,
+.calendar-navigation .btn,
+.calendar-page .calendar-navigation .btn {
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 /* Updated Hero Section */
@@ -27,7 +55,34 @@ body {
   
 }
 
+/* Hero Section */
+.calendar-page .hero {
+  position: relative;
+  width: 100%;
+  min-height: 400px;
+  height: auto;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin-top: 0;
+  color: white;
+}
+
 .hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../assets/images/login.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+.calendar-page .hero-background {
   position: absolute;
   top: 0;
   left: 0;
@@ -59,6 +114,15 @@ body {
   border-radius: 10px;
 }
 
+.calendar-page .hero-content {
+  position: relative;
+  z-index: 3;
+  max-width: 800px;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+}
+
 .hero h2 {
   font-size: 24px;
   margin-bottom: 15px;
@@ -71,6 +135,7 @@ body {
   font-weight: 400;
 }
 
+
 /* Calendar Container */
 .calendar-container {
   width: 100%;
@@ -79,6 +144,19 @@ body {
   padding: 20px;
   box-sizing: border-box;
   overflow: hidden;
+  margin-top: 20px;  /* Adjust the margin to prevent overlap */
+
+}
+
+/* Calendar Container */
+.calendar-page .calendar-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow: hidden;
+  margin-top: 20px;
 }
 
 /* Calendar Grid */
@@ -93,6 +171,26 @@ body {
   background-color: #ffffff; /* Change to white */
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Calendar Grid */
+.calendar-page .calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#current-month-year {
+  color: #1a541c; /* Bootstrap Danger Red */
+  font-weight: bold;
+  text-align: center;
 }
 
 .calendar-grid .col {
@@ -169,6 +267,15 @@ body {
   flex-wrap: wrap; /* Allow wrapping on smaller screens */
 }
 
+/* Calendar Navigation */
+.calendar-page .calendar-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .calendar-navigation .btn {
   padding: 8px 16px; /* Maintain consistent padding */
   background-color: #9f2626; /* Dark green */
@@ -182,6 +289,19 @@ body {
   flex-shrink: 0; /* Prevent shrinking */
 }
 
+/* Calendar Navigation */
+.calendar-page .calendar-navigation .btn {
+  padding: 8px 16px;
+  background-color: #9f2626;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  min-width: 120px;
+  text-align: center;
+  flex-shrink: 0;
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {
@@ -211,6 +331,24 @@ body {
   .calendar-navigation .btn {
     width: auto; /* Allow buttons to adjust slightly on smaller screens */
     min-width: 100px; /* Ensure a smaller minimum width for mobile */
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .calendar-page .calendar-grid .col {
+    min-height: 70px;
+    font-size: 12px;
+  }
+
+  .calendar-page .calendar-navigation {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .calendar-page .calendar-navigation .btn {
+    width: 100%;
+    max-width: 200px;
   }
 }
 
@@ -248,5 +386,40 @@ body {
 
   .calendar-navigation .btn {
     width: 48%;
+  }
+  .calendar-grid .col,
+  .calendar-page .calendar-grid .col,
+  .date-text,
+  .calendar-title,
+  .calendar-navigation .btn,
+  .calendar-page .calendar-navigation .btn {
+    font-family: 'Noto Naskh Arabic', serif;
+  }
+  
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .calendar-page .calendar-grid {
+    gap: 3px;
+    padding: 5px;
+  }
+
+  .calendar-page .calendar-grid .col {
+    min-height: 60px;
+    font-size: 10px;
+    padding: 5px;
+  }
+
+  .calendar-page .calendar-navigation .btn {
+    width: 48%;
+  }
+  .calendar-grid .col,
+  .calendar-page .calendar-grid .col,
+  .date-text,
+  .event-badge,
+  .calendar-navigation .btn,
+  .calendar-page .calendar-navigation .btn {
+    font-family: 'Noto Naskh Arabic', serif;
   }
 }
