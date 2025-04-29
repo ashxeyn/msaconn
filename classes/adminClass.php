@@ -794,12 +794,15 @@ class Admin {
 
     function softDeleteEvent($eventId, $reason) {
         $sql = "UPDATE events 
-                SET deleted_at = NOW(), reason = :reason 
+                SET is_deleted = 1, 
+                    reason = :reason,
+                    deleted_at = NOW() 
                 WHERE event_id = :event_id";
-
+        
         $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':reason', $reason);
         $query->bindParam(':event_id', $eventId);
+        $query->bindParam(':reason', $reason);
+        
         return $query->execute();
     }
 
@@ -828,59 +831,94 @@ class Admin {
 
     // Calendar Functions
     function fetchCalendarEvents() {
-        $sql = "SELECT ca.*, u.username FROM calendar_activities ca 
-                LEFT JOIN users u ON ca.created_by = u.user_id 
+        $sql = "SELECT ca.activity_id, ca.activity_date, ca.title, ca.description, ca.created_at, ca.deleted_at,
+                    u.username 
+                FROM calendar_activities ca
+                LEFT JOIN users u ON ca.created_by = u.user_id
+                WHERE ca.deleted_at IS NULL
                 ORDER BY ca.activity_date DESC";
+        
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         return $query->fetchAll();
     }
     
-    function getCalendarEventById($eventId) {
-        $sql = "SELECT * FROM calendar_activities WHERE activity_id = :activity_id";
+    function getCalendarEventById($activityId) {
+        $sql = "SELECT ca.activity_id, ca.activity_date, ca.title, ca.description, ca.created_at, ca.deleted_at,
+                    u.username
+                FROM calendar_activities ca
+                LEFT JOIN users u ON ca.created_by = u.user_id
+                WHERE ca.activity_id = :activity_id";
         $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':activity_id', $eventId);
+        $query->bindParam(':activity_id', $activityId);
         $query->execute();
         return $query->fetch();
     }
     
-    function addCalendarEvent($eventDate, $title, $description, $userId) {
+    function addCalendarEvent($activityDate, $title, $description, $userId) {
         $sql = "INSERT INTO calendar_activities (activity_date, title, description, created_by) 
                 VALUES (:activity_date, :title, :description, :created_by)";
         $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':activity_date', $eventDate);
+        $query->bindParam(':activity_date', $activityDate);
         $query->bindParam(':title', $title);
         $query->bindParam(':description', $description);
         $query->bindParam(':created_by', $userId);
         return $query->execute();
     }
     
-    function updateCalendarEvent($eventId, $eventDate, $title, $description) {
+    function updateCalendarEvent($activityId, $activityDate, $title, $description) {
         $sql = "UPDATE calendar_activities 
-                SET activity_date = :activity_date, 
-                    title = :title, 
-                    description = :description 
+                SET activity_date = :activity_date, title = :title, description = :description 
                 WHERE activity_id = :activity_id";
         $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':activity_date', $eventDate);
+        $query->bindParam(':activity_date', $activityDate);
         $query->bindParam(':title', $title);
         $query->bindParam(':description', $description);
-        $query->bindParam(':activity_id', $eventId);
+        $query->bindParam(':activity_id', $activityId);
         return $query->execute();
     }
     
-    function deleteCalendarEvent($eventId) {
-        $sql = "DELETE FROM calendar_activities WHERE activity_id = :activity_id";
+    function softDeleteCalendarEvent($activityId, $reason) {
+        $sql = "UPDATE calendar_activities 
+                SET is_deleted = 1, 
+                    reason = :reason,
+                    deleted_at = NOW() 
+                WHERE activity_id = :activity_id";
+        
         $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':activity_id', $eventId);
+        $query->bindParam(':activity_id', $activityId);
+        $query->bindParam(':reason', $reason);
+        
         return $query->execute();
     }
     
+    function restoreCalendarEvent($activityId) {
+        $sql = "UPDATE calendar_activities 
+                SET deleted_at = NULL, reason = NULL 
+                WHERE activity_id = :activity_id";
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':activity_id', $activityId);
+        return $query->execute();
+    }
+    
+    function fetchArchivedCalendar() {
+        $sql = "SELECT ca.activity_id, ca.activity_date, ca.title, ca.description, ca.reason, ca.deleted_at,
+                    u.username
+                FROM calendar_activities ca
+                LEFT JOIN users u ON ca.created_by = u.user_id
+                WHERE ca.deleted_at IS NOT NULL
+                ORDER BY ca.deleted_at DESC";
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
     // Prayer Schedule Functions
     function fetchFridayPrayers() {
         $sql = "SELECT fp.*, u.username 
                 FROM friday_prayers fp 
                 LEFT JOIN users u ON u.user_id = fp.created_by 
+                WHERE fp.deleted_at IS NULL
                 ORDER BY fp.khutbah_date DESC";
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -888,7 +926,10 @@ class Admin {
     }
     
     function getPrayerScheduleById($prayerId) {
-        $sql = "SELECT * FROM friday_prayers WHERE prayer_id = :prayer_id";
+        $sql = "SELECT fp.*, u.username 
+                FROM friday_prayers fp 
+                LEFT JOIN users u ON u.user_id = fp.created_by 
+                WHERE fp.prayer_id = :prayer_id";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':prayer_id', $prayerId);
         $query->execute();
@@ -918,11 +959,38 @@ class Admin {
         return $query->execute();
     }
     
-    function deletePrayerSchedule($prayerId) {
-        $sql = "DELETE FROM friday_prayers WHERE prayer_id = :prayer_id";
+    function softDeletePrayerSchedule($prayerId, $reason) {
+        $sql = "UPDATE friday_prayers 
+                SET is_deleted = 1, 
+                    reason = :reason,
+                    deleted_at = NOW() 
+                WHERE prayer_id = :prayer_id";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':prayer_id', $prayerId);
+        $query->bindParam(':reason', $reason);
+        
+        return $query->execute();
+    }
+    
+    function restorePrayerSchedule($prayerId) {
+        $sql = "UPDATE friday_prayers 
+                SET deleted_at = NULL, reason = NULL 
+                WHERE prayer_id = :prayer_id";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':prayer_id', $prayerId);
         return $query->execute();
+    }
+    
+    function fetchArchivedPrayers() {
+        $sql = "SELECT prayer_id, khutbah_date, speaker, topic, location, reason, deleted_at
+                FROM friday_prayers
+                WHERE deleted_at IS NOT NULL
+                ORDER BY deleted_at DESC";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
     }
 
     // Transparency Report Functions
@@ -1469,17 +1537,19 @@ class Admin {
         $query->execute();
         return $query->fetchAll();
     }
-
-    // function fetchProgram() {
-    //     $sql = "SELECT programs.program_id, programs.program_name, colleges.college_name 
-    //             FROM programs 
-    //             INNER JOIN colleges ON programs.college_id = colleges.college_id 
-    //             ORDER BY programs.program_name ASC;";
+    function fetchProgram() {
+        $sql = "SELECT programs.program_id, programs.program_name, colleges.college_name 
+                FROM programs 
+                INNER JOIN colleges ON programs.college_id = colleges.college_id 
+                WHERE programs.is_deleted = 0 
+                ORDER BY programs.program_name ASC";
         
-    //     $query = $this->db->connect()->prepare($sql);
-    //     $query->execute();
-    //     return $query->fetchAll();
-    // }
+        $query = $this->db->connect()->prepare($sql);
+        if ($query->execute()) {
+            return $query->fetchAll();
+        }
+        return false; 
+    }
     
     // function fetchColleges(){
     //     $sql = "SELECT * FROM colleges ORDER BY college_name ASC;";

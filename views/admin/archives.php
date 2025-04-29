@@ -7,6 +7,7 @@ $archivedColleges = $adminObj->fetchArchivedColleges();
 $archivedPrograms = $adminObj->fetchArchivedPrograms();
 $archivedEvents = $adminObj->fetchArchivedEvents();
 $archivedCalendar = $adminObj->fetchArchivedCalendar();
+$archivedPrayers = $adminObj->fetchArchivedPrayers();
 ?>
 
 <head>
@@ -40,6 +41,12 @@ $archivedCalendar = $adminObj->fetchArchivedCalendar();
                             <button class="nav-link" id="calendar-tab" data-bs-toggle="tab" data-bs-target="#calendar" 
                                     type="button" role="tab" aria-controls="calendar" aria-selected="false">
                                 Calendar Activities
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="prayer-tab" data-bs-toggle="tab" data-bs-target="#prayer" 
+                                    type="button" role="tab" aria-controls="prayer" aria-selected="false">
+                                Prayer
                             </button>
                         </li>
                     </ul>
@@ -153,6 +160,7 @@ $archivedCalendar = $adminObj->fetchArchivedCalendar();
                                 </table>
                             </div>
                         </div>
+
                         <div class="tab-pane fade" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
                             <div class="table-responsive">
                                 <table id="calendarTab" class="table align-items-center mb-0">
@@ -180,7 +188,48 @@ $archivedCalendar = $adminObj->fetchArchivedCalendar();
                                                     <td><?= clean_input($activity['reason']) ?></td>
                                                     <td><?= $activity['deleted_at'] ? date('M d, Y h:i A', strtotime($activity['deleted_at'])) : 'N/A' ?></td>
                                                     <td>
-                                                        <button class="btn btn-sm btn-success" onclick="setActivityId(<?= $activity['activity_id'] ?>, 'restore')">
+                                                        <button class="btn btn-sm btn-success" onclick="setCalendarId(<?= $activity['activity_id'] ?>, 'restore')">
+                                                            <i class="fas fa-undo"></i> Restore
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="tab-pane fade" id="prayer" role="tabpanel" aria-labelledby="prayer-tab">                            
+                            <div class="table-responsive">
+                                <table id="prayerTab" class="table align-items-center mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Speaker</th>
+                                            <th>Topic</th>
+                                            <th>Location</th>
+                                            <th>Reason</th>
+                                            <th>Archived At</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if (empty($archivedPrayers)): ?>
+                                            <tr>
+                                                <td colspan="7" class="text-center">No archived prayer schedules found</td>
+                                            </tr>
+                                        <?php else: ?>
+                                            <?php foreach ($archivedPrayers as $prayer): ?>
+                                                <tr>
+                                                    <td><?= date('M d, Y', strtotime($prayer['khutbah_date'])) ?></td>
+                                                    <td><?= clean_input($prayer['speaker']) ?></td>
+                                                    <td><?= clean_input($prayer['topic']) ?></td>
+                                                    <td><?= clean_input($prayer['location']) ?></td>
+                                                    <td><?= clean_input($prayer['reason']) ?></td>
+                                                    <td><?= date('M d, Y h:i A', strtotime($prayer['deleted_at'])) ?></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-success" onclick="setPrayerId(<?= $prayer['prayer_id'] ?>, 'restore')">
                                                             <i class="fas fa-undo"></i> Restore
                                                         </button>
                                                     </td>
@@ -202,6 +251,7 @@ $archivedCalendar = $adminObj->fetchArchivedCalendar();
 <?php include_once '../adminModals/restoreProgram.html'; ?>
 <?php include_once '../adminModals/restoreEvent.html'; ?>
 <?php include_once '../adminModals/restoreCalendar.html'; ?>
+<?php include_once '../adminModals/restorePrayer.html'; ?>
 
 <script>
     $(document).ready(function() {

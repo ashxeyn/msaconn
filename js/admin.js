@@ -22,6 +22,8 @@ $(document).ready(function() {
     $('#cashoutTable').DataTable();
     $('#eventTab').DataTable();
     $('#progTab').DataTable();
+    $('#prayerTab').DataTable();
+    $('#calendarTab').DataTable();
 });
 
 function viewPhoto(photoName, folder) {
@@ -556,12 +558,12 @@ function setCalendarId(activityId, action) {
         $('#archiveCalendarModal').modal('show');
     
         $('#confirmArchiveActivity').off('click').on('click', function () {
-            const reason = $('#calendarArchiveReason').val().trim();
+            const reason = $('#archiveReason').val().trim();
             if (reason === '') {
-                $('#calendarArchiveReasonError').text('Please provide a reason for archiving');
+                $('#archiveReasonError').text('Please provide a reason for archiving');
                 return;
             }
-            $('#calendarArchiveReasonError').text('');
+            $('#archiveReasonError').text('');
             processCalendar(activityId, 'delete');
         });    
     } else if (action === 'restore') {
@@ -605,7 +607,7 @@ function clearCalendarValidationErrors() {
     $('#editActivityDateError').text('');
     $('#editTitleError').text('');
     $('#editDescriptionError').text('');
-    $('#calendarArchiveReasonError').text('');
+    $('#archiveReasonError').text('');
 }
 
 function processCalendar(activityId, action) {
@@ -614,7 +616,7 @@ function processCalendar(activityId, action) {
     if (action === 'add' || action === 'edit') {
         formData = new FormData(document.getElementById('editCalendarForm'));
     } else if (action === 'delete') {
-        formData.append('reason', $('#calendarArchiveReason').val());
+        formData.append('reason', $('#archiveReason').val());
     } else if (action === 'restore') {
         formData.append('activity_id', $('#restoreActivityId').val());
     }
@@ -637,7 +639,7 @@ function processCalendar(activityId, action) {
                 $(".modal-backdrop").remove();
 
                 if (action === 'restore') {
-                    loadCalendarArchives(); 
+                    loadArchives(); 
                 } else {
                     loadCalendarSection(); 
                 }
@@ -656,6 +658,178 @@ function processCalendar(activityId, action) {
         }
     });
 }
+
+// PRAYER FUNCTIONS
+function openPrayerModal(modalId, prayerId, action) {
+    $('.modal').modal('hide');
+    $('.modal-backdrop').remove(); 
+    setTimeout(() => {
+        const modal = $('#' + modalId);
+        modal.modal('show'); 
+        setPrayerId(prayerId, action);
+    }, 300);
+}
+
+function setPrayerId(prayerId, action) {
+    if (action === 'edit') {
+        $.ajax({
+            url: "../../handler/admin/getPrayerSched.php",
+            type: "GET",
+            data: { prayer_id: prayerId },
+            success: function(response) {
+                try {
+                    const prayer = JSON.parse(response);
+                    $('#prayerId').val(prayer.prayer_id);
+                    $('#khutbahDate').val(prayer.khutbah_date);
+                    $('#speaker').val(prayer.speaker);
+                    $('#topic').val(prayer.topic);
+                    $('#location').val(prayer.location);
+                    $('#prayerModalTitle').text('Edit Prayer Schedule');
+                    $('#prayerFormSubmit').text('Update Schedule');
+                    clearPrayerValidationErrors();
+                    $('#addEditPrayerModal').modal('show');
+                } catch (e) {
+                    console.error("Invalid JSON:", response);
+                    alert("Failed to load prayer details.");
+                }
+            },
+            error: function() {
+                alert("Failed to load prayer details.");
+            }
+        });
+
+        $('#prayerForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validatePrayerForm()) {
+                processPrayer(prayerId, 'edit');
+            }
+        });
+    } else if (action === 'add') {
+        $('#prayerForm')[0].reset();
+        clearPrayerValidationErrors();
+        $('#prayerModalTitle').text('Add Prayer Schedule');
+        $('#prayerFormSubmit').text('Add Schedule');
+        $('#addEditPrayerModal').modal('show');
+
+        $('#prayerForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validatePrayerForm()) {
+                processPrayer(null, 'add');
+            }
+        });
+    } else if (action === 'delete') {
+        $('#archivePrayerId').val(prayerId);
+        $('#deletePrayerModal').modal('show');
+    
+        $('#confirmArchivePrayer').off('click').on('click', function () {
+            const reason = $('#archiveReason').val().trim();
+            if (reason === '') {
+                $('#archiveReasonError').text('Please provide a reason for archiving');
+                return;
+            }
+            $('#archiveReasonError').text('');
+            processPrayer(prayerId, 'delete');
+        });    
+    } else if (action === 'restore') {
+        $('#restorePrayerId').val(prayerId);
+        $('#restorePrayerModal').modal('show');
+
+        $('#restorePrayerForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            processPrayer(prayerId, 'restore');
+        });
+    }
+}
+
+function validatePrayerForm() {
+    let isValid = true;
+    clearPrayerValidationErrors();
+
+    const date = $('#khutbahDate').val().trim();
+    const speaker = $('#speaker').val().trim();
+    const topic = $('#topic').val().trim();
+    const location = $('#location').val().trim();
+
+    if (date === '') {
+        $('#khutbahDateError').text('Date is required');
+        isValid = false;
+    }
+
+    if (speaker === '') {
+        $('#speakerError').text('Speaker name is required');
+        isValid = false;
+    }
+
+    if (topic === '') {
+        $('#topicError').text('Topic is required');
+        isValid = false;
+    }
+
+    if (location === '') {
+        $('#locationError').text('Location is required');
+        isValid = false;
+    }
+
+    return isValid;
+}
+
+function clearPrayerValidationErrors() {
+    $('#khutbahDateError').text('');
+    $('#speakerError').text('');
+    $('#topicError').text('');
+    $('#locationError').text('');
+    $('#archiveReasonError').text('');
+}
+
+function processPrayer(prayerId, action) {
+    let formData = new FormData();
+
+    if (action === 'add' || action === 'edit') {
+        formData = new FormData(document.getElementById('prayerForm'));
+    } else if (action === 'delete') {
+        formData.append('reason', $('#archiveReason').val());
+    } else if (action === 'restore') {
+        formData.append('prayer_id', $('#restorePrayerId').val());
+    }
+
+    if (prayerId) {
+        formData.append('prayer_id', prayerId);
+    }
+    formData.append('action', action);
+
+    $.ajax({
+        url: "../../handler/admin/prayerAction.php",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.trim() === "success") {
+                $(".modal").modal("hide");
+                $("body").removeClass("modal-open");
+                $(".modal-backdrop").remove();
+
+                if (action === 'restore') {
+                    loadArchives(); 
+                } else {
+                    loadPrayerSchedSection(); 
+                }
+
+                showToast('Success', 
+                    action === 'delete' ? 'Prayer schedule has been archived.' :
+                    action === 'restore' ? 'Prayer schedule has been restored.' :
+                    'Prayer schedule has been ' + (action === 'edit' ? 'updated' : 'added') + '.', 
+                    'success');
+            } else {
+                alert("Failed to process request: " + response);
+            }
+        },
+        error: function() {
+            alert("An error occurred while processing the request.");
+        }
+    });
+}
+
 
 // REGISTRATION FUNCTIONS
 function openModal(modalId, volunteerId, action) {
@@ -1094,88 +1268,6 @@ function processFaq(faqId, action) {
         }
     });
 }
-
-// PRAYER FUNCTIONS
-function openPrayerModal(modalId, prayerId, action) {
-    $('.modal').modal('hide');
-    $('.modal-backdrop').remove();
-    setTimeout(() => {
-        const modal = $('#' + modalId);
-        modal.attr('aria-hidden', 'false');
-        modal.modal('show');
-        setPrayerId(prayerId, action);
-    }, 300);
-}
-
-function setPrayerId(prayerId, action) {
-    if (action === 'edit' && prayerId) {
-        $.ajax({
-            url: "../../handler/admin/getprayerSched.php",
-            type: "GET",
-            data: { prayer_id: prayerId },
-            success: function(response) {
-                const data = JSON.parse(response);
-                $('#prayerId').val(data.prayer_id);
-                $('#khutbahDate').val(data.khutbah_date);
-                $('#speaker').val(data.speaker);
-                $('#topic').val(data.topic);
-                $('#location').val(data.location);
-                $('#prayerModalTitle').text('Edit Schedule');
-                $('#confirmSavePrayer').text('Update Schedule');
-            }
-        });
-
-        $('#confirmSavePrayer').off('click').on('click', function (e) {
-            e.preventDefault();
-            processPrayer(prayerId, 'edit');
-        });
-
-    } else if (action === 'add') {
-        $('#prayerForm')[0].reset();
-        $('#prayerId').val('');
-        $('#prayerModalTitle').text('Add Schedule');
-        $('#confirmSavePrayer').text('Add Schedule');
-        $('#confirmSavePrayer').off('click').on('click', function (e) {
-            e.preventDefault();
-            processPrayer(null, 'add');
-        });
-    } else if (action === 'delete') {
-        $('#prayerIdToDelete').val(prayerId);
-        $('#confirmDeletePrayer').off('click').on('click', function () {
-            processPrayer(prayerId, 'delete');
-        });
-    }
-}
-
-function processPrayer(prayerId, action) {
-    let formData = new FormData(document.getElementById('prayerForm'));
-    if (prayerId) {
-        formData.append('prayer_id', prayerId);
-    }
-    formData.append('action', action);
-
-    $.ajax({
-        url: "../../handler/admin/prayerAction.php",
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function (response) {
-            if (response.trim() === "success") {
-                $(".modal").modal("hide");
-                $("body").removeClass("modal-open");
-                $(".modal-backdrop").remove();
-                loadPrayerSchedSection();
-            } else {
-                alert("Failed: " + response);
-            }
-        },
-        error: function () {
-            alert("An error occurred while processing the request.");
-        }
-    });
-}
-
 
 // ABOUTS FUNCTIONS
 function openAboutModal(modalId, aboutId, action) {

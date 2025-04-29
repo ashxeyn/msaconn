@@ -1,37 +1,33 @@
-<div class="modal fade" id="editCalendarModal" tabindex="-1">
+<div class="modal fade" id="editCalendarModal" tabindex="-1" aria-labelledby="editCalendarModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Add Activity</h5>
+        <form id="editCalendarForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Activity</h5>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="activity_id" id="editActivityId">
+                    <div class="mb-3">
+                        <label for="editActivityDate" class="form-label">Date</label>
+                        <input type="date" class="form-control" id="editActivityDate" name="activity_date">
+                        <div id="editActivityDateError" class="text-danger"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editTitle" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="editTitle" name="title">
+                        <div id="editTitleError" class="text-danger"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="editDescription" name="description"></textarea>
+                        <div id="editDescriptionError" class="text-danger"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="editCalendarFormSubmit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
             </div>
-            <div class="modal-body">
-                <form id="editCalendarForm">
-                    <input type="hidden" id="editActivityId" name="activity_id">
-
-                    <div class="mb-3">
-                        <label class="form-label">Date</label>
-                        <input type="date" class="form-control" name="activity_date" id="editActivityDate">
-                        <div class="text-danger" id="editActivityDateError"></div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Activity</label>
-                        <input type="text" class="form-control" name="title" id="editTitle">
-                        <div class="text-danger" id="editTitleError"></div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Description</label>
-                        <textarea class="form-control" name="description" id="editDescription"></textarea>
-                        <div class="text-danger" id="editDescriptionError"></div>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary" id="editCalendarFormSubmit">Add Activity</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+        </form>
     </div>
 </div>

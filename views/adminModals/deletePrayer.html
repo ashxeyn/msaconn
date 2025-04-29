@@ -1,17 +1,24 @@
-<div class="modal fade" id="deletePrayerModal" tabindex="-1">
+<div class="modal fade" id="deletePrayerModal" tabindex="-1" aria-labelledby="deletePrayerModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Delete Schedule</h5>
+        <form id="archivePrayerForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Archive Prayer Schedule</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to archive this prayer schedule?</p>
+                    <input type="hidden" id="archivePrayerId">
+                    <div class="mb-3">
+                        <label for="archiveReason" class="form-label">Reason for Archiving</label>
+                        <textarea class="form-control" name="archiveReason" id="archiveReason" rows="3" placeholder="Please provide a reason for archiving this prayer schedule"></textarea>
+                        <div id="archiveReasonError" class="text-danger"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="confirmArchivePrayer" class="btn btn-danger">Archive</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
             </div>
-            <div class="modal-body text-center">
-                <p>Are you sure you want to delete this schedule?</p>
-                <input type="hidden" id="prayerIdToDelete">
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-danger" id="confirmDeletePrayer">Delete</button>
-            </div>
-        </div>
+        </form>
     </div>
 </div>

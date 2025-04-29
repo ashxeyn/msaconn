@@ -2,27 +2,43 @@
 session_start();
 require_once '../../classes/adminClass.php';
 require_once '../../tools/function.php';
-
 $adminObj = new Admin();
+if (!isset($_SESSION['user_id'])) {
+    echo "error: unauthorized";
+    exit;
+}
+$userId = $_SESSION['user_id'];
 $action = $_POST['action'] ?? '';
-$eventId = $_POST['activity_id'] ?? null;
-$userId = $_SESSION['user_id'] ?? null;
-
-if ($action === 'add' || $action === 'edit') {
-    $eventDate = clean_input($_POST['activity_date']);
-    $activity = clean_input($_POST['title']);
+$activityId = $_POST['activity_id'] ?? null;
+if ($action === 'edit') {
+    $activityDate = clean_input($_POST['activity_date']);
+    $title = clean_input($_POST['title']);
     $description = clean_input($_POST['description']);
-
-    if ($action === 'add') {
-        $result = $adminObj->addCalendarEvent($eventDate, $activity, $description, $userId);
-    } else {
-        $result = $adminObj->updateCalendarEvent($eventId, $eventDate, $activity, $description);
+    $existingActivity = $adminObj->getCalendarEventById($activityId);
+    if (!$existingActivity) {
+        echo "error: activity_not_found";
+        exit;
     }
+    $result = $adminObj->updateCalendarEvent($activityId, $activityDate, $title, $description);
     echo $result ? "success" : "error";
-
 } elseif ($action === 'delete') {
-    $result = $adminObj->deleteCalendarEvent($eventId);
+    $reason = clean_input($_POST['reason']);
+    if (empty($reason)) {
+        echo "error: reason_required";
+        exit;
+    }
+    $result = $adminObj->softDeleteCalendarEvent($activityId, $reason);
+    echo $result ? "success" : "error";
+} elseif ($action === 'restore') {
+    $result = $adminObj->restoreCalendarEvent($activityId);
+    echo $result ? "success" : "error";
+} elseif ($action === 'add') {
+    $activityDate = clean_input($_POST['activity_date']);
+    $title = clean_input($_POST['title']);
+    $description = clean_input($_POST['description']);
+    $result = $adminObj->addCalendarEvent($activityDate, $title, $description, $userId);
     echo $result ? "success" : "error";
 } else {
     echo "invalid_action";
 }
+?>
