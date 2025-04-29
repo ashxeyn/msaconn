@@ -20,6 +20,8 @@ $(document).ready(function() {
     $('#table').DataTable();
     $('#cashinTable').DataTable();
     $('#cashoutTable').DataTable();
+    $('#eventTab').DataTable();
+    $('#progTab').DataTable();
 });
 
 function viewPhoto(photoName, folder) {
@@ -34,7 +36,61 @@ function viewPhoto(photoName, folder) {
     }, 300);
 }
 
+function clearValidationErrors() {
+    $('.error-message').text('');
+}
+
+
+function showToast(title, message, type) {
+    const toastHTML = `
+        <div class="toast align-items-center text-white bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    <strong>${title}</strong>: ${message}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    `;
+    
+    const toastContainer = document.getElementById('toastContainer');
+    if (!toastContainer) {
+        const container = document.createElement('div');
+        container.id = 'toastContainer';
+        container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+        document.body.appendChild(container);
+    }
+    
+    $('#toastContainer').append(toastHTML);
+    const toastElement = $('.toast').last();
+    const toast = new bootstrap.Toast(toastElement, { autohide: true, delay: 3000 });
+    toast.show();
+    
+    setTimeout(() => {
+        toastElement.remove();
+    }, 3500);
+}
+
 // SCHOOL CONFIG FUNCTIONS
+function validateProgramForm() {
+    let isValid = true;
+    clearValidationErrors();
+    
+    const programName = $('#programName').val().trim();
+    if (programName === '') {
+        $('#programNameError').text('Program name is required');
+        isValid = false;
+    }
+    
+    const collegeSelect = $('#collegeSelect').val();
+    if (collegeSelect === '') {
+        $('#collegeSelectError').text('Please select a college');
+        isValid = false;
+    }
+    
+    return isValid;
+}
+
 function openCollegeModal(modalId, collegeId, action) {
     $('.modal').modal('hide'); 
     $('.modal-backdrop').remove();
@@ -240,29 +296,6 @@ function setProgramId(programId, action) {
     }
 }
 
-function validateProgramForm() {
-    let isValid = true;
-    clearValidationErrors();
-    
-    const programName = $('#programName').val().trim();
-    if (programName === '') {
-        $('#programNameError').text('Program name is required');
-        isValid = false;
-    }
-    
-    const collegeSelect = $('#collegeSelect').val();
-    if (collegeSelect === '') {
-        $('#collegeSelectError').text('Please select a college');
-        isValid = false;
-    }
-    
-    return isValid;
-}
-
-function clearValidationErrors() {
-    $('.error-message').text('');
-}
-
 function processProgram(programId, action) {
     let formData = new FormData();
     
@@ -309,34 +342,157 @@ function processProgram(programId, action) {
     });
 }
 
-function showToast(title, message, type) {
-    const toastHTML = `
-        <div class="toast align-items-center text-white bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
-            <div class="d-flex">
-                <div class="toast-body">
-                    <strong>${title}</strong>: ${message}
-                </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-            </div>
-        </div>
-    `;
-    
-    const toastContainer = document.getElementById('toastContainer');
-    if (!toastContainer) {
-        const container = document.createElement('div');
-        container.id = 'toastContainer';
-        container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
-        document.body.appendChild(container);
-    }
-    
-    $('#toastContainer').append(toastHTML);
-    const toastElement = $('.toast').last();
-    const toast = new bootstrap.Toast(toastElement, { autohide: true, delay: 3000 });
-    toast.show();
-    
+
+// EVENT FUNCTIONS
+function openEventModal(modalId, eventId, action) {
+    $('.modal').modal('hide');
+    $('.modal-backdrop').remove(); 
     setTimeout(() => {
-        toastElement.remove();
-    }, 3500);
+        const modal = $('#' + modalId);
+        modal.modal('show'); 
+        setEventId(eventId, action);
+    }, 300);
+}
+
+
+function setEventId(eventId, action) {
+    if (action === 'edit') {
+        $.ajax({
+            url: "../../handler/admin/getEvent.php",
+            type: "GET",
+            data: { event_id: eventId },
+            success: function(response) {
+                try {
+                    const event = JSON.parse(response);
+                    $('#editEventId').val(event.event_id);
+                    $('#editDescription').val(event.description);
+                    $('#editEventModal .modal-title').text('Edit Event');
+                    $('#editEventFormSubmit').text('Update Event');
+                    clearValidationErrors();
+                    $('#editEventModal').modal('show');
+                } catch (e) {
+                    console.error("Invalid JSON:", response);
+                    alert("Failed to load event details.");
+                }
+            },
+            error: function() {
+                alert("Failed to load event details.");
+            }
+        });
+
+        $('#editEventForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateEventForm()) {
+                processEvent(eventId, 'edit');
+            }
+        });
+    } else if (action === 'add') {
+        $('#editEventForm')[0].reset();
+        clearValidationErrors();
+        $('#editEventModal .modal-title').text('Add Event');
+        $('#editEventFormSubmit').text('Add Event');
+        $('#editEventModal').modal('show');
+
+        $('#editEventForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateEventForm()) {
+                processEvent(null, 'add');
+            }
+        });
+    } else if (action === 'delete') {
+        $('#archiveEventId').val(eventId);
+        $('#archiveEventModal').modal('show');
+    
+        $('#confirmArchiveEvent').off('click').on('click', function () {
+            const reason = $('#archiveReason').val().trim();
+            if (reason === '') {
+                $('#archiveReasonError').text('Please provide a reason for archiving');
+                return;
+            }
+            $('#archiveReasonError').text('');
+            processEvent(eventId, 'delete');
+        });    
+    } else if (action === 'restore') {
+        $('#restoreEventId').val(eventId);
+        $('#restoreEventModal').modal('show');
+
+        $('#restoreEventForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            processEvent(eventId, 'restore');
+        });
+    }
+}
+
+function validateEventForm() {
+    let isValid = true;
+    clearValidationErrors();
+
+    const description = $('#editDescription').val().trim();
+    const imageInput = $('#editImage')[0];
+    const isEdit = $('#editEventId').val() !== "";
+
+    if (description === '') {
+        $('#editDescriptionError').text('Event description is required');
+        isValid = false;
+    }
+
+    if (!isEdit) {
+        if (imageInput.files.length === 0) {
+            $('#editImageError').text('Event image is required');
+            isValid = false;
+        }
+    }
+
+    return isValid;
+}
+
+function processEvent(eventId, action) {
+    let formData = new FormData();
+
+    if (action === 'add' || action === 'edit') {
+        formData = new FormData(document.getElementById('editEventForm'));
+    } else if (action === 'delete') {
+        formData.append('reason', $('#archiveReason').val());
+    } else if (action === 'restore') {
+        formData.append('event_id', $('#restoreEventId').val());
+    }
+
+    if (eventId) {
+        formData.append('event_id', eventId);
+    }
+    formData.append('action', action);
+
+    $.ajax({
+        url: "../../handler/admin/eventAction.php",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.trim() === "success") {
+                $(".modal").modal("hide");
+                $("body").removeClass("modal-open");
+                $(".modal-backdrop").remove();
+
+                if (action === 'restore') {
+                    loadArchives(); 
+                } else {
+                    loadEventsSection(); 
+                }
+
+                showToast('Success', 
+                    action === 'delete' ? 'Event has been archived.' :
+                    action === 'restore' ? 'Event has been restored.' :
+                    'Event has been ' + (action === 'edit' ? 'updated' : 'added') + '.', 
+                    'success');
+            } else {
+                alert("Failed to process request: " + response);
+            }
+        },
+        error: function() {
+            alert("An error occurred while processing the request.");
+        }
+    });
 }
 
 // REGISTRATION FUNCTIONS
@@ -777,92 +933,6 @@ function processFaq(faqId, action) {
     });
 }
 
-// EVENT FUNCTIONS    
-function openEventModal(modalId, eventId, action) {
-    $('.modal').modal('hide'); 
-    $('.modal-backdrop').remove(); 
-    setTimeout(() => {
-        const modal = $('#' + modalId);
-        modal.attr('aria-hidden', 'false');
-        modal.modal('show'); 
-        setEventData(eventId, action);
-    }, 300);
-}
-
-function setEventData(eventId, action) {
-    if (action === 'edit') {
-        $.ajax({
-            url: "../../handler/admin/getEvent.php",
-            type: "GET",
-            data: { event_id: eventId },
-            success: function(response) {
-                const event = JSON.parse(response);
-                $('#eventId').val(event.event_id);
-                $('#description').val(event.description);
-                $('#eventModalTitle').text('Edit Event');
-                $('#confirmSaveEvent').text('Update Event');
-
-                if (event.image) {
-                    $('#image-preview').show();
-                    $('#preview-img').attr('src', `../../assets/events/${event.image}`);
-                } else {
-                    $('#image-preview').hide();
-                }
-            },
-            error: function() {
-                alert("An error occurred while fetching event data.");
-            }
-        });
-
-        $('#confirmSaveEvent').off('click').on('click', function (e) {
-            e.preventDefault(); 
-            processEvent(eventId, 'edit');
-        });
-
-    } else if (action === 'delete') {
-        $('#confirmDeleteEvent').off('click').on('click', function () {
-            processEvent(eventId, 'delete');
-        });
-
-    } else if (action === 'add') {
-        $('#eventForm')[0].reset();
-        $('#eventModalTitle').text('Add Event');
-        $('#confirmSaveEvent').text('Add Event');
-        $('#confirmSaveEvent').off('click').on('click', function (e) {
-            e.preventDefault();
-            processEvent(null, 'add');
-        });
-    }
-}
-
-function processEvent(eventId, action) {
-    let formData = new FormData(document.getElementById('eventForm'));
-    if (eventId) {
-        formData.append('event_id', eventId);
-    }
-    formData.append('action', action);
-
-    $.ajax({
-        url: "../../handler/admin/eventAction.php",
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            if (response.trim() === "success") {
-                $(".modal").modal("hide");
-                $("body").removeClass("modal-open");
-                $(".modal-backdrop").remove();
-                loadEventsSection(); 
-            } else {
-                console.log(response);
-            }
-        },
-        error: function() {
-            alert("An error occurred while processing the request.");
-        }
-    });
-}
 
 // CALENDAR FUNCTIONS
 function openCalendarModal(modalId, activityId, action) {
@@ -1036,269 +1106,6 @@ function processPrayer(prayerId, action) {
     });
 }
 
-// TRANSPARENCY FUNCTIONS
-function openTransactionModal(modalId, reportId, action, transactionType) {
-    $('.modal').modal('hide'); 
-    $('.modal-backdrop').remove();
-    setTimeout(() => {
-        const modal = $('#' + modalId);
-        modal.attr('aria-hidden', 'false');
-        modal.modal('show'); 
-        setTransactionId(reportId, action, transactionType);
-    }, 300);
-}
-
-function setTransactionId(reportId, action, transactionType) {
-    if (action === 'edit') {
-        $.ajax({
-            url: "../../handler/admin/getTransparency.php",
-            type: "GET",
-            data: { 
-                action: 'get_transaction',
-                report_id: reportId 
-            },
-            success: function(response) {
-                const transaction = JSON.parse(response);
-                
-                if (transactionType === 'Cash In') {
-                    $('#reportId').val(transaction.report_id);
-                    $('#cashInDate').val(transaction.report_date);
-                    $('#cashInDetail').val(transaction.expense_detail);
-                    $('#cashInCategory').val(transaction.expense_category);
-                    $('#cashInAmount').val(transaction.amount);
-                    $('#cashInSemester').val(transaction.semester);
-                    $('#cashInSchoolYearId').val(transaction.school_year_id);
-                    $('#cashInModalTitle').text('Edit Cash-In');
-                    $('#confirmSaveCashIn').text('Update Cash-In');
-                    
-                    $('#confirmSaveCashIn').off('click').on('click', function(e) {
-                        e.preventDefault();
-                        processTransaction(reportId, 'edit', 'cash_in');
-                    });
-                } else {
-                    $('#reportIdOut').val(transaction.report_id);
-                    $('#cashOutDate').val(transaction.report_date);
-                    $('#cashOutDetail').val(transaction.expense_detail);
-                    $('#cashOutCategory').val(transaction.expense_category);
-                    $('#cashOutAmount').val(transaction.amount);
-                    $('#cashOutSemester').val(transaction.semester);
-                    $('#cashOutSchoolYearId').val(transaction.school_year_id);
-                    $('#cashOutModalTitle').text('Edit Cash-Out');
-                    $('#confirmSaveCashOut').text('Update Cash-Out');
-                    
-                    $('#confirmSaveCashOut').off('click').on('click', function(e) {
-                        e.preventDefault();
-                        processTransaction(reportId, 'edit', 'cash_out');
-                    });
-                }
-            },
-            error: function() {
-                alert("An error occurred while fetching the transaction data.");
-            }
-        });
-    } else if (action === 'delete') {
-        if (transactionType === 'Cash In') {
-            $('#deleteReportId').val(reportId);
-            $('#confirmDeleteTransaction').off('click').on('click', function() {
-                processTransaction(reportId, 'delete', 'cash_in');
-            });
-        } else {
-            $('#deleteReportIdOut').val(reportId);
-            $('#confirmDeleteTransactionOut').off('click').on('click', function() {
-                processTransaction(reportId, 'delete', 'cash_out');
-            });
-        }
-    } else if (action === 'add') {
-        if (transactionType === 'Cash In') {
-            $('#cashInForm')[0].reset();
-            $('#reportId').val('');
-            $('#cashInSchoolYearId').val($('#schoolYearSelect').val());
-            $('#cashInSemester').val($('#semesterSelect').val());
-            $('#cashInModalTitle').text('Add Cash-In');
-            $('#confirmSaveCashIn').text('Add Cash-In');
-            
-            $('#confirmSaveCashIn').off('click').on('click', function(e) {
-                e.preventDefault();
-                processTransaction(null, 'add', 'cash_in');
-            });
-        } else {
-            $('#cashOutForm')[0].reset();
-            $('#reportIdOut').val('');
-            $('#cashOutSchoolYearId').val($('#schoolYearSelect').val());
-            $('#cashOutSemester').val($('#semesterSelect').val());
-            $('#cashOutModalTitle').text('Add Cash-Out');
-            $('#confirmSaveCashOut').text('Add Cash-Out');
-            
-            $('#confirmSaveCashOut').off('click').on('click', function(e) {
-                e.preventDefault();
-                processTransaction(null, 'add', 'cash_out');
-            });
-        }
-    }
-}
-
-function processTransaction(reportId, action, type) {
-    let formData;
-    
-    if (action === 'delete') {
-        formData = new FormData();
-        formData.append('report_id', reportId);
-        formData.append('action', action);
-        formData.append('type', type);
-    } else {
-        if (type === 'cash_in') {
-            formData = new FormData(document.getElementById('cashInForm'));
-        } else {
-            formData = new FormData(document.getElementById('cashOutForm'));
-        }
-        
-        if (reportId) {
-            formData.append('report_id', reportId);
-        }
-        formData.append('action', action);
-        formData.append('type', type);
-    }
-
-    $.ajax({
-        url: "../../handler/admin/transparencyAction.php",
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            if (response.trim() === "success") {
-                $(".modal").modal("hide");
-                $("body").removeClass("modal-open");
-                $(".modal-backdrop").remove();
-                loadTransparencySection();
-            } else {
-                console.log(response);
-            }
-        },
-        error: function() {
-            alert("An error occurred while processing the request.");
-        }
-    });
-}
-
-function openUpdateStudentsModal() {
-    $('.modal').modal('hide');
-    $('.modal-backdrop').remove();
-    
-    setTimeout(() => {
-        const schoolYearId = $('#schoolYearSelect').val();
-        const semester = $('#semesterSelect').val();
-        
-        $.ajax({
-            url: "../../handler/admin/getTransparency.php",
-            type: "GET",
-            data: { 
-                action: 'get_student_paid',
-                school_year_id: schoolYearId,
-                semester: semester
-            },
-            success: function(response) {
-                const data = JSON.parse(response);
-                
-                $('#updateStudentsModal').attr('aria-hidden', 'false');
-                $('#updateStudentsModal').modal('show');
-                $('#studentSchoolYearId').val(schoolYearId);
-                $('#studentSemester').val(semester);
-                
-                if (data) {
-                    $('#paidId').val(data.paid_id);
-                    $('#noStudents').val(data.no_students);
-                } else {
-                    $('#paidId').val('');
-                    $('#noStudents').val('0');
-                }
-                
-                $('#confirmSaveStudents').off('click').on('click', function(e) {
-                    e.preventDefault();
-                    updateStudentsPaid();
-                });
-            },
-            error: function() {
-                alert("An error occurred while fetching student data.");
-            }
-        });
-    }, 300);
-}
-
-function updateStudentsPaid() {
-    let formData = new FormData(document.getElementById('studentsForm'));
-    formData.append('action', 'update_students');
-    
-    $.ajax({
-        url: "../../handler/admin/transparencyAction.php",
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            if (response.trim() === "success") {
-                $("#updateStudentsModal").modal("hide");
-                $("body").removeClass("modal-open");
-                $(".modal-backdrop").remove();
-                loadTransparencySection();
-            } else {
-                console.log(response);
-            }
-        },
-        error: function() {
-            alert("An error occurred while processing the request.");
-        }
-    });
-}
-
-// Transparency Filter Functions
-$(document).ready(function() {
-    $('.input-group.date').datepicker({
-        format: 'yyyy-mm-dd',
-        autoclose: true,
-        todayHighlight: true
-    });
-    
-    $('.filter-control, .filter-date').change(function() {
-        applyFilters();
-    });
-    
-    $('#clearDates').click(function() {
-        $('#startDate').val('');
-        $('#endDate').val('');
-        applyFilters();
-    });
-    
-    function applyFilters() {
-        const schoolYearId = $('#schoolYearSelect').val();
-        const semester = $('#semesterSelect').val();
-        const startDate = $('#startDate').val();
-        const endDate = $('#endDate').val();
-        
-        const params = {};
-        if (schoolYearId) params.school_year_id = schoolYearId;
-        if (semester) params.semester = semester;
-        if (startDate) params.start_date = startDate;
-        if (endDate) params.end_date = endDate;
-        
-        loadFilteredTransparencySection(params);
-    }
-});
-
-function loadFilteredTransparencySection(params) {
-    $.ajax({
-        url: "../admin/transparency.php",
-        method: 'GET',
-        data: params,
-        success: function (response) {
-            $('#contentArea').html(response);
-        },
-        error: function (xhr, status, error) {
-            console.error('Error loading transparency section:', error);
-            $('#contentArea').html('<p class="text-danger">Failed to load Transparency section. Please try again.</p>');
-        }
-    });
-}
 
 // ABOUTS FUNCTIONS
 function openAboutModal(modalId, aboutId, action) {
@@ -1722,3 +1529,266 @@ $(document).on('hidden.bs.modal', function () {
     }
 });
 
+// TRANSPARENCY FUNCTIONS
+function openTransactionModal(modalId, reportId, action, transactionType) {
+    $('.modal').modal('hide'); 
+    $('.modal-backdrop').remove();
+    setTimeout(() => {
+        const modal = $('#' + modalId);
+        modal.attr('aria-hidden', 'false');
+        modal.modal('show'); 
+        setTransactionId(reportId, action, transactionType);
+    }, 300);
+}
+
+function setTransactionId(reportId, action, transactionType) {
+    if (action === 'edit') {
+        $.ajax({
+            url: "../../handler/admin/getTransparency.php",
+            type: "GET",
+            data: { 
+                action: 'get_transaction',
+                report_id: reportId 
+            },
+            success: function(response) {
+                const transaction = JSON.parse(response);
+                
+                if (transactionType === 'Cash In') {
+                    $('#reportId').val(transaction.report_id);
+                    $('#cashInDate').val(transaction.report_date);
+                    $('#cashInDetail').val(transaction.expense_detail);
+                    $('#cashInCategory').val(transaction.expense_category);
+                    $('#cashInAmount').val(transaction.amount);
+                    $('#cashInSemester').val(transaction.semester);
+                    $('#cashInSchoolYearId').val(transaction.school_year_id);
+                    $('#cashInModalTitle').text('Edit Cash-In');
+                    $('#confirmSaveCashIn').text('Update Cash-In');
+                    
+                    $('#confirmSaveCashIn').off('click').on('click', function(e) {
+                        e.preventDefault();
+                        processTransaction(reportId, 'edit', 'cash_in');
+                    });
+                } else {
+                    $('#reportIdOut').val(transaction.report_id);
+                    $('#cashOutDate').val(transaction.report_date);
+                    $('#cashOutDetail').val(transaction.expense_detail);
+                    $('#cashOutCategory').val(transaction.expense_category);
+                    $('#cashOutAmount').val(transaction.amount);
+                    $('#cashOutSemester').val(transaction.semester);
+                    $('#cashOutSchoolYearId').val(transaction.school_year_id);
+                    $('#cashOutModalTitle').text('Edit Cash-Out');
+                    $('#confirmSaveCashOut').text('Update Cash-Out');
+                    
+                    $('#confirmSaveCashOut').off('click').on('click', function(e) {
+                        e.preventDefault();
+                        processTransaction(reportId, 'edit', 'cash_out');
+                    });
+                }
+            },
+            error: function() {
+                alert("An error occurred while fetching the transaction data.");
+            }
+        });
+    } else if (action === 'delete') {
+        if (transactionType === 'Cash In') {
+            $('#deleteReportId').val(reportId);
+            $('#confirmDeleteTransaction').off('click').on('click', function() {
+                processTransaction(reportId, 'delete', 'cash_in');
+            });
+        } else {
+            $('#deleteReportIdOut').val(reportId);
+            $('#confirmDeleteTransactionOut').off('click').on('click', function() {
+                processTransaction(reportId, 'delete', 'cash_out');
+            });
+        }
+    } else if (action === 'add') {
+        if (transactionType === 'Cash In') {
+            $('#cashInForm')[0].reset();
+            $('#reportId').val('');
+            $('#cashInSchoolYearId').val($('#schoolYearSelect').val());
+            $('#cashInSemester').val($('#semesterSelect').val());
+            $('#cashInModalTitle').text('Add Cash-In');
+            $('#confirmSaveCashIn').text('Add Cash-In');
+            
+            $('#confirmSaveCashIn').off('click').on('click', function(e) {
+                e.preventDefault();
+                processTransaction(null, 'add', 'cash_in');
+            });
+        } else {
+            $('#cashOutForm')[0].reset();
+            $('#reportIdOut').val('');
+            $('#cashOutSchoolYearId').val($('#schoolYearSelect').val());
+            $('#cashOutSemester').val($('#semesterSelect').val());
+            $('#cashOutModalTitle').text('Add Cash-Out');
+            $('#confirmSaveCashOut').text('Add Cash-Out');
+            
+            $('#confirmSaveCashOut').off('click').on('click', function(e) {
+                e.preventDefault();
+                processTransaction(null, 'add', 'cash_out');
+            });
+        }
+    }
+}
+
+function processTransaction(reportId, action, type) {
+    let formData;
+    
+    if (action === 'delete') {
+        formData = new FormData();
+        formData.append('report_id', reportId);
+        formData.append('action', action);
+        formData.append('type', type);
+    } else {
+        if (type === 'cash_in') {
+            formData = new FormData(document.getElementById('cashInForm'));
+        } else {
+            formData = new FormData(document.getElementById('cashOutForm'));
+        }
+        
+        if (reportId) {
+            formData.append('report_id', reportId);
+        }
+        formData.append('action', action);
+        formData.append('type', type);
+    }
+
+    $.ajax({
+        url: "../../handler/admin/transparencyAction.php",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.trim() === "success") {
+                $(".modal").modal("hide");
+                $("body").removeClass("modal-open");
+                $(".modal-backdrop").remove();
+                loadTransparencySection();
+            } else {
+                console.log(response);
+            }
+        },
+        error: function() {
+            alert("An error occurred while processing the request.");
+        }
+    });
+}
+
+function openUpdateStudentsModal() {
+    $('.modal').modal('hide');
+    $('.modal-backdrop').remove();
+    
+    setTimeout(() => {
+        const schoolYearId = $('#schoolYearSelect').val();
+        const semester = $('#semesterSelect').val();
+        
+        $.ajax({
+            url: "../../handler/admin/getTransparency.php",
+            type: "GET",
+            data: { 
+                action: 'get_student_paid',
+                school_year_id: schoolYearId,
+                semester: semester
+            },
+            success: function(response) {
+                const data = JSON.parse(response);
+                
+                $('#updateStudentsModal').attr('aria-hidden', 'false');
+                $('#updateStudentsModal').modal('show');
+                $('#studentSchoolYearId').val(schoolYearId);
+                $('#studentSemester').val(semester);
+                
+                if (data) {
+                    $('#paidId').val(data.paid_id);
+                    $('#noStudents').val(data.no_students);
+                } else {
+                    $('#paidId').val('');
+                    $('#noStudents').val('0');
+                }
+                
+                $('#confirmSaveStudents').off('click').on('click', function(e) {
+                    e.preventDefault();
+                    updateStudentsPaid();
+                });
+            },
+            error: function() {
+                alert("An error occurred while fetching student data.");
+            }
+        });
+    }, 300);
+}
+
+function updateStudentsPaid() {
+    let formData = new FormData(document.getElementById('studentsForm'));
+    formData.append('action', 'update_students');
+    
+    $.ajax({
+        url: "../../handler/admin/transparencyAction.php",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.trim() === "success") {
+                $("#updateStudentsModal").modal("hide");
+                $("body").removeClass("modal-open");
+                $(".modal-backdrop").remove();
+                loadTransparencySection();
+            } else {
+                console.log(response);
+            }
+        },
+        error: function() {
+            alert("An error occurred while processing the request.");
+        }
+    });
+}
+
+// Transparency Filter Functions
+$(document).ready(function() {
+    $('.input-group.date').datepicker({
+        format: 'yyyy-mm-dd',
+        autoclose: true,
+        todayHighlight: true
+    });
+    
+    $('.filter-control, .filter-date').change(function() {
+        applyFilters();
+    });
+    
+    $('#clearDates').click(function() {
+        $('#startDate').val('');
+        $('#endDate').val('');
+        applyFilters();
+    });
+    
+    function applyFilters() {
+        const schoolYearId = $('#schoolYearSelect').val();
+        const semester = $('#semesterSelect').val();
+        const startDate = $('#startDate').val();
+        const endDate = $('#endDate').val();
+        
+        const params = {};
+        if (schoolYearId) params.school_year_id = schoolYearId;
+        if (semester) params.semester = semester;
+        if (startDate) params.start_date = startDate;
+        if (endDate) params.end_date = endDate;
+        
+        loadFilteredTransparencySection(params);
+    }
+});
+
+function loadFilteredTransparencySection(params) {
+    $.ajax({
+        url: "../admin/transparency.php",
+        method: 'GET',
+        data: params,
+        success: function (response) {
+            $('#contentArea').html(response);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error loading transparency section:', error);
+            $('#contentArea').html('<p class="text-danger">Failed to load Transparency section. Please try again.</p>');
+        }
+    });
+}

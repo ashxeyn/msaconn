@@ -744,10 +744,11 @@ class Admin {
 
     // Events Functions
     function fetchEventPhotos() {
-        $sql = "SELECT e.event_id, e.image, e.description, e.created_at, 
+        $sql = "SELECT e.event_id, e.image, e.description, e.created_at, e.deleted_at,
                     u.username AS uploaded_by 
                 FROM events e
                 LEFT JOIN users u ON e.uploaded_by = u.user_id
+                WHERE e.deleted_at IS NULL
                 ORDER BY e.event_id DESC";
         
         $query = $this->db->connect()->prepare($sql);
@@ -756,7 +757,7 @@ class Admin {
     }
 
     function getEventById($eventId) {
-        $sql = "SELECT e.event_id, e.image, e.description, e.created_at, 
+        $sql = "SELECT e.event_id, e.image, e.description, e.created_at, e.deleted_at,
                     u.username AS uploaded_by 
                 FROM events e
                 LEFT JOIN users u ON e.uploaded_by = u.user_id
@@ -791,12 +792,38 @@ class Admin {
         return $query->execute();
     }
 
-    function deleteEvent($eventId) {
-        $sql = "DELETE FROM events WHERE event_id = :event_id";
+    function softDeleteEvent($eventId, $reason) {
+        $sql = "UPDATE events 
+                SET deleted_at = NOW(), reason = :reason 
+                WHERE event_id = :event_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':reason', $reason);
+        $query->bindParam(':event_id', $eventId);
+        return $query->execute();
+    }
+
+    function restoreEvent($eventId) {
+        $sql = "UPDATE events 
+                SET deleted_at = NULL, reason = NULL 
+                WHERE event_id = :event_id";
 
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':event_id', $eventId);
         return $query->execute();
+    }
+
+    function fetchArchivedEvents() {
+        $sql = "SELECT e.event_id, e.description, e.reason, e.deleted_at,
+                    u.username AS uploaded_by
+                FROM events e
+                LEFT JOIN users u ON e.uploaded_by = u.user_id
+                WHERE e.deleted_at IS NOT NULL
+                ORDER BY e.deleted_at DESC";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
     }
 
     // Calendar Functions
@@ -898,92 +925,102 @@ class Admin {
         return $query->execute();
     }
 
-// Transparency Report Functions
-function getCashInTransactions($schoolYearId, $semester = null, $month = null, $startDate = null, $endDate = null) {
-    $sql = "SELECT * FROM transparency_report 
-            WHERE transaction_type = 'Cash In' 
-            AND school_year_id = :school_year_id";
-    
-    if ($semester) {
-        $sql .= " AND semester = :semester";
+    // Transparency Report Functions
+    function getCashInTransactions($schoolYearId = null, $semester = null, $month = null, $startDate = null, $endDate = null) {
+        $sql = "SELECT * FROM transparency_report WHERE transaction_type = 'Cash In'";
+        
+        if ($schoolYearId) {
+            $sql .= " AND school_year_id = :school_year_id";
+        }
+        
+        if ($semester) {
+            $sql .= " AND semester = :semester";
+        }
+        
+        if ($startDate && $endDate) {
+            $sql .= " AND report_date BETWEEN :start_date AND :end_date";
+        } else if ($startDate) {
+            $sql .= " AND report_date >= :start_date";
+        } else if ($endDate) {
+            $sql .= " AND report_date <= :end_date";
+        } else if ($month) {
+            $sql .= " AND MONTH(report_date) = :month";
+        }
+        
+        $sql .= " ORDER BY report_date DESC";
+        
+        $query = $this->db->connect()->prepare($sql);
+        
+        if ($schoolYearId) {
+            $query->bindParam(':school_year_id', $schoolYearId);
+        }
+        
+        if ($semester) {
+            $query->bindParam(':semester', $semester);
+        }
+        
+        if ($startDate && $endDate) {
+            $query->bindParam(':start_date', $startDate);
+            $query->bindParam(':end_date', $endDate);
+        } else if ($startDate) {
+            $query->bindParam(':start_date', $startDate);
+        } else if ($endDate) {
+            $query->bindParam(':end_date', $endDate);
+        } else if ($month) {
+            $query->bindParam(':month', $month);
+        }
+        
+        $query->execute();
+        return $query->fetchAll();
     }
-    
-    if ($startDate && $endDate) {
-        $sql .= " AND report_date BETWEEN :start_date AND :end_date";
-    } else if ($startDate) {
-        $sql .= " AND report_date >= :start_date";
-    } else if ($endDate) {
-        $sql .= " AND report_date <= :end_date";
-    } else if ($month) {
-        $sql .= " AND MONTH(report_date) = :month";
-    }
-    
-    $sql .= " ORDER BY report_date DESC";
-    
-    $query = $this->db->connect()->prepare($sql);
-    $query->bindParam(':school_year_id', $schoolYearId);
-    
-    if ($semester) {
-        $query->bindParam(':semester', $semester);
-    }
-    
-    if ($startDate && $endDate) {
-        $query->bindParam(':start_date', $startDate);
-        $query->bindParam(':end_date', $endDate);
-    } else if ($startDate) {
-        $query->bindParam(':start_date', $startDate);
-    } else if ($endDate) {
-        $query->bindParam(':end_date', $endDate);
-    } else if ($month) {
-        $query->bindParam(':month', $month);
-    }
-    
-    $query->execute();
-    return $query->fetchAll();
-}
 
-function getCashOutTransactions($schoolYearId, $semester = null, $month = null, $startDate = null, $endDate = null) {
-    $sql = "SELECT * FROM transparency_report 
-            WHERE transaction_type = 'Cash Out' 
-            AND school_year_id = :school_year_id";
-    
-    if ($semester) {
-        $sql .= " AND semester = :semester";
+    function getCashOutTransactions($schoolYearId = null, $semester = null, $month = null, $startDate = null, $endDate = null) {
+        $sql = "SELECT * FROM transparency_report WHERE transaction_type = 'Cash Out'";
+        
+        if ($schoolYearId) {
+            $sql .= " AND school_year_id = :school_year_id";
+        }
+        
+        if ($semester) {
+            $sql .= " AND semester = :semester";
+        }
+        
+        if ($startDate && $endDate) {
+            $sql .= " AND report_date BETWEEN :start_date AND :end_date";
+        } else if ($startDate) {
+            $sql .= " AND report_date >= :start_date";
+        } else if ($endDate) {
+            $sql .= " AND report_date <= :end_date";
+        } else if ($month) {
+            $sql .= " AND MONTH(report_date) = :month";
+        }
+        
+        $sql .= " ORDER BY report_date DESC";
+        
+        $query = $this->db->connect()->prepare($sql);
+        
+        if ($schoolYearId) {
+            $query->bindParam(':school_year_id', $schoolYearId);
+        }
+        
+        if ($semester) {
+            $query->bindParam(':semester', $semester);
+        }
+        
+        if ($startDate && $endDate) {
+            $query->bindParam(':start_date', $startDate);
+            $query->bindParam(':end_date', $endDate);
+        } else if ($startDate) {
+            $query->bindParam(':start_date', $startDate);
+        } else if ($endDate) {
+            $query->bindParam(':end_date', $endDate);
+        } else if ($month) {
+            $query->bindParam(':month', $month);
+        }
+        
+        $query->execute();
+        return $query->fetchAll();
     }
-    
-    if ($startDate && $endDate) {
-        $sql .= " AND report_date BETWEEN :start_date AND :end_date";
-    } else if ($startDate) {
-        $sql .= " AND report_date >= :start_date";
-    } else if ($endDate) {
-        $sql .= " AND report_date <= :end_date";
-    } else if ($month) {
-        $sql .= " AND MONTH(report_date) = :month";
-    }
-    
-    $sql .= " ORDER BY report_date DESC";
-    
-    $query = $this->db->connect()->prepare($sql);
-    $query->bindParam(':school_year_id', $schoolYearId);
-    
-    if ($semester) {
-        $query->bindParam(':semester', $semester);
-    }
-    
-    if ($startDate && $endDate) {
-        $query->bindParam(':start_date', $startDate);
-        $query->bindParam(':end_date', $endDate);
-    } else if ($startDate) {
-        $query->bindParam(':start_date', $startDate);
-    } else if ($endDate) {
-        $query->bindParam(':end_date', $endDate);
-    } else if ($month) {
-        $query->bindParam(':month', $month);
-    }
-    
-    $query->execute();
-    return $query->fetchAll();
-}
 
     function getTransactionById($reportId) {
         $sql = "SELECT * FROM transparency_report WHERE report_id = :report_id";
@@ -1035,26 +1072,6 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':report_id', $reportId);
         return $query->execute();
-    }
-
-    function getTotalStudentsPaid($schoolYearId, $semester = null) {
-        $sql = "SELECT SUM(no_students) as total FROM student_paid 
-                WHERE school_year_id = :school_year_id";
-        
-        if ($semester) {
-            $sql .= " AND semester = :semester";
-        }
-        
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':school_year_id', $schoolYearId);
-        
-        if ($semester) {
-            $query->bindParam(':semester', $semester);
-        }
-        
-        $query->execute();
-        $result = $query->fetch();
-        return $result['total'] ?? 0;
     }
 
     function getAllSchoolYears() {
@@ -1127,7 +1144,7 @@ function getCashOutTransactions($schoolYearId, $semester = null, $month = null, 
         return $query->execute();
     }
 
-        // File functions
+    // FILE FUNCTIONS
     function fetchDownloadableFiles() {
         $sql = "SELECT f.file_id, f.file_name, f.file_path, f.file_type, f.file_size, 
                     f.created_at, u.username 

@@ -14,9 +14,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'get_transactions') {
     
     $cashIn = $admin->getCashInTransactions($schoolYearId, $semester);
     $cashOut = $admin->getCashOutTransactions($schoolYearId, $semester);
-    $students = $admin->getTotalStudentsPaid($schoolYearId, $semester);
+    // $students = $admin->getTotalStudentsPaid($schoolYearId, $semester);
     
-    // Calculate totals
     $totalCashIn = 0;
     foreach ($cashIn as $transaction) {
         $totalCashIn += $transaction['amount'];
@@ -46,6 +45,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'get_student_paid') {
     $schoolYearId = isset($_GET['school_year_id']) ? $_GET['school_year_id'] : null;
     $semester = isset($_GET['semester']) ? $_GET['semester'] : null;
     
-    $studentPaid = $admin->getStudentPaidRecord($schoolYearId, $semester);
+    // $studentPaid = $admin->getStudentPaidRecord($schoolYearId, $semester);
     echo json_encode($studentPaid);
 }

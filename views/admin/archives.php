@@ -5,7 +5,12 @@ require_once '../../tools/function.php';
 $adminObj = new Admin();
 $archivedColleges = $adminObj->fetchArchivedColleges();
 $archivedPrograms = $adminObj->fetchArchivedPrograms();
+$archivedEvents = $adminObj->fetchArchivedEvents();
 ?>
+
+<head>
+    <script src="../../js/admin.js"></script>
+</head>
 
 <div class="container-fluid py-4">
     <div class="row mb-4">
@@ -23,6 +28,11 @@ $archivedPrograms = $adminObj->fetchArchivedPrograms();
                             <button class="nav-link" id="programs-tab" data-bs-toggle="tab" data-bs-target="#programs" 
                                     type="button" role="tab" aria-controls="programs" aria-selected="false">
                                 Programs
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="archived-events-tab" data-bs-toggle="tab" data-bs-target="#archived-events" type="button" role="tab" aria-controls="archived-events" aria-selected="false">
+                                Events
                             </button>
                         </li>
                     </ul>
@@ -65,7 +75,7 @@ $archivedPrograms = $adminObj->fetchArchivedPrograms();
                         
                         <div class="tab-pane fade" id="programs" role="tabpanel" aria-labelledby="programs-tab">
                             <div class="table-responsive">
-                                <table id="table" class="table align-items-center mb-0">
+                                <table id="progTab" class="table align-items-center mb-0">
                                     <thead>
                                         <tr>
                                             <th>Program Name</th>
@@ -99,6 +109,43 @@ $archivedPrograms = $adminObj->fetchArchivedPrograms();
                                 </table>
                             </div>
                         </div>
+
+                        <div class="tab-pane fade" id="archived-events" role="tabpanel" aria-labelledby="archived-events-tab">
+                            <div class="table-responsive">
+                                <table id="eventTab" class="table align-items-center mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Description</th>
+                                            <th>Archived By</th>
+                                            <th>Reason</th>
+                                            <th>Archived At</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if (empty($archivedEvents)): ?>
+                                            <tr>
+                                                <td colspan="5" class="text-center">No archived events</td>
+                                            </tr>
+                                        <?php else: ?>
+                                            <?php foreach ($archivedEvents as $event): ?>
+                                                <tr>
+                                                    <td><?= clean_input($event['description']) ?></td>
+                                                    <td><?= clean_input($event['uploaded_by']) ?></td>
+                                                    <td><?= clean_input($event['reason']) ?></td>
+                                                    <td><?= $event['deleted_at'] ? date('M d, Y h:i A', strtotime($event['deleted_at'])) : 'N/A' ?></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-success" onclick="setEventId(<?= $event['event_id'] ?>, 'restore')">
+                                                            <i class="fas fa-undo"></i> Restore
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -108,6 +155,7 @@ $archivedPrograms = $adminObj->fetchArchivedPrograms();
 
 <?php include_once '../adminModals/restoreCollege.html'; ?>
 <?php include_once '../adminModals/restoreProgram.html'; ?>
+<?php include_once '../adminModals/restoreEvent.html'; ?>
 
 <script>
     $(document).ready(function() {

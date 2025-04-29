@@ -1,29 +1,29 @@
-<div class="modal fade" id="addEditEventModal" tabindex="-1">
+<div class="modal fade" id="editEventModal" tabindex="-1" aria-labelledby="editEventModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="eventModalTitle">Add Event</h5>
-            </div>
-            <div class="modal-body">
-                <form id="eventForm">
-                    <input type="hidden" id="eventId" name="eventId">
+        <form id="editEventForm" enctype="multipart/form-data">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Event</h5>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="event_id" id="editEventId">
                     <div class="mb-3">
-                        <label for="image" class="form-label">Image</label>
-                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                        <div id="image-preview" style="display: none;">
-                            <img id="preview-img" src="" alt="Current Image" class="img-thumbnail mt-2" width="100">
-                        </div>
+                        <label for="editDescription" class="form-label">Description</label>
+                        <textarea class="form-control" id="editDescription" name="description"></textarea>
+                        <div id="editDescriptionError" class="text-danger"></div>
                     </div>
-                    <div>
-                        <label for="description" class="form-label">Description</label>
-                        <input type="text" class="form-control" id="description" name="description" required>
+                    <div class="mb-3">
+                        <label for="editImage" class="form-label">Event Image</label>
+                        <input class="form-control" type="file" id="editImage" name="image">
+                        <div id="editImageError" class="text-danger"></div>
+                        <small class="text-muted">Leave blank to keep current image.</small>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary" id="confirmSaveEvent">Add Event</button>
-                    </div>
-                </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="editEventFormSubmit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 </div>

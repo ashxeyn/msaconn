@@ -50,8 +50,8 @@ if ($action === 'add' || $action === 'edit') {
     $schoolYearId = clean_input($_POST['school_year_id']);
     $paidId = clean_input($_POST['paid_id'] ?? null);
     
-    $result = $adminObj->updateStudentsPaid($noStudents, $schoolYearId, $semester, $paidId);
-    echo $result ? "success" : "error";
+    // $result = $adminObj->updateStudentsPaid($noStudents, $schoolYearId, $semester, $paidId);
+    // echo $result ? "success" : "error";
 } else {
     echo "invalid_action";
 }

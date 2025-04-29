@@ -15,6 +15,7 @@ $eventPhotos = $adminObj->fetchEventPhotos();
     <title>Manage Event Photos</title>
     <link rel="stylesheet" href="../../css/adminRegistration.css?v=<?php echo time(); ?>">
     <script src="../../js/admin.js"></script>
+    <script src="../../js/sideBar.js"></script>
     <!-- <?php include '../../includes/head.php'; ?>  -->
 
     <style>

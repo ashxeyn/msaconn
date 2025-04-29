@@ -28,7 +28,6 @@ if ($action === 'edit') {
         $targetDir = "../../assets/events/";
         $image = basename($_FILES['image']['name']);
         $targetFile = $targetDir . $image;
-
         move_uploaded_file($_FILES['image']['tmp_name'], $targetFile);
     } else {
         $image = $existingEvent['image']; 
@@ -38,7 +37,17 @@ if ($action === 'edit') {
     echo $result ? "success" : "error";
 
 } elseif ($action === 'delete') {
-    $result = $adminObj->deleteEvent($eventId);
+    $reason = clean_input($_POST['reason']);
+    if (empty($reason)) {
+        echo "error: reason_required";
+        exit;
+    }
+
+    $result = $adminObj->softDeleteEvent($eventId, $reason);
+    echo $result ? "success" : "error";
+
+} elseif ($action === 'restore') {
+    $result = $adminObj->restoreEvent($eventId);
     echo $result ? "success" : "error";
 
 } elseif ($action === 'add') {
