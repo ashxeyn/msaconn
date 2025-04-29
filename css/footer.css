@@ -1,79 +1,87 @@
 /* General Styles */
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Noto Naskh Arabic', serif;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* Ensure the body takes at least the full viewport height */
+  min-height: 100vh;
   background-color: #e6dfdf;
 }
 
 /* Footer Styles (Scoped to Footer Only) */
 footer {
+  font-family: 'Noto Naskh Arabic', serif;
   background: #000000;
   color: #fff;
-  padding: 10px; /* Reduced padding */
+  padding: 10px;
   width: 100%;
-  margin-top: auto; /* Ensure footer stays at the bottom */
+  margin-top: auto;
 }
 
 footer .footer-content {
+  font-family: 'Noto Naskh Arabic', serif;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 10px; /* Reduced padding */
-  position: relative; /* Added for positioning */
+  padding: 0 10px;
+  position: relative;
 }
 
 /* Footer Upper Left Section */
 footer .footer-upper-left {
+  font-family: 'Noto Naskh Arabic', serif;
   display: flex;
-  align-items: center; /* Align logo and text vertically */
-  margin-bottom: 10px; /* Reduced margin */
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 footer .logo {
-  width: 50px; /* Adjust logo size */
-  height: auto; /* Maintain aspect ratio */
-  margin-right: 10px; /* Space between logo and text */
+  width: 50px;
+  height: auto;
+  margin-right: 10px;
 }
 
 footer .logo-text p {
-  margin: 2px 0; /* Reduced margin */
+  font-family: 'Noto Naskh Arabic', serif;
+  margin: 2px 0;
 }
 
 footer .logo-text p strong {
-  font-size: 1.1rem; /* Slightly smaller font size */
+  font-family: 'Noto Naskh Arabic', serif;
+  font-size: 1.1rem;
 }
 
 /* Horizontal Line (Divider) */
 footer .footer-divider {
-  width: 100%; /* Full width */
-  border: 0; /* Remove default border */
-  border-top: 1px solid #444; /* Add a light gray line */
-  margin: 10px 0; /* Space above and below the line */
+  width: 100%;
+  border: 0;
+  border-top: 1px solid #444;
+  margin: 10px 0;
 }
 
 /* Footer Middle Section */
 footer .footer-middle {
+  font-family: 'Noto Naskh Arabic', serif;
   text-align: center;
-  margin: 0 auto 10px; /* Center the middle section */
-  width: 100%; /* Ensure it spans the full width */
+  margin: 0 auto 10px;
+  width: 100%;
 }
 
 footer .socials {
+  font-family: 'Noto Naskh Arabic', serif;
   display: flex;
   justify-content: center;
-  gap: 10px; /* Space between icons */
-  margin-bottom: 5px; /* Space between socials and contact info */
+  gap: 10px;
+  margin-bottom: 5px;
 }
 
 footer .socials a {
+  font-family: 'Noto Naskh Arabic', serif;
   color: #fff;
-  font-size: 1.2rem; /* Slightly smaller icons */
+  font-size: 1.2rem;
   text-decoration: none;
 }
 
@@ -82,56 +90,59 @@ footer .socials a:hover {
 }
 
 footer .contact-info p {
-  margin: 3px 0; /* Reduced margin */
-  font-size: 0.9rem; /* Slightly smaller font size */
+  font-family: 'Noto Naskh Arabic', serif;
+  margin: 3px 0;
+  font-size: 0.9rem;
 }
 
 /* Footer Lower Right Section */
 footer .footer-lower-right {
+  font-family: 'Noto Naskh Arabic', serif;
   text-align: right;
-  position: absolute; /* Position it absolutely */
-  bottom: 10px; /* Distance from the bottom */
-  right: 10px; /* Distance from the right */
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
 }
 
 footer .footer-lower-right p {
+  font-family: 'Noto Naskh Arabic', serif;
   margin: 0;
-  font-size: 0.9rem; /* Slightly smaller font size */
+  font-size: 0.9rem;
 }
 
 /* Media Queries for Responsiveness */
 @media (max-width: 768px) {
   footer .footer-content {
-    align-items: center; /* Center align content */
+    align-items: center;
   }
 
   footer .footer-upper-left {
-    flex-direction: column; /* Stack logo and text vertically */
-    align-items: center; /* Center align items */
-    text-align: center; /* Center align text */
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
 
   footer .footer-lower-right {
-    position: static; /* Remove absolute positioning */
-    text-align: center; /* Center align text */
-    margin-top: 10px; /* Add margin to separate from other content */
+    position: static;
+    text-align: center;
+    margin-top: 10px;
   }
 }
 
 @media (max-width: 480px) {
   footer .footer-content {
-    padding: 0 5px; /* Reduce padding for smaller screens */
+    padding: 0 5px;
   }
 
   footer .socials a {
-    font-size: 1rem; /* Smaller icons for smaller screens */
+    font-size: 1rem;
   }
 
   footer .contact-info p {
-    font-size: 0.8rem; /* Smaller font size for smaller screens */
+    font-size: 0.8rem;
   }
 
   footer .footer-lower-right p {
-    font-size: 0.8rem; /* Smaller font size for smaller screens */
+    font-size: 0.8rem;
   }
 }

@@ -3,7 +3,7 @@
 
 /* General Styles */
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Noto Naskh Arabic', serif;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -27,6 +27,7 @@ body {
     padding: 20px;
     display: flex;
     justify-content: center;
+    font-family: 'Noto Naskh Arabic', serif;
 }
 
 /* Type Selection Screen */
@@ -39,12 +40,14 @@ body {
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     text-align: center;
+    font-family: 'Noto Naskh Arabic', serif;
 }
 
 .registration-type-container h2 {
     color: #1a541c;
     margin-bottom: 30px;
     font-size: 28px;
+    font-family: 'Noto Naskh Arabic', serif;
 }
 
 .type-options {
@@ -74,6 +77,7 @@ body {
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
+    font-family: 'Noto Naskh Arabic', serif;
 }
 
 .type-option input[type="radio"]:checked + label {
@@ -87,12 +91,14 @@ body {
     margin-top: 0;
     margin-bottom: 10px;
     font-size: 20px;
+    font-family: 'Noto Naskh Arabic', serif;
 }
 
 .type-option label p {
     color: #666;
     margin: 0;
     font-size: 14px;
+    font-family: 'Noto Naskh Arabic', serif;
 }
 
 /* Form Styles (shared by both types) */
@@ -104,6 +110,7 @@ form {
     background-color: rgba(255, 255, 255, 0.95);
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    font-family: 'Noto Naskh Arabic', serif;
 }
 
 .form-section {
@@ -117,6 +124,7 @@ label {
     font-weight: 600;
     color: #333;
     font-size: 15px;
+    font-family: 'Noto Naskh Arabic', serif;
 }
 
 /* Input Fields */
@@ -134,6 +142,7 @@ input[type="file"] {
     transition: all 0.3s ease;
     background-color: #f9f9f9;
     box-sizing: border-box;
+    font-family: 'Noto Naskh Arabic', serif;
 }
 
 input[type="text"]:focus,
@@ -151,6 +160,7 @@ input[type="file"]:focus {
     margin: -5px 0 15px 0;
     font-weight: 500;
     display: block;
+    font-family: 'Noto Naskh Arabic', serif;
 }
 
 /* Optional Section Styling */
@@ -160,6 +170,7 @@ input[type="file"]:focus {
     border-radius: 10px;
     margin-top: 30px;
     border-left: 4px solid #1a9626;
+    font-family: 'Noto Naskh Arabic', serif;
 }
 
 .optional-section h3 {
@@ -167,6 +178,7 @@ input[type="file"]:focus {
     margin-top: 0;
     margin-bottom: 15px;
     font-size: 18px;
+    font-family: 'Noto Naskh Arabic', serif;
 }
 
 /* Upload Container Styles */
@@ -182,6 +194,7 @@ input[type="file"]:focus {
     cursor: pointer;
     background-color: #f9f9f9;
     transition: all 0.3s ease;
+    font-family: 'Noto Naskh Arabic', serif;
 }
 
 .upload-area:hover {
@@ -205,11 +218,13 @@ input[type="file"]:focus {
     margin: 0;
     font-size: 14px;
     color: #555;
+    font-family: 'Noto Naskh Arabic', serif;
 }
 
 .upload-hint {
     font-size: 12px;
     color: #888;
+    font-family: 'Noto Naskh Arabic', serif;
 }
 
 /* Image Preview Styles */
@@ -266,6 +281,7 @@ input[type="file"]:focus {
     transition: all 0.3s ease;
     text-align: center;
     border: none;
+    font-family: 'Noto Naskh Arabic', serif;
 }
 
 .back-button {
@@ -309,6 +325,7 @@ input[type="file"]:focus {
     text-align: center;
     position: relative;
     animation: fadeIn 0.3s ease-in-out;
+    font-family: 'Noto Naskh Arabic', serif;
 }
 
 .close-button {

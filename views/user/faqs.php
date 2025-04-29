@@ -13,6 +13,7 @@ $faqs = $user->fetchUserFaqs();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FAQs</title>
     <?php include '../../includes/header.php'; ?>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo $base_url; ?>css/faqs.css">
 </head>
 <body>

@@ -6,6 +6,7 @@
     <title>Two-Tone Header Design</title>
     <?php $base_url = 'http://' . $_SERVER['HTTP_HOST'] . '/msaconnect/'; ?>
     <link rel="stylesheet" href="<?php echo $base_url; ?>css/header.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
 </head>
 <body>
 <header>

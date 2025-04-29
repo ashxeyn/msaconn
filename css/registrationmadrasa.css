@@ -1,168 +1,180 @@
 * {
-    box-sizing: border-box;
-  }
-  
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background-color: #ffffff; /* 60% WHITE (Dominant) */
-    color: #000000; /* 30% BLACK (Text) */
-  }
-  
-  .content {
-    flex: 1;
-    padding: 20px;
-    background-color: #ffffff; /* 60% WHITE */
-  }
-  
-  .hero {
-    position: relative;
-    width: 100%;
-    min-height: 400px;
-    height: auto;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: white;
-  }
-  
-  .hero-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('../assets/images/login.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    z-index: 1;
-  }
-  
-  .hero-background::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0.6;
-    z-index: 2;
-  }
-  
-  .hero-content {
-    position: relative;
-    z-index: 3;
-    max-width: 800px;
-    padding: 20px;
-    background-color: rgba(0, 0, 0, 0.7); /* 30% BLACK (Contrast) */
-    border-radius: 10px;
-  }
-  
-  .volunteer-button-container {
-    text-align: center;
-    margin: 20px 0;
-    display: flex;
-    flex-direction: column; /* Stack buttons vertically */
-    align-items: center;
-  }
-  
-  .volunteer-button {
-    background-color: #9f2626; 
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin: 5px; /* Add spacing between buttons */
-    width: 90%; /* Make buttons full-width with some margin */
-    max-width: 300px; /* Limit the maximum width */
-  }
-  
-  .volunteer-button:hover {
-    background-color: #7d1f1f; /* Darker shade on hover */
-  }
-  
-  .volunteer-section {
-    width: 80%;
-    max-width: 1200px;
-    margin: 40px auto;
-    text-align: center;
-    padding: 10px; /* Reduced from default (e.g., 20px) to minimize white space */
-  }
-  
-  .volunteer-section h3 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #000000; /* 30% BLACK */
-  }
-  
-  .volunteer-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-  
-  .volunteer {
-    background-color: #ffffff; /* 60% WHITE */
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* 30% BLACK (Subtle shadow) */
-    padding: 15px;
-    text-align: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #e0e0e0; /* Light gray border */
-  }
-  
-  .volunteer .name {
-    font-size: 18px;
-    font-weight: bold;
-    margin: 0;
-    color: #000000; /* 30% BLACK */
-  }
-  select:disabled {
-    background-color: #f5f5f5;
-    cursor: not-allowed;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Noto Naskh Arabic', serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.content {
+  font-family: 'Noto Naskh Arabic', serif;
+  flex: 1;
+  padding: 20px;
+  background-color: #ffffff;
+}
+
+.hero {
+  position: relative;
+  width: 100%;
+  min-height: 400px;
+  height: auto;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  font-family: 'Noto Naskh Arabic', serif;
+}
+
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('../assets/images/login.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
+}
+
+.hero-background::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.6;
+  z-index: 2;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 3;
+  max-width: 800px;
+  padding: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  font-family: 'Noto Naskh Arabic', serif;
+}
+
+.volunteer-button-container {
+  text-align: center;
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'Noto Naskh Arabic', serif;
+}
+
+.volunteer-button {
+  background-color: #9f2626;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 5px;
+  width: 90%;
+  max-width: 300px;
+  font-family: 'Noto Naskh Arabic', serif;
+}
+
+.volunteer-button:hover {
+  background-color: #7d1f1f;
+}
+
+.volunteer-section {
+  width: 80%;
+  max-width: 1200px;
+  margin: 40px auto;
+  text-align: center;
+  padding: 10px;
+  font-family: 'Noto Naskh Arabic', serif;
+}
+
+.volunteer-section h3 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #000000;
+  font-family: 'Noto Naskh Arabic', serif;
+}
+
+.volunteer-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  font-family: 'Noto Naskh Arabic', serif;
+}
+
+.volunteer {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 15px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e0e0e0;
+  font-family: 'Noto Naskh Arabic', serif;
+}
+
+.volunteer .name {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+  color: #000000;
+  font-family: 'Noto Naskh Arabic', serif;
+}
+
+select:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 .loading-option {
-    color: #888;
-    font-style: italic;
+  color: #888;
+  font-style: italic;
+  font-family: 'Noto Naskh Arabic', serif;
 }
-  
-  @media (max-width: 768px) {
-    .volunteer-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-    .volunteer-button {
-      padding: 8px 16px; /* Reduce padding for smaller screens */
-      font-size: 14px; /* Reduce font size */
-    }
+
+@media (max-width: 768px) {
+  .volunteer-grid {
+    grid-template-columns: 1fr 1fr;
   }
-  
-  @media (max-width: 480px) {
-    .volunteer-grid {
-        grid-template-columns: 1fr;
-    }
-    .volunteer-button-container {
-      display: flex;
-      flex-direction: column; /* Stack buttons vertically */
-      align-items: center;
-    }
-  
-    .volunteer-button {
-      width: 90%; /* Make buttons full-width with some margin */
-      max-width: 300px; /* Limit the maximum width */
-      padding: 10px; /* Adjust padding */
-      font-size: 14px; /* Adjust font size */
-    }
+  .volunteer-button {
+    padding: 8px 16px;
+    font-size: 14px;
   }
+}
+
+@media (max-width: 480px) {
+  .volunteer-grid {
+    grid-template-columns: 1fr;
+  }
+  .volunteer-button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .volunteer-button {
+    width: 90%;
+    max-width: 300px;
+    padding: 10px;
+    font-size: 14px;
+  }
+}

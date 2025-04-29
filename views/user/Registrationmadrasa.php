@@ -6,6 +6,7 @@
     <title>Registration Madrasa</title>
 </head>
 <body>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">  
     <?php include '../../includes/header.php'; ?>
     <link rel="stylesheet" href="<?php echo $base_url; ?>css/registrationmadrasa.css">
     

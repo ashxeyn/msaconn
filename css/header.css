@@ -1,28 +1,29 @@
-
 :root {
   --primary-color: #00441b; /* Green */
   --secondary-color: #000000; /* Black */
   --text-color: #ffffff; /* White */
   --hover-color: #1a9626; /* Light Green */
   --active-color: #be0b0b; /* Red */
-  --font-family: Arial, sans-serif;
+  --font-family: 'Noto Naskh Arabic', serif;
   --transition-speed: 0.3s;
 }
 
 /* General Styles */
 body {
-  font-family: sans-serif(--font-family);
+  font-family: var(--font-family);
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
+  margin-top: 0 !important;
 }
 
 /* Header Styles */
 header {
+  all: unset;
   position: sticky;
   top: 0;
-  z-index: 1000; /* Ensures header stays above other content */
+  z-index: 9999;
   background: var(--secondary-color);
   color: var(--text-color);
   display: flex;
@@ -30,6 +31,8 @@ header {
   align-items: flex-start;
   width: 100%;
   box-sizing: border-box;
+  height: auto;
+  font-family: var(--font-family);
 }
 
 /* Top Section: Logo and MSA CONNECT */
@@ -41,11 +44,13 @@ header {
   justify-content: space-between;
   align-items: center;
   box-sizing: border-box;
+  font-family: var(--font-family);
 }
 
 .header-top .logo {
   display: flex;
   align-items: center;
+  font-family: var(--font-family);
 }
 
 .header-top .logo a {
@@ -53,6 +58,7 @@ header {
   align-items: center;
   text-decoration: none;
   color: var(--text-color);
+  font-family: var(--font-family);
 }
 
 .header-top .logo .logo-image {
@@ -64,16 +70,19 @@ header {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  font-family: var(--font-family);
 }
 
 .header-top .logo .logo-text {
   font-size: 28px;
   font-weight: bold;
   margin-bottom: 5px;
+  font-family: var(--font-family);
 }
 
 .header-top .logo .logo-subtext {
   font-size: 14px;
+  font-family: var(--font-family);
 }
 
 /* Mobile Menu Toggle Button */
@@ -87,6 +96,7 @@ header {
   border: none;
   cursor: pointer;
   padding: 0;
+  font-family: var(--font-family);
 }
 
 .menu-toggle .hamburger {
@@ -105,6 +115,7 @@ header {
   justify-content: center;
   align-items: center;
   box-sizing: border-box;
+  font-family: var(--font-family);
 }
 
 .nav-links {
@@ -112,11 +123,13 @@ header {
   display: flex;
   margin: 0;
   padding: 0;
+  font-family: var(--font-family);
 }
 
 .nav-links li {
   position: relative;
   margin-left: 20px;
+  font-family: var(--font-family);
 }
 
 .nav-links li a {
@@ -124,6 +137,7 @@ header {
   text-decoration: none;
   font-size: 16px;
   transition: color var(--transition-speed);
+  font-family: var(--font-family);
 }
 
 /* Dropdown Menu Styles */
@@ -141,12 +155,14 @@ header {
   margin: 0;
   border-radius: 5px;
   overflow: hidden;
+  font-family: var(--font-family);
 }
 
 .nav-links .dropdown-content li {
   padding: 16px 20px;
   background-color: var(--text-color);
   border-bottom: 1px solid #ffffff;
+  font-family: var(--font-family);
 }
 
 .nav-links .dropdown-content li:last-child {
@@ -158,6 +174,7 @@ header {
   text-decoration: none;
   display: block;
   transition: background-color var(--transition-speed);
+  font-family: var(--font-family);
 }
 
 .nav-links .dropdown-content li a:hover {
