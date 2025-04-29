@@ -7,6 +7,7 @@ $adminObj = new Admin();
 $action = $_POST['action'] ?? '';
 $reportId = $_POST['report_id'] ?? null;
 $userId = $_SESSION['user_id'] ?? null;
+$type = $_POST['type'] ?? '';
 
 if ($action === 'add' || $action === 'edit') {
     $reportDate = clean_input($_POST['report_date']);
@@ -42,16 +43,20 @@ if ($action === 'add' || $action === 'edit') {
     echo $result ? "success" : "error";
 
 } elseif ($action === 'delete') {
-    $result = $adminObj->deleteTransparencyTransaction($reportId);
-    echo $result ? "success" : "error";
-} elseif ($action === 'update_students') {
-    $noStudents = clean_input($_POST['no_students']);
-    $semester = clean_input($_POST['semester']);
-    $schoolYearId = clean_input($_POST['school_year_id']);
-    $paidId = clean_input($_POST['paid_id'] ?? null);
+    $reason = clean_input($_POST['reason'] ?? '');
     
-    // $result = $adminObj->updateStudentsPaid($noStudents, $schoolYearId, $semester, $paidId);
-    // echo $result ? "success" : "error";
+    if (empty($reason)) {
+        echo "error: reason_required";
+        exit;
+    }
+    
+    $result = $adminObj->softDeleteTransaction($reportId, $reason);
+    echo $result ? "success" : "error";
+    
+} elseif ($action === 'restore') {
+    $result = $adminObj->restoreTransaction($reportId);
+    echo $result ? "success" : "error";
+    
 } else {
     echo "invalid_action";
 }

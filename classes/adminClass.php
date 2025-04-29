@@ -995,7 +995,7 @@ class Admin {
 
     // Transparency Report Functions
     function getCashInTransactions($schoolYearId = null, $semester = null, $month = null, $startDate = null, $endDate = null) {
-        $sql = "SELECT * FROM transparency_report WHERE transaction_type = 'Cash In'";
+        $sql = "SELECT * FROM transparency_report WHERE transaction_type = 'Cash In' AND deleted_at IS NULL";
         
         if ($schoolYearId) {
             $sql .= " AND school_year_id = :school_year_id";
@@ -1043,7 +1043,7 @@ class Admin {
     }
 
     function getCashOutTransactions($schoolYearId = null, $semester = null, $month = null, $startDate = null, $endDate = null) {
-        $sql = "SELECT * FROM transparency_report WHERE transaction_type = 'Cash Out'";
+        $sql = "SELECT * FROM transparency_report WHERE transaction_type = 'Cash Out' AND deleted_at IS NULL";
         
         if ($schoolYearId) {
             $sql .= " AND school_year_id = :school_year_id";
@@ -1135,11 +1135,40 @@ class Admin {
         return $query->execute();
     }
 
-    function deleteTransparencyTransaction($reportId) {
-        $sql = "DELETE FROM transparency_report WHERE report_id = :report_id";
+    function softDeleteTransaction($reportId, $reason) {
+        $sql = "UPDATE transparency_report 
+                SET is_deleted = 1, 
+                    reason = :reason,
+                    deleted_at = NOW() 
+                WHERE report_id = :report_id";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':report_id', $reportId);
+        $query->bindParam(':reason', $reason);
+        
+        return $query->execute();
+    }
+
+    function restoreTransaction($reportId) {
+        $sql = "UPDATE transparency_report 
+                SET deleted_at = NULL, reason = NULL 
+                WHERE report_id = :report_id";
+
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':report_id', $reportId);
         return $query->execute();
+    }
+
+    function fetchArchivedTransactions($transactionType) {
+        $sql = "SELECT * FROM transparency_report 
+                WHERE transaction_type = :transaction_type 
+                AND deleted_at IS NOT NULL 
+                ORDER BY deleted_at DESC";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':transaction_type', $transactionType);
+        $query->execute();
+        return $query->fetchAll();
     }
 
     function getAllSchoolYears() {

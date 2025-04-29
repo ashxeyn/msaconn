@@ -265,6 +265,20 @@ function loadOnlineSection () {
     });
 }
 
+function loadUpdatesSection () {
+    $.ajax({
+        url: "../admin/updates.php",
+        method: 'GET',
+        success: function (response) {
+            $('#contentArea').html(response);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error loading updates section:', error);
+            $('#contentArea').html('<p class="text-danger">Failed to load Updates section. Please try again.</p>');
+        }
+    });
+}
+
 //TOP NAVIGATION 
 function loadArchives () {
     $.ajax({
