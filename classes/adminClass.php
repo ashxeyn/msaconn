@@ -685,61 +685,88 @@ class Admin {
 
     // FAQs Functions
     function fetchFaqs() {
-        $sql = "SELECT * FROM faqs ORDER BY category ASC";
+        $sql = "SELECT f.faq_id, f.question, f.answer, f.category, f.created_at, f.deleted_at, f.reason
+                FROM faqs f
+                WHERE f.is_deleted = 0
+                ORDER BY f.category ASC";
+        
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         return $query->fetchAll();
     }
-    
+
     function getFaqById($faqId) {
-        $sql = "SELECT 
-                    faq_id,
-                    question,
-                    answer,
-                    category
-                FROM faqs
-                WHERE faq_id = :faq_id";
-    
+        $sql = "SELECT * FROM faqs WHERE faq_id = :faq_id";
+        
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':faq_id', $faqId);
         $query->execute();
-    
+
         return $query->fetch();
     }
 
     function updateFaq($faqId, $question, $answer, $category) {
         $sql = "UPDATE faqs 
-                SET question = :question, answer = :answer, category = :category
+                SET question = :question, 
+                    answer = :answer, 
+                    category = :category
                 WHERE faq_id = :faq_id";
-    
+
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':question', $question);
         $query->bindParam(':answer', $answer);
         $query->bindParam(':category', $category);
         $query->bindParam(':faq_id', $faqId);
-    
+
         return $query->execute();
     }
-    
-    function addFaq($question, $answer, $category) {
+
+    function addFaq($question, $answer, $category, $userId) {
         $sql = "INSERT INTO faqs (question, answer, category) 
-                    VALUES (:question, :answer, :category)";
-    
+                VALUES (:question, :answer, :category)";
+
         $query = $this->db->connect()->prepare($sql);
-         $query->bindParam(':question', $question);
+        $query->bindParam(':question', $question);
         $query->bindParam(':answer', $answer);
         $query->bindParam(':category', $category);
-    
+
         return $query->execute();
     }
-    
-    function deleteFaq($faqId) {
-        $sql = "DELETE FROM faqs WHERE faq_id = :faq_id";
-    
+
+    function softDeleteFaq($faqId, $reason) {
+        $sql = "UPDATE faqs 
+                SET is_deleted = 1,
+                    deleted_at = NOW(), 
+                    reason = :reason 
+                WHERE faq_id = :faq_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':reason', $reason);
+        $query->bindParam(':faq_id', $faqId);
+        return $query->execute();
+    }
+
+    function restoreFaq($faqId) {
+        $sql = "UPDATE faqs 
+                SET is_deleted = 0,
+                    deleted_at = NULL, 
+                    reason = NULL 
+                WHERE faq_id = :faq_id";
+
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':faq_id', $faqId);
-    
         return $query->execute();
+    }
+
+    function fetchArchivedFaqs() {
+        $sql = "SELECT faq_id, question, answer, category, reason, deleted_at
+                FROM faqs 
+                WHERE is_deleted = 1
+                ORDER BY deleted_at DESC";
+    
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
     }
 
     // Events Functions
@@ -995,7 +1022,7 @@ class Admin {
 
     // Transparency Report Functions
     function getCashInTransactions($schoolYearId = null, $semester = null, $month = null, $startDate = null, $endDate = null) {
-        $sql = "SELECT * FROM transparency_report WHERE transaction_type = 'Cash In'";
+        $sql = "SELECT * FROM transparency_report WHERE transaction_type = 'Cash In' AND deleted_at IS NULL";
         
         if ($schoolYearId) {
             $sql .= " AND school_year_id = :school_year_id";
@@ -1043,7 +1070,7 @@ class Admin {
     }
 
     function getCashOutTransactions($schoolYearId = null, $semester = null, $month = null, $startDate = null, $endDate = null) {
-        $sql = "SELECT * FROM transparency_report WHERE transaction_type = 'Cash Out'";
+        $sql = "SELECT * FROM transparency_report WHERE transaction_type = 'Cash Out' AND deleted_at IS NULL";
         
         if ($schoolYearId) {
             $sql .= " AND school_year_id = :school_year_id";
@@ -1135,11 +1162,40 @@ class Admin {
         return $query->execute();
     }
 
-    function deleteTransparencyTransaction($reportId) {
-        $sql = "DELETE FROM transparency_report WHERE report_id = :report_id";
+    function softDeleteTransaction($reportId, $reason) {
+        $sql = "UPDATE transparency_report 
+                SET is_deleted = 1, 
+                    reason = :reason,
+                    deleted_at = NOW() 
+                WHERE report_id = :report_id";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':report_id', $reportId);
+        $query->bindParam(':reason', $reason);
+        
+        return $query->execute();
+    }
+
+    function restoreTransaction($reportId) {
+        $sql = "UPDATE transparency_report 
+                SET deleted_at = NULL, reason = NULL 
+                WHERE report_id = :report_id";
+
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':report_id', $reportId);
         return $query->execute();
+    }
+
+    function fetchArchivedTransactions($transactionType) {
+        $sql = "SELECT * FROM transparency_report 
+                WHERE transaction_type = :transaction_type 
+                AND deleted_at IS NOT NULL 
+                ORDER BY deleted_at DESC";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':transaction_type', $transactionType);
+        $query->execute();
+        return $query->fetchAll();
     }
 
     function getAllSchoolYears() {
@@ -1158,7 +1214,9 @@ class Admin {
 
     // ABOUTS Functions
     function fetchAbouts() {
-        $sql = "SELECT * FROM about_msa ORDER BY id DESC";
+        $sql = "SELECT * FROM about_msa 
+                WHERE is_deleted = 0
+                ORDER BY id DESC";
         
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -1177,7 +1235,8 @@ class Admin {
     }
 
     function addAbout($mission, $vision, $description) {
-        $sql = "INSERT INTO about_msa (mission, vision, description) VALUES (:mission, :vision, :description)";
+        $sql = "INSERT INTO about_msa (mission, vision, description) 
+                VALUES (:mission, :vision, :description)";
         
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':mission', $mission);
@@ -1203,13 +1262,43 @@ class Admin {
         return $query->execute();
     }
 
-    function deleteAbout($aboutId) {
-        $sql = "DELETE FROM about_msa WHERE id = :about_id";
+    function softDeleteAbout($aboutId, $reason) {
+        $sql = "UPDATE about_msa 
+                SET is_deleted = 1, 
+                    deleted_at = NOW(), 
+                    reason = :reason 
+                WHERE id = :about_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':reason', $reason);
+        $query->bindParam(':about_id', $aboutId);
+
+        return $query->execute();
+    }
+
+    function restoreAbout($aboutId) {
+        $sql = "UPDATE about_msa 
+                SET is_deleted = 0, 
+                    deleted_at = NULL, 
+                    reason = NULL 
+                WHERE id = :about_id";
 
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':about_id', $aboutId);
 
         return $query->execute();
+    }
+
+    function fetchArchivedAbouts() {
+        $sql = "SELECT * FROM about_msa 
+                WHERE is_deleted = 1
+                ORDER BY deleted_at DESC";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        
+        return $query->fetchAll();
+        // var_dump($result);
     }
 
     // FILE FUNCTIONS

@@ -1,55 +1,40 @@
-<?php
-require_once '../../classes/adminClass.php';
-require_once '../../tools/function.php';
-
-$adminObj = new Admin();
-
-$faqId = $_GET['faq_id'] ?? null;
-$faq = null;
-?>
-
-<div class="modal fade" id="addEditFaqModal" tabindex="-1">
+<div class="modal fade" id="editFaqModal" tabindex="-1" aria-labelledby="editFaqModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="faqModalTitle">
-                    <?= $faq ? 'Edit FAQ' : 'Add FAQ' ?>
-                </h5>
-            </div>
-            <div class="modal-body">
-                <form id="faqForm">
-                    <input type="hidden" id="faqId" name="faqId" value="<?= $faq ? $faq['faq_id'] : '' ?>">
-                    
+        <form id="editFaqForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit FAQ</h5>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="faq_id" id="editFaqId">
                     <div class="mb-3">
-                        <label for="faqQuestion" class="form-label">Question</label>
-                        <input type="text" class="form-control" id="question" name="question" 
-                               value="<?= $faq ? clean_input($faq['question']) : '' ?>" required>
+                        <label for="editQuestion" class="form-label">Question</label>
+                        <input type="text" class="form-control" id="editQuestion" name="question">
+                        <div id="editQuestionError" class="text-danger"></div>
                     </div>
-
                     <div class="mb-3">
-                        <label for="faqAnswer" class="form-label">Answer</label>
-                        <textarea class="form-control" id="answer" name="answer" rows="3" required><?= $faq ? clean_input($faq['answer']) : '' ?></textarea>
+                        <label for="editAnswer" class="form-label">Answer</label>
+                        <textarea class="form-control" id="editAnswer" name="answer" rows="3"></textarea>
+                        <div id="editAnswerError" class="text-danger"></div>
                     </div>
-
                     <div class="mb-3">
-                        <label for="faqCategory" class="form-label">Category</label>
-                        <select class="form-control" id="category" name="category" required>
-                            <option value="General Questions" <?= ($faq && $faq['category'] == 'General Questions') ? 'selected' : '' ?>>General Questions</option>
-                            <option value="Events and Activities" <?= ($faq && $faq['category'] == 'Events and Activities') ? 'selected' : '' ?>>Events and Activities</option>
-                            <option value="Donation and Support" <?= ($faq && $faq['category'] == 'Donation and Support') ? 'selected' : '' ?>>Donation and Support</option>
-                            <option value="Contact and Support" <?= ($faq && $faq['category'] == 'Contact and Support') ? 'selected' : '' ?>>Contact and Support</option>
-                            <option value="Other" <?= ($faq && $faq['category'] == 'Other') ? 'selected' : '' ?>>Other</option>
+                        <label for="editCategory" class="form-label">Category</label>
+                        <select class="form-control" id="editCategory" name="category">
+                            <option value="">Select Category</option>
+                            <option value="General Questions">General Questions</option>
+                            <option value="Events and Activities">Events and Activities</option>
+                            <option value="Donation and Support">Donation and Support</option>
+                            <option value="Contact and Support">Contact and Support</option>
+                            <option value="Other">Other</option>
                         </select>
+                        <div id="editCategoryError" class="text-danger"></div>
                     </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary" id="confirmSaveFaq">
-                            <?= $faq ? 'Update FAQ' : 'Add FAQ' ?>
-                        </button>
-                    </div>
-                </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="editFaqFormSubmit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 </div>

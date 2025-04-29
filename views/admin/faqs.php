@@ -13,7 +13,6 @@ $faqs = $adminObj->fetchFaqs();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FAQs Management</title>
-    <link rel="stylesheet" href="../../css/adminfaqs.css?v=<?php echo time(); ?>">
     <script src="../../js/admin.js"></script> 
     <!-- <?php include '../../includes/head.php'; ?> -->
 </head>

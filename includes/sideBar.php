@@ -34,6 +34,11 @@ $userRole = $_SESSION['role'] ?? '';
             <hr class="text-white">
         </li>
         <li class="nav-item">
+            <a href="#" onclick="loadUpdatesSection()" class="nav-link text-white">
+            <i class="bi bi-newspaper me-2"></i> <span class="sidebar-text">Updates</span>
+            </a>
+        </li>
+        <li class="nav-item">
             <a href="#" onclick="loadEventsSection()" class="nav-link text-white">
                 <i class="bi bi-calendar-event me-2"></i> <span class="sidebar-text">Events</span>
             </a>

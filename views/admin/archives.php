@@ -8,6 +8,10 @@ $archivedPrograms = $adminObj->fetchArchivedPrograms();
 $archivedEvents = $adminObj->fetchArchivedEvents();
 $archivedCalendar = $adminObj->fetchArchivedCalendar();
 $archivedPrayers = $adminObj->fetchArchivedPrayers();
+$archivedCashIn = $adminObj->fetchArchivedTransactions('Cash In');
+$archivedCashOut = $adminObj->fetchArchivedTransactions('Cash Out');
+$archivedFAQs = $adminObj->fetchArchivedFAQs();
+$archivedAboutMsa = $adminObj->fetchArchivedAbouts();
 ?>
 
 <head>
@@ -47,6 +51,24 @@ $archivedPrayers = $adminObj->fetchArchivedPrayers();
                             <button class="nav-link" id="prayer-tab" data-bs-toggle="tab" data-bs-target="#prayer" 
                                     type="button" role="tab" aria-controls="prayer" aria-selected="false">
                                 Prayer
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="transparency-tab" data-bs-toggle="tab" data-bs-target="#transparency" 
+                                    type="button" role="tab" aria-controls="transparency" aria-selected="false">
+                                Transparency
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="faqs-tab" data-bs-toggle="tab" data-bs-target="#faqs" 
+                                    type="button" role="tab" aria-controls="faqs" aria-selected="false">
+                                FAQs
+                            </button>    
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="about-msa-archives-tab" data-bs-toggle="tab" data-bs-target="#about-msa-archives" 
+                                    type="button" role="tab" aria-controls="about-msa-archives" aria-selected="false">
+                                About MSA
                             </button>
                         </li>
                     </ul>
@@ -240,6 +262,189 @@ $archivedPrayers = $adminObj->fetchArchivedPrayers();
                                 </table>
                             </div>
                         </div>
+                        <div class="tab-pane fade" id="transparency" role="tabpanel" aria-labelledby="transparency-tab">
+                            <ul class="nav nav-tabs" id="transparencySubTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="cashin-tab" data-bs-toggle="tab" data-bs-target="#cashin" 
+                                            type="button" role="tab" aria-controls="cashin" aria-selected="true">
+                                        Cash In
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="cashout-tab" data-bs-toggle="tab" data-bs-target="#cashout" 
+                                            type="button" role="tab" aria-controls="cashout" aria-selected="false">
+                                        Cash Out
+                                    </button>
+                                </li>
+                            </ul>
+                            
+                            <div class="tab-content" id="transparencySubTabsContent">
+                                <div class="tab-pane fade show active" id="cashin" role="tabpanel" aria-labelledby="cashin-tab">
+                                    <div class="table-responsive mt-3">
+                                        <table id="cashinTab" class="table align-items-center mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Description</th>
+                                                    <th>Category</th>
+                                                    <th>Amount</th>
+                                                    <th>Semester</th>
+                                                    <th>Reason</th>
+                                                    <th>Archived At</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php if (empty($archivedCashIn)): ?>
+                                                    <tr>
+                                                        <td colspan="8" class="text-center">No archived Cash In transactions</td>
+                                                    </tr>
+                                                <?php else: ?>
+                                                    <?php foreach ($archivedCashIn as $transaction): ?>
+                                                        <tr>
+                                                            <td><?= date('M d, Y', strtotime($transaction['report_date'])) ?></td>
+                                                            <td><?= clean_input($transaction['expense_detail']) ?></td>
+                                                            <td><?= clean_input($transaction['expense_category']) ?></td>
+                                                            <td class="text-success">+<?= number_format($transaction['amount'], 2) ?></td>
+                                                            <td><?= clean_input($transaction['semester']) ?></td>
+                                                            <td><?= clean_input($transaction['reason']) ?></td>
+                                                            <td><?= $transaction['deleted_at'] ? date('M d, Y h:i A', strtotime($transaction['deleted_at'])) : 'N/A' ?></td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-success" 
+                                                                        onclick="openTransactionModal('restoreTransactionModal', <?= $transaction['report_id'] ?>, 'restore', 'Cash In')">
+                                                                    <i class="fas fa-undo"></i> Restore
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <div class="tab-pane fade" id="cashout" role="tabpanel" aria-labelledby="cashout-tab">
+                                    <div class="table-responsive mt-3">
+                                        <table id="cashoutTab" class="table align-items-center mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date</th>
+                                                    <th>Description</th>
+                                                    <th>Category</th>
+                                                    <th>Amount</th>
+                                                    <th>Semester</th>
+                                                    <th>Reason</th>
+                                                    <th>Archived At</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php if (empty($archivedCashOut)): ?>
+                                                    <tr>
+                                                        <td colspan="8" class="text-center">No archived Cash Out transactions</td>
+                                                    </tr>
+                                                <?php else: ?>
+                                                    <?php foreach ($archivedCashOut as $transaction): ?>
+                                                        <tr>
+                                                            <td><?= date('M d, Y', strtotime($transaction['report_date'])) ?></td>
+                                                            <td><?= clean_input($transaction['expense_detail']) ?></td>
+                                                            <td><?= clean_input($transaction['expense_category']) ?></td>
+                                                            <td class="text-danger">-<?= number_format($transaction['amount'], 2) ?></td>
+                                                            <td><?= clean_input($transaction['semester']) ?></td>
+                                                            <td><?= clean_input($transaction['reason']) ?></td>
+                                                            <td><?= $transaction['deleted_at'] ? date('M d, Y h:i A', strtotime($transaction['deleted_at'])) : 'N/A' ?></td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-success" 
+                                                                        onclick="openTransactionModal('restoreTransactionModal', <?= $transaction['report_id'] ?>, 'restore', 'Cash Out')">
+                                                                    <i class="fas fa-undo"></i> Restore
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="faqs" role="tabpanel" aria-labelledby="faqs-tab">
+                            <div class="table-responsive">
+                            <table id="faqsTab" class="table align-items-center mb-0">
+                                <thead>
+                                        <tr>
+                                            <th>Question</th>
+                                            <th>Answer</th>
+                                            <th>Category</th>
+                                            <th>Reason</th>
+                                            <th>Archived Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if (empty($archivedFAQs)): ?>
+                                            <tr>
+                                                <td colspan="6" class="text-center py-4">No archived FAQs found</td>
+                                            </tr>
+                                        <?php else: ?>
+                                            <?php foreach ($archivedFAQs as $faq): ?>
+                                                <tr>
+                                                    <td><?= clean_input($faq['question']) ?></td>
+                                                    <td><?= clean_input($faq['answer']) ?></td>
+                                                    <td><?= clean_input($faq['category']) ?></td>
+                                                    <td><?= clean_input($faq['reason']) ?></td>
+                                                    <td><?= date('M j, Y', strtotime($faq['deleted_at'])) ?></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-success" 
+                                                                onclick="openFaqModal('restoreFaqModal', <?= $faq['faq_id'] ?>, 'restore')">
+                                                            <i class="fas fa-rotate-left"></i> Restore
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table> 
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="about-msa-archives" role="tabpanel" aria-labelledby="about-msa-archives-tab">
+                            <div class="table-responsive">
+                                <table id="aboutMsaArchivesTab" class="table align-items-center mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Mission</th>
+                                            <th>Vision</th>
+                                            <th>Description</th>
+                                            <th>Reason</th>
+                                            <th>Archived Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if (empty($archivedAboutMsa)): ?>
+                                            <tr>
+                                                <td colspan="6" class="text-center">No archived About MSA content found</td>
+                                            </tr>
+                                        <?php else: ?>
+                                            <?php foreach ($archivedAboutMsa as $about): ?>
+                                                <tr>
+                                                    <td><?= clean_input($about['mission']) ?></td>
+                                                    <td><?= clean_input($about['vision']) ?></td>
+                                                    <td><?= clean_input($about['description']) ?></td>
+                                                    <td><?= clean_input($about['reason']) ?></td>
+                                                    <td><?= date('M j, Y', strtotime($about['deleted_at'])) ?></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-success" onclick="openAboutModal('restoreAboutModal', <?= $about['id'] ?>, 'restore')">
+                                                            <i class="fas fa-rotate-left"></i> Restore
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -252,6 +457,9 @@ $archivedPrayers = $adminObj->fetchArchivedPrayers();
 <?php include_once '../adminModals/restoreEvent.html'; ?>
 <?php include_once '../adminModals/restoreCalendar.html'; ?>
 <?php include_once '../adminModals/restorePrayer.html'; ?>
+<?php include_once '../adminModals/restoreTransaction.html'; ?>
+<?php include_once '../adminModals/restoreFaq.html'; ?>
+<?php include_once '../adminModals/restoreAbouts.html'; ?>
 
 <script>
     $(document).ready(function() {

@@ -1,16 +1,24 @@
-<div class="modal fade" id="deleteAboutModal" tabindex="-1">
+<div class="modal fade" id="archiveAboutModal" tabindex="-1" aria-labelledby="archiveAboutModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5>Delete About</h5>
+        <form id="archiveAboutForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Archive About</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to archive this about information?</p>
+                    <input type="hidden" id="archiveAboutId">
+                    <div class="mb-3">
+                        <label for="archiveReason" class="form-label">Reason for Archiving</label>
+                        <textarea class="form-control" name="archiveReason" id="archiveReason" rows="3" placeholder="Please provide a reason for archiving this about information"></textarea>
+                        <div id="archiveReasonError" class="text-danger"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="confirmArchiveAbout" class="btn btn-danger">Archive</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
             </div>
-            <div class="modal-body">
-                Are you sure you want to delete this about information?
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <button class="btn btn-danger" id="confirmDeleteAbout">Delete</button>
-            </div>
-        </div>
+        </form>
     </div>
 </div>
