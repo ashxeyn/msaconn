@@ -11,7 +11,6 @@ $abouts = $adminObj->fetchAbouts();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About MSA</title>
-    <link rel="stylesheet" href="../../css/adminregistration.css?v=<?php echo time(); ?>">
     <script src="../../js/admin.js"></script>
     <!-- <?php include '../../includes/head.php'; ?>  -->
     <style>

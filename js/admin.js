@@ -1300,6 +1300,169 @@ function processFaq(faqId, action) {
     });
 }
 
+// ABOUTS FUNCTIONS
+function openAboutModal(modalId, aboutId, action) {
+    $('.modal').modal('hide');
+    $('.modal-backdrop').remove(); 
+    setTimeout(() => {
+        const modal = $('#' + modalId);
+        modal.modal('show'); 
+        setAboutId(aboutId, action);
+    }, 300);
+}
+
+function setAboutId(aboutId, action) {
+    if (action === 'edit') {
+        $.ajax({
+            url: "../../handler/admin/getAbouts.php",
+            type: "GET",
+            data: { id: aboutId },
+            success: function(response) {
+                try {
+                    const about = JSON.parse(response);
+                    $('#editAboutId').val(about.id);
+                    $('#editMission').val(about.mission);
+                    $('#editVision').val(about.vision);
+                    $('#editDescription').val(about.description);
+                    $('#editAboutModal .modal-title').text('Edit About MSA');
+                    $('#editAboutFormSubmit').text('Update About');
+                    clearValidationErrors();
+                    $('#editAboutModal').modal('show');
+                } catch (e) {
+                    console.error("Invalid JSON:", response);
+                    alert("Failed to load about details.");
+                }
+            },
+            error: function() {
+                alert("Failed to load about details.");
+            }
+        });
+
+        $('#editAboutForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateAboutForm()) {
+                processAbout(aboutId, 'edit');
+            }
+        });
+    } else if (action === 'add') {
+        $('#editAboutForm')[0].reset();
+        clearValidationErrors();
+        $('#editAboutModal .modal-title').text('Add About MSA');
+        $('#editAboutFormSubmit').text('Add About');
+        $('#editAboutModal').modal('show');
+
+        $('#editAboutForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateAboutForm()) {
+                processAbout(null, 'add');
+            }
+        });
+    } else if (action === 'delete') {
+        $('#archiveAboutId').val(aboutId);
+        $('#archiveAboutModal').modal('show');
+    
+        $('#confirmArchiveAbout').off('click').on('click', function () {
+            const reason = $('#archiveReason').val().trim();
+            if (reason === '') {
+                $('#archiveReasonError').text('Please provide a reason for archiving');
+                return;
+            }
+            $('#archiveReasonError').text('');
+            processAbout(aboutId, 'delete');
+        });    
+    } else if (action === 'restore') {
+        $('#restoreAboutId').val(aboutId);
+        $('#restoreAboutModal').modal('show');
+
+        $('#restoreAboutForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            processAbout(aboutId, 'restore');
+        });
+    }
+}
+
+function validateAboutForm() {
+    let isValid = true;
+    clearValidationErrors();
+
+    const mission = $('#editMission').val().trim();
+    const vision = $('#editVision').val().trim();
+    const description = $('#editDescription').val().trim();
+
+    if (mission === '') {
+        $('#editMissionError').text('Mission statement is required');
+        isValid = false;
+    }
+
+    if (vision === '') {
+        $('#editVisionError').text('Vision statement is required');
+        isValid = false;
+    }
+
+    if (description === '') {
+        $('#editDescriptionError').text('Description is required');
+        isValid = false;
+    }
+
+    return isValid;
+}
+
+function clearValidationErrors() {
+    $('#editMissionError').text('');
+    $('#editVisionError').text('');
+    $('#editDescriptionError').text('');
+    $('#archiveReasonError').text('');
+}
+
+function processAbout(aboutId, action) {
+    let formData = new FormData();
+
+    if (action === 'add' || action === 'edit') {
+        formData = new FormData(document.getElementById('editAboutForm'));
+    } else if (action === 'delete') {
+        formData.append('reason', $('#archiveReason').val());
+    } else if (action === 'restore') {
+        formData.append('id', $('#restoreAboutId').val());
+    }
+
+    if (aboutId) {
+        formData.append('id', aboutId);
+    }
+    formData.append('action', action);
+
+    $.ajax({
+        url: "../../handler/admin/aboutsAction.php",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.trim() === "success") {
+                $(".modal").modal("hide");
+                $("body").removeClass("modal-open");
+                $(".modal-backdrop").remove();
+
+                if (action === 'restore') {
+                    loadArchives(); 
+                } else {
+                    loadAboutsSection(); 
+                }
+
+                showToast('Success', 
+                    action === 'delete' ? 'About information has been archived.' :
+                    action === 'restore' ? 'About information has been restored.' :
+                    'About information has been ' + (action === 'edit' ? 'updated' : 'added') + '.', 
+                    'success');
+            } else {
+                alert("Failed to process request: " + response);
+            }
+        },
+        error: function() {
+            alert("An error occurred while processing the request.");
+        }
+    });
+}
+
 // REGISTRATION FUNCTIONS
 function openModal(modalId, volunteerId, action) {
     $('.modal').modal('hide'); 
@@ -1646,95 +1809,6 @@ function processModerator(moderatorId, action) {
 
 
 
-// ABOUTS FUNCTIONS
-function openAboutModal(modalId, aboutId, action) {
-    $('.modal').modal('hide');
-    $('.modal-backdrop').remove();
-    setTimeout(() => {
-        const modal = $('#' + modalId);
-        modal.attr('aria-hidden', 'false');
-        modal.modal('show');
-        setAboutId(aboutId, action);
-    }, 300);
-}
-
-function setAboutId(aboutId, action) {
-    if (action === 'edit') {
-        $.ajax({
-            url: "../../handler/admin/getAbouts.php",
-            type: "GET",
-            data: { id: aboutId },
-            success: function (response) {
-                try {
-                    const about = JSON.parse(response);
-                    $('#aboutId').val(about.id);
-                    $('#mission').val(about.mission);
-                    $('#vision').val(about.vision);
-                    $('#description').val(about.description);
-                    $('#aboutModalTitle').text('Edit About MSA');
-                    $('#confirmSaveAbout').text('Update About');
-                    $('#addEditAboutModal').modal('show');
-                } catch (e) {
-                    console.error("Invalid JSON response:", response);
-                    alert("An error occurred while fetching the about data.");
-                }
-            },
-            error: function () {
-                alert("An error occurred while fetching the about data.");
-            }
-        });
-
-        $('#confirmSaveAbout').off('click').on('click', function (e) {
-            e.preventDefault();
-            processAbout(aboutId, 'edit');
-        });
-
-    } else if (action === 'delete') {
-        $('#aboutIdToDelete').val(aboutId);
-        $('#deleteAboutModal').modal('show');
-        $('#confirmDeleteAbout').off('click').on('click', function () {
-            processAbout(aboutId, 'delete');
-        });
-
-    } else if (action === 'add') {
-        $('#aboutForm')[0].reset();
-        $('#aboutModalTitle').text('Add About MSA');
-        $('#confirmSaveAbout').text('Add About');
-        $('#confirmSaveAbout').off('click').on('click', function (e) {
-            e.preventDefault();
-            processAbout(null, 'add');
-        });
-    }
-}
-
-function processAbout(aboutId, action) {
-    let formData = new FormData(document.getElementById('aboutForm'));
-    if (aboutId) formData.append('id', aboutId);
-    formData.append('action', action);
-
-    $.ajax({
-        url: "../../handler/admin/aboutsAction.php",
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function (response) {
-            if (response.trim() === "success") {
-                $(".modal").modal("hide");
-                $("body").removeClass("modal-open");
-                $(".modal-backdrop").remove();
-                loadAboutsSection();
-            } else {
-                console.error("Failed to process request:", response);
-                alert("Failed to process request: " + response);
-            }
-        },
-        error: function (xhr, status, error) {
-            console.error("AJAX error:", status, error);
-            alert("An error occurred while processing the request.");
-        }
-    });
-}
 
 // DOWNLOADS FUNCTIONS
 function openFileModal(modalId, fileId, action) {

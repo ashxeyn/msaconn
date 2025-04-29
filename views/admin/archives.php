@@ -11,6 +11,7 @@ $archivedPrayers = $adminObj->fetchArchivedPrayers();
 $archivedCashIn = $adminObj->fetchArchivedTransactions('Cash In');
 $archivedCashOut = $adminObj->fetchArchivedTransactions('Cash Out');
 $archivedFAQs = $adminObj->fetchArchivedFAQs();
+$archivedAboutMsa = $adminObj->fetchArchivedAbouts();
 ?>
 
 <head>
@@ -63,6 +64,12 @@ $archivedFAQs = $adminObj->fetchArchivedFAQs();
                                     type="button" role="tab" aria-controls="faqs" aria-selected="false">
                                 FAQs
                             </button>    
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="about-msa-archives-tab" data-bs-toggle="tab" data-bs-target="#about-msa-archives" 
+                                    type="button" role="tab" aria-controls="about-msa-archives" aria-selected="false">
+                                About MSA
+                            </button>
                         </li>
                     </ul>
                     
@@ -400,6 +407,44 @@ $archivedFAQs = $adminObj->fetchArchivedFAQs();
                                 </table> 
                             </div>
                         </div>
+                        <div class="tab-pane fade" id="about-msa-archives" role="tabpanel" aria-labelledby="about-msa-archives-tab">
+                            <div class="table-responsive">
+                                <table id="aboutMsaArchivesTab" class="table align-items-center mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Mission</th>
+                                            <th>Vision</th>
+                                            <th>Description</th>
+                                            <th>Reason</th>
+                                            <th>Archived Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if (empty($archivedAboutMsa)): ?>
+                                            <tr>
+                                                <td colspan="6" class="text-center">No archived About MSA content found</td>
+                                            </tr>
+                                        <?php else: ?>
+                                            <?php foreach ($archivedAboutMsa as $about): ?>
+                                                <tr>
+                                                    <td><?= clean_input($about['mission']) ?></td>
+                                                    <td><?= clean_input($about['vision']) ?></td>
+                                                    <td><?= clean_input($about['description']) ?></td>
+                                                    <td><?= clean_input($about['reason']) ?></td>
+                                                    <td><?= date('M j, Y', strtotime($about['deleted_at'])) ?></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-success" onclick="openAboutModal('restoreAboutModal', <?= $about['id'] ?>, 'restore')">
+                                                            <i class="fas fa-rotate-left"></i> Restore
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -414,6 +459,7 @@ $archivedFAQs = $adminObj->fetchArchivedFAQs();
 <?php include_once '../adminModals/restorePrayer.html'; ?>
 <?php include_once '../adminModals/restoreTransaction.html'; ?>
 <?php include_once '../adminModals/restoreFaq.html'; ?>
+<?php include_once '../adminModals/restoreAbouts.html'; ?>
 
 <script>
     $(document).ready(function() {

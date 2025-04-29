@@ -1214,7 +1214,9 @@ class Admin {
 
     // ABOUTS Functions
     function fetchAbouts() {
-        $sql = "SELECT * FROM about_msa ORDER BY id DESC";
+        $sql = "SELECT * FROM about_msa 
+                WHERE is_deleted = 0
+                ORDER BY id DESC";
         
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -1233,7 +1235,8 @@ class Admin {
     }
 
     function addAbout($mission, $vision, $description) {
-        $sql = "INSERT INTO about_msa (mission, vision, description) VALUES (:mission, :vision, :description)";
+        $sql = "INSERT INTO about_msa (mission, vision, description) 
+                VALUES (:mission, :vision, :description)";
         
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':mission', $mission);
@@ -1259,13 +1262,43 @@ class Admin {
         return $query->execute();
     }
 
-    function deleteAbout($aboutId) {
-        $sql = "DELETE FROM about_msa WHERE id = :about_id";
+    function softDeleteAbout($aboutId, $reason) {
+        $sql = "UPDATE about_msa 
+                SET is_deleted = 1, 
+                    deleted_at = NOW(), 
+                    reason = :reason 
+                WHERE id = :about_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':reason', $reason);
+        $query->bindParam(':about_id', $aboutId);
+
+        return $query->execute();
+    }
+
+    function restoreAbout($aboutId) {
+        $sql = "UPDATE about_msa 
+                SET is_deleted = 0, 
+                    deleted_at = NULL, 
+                    reason = NULL 
+                WHERE id = :about_id";
 
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':about_id', $aboutId);
 
         return $query->execute();
+    }
+
+    function fetchArchivedAbouts() {
+        $sql = "SELECT * FROM about_msa 
+                WHERE is_deleted = 1
+                ORDER BY deleted_at DESC";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        
+        return $query->fetchAll();
+        // var_dump($result);
     }
 
     // FILE FUNCTIONS
