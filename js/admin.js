@@ -26,6 +26,7 @@ $(document).ready(function() {
     $('#calendarTab').DataTable();
     $('#cashinTab').DataTable();
     $('#cashoutTab').DataTable();
+    $('#faqsTab').DataTable();
 });
 
 function viewPhoto(photoName, folder) {
@@ -1135,6 +1136,170 @@ function loadFilteredTransparencySection(params) {
     });
 }
 
+// FAQS FUNCTIONS
+function openFaqModal(modalId, faqId, action) {
+    $('.modal').modal('hide');
+    $('.modal-backdrop').remove();
+    setTimeout(() => {
+        const modal = $('#' + modalId);
+        modal.attr('aria-hidden', 'false');
+        modal.modal('show');
+        setFaqId(faqId, action);
+    }, 300);
+}
+
+function setFaqId(faqId, action) {
+    if (action === 'edit') {
+        $.ajax({
+            url: "../../handler/admin/getFaq.php",
+            type: "GET",
+            data: { faq_id: faqId },
+            success: function(response) {
+                try {
+                    const faq = JSON.parse(response);
+                    $('#editFaqId').val(faq.faq_id);
+                    $('#editQuestion').val(faq.question);
+                    $('#editAnswer').val(faq.answer);
+                    $('#editCategory').val(faq.category);
+                    $('#editFaqModal .modal-title').text('Edit FAQ');
+                    $('#editFaqFormSubmit').text('Update FAQ');
+                    clearValidationErrors();
+                    $('#editFaqModal').modal('show');
+                } catch (e) {
+                    console.error("Invalid JSON:", response);
+                    alert("Failed to load FAQ details.");
+                }
+            },
+            error: function() {
+                alert("Failed to load FAQ details.");
+            }
+        });
+
+        $('#editFaqForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateFaqForm()) {
+                processFaq(faqId, 'edit');
+            }
+        });
+    } else if (action === 'add') {
+        $('#editFaqForm')[0].reset();
+        clearValidationErrors();
+        $('#editFaqModal .modal-title').text('Add FAQ');
+        $('#editFaqFormSubmit').text('Add FAQ');
+        $('#editFaqModal').modal('show');
+
+        $('#editFaqForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateFaqForm()) {
+                processFaq(null, 'add');
+            }
+        });
+    } else if (action === 'delete') {
+        $('#archiveFaqId').val(faqId);
+        $('#archiveFaqModal').modal('show');
+    
+        $('#confirmArchiveFaq').off('click').on('click', function () {
+            const reason = $('#archiveReason').val().trim();
+            if (reason === '') {
+                $('#archiveReasonError').text('Please provide a reason for archiving');
+                return;
+            }
+            $('#archiveReasonError').text('');
+            processFaq(faqId, 'delete');
+        });    
+    } else if (action === 'restore') {
+        $('#restoreFaqId').val(faqId);
+        $('#restoreFaqModal').modal('show');
+
+        $('#restoreFaqForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            processFaq(faqId, 'restore');
+        });
+    }
+}
+
+function validateFaqForm() {
+    let isValid = true;
+    clearValidationErrors();
+
+    const question = $('#editQuestion').val().trim();
+    const answer = $('#editAnswer').val().trim();
+    const category = $('#editCategory').val();
+
+    if (question === '') {
+        $('#editQuestionError').text('Question is required');
+        isValid = false;
+    }
+
+    if (answer === '') {
+        $('#editAnswerError').text('Answer is required');
+        isValid = false;
+    }
+
+    if (category === '') {
+        $('#editCategoryError').text('Category is required');
+        isValid = false;
+    }
+
+    return isValid;
+}
+
+function clearValidationErrors() {
+    $('#editQuestionError').text('');
+    $('#editAnswerError').text('');
+    $('#editCategoryError').text('');
+    $('#archiveReasonError').text('');
+}
+
+function processFaq(faqId, action) {
+    let formData = new FormData();
+
+    if (action === 'add' || action === 'edit') {
+        formData = new FormData(document.getElementById('editFaqForm'));
+    } else if (action === 'delete') {
+        formData.append('reason', $('#archiveReason').val());
+    } else if (action === 'restore') {
+        formData.append('faq_id', $('#restoreFaqId').val());
+    }
+
+    if (faqId) {
+        formData.append('faq_id', faqId);
+    }
+    formData.append('action', action);
+
+    $.ajax({
+        url: "../../handler/admin/faqsAction.php",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.trim() === "success") {
+                $(".modal").modal("hide");
+                $("body").removeClass("modal-open");
+                $(".modal-backdrop").remove();
+
+                if (action === 'restore') {
+                    loadArchives(); 
+                } else {
+                    loadFaqsSection(); 
+                }
+
+                showToast('Success', 
+                    action === 'delete' ? 'FAQ has been archived.' :
+                    action === 'restore' ? 'FAQ has been restored.' :
+                    'FAQ has been ' + (action === 'edit' ? 'updated' : 'added') + '.', 
+                    'success');
+            } else {
+                alert("Failed to process request: " + response);
+            }
+        },
+        error: function() {
+            alert("An error occurred while processing the request.");
+        }
+    });
+}
+
 // REGISTRATION FUNCTIONS
 function openModal(modalId, volunteerId, action) {
     $('.modal').modal('hide'); 
@@ -1479,99 +1644,7 @@ function processModerator(moderatorId, action) {
     });
 }
 
-// FAQS FUNCTIONS
-function openFaqModal(modalId, faqId, action) {
-    $('.modal').modal('hide');
-    $('.modal-backdrop').remove();
-    setTimeout(() => {
-        const modal = $('#' + modalId);
-        modal.attr('aria-hidden', 'false');
-        modal.modal('show');
-        setFaqId(faqId, action);
-    }, 300);
-}
 
-function setFaqId(faqId, action) {
-    if (action === 'edit') {
-        $.ajax({
-            url: "../../handler/admin/getFaq.php",
-            type: "GET",
-            data: { faq_id: faqId },
-            success: function(response) {
-                try {
-                    const faq = JSON.parse(response);
-                    $('#faqId').val(faq.faq_id);
-                    $('#question').val(faq.question);
-                    $('#answer').val(faq.answer);
-                    $('#category').val(faq.category);
-                    $('#modalTitle').text('Edit FAQ');
-                    $('#confirmSaveFaq').text('Update FAQ');
-                } catch (e) {
-                    console.error("Invalid JSON response:", response);
-                    alert("An error occurred while fetching the FAQ data.");
-                }
-            },
-            error: function() {
-                alert("An error occurred while fetching the FAQ data.");
-            }
-        });
-
-        $('#confirmSaveFaq').off('click').on('click', function (e) {
-            e.preventDefault();
-            processFaq(faqId, 'edit');
-        });
-    } else if (action === 'delete') {
-        $('#faqIdToDelete').val(faqId);
-        $('#deleteFaqModal').modal('show');
-        $('#confirmDeleteFaq').off('click').on('click', function () {
-            processFaq(faqId, 'delete');
-        });
-    } else if (action === 'add') {
-        $('#faqForm')[0].reset();
-        $('#modalTitle').text('Add FAQ');
-        $('#confirmSaveFaq').text('Add FAQ');
-        $('#confirmSaveFaq').off('click').on('click', function (e) {
-            e.preventDefault();
-            processFaq(null, 'add');
-        });
-    }
-}
-
-function processFaq(faqId, action) {
-    const form = document.getElementById('faqForm');
-    const formData = new FormData(form);
-    
-    if (faqId) {
-        formData.append('faq_id', faqId);
-    }
-    formData.append('action', action);
-
-    // for (let [key, value] of formData.entries()) {
-    //     console.log(key, value);
-    // }
-
-    $.ajax({
-        url: "../../handler/admin/faqsAction.php",
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            console.log("Server response:", response);
-            if (response.trim() === "success") {
-                $("#addEditFaqModal").modal("hide");
-                $("#deleteFaqModal").modal("hide");
-                loadFaqsSection();
-            } else {
-                alert("Error: " + response);
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error("AJAX Error:", status, error);
-            alert("Failed to save. Check console for details.");
-        }
-    });
-}
 
 // ABOUTS FUNCTIONS
 function openAboutModal(modalId, aboutId, action) {

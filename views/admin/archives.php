@@ -10,7 +10,7 @@ $archivedCalendar = $adminObj->fetchArchivedCalendar();
 $archivedPrayers = $adminObj->fetchArchivedPrayers();
 $archivedCashIn = $adminObj->fetchArchivedTransactions('Cash In');
 $archivedCashOut = $adminObj->fetchArchivedTransactions('Cash Out');
-$allArchived = array_merge($archivedCashIn, $archivedCashOut);
+$archivedFAQs = $adminObj->fetchArchivedFAQs();
 ?>
 
 <head>
@@ -57,6 +57,12 @@ $allArchived = array_merge($archivedCashIn, $archivedCashOut);
                                     type="button" role="tab" aria-controls="transparency" aria-selected="false">
                                 Transparency
                             </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="faqs-tab" data-bs-toggle="tab" data-bs-target="#faqs" 
+                                    type="button" role="tab" aria-controls="faqs" aria-selected="false">
+                                FAQs
+                            </button>    
                         </li>
                     </ul>
                     
@@ -355,6 +361,45 @@ $allArchived = array_merge($archivedCashIn, $archivedCashOut);
                                 </div>
                             </div>
                         </div>
+                        <div class="tab-pane fade" id="faqs" role="tabpanel" aria-labelledby="faqs-tab">
+                            <div class="table-responsive">
+                            <table id="faqsTab" class="table align-items-center mb-0">
+                                <thead>
+                                        <tr>
+                                            <th>Question</th>
+                                            <th>Answer</th>
+                                            <th>Category</th>
+                                            <th>Reason</th>
+                                            <th>Archived Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if (empty($archivedFAQs)): ?>
+                                            <tr>
+                                                <td colspan="6" class="text-center py-4">No archived FAQs found</td>
+                                            </tr>
+                                        <?php else: ?>
+                                            <?php foreach ($archivedFAQs as $faq): ?>
+                                                <tr>
+                                                    <td><?= clean_input($faq['question']) ?></td>
+                                                    <td><?= clean_input($faq['answer']) ?></td>
+                                                    <td><?= clean_input($faq['category']) ?></td>
+                                                    <td><?= clean_input($faq['reason']) ?></td>
+                                                    <td><?= date('M j, Y', strtotime($faq['deleted_at'])) ?></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-success" 
+                                                                onclick="openFaqModal('restoreFaqModal', <?= $faq['faq_id'] ?>, 'restore')">
+                                                            <i class="fas fa-rotate-left"></i> Restore
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table> 
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -368,6 +413,7 @@ $allArchived = array_merge($archivedCashIn, $archivedCashOut);
 <?php include_once '../adminModals/restoreCalendar.html'; ?>
 <?php include_once '../adminModals/restorePrayer.html'; ?>
 <?php include_once '../adminModals/restoreTransaction.html'; ?>
+<?php include_once '../adminModals/restoreFaq.html'; ?>
 
 <script>
     $(document).ready(function() {
