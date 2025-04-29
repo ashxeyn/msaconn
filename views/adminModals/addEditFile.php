@@ -1,22 +1,21 @@
-<div class="modal fade" id="addEditFileModal" tabindex="-1">
+<div class="modal fade" id="editFileModal" tabindex="-1" aria-labelledby="editFileModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="fileModalTitle">Add File</h5>
-            </div>
-            <div class="modal-body">
-                <!-- Error container -->
-                <div id="fileErrorContainer" class="alert alert-danger" style="display: none;"></div>
-                
-                <form id="fileForm">
-                    <input type="hidden" id="fileId" name="fileId">
+        <form id="editFileForm" enctype="multipart/form-data">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit File</h5>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="file_id" id="editFileId">
                     <div class="mb-3">
-                        <label for="file_name" class="form-label">File Name</label>
-                        <input type="text" class="form-control" id="file_name" name="file_name" required>
+                        <label for="editFileName" class="form-label">File Name</label>
+                        <input type="text" class="form-control" id="editFileName" name="file_name">
+                        <div id="editFileNameError" class="text-danger"></div>
                     </div>
                     <div class="mb-3">
-                        <label for="file" class="form-label">File</label>
-                        <input type="file" class="form-control" id="file" name="file" accept=".pdf,.docx" required>
+                        <label for="editFile" class="form-label">File</label>
+                        <input type="file" class="form-control" id="editFile" name="file" accept=".pdf,.docx">
+                        <div id="editFileError" class="text-danger"></div>
                         <small class="text-muted">Only PDF and DOCX files are accepted.</small>
                         <div id="current-file-info" class="mt-2" style="display: none;">
                             <p><strong>Current file:</strong> <span id="current-file-name"></span></p>
@@ -25,12 +24,12 @@
                             <small class="text-muted">Upload a new file only if you want to replace the current one.</small>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-primary" id="confirmSaveFile">Add File</button>
-                    </div>
-                </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="editFileFormSubmit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 </div>

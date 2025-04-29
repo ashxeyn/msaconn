@@ -27,6 +27,8 @@ $(document).ready(function() {
     $('#cashinTab').DataTable();
     $('#cashoutTab').DataTable();
     $('#faqsTab').DataTable();
+    $('#filesTab').DataTable();
+    $('#aboutTab').DataTable();
 });
 
 function viewPhoto(photoName, folder) {
@@ -1463,6 +1465,184 @@ function processAbout(aboutId, action) {
     });
 }
 
+// DOWNLOADS FUNCTIONS
+function openFileModal(modalId, fileId, action) {
+    $('.modal').modal('hide');
+    $('.modal-backdrop').remove(); 
+    setTimeout(() => {
+        const modal = $('#' + modalId);
+        modal.modal('show'); 
+        setFileId(fileId, action);
+    }, 300);
+}
+
+
+function setFileId(fileId, action) {
+    if (action === 'edit') {
+        $.ajax({
+            url: "../../handler/admin/getFile.php",
+            type: "GET",
+            data: { file_id: fileId },
+            success: function(response) {
+                try {
+                    const file = JSON.parse(response);
+                    $('#editFileId').val(file.file_id);
+                    $('#editFileName').val(file.file_name);
+                    $('#editFileModal .modal-title').text('Edit File');
+                    $('#editFileFormSubmit').text('Update File');
+                    clearValidationErrors();
+                    
+                    $('#current-file-info').show();
+                    $('#current-file-name').text(file.file_name);
+
+                    let fileType = file.file_type;
+                    if (fileType === 'application/pdf') {
+                        fileType = 'PDF';
+                    } else if (fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                        fileType = 'DOCX';
+                    }
+
+                    $('#current-file-type').text(fileType);
+                    $('#current-file-size').text(formatFileSize(file.file_size));
+                    $('#editFileModal').modal('show');
+                } catch (e) {
+                    console.error("Invalid JSON:", response);
+                    alert("Failed to load file details.");
+                }
+            },
+            error: function() {
+                alert("Failed to load file details.");
+            }
+        });
+
+        $('#editFileForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateFileForm()) {
+                processFile(fileId, 'edit');
+            }
+        });
+    } else if (action === 'add') {
+        $('#editFileForm')[0].reset();
+        clearValidationErrors();
+        $('#editFileModal .modal-title').text('Add File');
+        $('#editFileFormSubmit').text('Add File');
+        $('#current-file-info').hide();
+        $('#editFileModal').modal('show');
+        
+        $('#editFileForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateFileForm()) {
+                processFile(null, 'add');
+            }
+        });
+    } else if (action === 'delete') {
+        $('#archiveFileId').val(fileId);
+        $('#archiveFileModal').modal('show');
+    
+        $('#confirmArchiveFile').off('click').on('click', function () {
+            const reason = $('#archiveReason').val().trim();
+            if (reason === '') {
+                $('#archiveReasonError').text('Please provide a reason for archiving');
+                return;
+            }
+            $('#archiveReasonError').text('');
+            processFile(fileId, 'delete');
+        });
+    } else if (action === 'restore') {
+        $('#restoreFileId').val(fileId);
+        $('#restoreFileModal').modal('show');
+
+        $('#restoreFileForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            processFile(fileId, 'restore');
+        });
+    }
+}
+
+function validateFileForm() {
+    let isValid = true;
+    clearValidationErrors();
+
+    const fileName = $('#editFileName').val().trim();
+    const fileInput = $('#editFile')[0];
+    const isEdit = $('#editFileId').val() !== "";
+
+    if (fileName === '') {
+        $('#editFileNameError').text('File name is required');
+        isValid = false;
+    }
+
+    if (!isEdit) {
+        if (fileInput.files.length === 0) {
+            $('#editFileError').text('File is required');
+            isValid = false;
+        }
+    }
+
+    return isValid;
+}
+
+function clearValidationErrors() {
+    $('.text-danger').text('');
+}
+
+function processFile(fileId, action) {
+    let formData = new FormData();
+
+    if (action === 'add' || action === 'edit') {
+        formData = new FormData(document.getElementById('editFileForm'));
+    } else if (action === 'delete') {
+        formData.append('reason', $('#archiveReason').val());
+    } else if (action === 'restore') {
+        formData.append('file_id', $('#restoreFileId').val());
+    }
+
+    if (fileId) {
+        formData.append('file_id', fileId);
+    }
+    formData.append('action', action);
+
+    $.ajax({
+        url: "../../handler/admin/fileAction.php",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.trim() === "success") {
+                $(".modal").modal("hide");
+                $("body").removeClass("modal-open");
+                $(".modal-backdrop").remove();
+
+                if (action === 'restore') {
+                    loadArchives(); 
+                } else {
+                    loadDownloadablesSection(); 
+                }
+
+                showToast('Success', 
+                    action === 'delete' ? 'File has been archived.' :
+                    action === 'restore' ? 'File has been restored.' :
+                    'File has been ' + (action === 'edit' ? 'updated' : 'added') + '.', 
+                    'success');
+            } else {
+                alert("Failed to process request: " + response);
+            }
+        },
+        error: function() {
+            alert("An error occurred while processing the request.");
+        }
+    });
+}
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
 // REGISTRATION FUNCTIONS
 function openModal(modalId, volunteerId, action) {
     $('.modal').modal('hide'); 
@@ -1805,123 +1985,6 @@ function processModerator(moderatorId, action) {
             alert("An error occurred while processing the request.");
         }
     });
-}
-
-
-
-
-// DOWNLOADS FUNCTIONS
-function openFileModal(modalId, fileId, action) {
-    $('.modal').modal('hide'); 
-    $('.modal-backdrop').remove(); 
-    setTimeout(() => {
-        const modal = $('#' + modalId);
-        modal.attr('aria-hidden', 'false');
-        modal.modal('show'); 
-        setFileId(fileId, action);
-    }, 300);
-}
-
-function setFileId(fileId, action) {
-    if (action === 'edit') {
-        $.ajax({
-            url: "../../handler/admin/getFile.php",
-            type: "GET",
-            data: { file_id: fileId },
-            success: function(response) {
-                const file = JSON.parse(response);
-                $('#fileId').val(file.file_id);
-                $('#file_name').val(file.file_name);
-                $('#fileModalTitle').text('Edit File');
-                $('#confirmSaveFile').text('Update File');
-                
-                $('#current-file-info').show();
-                $('#current-file-name').text(file.file_name);
-
-                let fileType = file.file_type;
-                if (fileType === 'application/pdf') {
-                    fileType = 'PDF';
-                } else if (fileType === 'application/vnd.openxmlformats-officedocument.word') {
-                    fileType = 'DOCX';
-                }
-
-                $('#current-file-type').text(fileType);
-                $('#current-file-size').text(formatFileSize(file.file_size));
-            },
-            error: function() {
-                alert("An error occurred while fetching file data.");
-            }
-        });
-
-        $('#confirmSaveFile').off('click').on('click', function (e) {
-            e.preventDefault(); 
-            processFile(fileId, 'edit');
-        });
-
-    } else if (action === 'delete') {
-        $.ajax({
-            url: "../../handler/admin/getFile.php",
-            type: "GET",
-            data: { file_id: fileId },
-            success: function(response) {
-                const file = JSON.parse(response);
-                $('#delete-file-name').text(file.file_name);
-            }
-        });
-        
-        $('#confirmDeleteFile').off('click').on('click', function () {
-            processFile(fileId, 'delete');
-        });
-
-    } else if (action === 'add') {
-        $('#fileForm')[0].reset();
-        $('#fileModalTitle').text('Add File');
-        $('#confirmSaveFile').text('Add File');
-        $('#current-file-info').hide();
-        
-        $('#confirmSaveFile').off('click').on('click', function (e) {
-            e.preventDefault();
-            processFile(null, 'add');
-        });
-    }
-}
-
-function processFile(fileId, action) {
-    let formData = new FormData(document.getElementById('fileForm'));
-    if (fileId) {
-        formData.append('file_id', fileId);
-    }
-    formData.append('action', action);
-
-    $.ajax({
-        url: "../../handler/admin/fileAction.php",
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            if (response.trim() === "success") {
-                $(".modal").modal("hide");
-                $("body").removeClass("modal-open");
-                $(".modal-backdrop").remove();
-                loadDownloadablesSection(); 
-            } else {
-                console.log(response);
-                // console.log("Error: " + response);
-            }
-        },
-        error: function() {
-            alert("An error occurred while processing the request.");
-        }
-    });
-}
-
-function formatFileSize(bytes) {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
 // ENROLLMENT FUNCTIONS

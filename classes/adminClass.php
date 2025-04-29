@@ -1304,9 +1304,10 @@ class Admin {
     // FILE FUNCTIONS
     function fetchDownloadableFiles() {
         $sql = "SELECT f.file_id, f.file_name, f.file_path, f.file_type, f.file_size, 
-                    f.created_at, u.username 
+                    f.created_at, f.deleted_at, u.username AS username 
                 FROM downloadable_files f
                 LEFT JOIN users u ON f.user_id = u.user_id
+                WHERE f.deleted_at IS NULL
                 ORDER BY f.file_id DESC";
         
         $query = $this->db->connect()->prepare($sql);
@@ -1316,7 +1317,7 @@ class Admin {
 
     function getFileById($fileId) {
         $sql = "SELECT f.file_id, f.file_name, f.file_path, f.file_type, f.file_size, 
-                    f.created_at, u.username 
+                    f.created_at, f.deleted_at, u.username AS uploaded_by 
                 FROM downloadable_files f
                 LEFT JOIN users u ON f.user_id = u.user_id
                 WHERE f.file_id = :file_id";
@@ -1355,12 +1356,38 @@ class Admin {
         return $query->execute();
     }
 
-    function deleteFile($fileId) {
-        $sql = "DELETE FROM downloadable_files WHERE file_id = :file_id";
+    function softDeleteFile($fileId, $reason) {
+        $sql = "UPDATE downloadable_files 
+                SET deleted_at = NOW(), reason = :reason 
+                WHERE file_id = :file_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':reason', $reason);
+        $query->bindParam(':file_id', $fileId);
+        return $query->execute();
+    }
+
+    function restoreFile($fileId) {
+        $sql = "UPDATE downloadable_files 
+                SET deleted_at = NULL, reason = NULL 
+                WHERE file_id = :file_id";
 
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':file_id', $fileId);
         return $query->execute();
+    }
+
+    function fetchArchivedFiles() {
+        $sql = "SELECT f.file_id, f.file_name, f.file_path, f.file_type, f.file_size, 
+                    f.reason, f.deleted_at, u.username AS uploaded_by
+                FROM downloadable_files f
+                LEFT JOIN users u ON f.user_id = u.user_id
+                WHERE f.deleted_at IS NOT NULL
+                ORDER BY f.deleted_at DESC";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
     }
 
     function getFileExtension($fileType) {

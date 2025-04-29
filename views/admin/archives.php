@@ -12,6 +12,7 @@ $archivedCashIn = $adminObj->fetchArchivedTransactions('Cash In');
 $archivedCashOut = $adminObj->fetchArchivedTransactions('Cash Out');
 $archivedFAQs = $adminObj->fetchArchivedFAQs();
 $archivedAboutMsa = $adminObj->fetchArchivedAbouts();
+$archivedFiles = $adminObj->fetchArchivedFiles();
 ?>
 
 <head>
@@ -69,6 +70,12 @@ $archivedAboutMsa = $adminObj->fetchArchivedAbouts();
                             <button class="nav-link" id="about-msa-archives-tab" data-bs-toggle="tab" data-bs-target="#about-msa-archives" 
                                     type="button" role="tab" aria-controls="about-msa-archives" aria-selected="false">
                                 About MSA
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="files-tab" data-bs-toggle="tab" data-bs-target="#files" 
+                                    type="button" role="tab" aria-controls="files" aria-selected="false">
+                                Files
                             </button>
                         </li>
                     </ul>
@@ -409,7 +416,7 @@ $archivedAboutMsa = $adminObj->fetchArchivedAbouts();
                         </div>
                         <div class="tab-pane fade" id="about-msa-archives" role="tabpanel" aria-labelledby="about-msa-archives-tab">
                             <div class="table-responsive">
-                                <table id="aboutMsaArchivesTab" class="table align-items-center mb-0">
+                                <table id="aboutTab" class="table align-items-center mb-0">
                                     <thead>
                                         <tr>
                                             <th>Mission</th>
@@ -445,6 +452,44 @@ $archivedAboutMsa = $adminObj->fetchArchivedAbouts();
                                 </table>
                             </div>
                         </div>
+                        <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="file-tab">
+                            <div class="table-responsive">
+                                <table id="filesTab" class="table align-items-center mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>File Name</th>
+                                            <th>File Type</th>
+                                            <th>File Size</th>
+                                            <th>Reason</th>
+                                            <th>Archived Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if (empty($archivedFiles)): ?>
+                                            <tr>
+                                                <td colspan="6" class="text-center">No archived files found</td>
+                                            </tr>
+                                        <?php else: ?>
+                                            <?php foreach ($archivedFiles as $file): ?>
+                                                <tr>
+                                                    <td><?= clean_input($file['file_name']) ?></td>
+                                                    <td><?= clean_input($file['file_type']) ?></td>
+                                                    <td><?= formatFileSize($file['file_size']) ?></td>
+                                                    <td><?= clean_input($file['reason']) ?></td>
+                                                    <td><?= date('M j, Y', strtotime($file['deleted_at'])) ?></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-success" onclick="openFileModal('restoreFileModal', <?= $file['file_id'] ?>, 'restore')">
+                                                            <i class="fas fa-rotate-left"></i> Restore
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -460,6 +505,7 @@ $archivedAboutMsa = $adminObj->fetchArchivedAbouts();
 <?php include_once '../adminModals/restoreTransaction.html'; ?>
 <?php include_once '../adminModals/restoreFaq.html'; ?>
 <?php include_once '../adminModals/restoreAbouts.html'; ?>
+<?php include_once '../adminModals/restoreFile.html'; ?>
 
 <script>
     $(document).ready(function() {

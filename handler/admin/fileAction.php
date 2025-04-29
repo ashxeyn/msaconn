@@ -14,16 +14,13 @@ $userId = $_SESSION['user_id'];
 $action = $_POST['action'] ?? '';
 $fileId = $_POST['file_id'] ?? null;
 
-function isValidFileType($fileType) {
-    $allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.word'];
-    return in_array($fileType, $allowedTypes);
-}
-
 if ($action === 'edit') {
     $fileName = clean_input($_POST['file_name']);
-    $filePath = null;
-    $fileType = null;
-    $fileSize = 0;
+    
+    if (empty($fileName)) {
+        echo "error: file_name_required";
+        exit;
+    }
 
     $existingFile = $adminObj->getFileById($fileId);
     if (!$existingFile) {
@@ -61,20 +58,26 @@ if ($action === 'edit') {
     echo $result ? "success" : "error";
 
 } elseif ($action === 'delete') {
-    $existingFile = $adminObj->getFileById($fileId);
-    if ($existingFile) {
-        $targetDir = "../../assets/downloadables/";
-        $oldFile = $targetDir . $existingFile['file_path'];
-        if (file_exists($oldFile)) {
-            unlink($oldFile);
-        }
+    $reason = clean_input($_POST['reason']);
+    if (empty($reason)) {
+        echo "error: reason_required";
+        exit;
     }
-    
-    $result = $adminObj->deleteFile($fileId);
+
+    $result = $adminObj->softDeleteFile($fileId, $reason);
+    echo $result ? "success" : "error";
+
+} elseif ($action === 'restore') {
+    $result = $adminObj->restoreFile($fileId);
     echo $result ? "success" : "error";
 
 } elseif ($action === 'add') {
     $fileName = clean_input($_POST['file_name']);
+    
+    if (empty($fileName)) {
+        echo "error: file_name_required";
+        exit;
+    }
     
     if (empty($_FILES['file']['name'])) {
         echo "error: no_file";
@@ -101,5 +104,14 @@ if ($action === 'edit') {
 
 } else {
     echo "invalid_action";
+}
+
+// Helper function for file type validation
+function isValidFileType($fileType) {
+    $validTypes = [
+        'application/pdf',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+    ];
+    return in_array($fileType, $validTypes);
 }
 ?>

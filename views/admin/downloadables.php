@@ -14,7 +14,7 @@ $downloadableFiles = $adminObj->fetchDownloadableFiles();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Downloadable Files</title>
     <link rel="stylesheet" href="../../css/adminRegistration.css?v=<?php echo time(); ?>">
-    <script src="../../js/admin.js"></script>
+    <script src="../../testing/testing.js"></script>
     <!-- <?php include '../../includes/head.php'; ?>  -->
 
     <style>

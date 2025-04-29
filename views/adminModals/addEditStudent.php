@@ -32,9 +32,9 @@ $yearLevels = ['1st year', '2nd year', '3rd year', '4th year', 'Others'];
 
                     <div id="classificationStep" style="display: <?= $student ? 'none' : 'block' ?>;">
                         <div class="mb-3">
-                            <label for="classification" class="form-label">Classification</label>
+                            <label for="classification" class="form-label">Learning Mode</label>
                             <select class="form-select" id="classification" name="classification" required>
-                                <option value="">Select Classification</option>
+                                <option value="">Select Mode</option>
                                 <option value="On-site" <?= ($student && $student['classification'] == 'On-site') ? 'selected' : '' ?>>On-site</option>
                                 <option value="Online" <?= ($student && $student['classification'] == 'Online') ? 'selected' : '' ?>>Online</option>
                             </select>
@@ -49,7 +49,7 @@ $yearLevels = ['1st year', '2nd year', '3rd year', '4th year', 'Others'];
                         <?php if (!$student): ?>
                         <div class="mb-3">
                             <button type="button" class="btn btn-secondary btn-sm" onclick="prevStep()">
-                                <i class="fas fa-arrow-left"></i> Back to Classification
+                                <i class="fas fa-arrow-left"></i> Back
                             </button>
                         </div>
                         <?php endif; ?>
