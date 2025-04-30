@@ -32,6 +32,7 @@ $(document).ready(function() {
     $('#olTab').DataTable();
     $('#osTab').DataTable();
     $('#officersTab').DataTable();
+    $('#volunteersTab').DataTable();
 });
 
 function viewPhoto(photoName, folder) {
@@ -2179,6 +2180,221 @@ function processOfficer(officerId, action) {
     });
 }
 
+// VOLUNTEER FUNCTIONS
+function openVolunteerModal(modalId, volunteerId, action) {
+    $('.modal').modal('hide');
+    $('.modal-backdrop').remove(); 
+    setTimeout(() => {
+        const modal = $('#' + modalId);
+        modal.modal('show'); 
+        setVolunteerId(volunteerId, action);
+    }, 300);
+}
+
+function setVolunteerId(volunteerId, action) {
+    if (action === 'edit') {
+        $.ajax({
+            url: "../../handler/admin/getVolunteer.php",
+            type: "GET",
+            data: { volunteer_id: volunteerId },
+            success: function(response) {
+                try {
+                    const volunteer = JSON.parse(response);
+                    $('#volunteerId').val(volunteer.volunteer_id);
+                    $('#firstName').val(volunteer.first_name);
+                    $('#middleName').val(volunteer.middle_name);
+                    $('#surname').val(volunteer.last_name);
+                    $('#year').val(volunteer.year_level);
+                    $('#section').val(volunteer.section);
+                    $('#program').val(volunteer.program_id);
+                    $('#contact').val(volunteer.contact);
+                    $('#email').val(volunteer.email);
+                    $('#existing_image').val(volunteer.cor_file);
+                    
+                    if (volunteer.cor_file) {
+                        $('#image-preview').show();
+                        $('#preview-img').attr('src', '../../assets/cors/' + volunteer.cor_file);
+                    } else {
+                        $('#image-preview').hide();
+                    }
+                    
+                    clearValidationErrors();
+                    $('.modal-title').text('Edit Volunteer');
+                    $('#volunteerFormSubmit').text('Update Volunteer');
+                    $('#editVolunteerModal').modal('show');
+                } catch (e) {
+                    console.error("Invalid JSON:", response);
+                    alert("Failed to load volunteer details.");
+                }
+            },
+            error: function() {
+                alert("Failed to load volunteer details.");
+            }
+        });
+
+        $('#volunteerForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateVolunteerForm()) {
+                processVolunteer(volunteerId, 'edit');
+            }
+        });
+    } else if (action === 'add') {
+        $('#volunteerForm')[0].reset();
+        $('#image-preview').hide();
+        clearValidationErrors();
+        $('.modal-title').text('Add Volunteer');
+        $('#volunteerFormSubmit').text('Add Volunteer');
+        $('#editVolunteerModal').modal('show');
+
+        $('#volunteerForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateVolunteerForm()) {
+                processVolunteer(null, 'add');
+            }
+        });
+    } else if (action === 'delete') {
+        $('#archiveVolunteerId').val(volunteerId);
+        $('#archiveVolunteerModal').modal('show');
+    
+        $('#confirmArchiveVolunteer').off('click').on('click', function () {
+            const reason = $('#archiveReason').val().trim();
+            if (reason === '') {
+                $('#archiveReasonError').text('Please provide a reason for archiving');
+                return;
+            }
+            $('#archiveReasonError').text('');
+            processVolunteer(volunteerId, 'delete');
+        });    
+    } else if (action === 'restore') {
+        $('#restoreVolunteerId').val(volunteerId);
+        $('#restoreVolunteerModal').modal('show');
+
+        $('#restoreVolunteerForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            processVolunteer(volunteerId, 'restore');
+        });
+    }
+}
+
+function validateVolunteerForm() {
+    let isValid = true;
+    clearValidationErrors();
+
+    const firstName = $('#firstName').val().trim();
+    const lastName = $('#surname').val().trim();
+    const year = $('#year').val().trim();
+    const section = $('#section').val().trim();
+    const program = $('#program').val().trim();
+    const contact = $('#contact').val().trim();
+    const email = $('#email').val().trim();
+    const imageInput = $('#image')[0];
+    const isEdit = $('#volunteerId').val() !== "";
+
+    if (firstName === '') {
+        $('#firstNameError').text('First name is required');
+        isValid = false;
+    }
+
+    if (lastName === '') {
+        $('#surnameError').text('Last name is required');
+        isValid = false;
+    }
+
+    if (year === '') {
+        $('#yearError').text('Year level is required');
+        isValid = false;
+    } else if (isNaN(year) || parseInt(year) < 1 || parseInt(year) > 6) {
+        $('#yearError').text('Year level must be between 1 and 6');
+        isValid = false;
+    }
+
+    if (section === '') {
+        $('#sectionError').text('Section is required');
+        isValid = false;
+    }
+
+    if (program === '') {
+        $('#programError').text('Program is required');
+        isValid = false;
+    }
+
+    if (contact === '') {
+        $('#contactError').text('Contact number is required');
+        isValid = false;
+    } else if (!/^\d{11}$/.test(contact)) {
+        $('#contactError').text('Contact must be an 11-digit number');
+        isValid = false;
+    }
+
+    if (email === '') {
+        $('#emailError').text('Email is required');
+        isValid = false;
+    } else if (!/^\S+@\S+\.\S+$/.test(email)) {
+        $('#emailError').text('Please enter a valid email address');
+        isValid = false;
+    }
+
+    if (!isEdit && imageInput.files.length === 0) {
+        $('#imageError').text('Certificate of Registration is required');
+        isValid = false;
+    }
+
+    return isValid;
+}
+
+function clearValidationErrors() {
+    $('.text-danger').text('');
+}
+
+function processVolunteer(volunteerId, action) {
+    let formData = new FormData();
+
+    if (action === 'add' || action === 'edit') {
+        formData = new FormData(document.getElementById('volunteerForm'));
+    } else if (action === 'delete') {
+        formData.append('reason', $('#archiveReason').val());
+    } else if (action === 'restore') {
+        formData.append('volunteer_id', $('#restoreVolunteerId').val());
+    }
+
+    if (volunteerId) {
+        formData.append('volunteer_id', volunteerId);
+    }
+    formData.append('action', action);
+
+    $.ajax({
+        url: "../../handler/admin/volunteerAction.php",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.trim() === "success") {
+                $(".modal").modal("hide");
+                $("body").removeClass("modal-open");
+                $(".modal-backdrop").remove();
+
+                if (action === 'restore') {
+                    loadArchives(); 
+                } else {
+                    loadVolunteersSection(); 
+                }
+
+                showToast('Success', 
+                    action === 'delete' ? 'Volunteer has been archived.' :
+                    action === 'restore' ? 'Volunteer has been restored.' :
+                    'Volunteer has been ' + (action === 'edit' ? 'updated' : 'added') + '.', 
+                    'success');
+            } else {
+                alert("Failed to process request: " + response);
+            }
+        },
+        error: function() {
+            alert("An error occurred while processing the request.");
+        }
+    });
+}
+
 // REGISTRATION FUNCTIONS
 function openModal(modalId, volunteerId, action) {
     $('.modal').modal('hide'); 
@@ -2228,90 +2444,6 @@ function processRegistration(volunteerId, action) {
 }
 
 
-// MODERATOR FUNCTIONS
-function openModeratorModal(modalId, moderatorId, action) {
-    $('.modal').modal('hide'); 
-    $('.modal-backdrop').remove(); 
-    setTimeout(() => {
-        const modal = $('#' + modalId);
-        modal.attr('aria-hidden', 'false');
-        modal.modal('show'); 
-        setModeratorId(moderatorId, action);
-    }, 300);
-}
-
-function setModeratorId(moderatorId, action) {
-    if (action === 'edit') {
-        $.ajax({
-            url: "../../handler/admin/getModerator.php",
-            type: "GET",
-            data: { user_id: moderatorId },
-            success: function(response) {
-                const moderator = JSON.parse(response);
-                $('#moderatorId').val(moderator.user_id);
-                $('#firstName').val(moderator.first_name);
-                $('#middleName').val(moderator.middle_name);
-                $('#lastName').val(moderator.last_name);
-                $('#username').val(moderator.username);
-                $('#email').val(moderator.email);
-                $('#positionId').val(moderator.position_id);
-                $('#modalTitle').text('Edit Moderator');
-                $('#confirmSaveModerator').text('Update Moderator');
-            },
-            error: function() {
-                alert("An error occurred while fetching the moderator data.");
-            }
-        });
-
-        $('#confirmSaveModerator').off('click').on('click', function (e) {
-            e.preventDefault(); 
-            processModerator(moderatorId, 'edit');
-        });
-    } else if (action === 'delete') {
-        $('#confirmDeleteModerator').off('click').on('click', function () {
-            processModerator(moderatorId, 'delete');
-        });
-    }
-}
-
-function processModerator(moderatorId, action) {
-    let formData = new FormData(document.getElementById('moderatorForm'));
-    if (moderatorId) {
-        formData.append('user_id', moderatorId);
-    }
-    formData.append('action', action);
-
-    // for (let [key, value] of formData.entries()) {
-    //     console.log(key, value);
-    // }
-
-    $.ajax({
-        url: "../../handler/admin/moderatorAction.php",
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            //console.log("Server response:", response); 
-            if (response.trim() === "success") {
-                $(".modal").modal("hide");
-                $("body").removeClass("modal-open");
-                $(".modal-backdrop").remove();
-                loadModeratorsSection();
-            } else {
-                try {
-                    const errors = JSON.parse(response);
-                    displayValidationErrors(errors);
-                } catch (e) {
-                    //console.log("Failed to process request: " + response);
-                }
-            }
-        },
-        error: function() {
-            alert("An error occurred while processing the request.");
-        }
-    });
-}
 
 // ENROLLMENT FUNCTIONS
 function openEnrollmentModal(modalId, enrollmentId, action) {

@@ -133,7 +133,7 @@ class Admin {
 
     function restoreOfficer($officerId) {
         $sql = "UPDATE executive_officers 
-                SET deleted_at = NULL, reason = NULL 
+                SET is_deleted = 0, deleted_at = NULL, reason = NULL 
                 WHERE officer_id = :officer_id";
 
         $query = $this->db->connect()->prepare($sql);
@@ -164,30 +164,60 @@ class Admin {
         return $query->fetchAll();
     }
 
-    // Volunteer functions
-    function addVolunteer() {
-        $sql = "INSERT INTO volunteers (last_name, first_name, middle_name, year, section, program_id, contact, email, cor_file)
-                VALUES (:last_name, :first_name, :middle_name, :year, :section, :program, :contact, :email, :cor_file)";
+    // Volunteer Functions
+    function fetchVolunteers() {
+        $sql = "SELECT v.volunteer_id, v.first_name, v.middle_name, v.last_name, 
+                    v.year AS year_level, v.section, v.program_id, v.contact, 
+                    v.email, v.cor_file, v.created_at, v.deleted_at, v.reason,
+                    p.program_name
+                FROM volunteers v
+                JOIN programs p ON v.program_id = p.program_id
+                WHERE v.deleted_at IS NULL
+                ORDER BY v.volunteer_id DESC";
         
         $query = $this->db->connect()->prepare($sql);
-
-        $query->bindParam(':last_name', $this->last_name);
-        $query->bindParam(':first_name', $this->first_name);
-        $query->bindParam(':middle_name', $this->middle_name);
-        $query->bindParam(':year', $this->year);
-        $query->bindParam(':section', $this->section);
-        $query->bindParam(':contact', $this->contact);
-        $query->bindParam(':email', $this->email);
-        $query->bindParam(':cor_file', $this->cor_file);
-        $query->bindParam(':program', $this->program);
-
         $query->execute();
+        return $query->fetchAll();
     }
 
-    function updateVolunteer($volunteerId, $surname, $firstName, $year, $section, $programId, $contact, $email, $corFile = null) {
+    function getVolunteerById($volunteerId) {
+        $sql = "SELECT v.volunteer_id, v.first_name, v.middle_name, v.last_name, 
+                    v.year AS year_level, v.section, v.program_id, v.contact, 
+                    v.email, v.cor_file, v.status, v.created_at, v.deleted_at,
+                    p.program_name
+                FROM volunteers v
+                JOIN programs p ON v.program_id = p.program_id
+                WHERE v.volunteer_id = :volunteer_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':volunteer_id', $volunteerId);
+        $query->execute();
+
+        return $query->fetch();
+    }
+
+    function addVolunteer($firstName, $middleName, $lastName, $year, $section, $programId, $contact, $email, $corFile) {
+        $sql = "INSERT INTO volunteers (first_name, middle_name, last_name, year, section, program_id, contact, email, cor_file) 
+                VALUES (:first_name, :middle_name, :last_name, :year, :section, :program_id, :contact, :email, :cor_file)";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':first_name', $firstName);
+        $query->bindParam(':middle_name', $middleName);
+        $query->bindParam(':last_name', $lastName);
+        $query->bindParam(':year', $year);
+        $query->bindParam(':section', $section);
+        $query->bindParam(':program_id', $programId);
+        $query->bindParam(':contact', $contact);
+        $query->bindParam(':email', $email);
+        $query->bindParam(':cor_file', $corFile);
+        return $query->execute();
+    }
+
+    function updateVolunteer($volunteerId, $firstName, $middleName, $lastName, $year, $section, $programId, $contact, $email, $corFile = null) {
         $sql = "UPDATE volunteers 
-                SET last_name = :last_name, 
-                    first_name = :first_name, 
+                SET first_name = :first_name, 
+                    middle_name = :middle_name,
+                    last_name = :last_name, 
                     year = :year, 
                     section = :section, 
                     program_id = :program_id, 
@@ -199,11 +229,12 @@ class Admin {
         }
         
         $sql .= " WHERE volunteer_id = :volunteer_id";
-    
+
         $query = $this->db->connect()->prepare($sql);
-    
-        $query->bindParam(':last_name', $surname);
+
         $query->bindParam(':first_name', $firstName);
+        $query->bindParam(':middle_name', $middleName);
+        $query->bindParam(':last_name', $lastName);
         $query->bindParam(':year', $year);
         $query->bindParam(':section', $section);
         $query->bindParam(':program_id', $programId);
@@ -214,38 +245,45 @@ class Admin {
         if ($corFile !== null && $corFile !== '') {
             $query->bindParam(':cor_file', $corFile);
         }
-    
-        if (!$query->execute()) {
-            return 0;
-        }
-        return 1;
-    }
-    
 
-    function getVolunteerById($volunteerId) {
-        $sql = "SELECT 
-                    v.volunteer_id,
-                    v.first_name,
-                    v.middle_name,
-                    v.last_name,
-                    v.year AS year_level,
-                    v.section,
-                    v.program_id,
-                    v.contact,
-                    v.email,
-                    v.cor_file,
-                    v.status,
-                    v.created_at,
-                    p.program_name
-                FROM volunteers v
-                JOIN programs p ON v.program_id = p.program_id
-                WHERE v.volunteer_id = :volunteer_id";
-    
+        return $query->execute();
+    }
+
+    function softDeleteVolunteer($volunteerId, $reason) {
+        $sql = "UPDATE volunteers 
+                SET is_deleted = 1, deleted_at = NOW(), reason = :reason 
+                WHERE volunteer_id = :volunteer_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':reason', $reason);
+        $query->bindParam(':volunteer_id', $volunteerId);
+        return $query->execute();
+    }
+
+    function restoreVolunteer($volunteerId) {
+        $sql = "UPDATE volunteers 
+                SET is_deleted = 0, deleted_at = NULL, reason = NULL 
+                WHERE volunteer_id = :volunteer_id";
+
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':volunteer_id', $volunteerId);
+        return $query->execute();
+    }
+
+    function fetchArchivedVolunteers() {
+        $sql = "SELECT v.volunteer_id,  CONCAT(v.last_name, ', ', v.first_name, ' ', v.middle_name) AS full_name, 
+                CONCAT(v.year, '-', v.section) AS yr_section,
+                    v.contact, v.email,
+                    v.reason, v.deleted_at, p.program_name
+                FROM volunteers v
+                JOIN programs p ON v.program_id = p.program_id
+                WHERE v.deleted_at IS NOT NULL
+                AND v.is_deleted = 1
+                ORDER BY v.deleted_at DESC";
+
+        $query = $this->db->connect()->prepare($sql);
         $query->execute();
-    
-        return $query->fetch();
+        return $query->fetchAll();
     }
     
     function fetchPendingVolunteer() { 
@@ -261,7 +299,7 @@ class Admin {
     function fetchApprovedVolunteer() { 
         $sql = "SELECT v.volunteer_id, CONCAT(v.last_name, ', ', v.first_name, ' ', v.middle_name) AS full_name, p.program_name, CONCAT(v.year, '-', v.section) AS yr_section, 
                 v.contact, v.email, v.cor_file AS cor, v.status, u.username AS registered_by FROM volunteers v 
-                LEFT JOIN users u ON v.user_id = u.user_id LEFT JOIN programs p ON v.program_id = p.program_id WHERE v.status = 'approved'";
+                LEFT JOIN users u ON v.user_id = u.user_id LEFT JOIN programs p ON v.program_id = p.program_id WHERE v.status = 'approved' AND v.is_deleted = 0";
         
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -298,13 +336,6 @@ class Admin {
             return "Sad di magawa";
         }
         return 1;
-    }
-    
-    function deleteVolunteer($volunteerId) {
-        $sql = "DELETE FROM volunteers WHERE volunteer_id = :volunteer_id";
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':volunteer_id', $volunteerId);
-        return $query->execute();
     }
 
     //Moderator functions
@@ -846,7 +877,7 @@ class Admin {
 
     function restoreEvent($eventId) {
         $sql = "UPDATE events 
-                SET deleted_at = NULL, reason = NULL 
+                SET is_deleted = 0, deleted_at = NULL, reason = NULL 
                 WHERE event_id = :event_id";
 
         $query = $this->db->connect()->prepare($sql);
@@ -932,7 +963,7 @@ class Admin {
     
     function restoreCalendarEvent($activityId) {
         $sql = "UPDATE calendar_activities 
-                SET deleted_at = NULL, reason = NULL 
+                SET is_deleted = 0, deleted_at = NULL, reason = NULL 
                 WHERE activity_id = :activity_id";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':activity_id', $activityId);
@@ -1013,7 +1044,7 @@ class Admin {
     
     function restorePrayerSchedule($prayerId) {
         $sql = "UPDATE friday_prayers 
-                SET deleted_at = NULL, reason = NULL 
+                SET is_deleted = 0, deleted_at = NULL, reason = NULL 
                 WHERE prayer_id = :prayer_id";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':prayer_id', $prayerId);
@@ -1189,7 +1220,7 @@ class Admin {
 
     function restoreTransaction($reportId) {
         $sql = "UPDATE transparency_report 
-                SET deleted_at = NULL, reason = NULL 
+                SET is_deleted = 0, deleted_at = NULL, reason = NULL 
                 WHERE report_id = :report_id";
 
         $query = $this->db->connect()->prepare($sql);
@@ -1380,7 +1411,7 @@ class Admin {
 
     function restoreFile($fileId) {
         $sql = "UPDATE downloadable_files 
-                SET deleted_at = NULL, reason = NULL 
+                SET is_deleted = 0, deleted_at = NULL, reason = NULL 
                 WHERE file_id = :file_id";
 
         $query = $this->db->connect()->prepare($sql);
@@ -1657,7 +1688,7 @@ class Admin {
 
     function restoreStudent($enrollmentId) {
     $sql = "UPDATE madrasa_enrollment 
-            SET deleted_at = NULL, reason = NULL 
+            SET is_deleted = 0, deleted_at = NULL, reason = NULL 
             WHERE enrollment_id = :enrollment_id";
 
     $query = $this->db->connect()->prepare($sql);

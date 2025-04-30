@@ -16,6 +16,7 @@ $archivedFiles = $adminObj->fetchArchivedFiles();
 $archivedOnsite = $adminObj->fetchArchivedStudents('On-site');
 $archivedOnline = $adminObj->fetchArchivedStudents('Online');
 $archivedOfficers = $adminObj->fetchArchivedOfficers();
+$archivedVolunteers = $adminObj->fetchArchivedVolunteers();
 
 
 ?>
@@ -96,6 +97,12 @@ $archivedOfficers = $adminObj->fetchArchivedOfficers();
                             <button class="nav-link" id="officers-tab" data-bs-toggle="tab" data-bs-target="#officers"
                                     type="button" role="tab" aria-controls="officers" aria-selected="false">
                                 Officers
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="volunteers-tab" data-bs-toggle="tab" data-bs-target="#volunteers"
+                                    type="button" role="tab" aria-controls="volunteers" aria-selected="false">
+                                Volunteers
                             </button>
                         </li>
                     </ul>
@@ -643,7 +650,7 @@ $archivedOfficers = $adminObj->fetchArchivedOfficers();
                                             <?php else: ?>
                                                 <?php foreach ($archivedOfficers as $officer): ?>
                                                     <tr>
-                                                        <td><?= clean_input($officer['full_name']) ?></td>
+                                                        <td><?= clean_input(strtoupper($officer['full_name'])) ?></td>
                                                         <td><?= clean_input($officer['program_name']) ?? 'N/A' ?></td>
                                                         <td><?= clean_input($officer['position_name']) ?></td>
                                                         <td><?= clean_input($officer['school_year']) ?></td>
@@ -663,6 +670,49 @@ $archivedOfficers = $adminObj->fetchArchivedOfficers();
                                 </div>
                             </div>
 
+                            <div class="tab-pane fade" id="volunteers" role="tabpanel" aria-labelledby="volunteers-tab">
+                                <div class="table-responsive">
+                                    <table id="volunteersTab" class="table align-items-center mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Volunteer Name</th>
+                                                <th>Program</th>
+                                                <th>Year & Section</th>
+                                                <th>Contact</th>
+                                                <th>Email</th>
+                                                <th>Reason</th>
+                                                <th>Deleted At</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php if (empty($archivedVolunteers)): ?>
+                                                <tr>
+                                                    <td colspan="9" class="text-center">No archived volunteers</td>
+                                                </tr>
+                                            <?php else: ?>
+                                                <?php foreach ($archivedVolunteers as $volunteer): ?>
+                                                    <tr>
+                                                        <td><?= clean_input(strtoupper($volunteer['full_name'])) ?></td>
+                                                        <td><?= clean_input($volunteer['program_name']) ?? 'N/A' ?></td>
+                                                        <td><?= clean_input($volunteer['yr_section']) ?></td>
+                                                        <td><?= clean_input($volunteer['contact']) ?></td>
+                                                        <td><?= clean_input($volunteer['email']) ?></td>
+                                                        <td><?= clean_input($volunteer['reason']) ?></td>
+                                                        <td><?= $volunteer['deleted_at'] ? date('M d, Y h:i A', strtotime($volunteer['deleted_at'])) : 'N/A' ?></td>
+                                                        <td>
+                                                            <button class="btn btn-sm btn-success" 
+                                                                    onclick="openVolunteerModal('restoreVolunteerModal', <?= $volunteer['volunteer_id'] ?>, 'restore')">
+                                                                <i class="fas fa-undo"></i> Restore
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -681,6 +731,7 @@ $archivedOfficers = $adminObj->fetchArchivedOfficers();
 <?php include_once '../adminModals/restoreFile.html'; ?>
 <?php include_once '../adminModals/restoreStudent.html'; ?>
 <?php include_once '../adminModals/restoreOfficer.html'; ?>
+<?php include_once '../adminModals/restoreVolunteer.html'; ?>
 
 <!-- <script>
     $(document).ready(function() {
