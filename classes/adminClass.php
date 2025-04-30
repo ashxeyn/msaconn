@@ -1484,11 +1484,11 @@ class Admin {
                 e.classification, e.address, 
                 p.program_name, c.college_name, 
                 e.year_level, e.school, 
-                e.cor_path, e.status 
+                e.cor_path, e.status, e.contact_number, e.email 
                 FROM madrasa_enrollment e
                 LEFT JOIN programs p ON e.program_id = p.program_id
                 LEFT JOIN colleges c ON e.college_id = c.college_id
-                WHERE e.status = 'Enrolled' AND e.classification = 'On-site'";
+                WHERE e.status = 'Enrolled' AND e.classification = 'On-site' AND e.is_deleted = 0";   
         
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -1501,11 +1501,11 @@ class Admin {
                 e.classification, e.address, 
                 e.ol_college, e.ol_program, 
                 e.year_level, e.school, 
-                e.cor_path, e.status 
+                e.cor_path, e.status, e.contact_number, e.email
                 FROM madrasa_enrollment e
                 LEFT JOIN programs p ON e.program_id = p.program_id
                 LEFT JOIN colleges c ON e.college_id = c.college_id
-                WHERE e.status = 'Enrolled' AND e.classification = 'Online'";
+                WHERE e.status = 'Enrolled' AND e.classification = 'Online' AND e.is_deleted = 0";
         
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -1554,96 +1554,138 @@ class Admin {
         return $query->fetchAll();
     }
 
-    // function fetchProgramsByCollege($collegeId) {
-    //     $sql = "SELECT * FROM programs WHERE college_id = :college_id ORDER BY program_name";
-    //     $query = $this->db->connect()->prepare($sql);
-    //     $query->bindParam(':college_id', $collegeId);
-    //     $query->execute();
-    //     return $query->fetchAll();
-    // }
+    function addStudent($firstName, $middleName, $lastName, $classification, 
+    $address, $collegeId, $programId, $yearLevel, $school, $corPath, 
+    $email, $contactNumber, $collegeText = null, $programText = null) {
+    $sql = "INSERT INTO madrasa_enrollment (
+    first_name, middle_name, last_name, classification, address, 
+    college_id, program_id, year_level, school, cor_path, 
+    ol_college, ol_program, email, contact_number, status) 
+    VALUES (
+    :first_name, :middle_name, :last_name, :classification, :address, 
+    :college_id, :program_id, :year_level, :school, :cor_path,
+    :ol_college, :ol_program, :email, :contact_number, 'Enrolled')";
+
+    $query = $this->db->connect()->prepare($sql);
+    $query->bindParam(':first_name', $firstName);
+    $query->bindParam(':middle_name', $middleName);
+    $query->bindParam(':last_name', $lastName);
+    $query->bindParam(':classification', $classification);
+    $query->bindParam(':address', $address);
+    $query->bindParam(':college_id', $collegeId);
+    $query->bindParam(':program_id', $programId);
+    $query->bindParam(':year_level', $yearLevel);
+    $query->bindParam(':school', $school);
+    $query->bindParam(':cor_path', $corPath);
+    $query->bindParam(':ol_college', $collegeText);
+    $query->bindParam(':ol_program', $programText);
+    $query->bindParam(':email', $email);
+    $query->bindParam(':contact_number', $contactNumber);
+
+    return $query->execute();
+    }
 
     function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $classification, 
-            $address, $collegeId, $programId, $yearLevel, $school, $corPath, 
-            $email, $contactNumber, $collegeText = null, $programText = null) {
-        $sql = "UPDATE madrasa_enrollment SET 
-        first_name = :first_name, 
-        middle_name = :middle_name, 
-        last_name = :last_name, 
-        classification = :classification, 
-        address = :address, 
-        college_id = :college_id, 
-        program_id = :program_id, 
-        year_level = :year_level, 
-        school = :school,
-        email = :email,
-        contact_number = :contact_number,
-        ol_college = :ol_college,
-        ol_program = :ol_program";
+        $address, $collegeId, $programId, $yearLevel, $school, $corPath, 
+        $email, $contactNumber, $collegeText = null, $programText = null) {
+    $sql = "UPDATE madrasa_enrollment SET 
+    first_name = :first_name, 
+    middle_name = :middle_name, 
+    last_name = :last_name, 
+    classification = :classification, 
+    address = :address, 
+    college_id = :college_id, 
+    program_id = :program_id, 
+    year_level = :year_level, 
+    school = :school,
+    email = :email,
+    contact_number = :contact_number,
+    ol_college = :ol_college,
+    ol_program = :ol_program";
 
-        if (!empty($corPath)) {
-        $sql .= ", cor_path = :cor_path";
+    if (!empty($corPath)) {
+    $sql .= ", cor_path = :cor_path";
+    }
+
+    $sql .= ", updated_at = NOW() WHERE enrollment_id = :enrollment_id";
+
+    $query = $this->db->connect()->prepare($sql);
+    $query->bindParam(':first_name', $firstName);
+    $query->bindParam(':middle_name', $middleName);
+    $query->bindParam(':last_name', $lastName);
+    $query->bindParam(':classification', $classification);
+    $query->bindParam(':address', $address);
+    $query->bindParam(':college_id', $collegeId);
+    $query->bindParam(':program_id', $programId);
+    $query->bindParam(':year_level', $yearLevel);
+    $query->bindParam(':school', $school);
+    $query->bindParam(':email', $email);
+    $query->bindParam(':contact_number', $contactNumber);
+    $query->bindParam(':ol_college', $collegeText);
+    $query->bindParam(':ol_program', $programText);
+
+    if (!empty($corPath)) {
+    $query->bindParam(':cor_path', $corPath);
+    }
+
+    $query->bindParam(':enrollment_id', $enrollmentId);
+
+    return $query->execute();
+    }
+
+    function softDeleteStudent($enrollmentId, $reason) {
+    $sql = "UPDATE madrasa_enrollment 
+            SET is_deleted = 1, deleted_at = NOW(), reason = :reason 
+            WHERE enrollment_id = :enrollment_id";
+
+    $query = $this->db->connect()->prepare($sql);
+    $query->bindParam(':reason', $reason);
+    $query->bindParam(':enrollment_id', $enrollmentId);
+    return $query->execute();
+    }
+
+    function restoreStudent($enrollmentId) {
+    $sql = "UPDATE madrasa_enrollment 
+            SET deleted_at = NULL, reason = NULL 
+            WHERE enrollment_id = :enrollment_id";
+
+    $query = $this->db->connect()->prepare($sql);
+    $query->bindParam(':enrollment_id', $enrollmentId);
+    return $query->execute();
+    }
+
+    function fetchArchivedStudents($classification = null) {
+        $sql = "SELECT e.enrollment_id, 
+                CONCAT(e.last_name, ', ', e.first_name, ' ', IFNULL(e.middle_name, '')) AS full_name, 
+                e.classification, e.reason, e.deleted_at,
+                CASE 
+                    WHEN e.classification = 'On-site' THEN CONCAT(c.college_name, ' - ', p.program_name) 
+                    ELSE CONCAT(e.ol_college, ' - ', e.ol_program)
+                END AS program_info
+                FROM madrasa_enrollment e
+                LEFT JOIN programs p ON e.program_id = p.program_id
+                LEFT JOIN colleges c ON e.college_id = c.college_id
+                WHERE e.deleted_at IS NOT NULL";
+        
+        if ($classification === 'On-site') {
+            $sql .= " AND e.classification = 'On-site'";
+        } elseif ($classification === 'Online') {
+            $sql .= " AND e.classification = 'Online'";
         }
-
-        $sql .= ", updated_at = NOW() WHERE enrollment_id = :enrollment_id";
-
+        
+        $sql .= " ORDER BY e.deleted_at DESC";
+    
         $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':first_name', $firstName);
-        $query->bindParam(':middle_name', $middleName);
-        $query->bindParam(':last_name', $lastName);
-        $query->bindParam(':classification', $classification);
-        $query->bindParam(':address', $address);
-        $query->bindParam(':college_id', $collegeId);
-        $query->bindParam(':program_id', $programId);
-        $query->bindParam(':year_level', $yearLevel);
-        $query->bindParam(':school', $school);
-        $query->bindParam(':email', $email);
-        $query->bindParam(':contact_number', $contactNumber);
-        $query->bindParam(':ol_college', $collegeText);
-        $query->bindParam(':ol_program', $programText);
+        $query->execute();
+        return $query->fetchAll();
+    }
 
-        if (!empty($corPath)) {
-        $query->bindParam(':cor_path', $corPath);
-        }
-
-        $query->bindParam(':enrollment_id', $enrollmentId);
-
-        return $query->execute();
-        }
-
-        function addStudent($firstName, $middleName, $lastName, $classification, 
-        $address, $collegeId, $programId, $yearLevel, $school, $corPath,
-        $collegeText = null, $programText = null) {
-        $sql = "INSERT INTO madrasa_enrollment (
-        first_name, middle_name, last_name, classification, address, 
-        college_id, program_id, year_level, school, cor_path, 
-        ol_college, ol_program, status) 
-        VALUES (
-        :first_name, :middle_name, :last_name, :classification, :address, 
-        :college_id, :program_id, :year_level, :school, :cor_path,
-        :ol_college, :ol_program, 'Enrolled')";
-
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':first_name', $firstName);
-        $query->bindParam(':middle_name', $middleName);
-        $query->bindParam(':last_name', $lastName);
-        $query->bindParam(':classification', $classification);
-        $query->bindParam(':address', $address);
-        $query->bindParam(':college_id', $collegeId);
-        $query->bindParam(':program_id', $programId);
-        $query->bindParam(':year_level', $yearLevel);
-        $query->bindParam(':school', $school);
-        $query->bindParam(':cor_path', $corPath);
-        $query->bindParam(':ol_college', $collegeText);
-        $query->bindParam(':ol_program', $programText);
-
-        return $query->execute();
-        }
-
-    function deleteStudent($enrollmentId) {
-        $sql = "DELETE FROM madrasa_enrollment WHERE enrollment_id = :enrollment_id";
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':enrollment_id', $enrollmentId);
-        return $query->execute();
+    function validateEmail($email, $classification) {
+    if ($classification === 'On-site') {
+        return filter_var($email, FILTER_VALIDATE_EMAIL) && preg_match('/@wmsu\.edu\.ph$/', $email);
+    } else {
+        return filter_var($email, FILTER_VALIDATE_EMAIL);
+    }
     }
     
     // Others

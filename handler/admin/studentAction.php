@@ -1,8 +1,16 @@
 <?php
+session_start();
 require_once '../../classes/adminClass.php';
 require_once '../../tools/function.php';
 
 $adminObj = new Admin();
+
+if (!isset($_SESSION['user_id'])) {
+    echo "error: unauthorized";
+    exit;
+}
+
+$userId = $_SESSION['user_id'];
 $action = $_POST['action'] ?? '';
 $enrollmentId = $_POST['enrollmentId'] ?? null;
 
@@ -11,7 +19,18 @@ if ($action === 'edit') {
     $middleName = clean_input($_POST['middleName']);
     $lastName = clean_input($_POST['lastName']);
     $classification = clean_input($_POST['classification']);
+    $contactNumber = clean_input($_POST['contactNumber']);
+    $email = clean_input($_POST['email']);
     $existingImage = $_POST['existing_image'] ?? null;
+    
+    if (!$adminObj->validateEmail($email, $classification)) {
+        if ($classification === 'On-site') {
+            echo "error: invalid_email_format";
+        } else {
+            echo "error: invalid_email";
+        }
+        exit;
+    }
     
     $collegeId = null;
     $programId = null;
@@ -54,19 +73,44 @@ if ($action === 'edit') {
         $yearLevel,
         $school,
         $image,
+        $email,
+        $contactNumber,
         $collegeText,
         $programText
     );
 
     echo $result ? "success" : "error";
+
 } elseif ($action === 'delete') {
-    $result = $adminObj->deleteStudent($enrollmentId);
+    $reason = clean_input($_POST['reason']);
+    if (empty($reason)) {
+        echo "error: reason_required";
+        exit;
+    }
+
+    $result = $adminObj->softDeleteStudent($enrollmentId, $reason);
     echo $result ? "success" : "error";
+
+} elseif ($action === 'restore') {
+    $result = $adminObj->restoreStudent($enrollmentId);
+    echo $result ? "success" : "error";
+
 } elseif ($action === 'add') {
     $firstName = clean_input($_POST['firstName']);
     $middleName = clean_input($_POST['middleName']);
     $lastName = clean_input($_POST['lastName']);
     $classification = clean_input($_POST['classification']);
+    $contactNumber = clean_input($_POST['contactNumber']);
+    $email = clean_input($_POST['email']);
+    
+    if (!$adminObj->validateEmail($email, $classification)) {
+        if ($classification === 'On-site') {
+            echo "error: invalid_email_format";
+        } else {
+            echo "error: invalid_email";
+        }
+        exit;
+    }
     
     $collegeId = null;
     $programId = null;
@@ -108,6 +152,8 @@ if ($action === 'edit') {
         $yearLevel,
         $school,
         $image,
+        $email,
+        $contactNumber,
         $collegeText,
         $programText
     );

@@ -54,10 +54,14 @@ $result = $adminObj->fetchOnlineEnrolledStudents();
                         <td><?= clean_input(strtoupper($row['full_name'])) ?></td>
                         <td>
                             <?php if ($row['classification'] == 'On-site'): ?>
+                                <strong>Contact:</strong> <?= clean_input($row['contact_number'] ?? 'N/A') ?><br>
+                                <strong>Email:</strong> <?= clean_input($row['email'] ?? 'N/A') ?><br>
                                 <strong>Program:</strong> <?= clean_input($row['ol_program'] ?? 'N/A') ?><br>
                                 <strong>College:</strong> <?= clean_input($row['ol_college'] ?? 'N/A') ?><br>
                                 <strong>Year Level:</strong> <?= clean_input($row['year_level'] ?? 'N/A') ?>
                             <?php else: ?>
+                                <strong>Contact:</strong> <?= clean_input($row['contact_number'] ?? 'N/A') ?><br>
+                                <strong>Email:</strong> <?= clean_input($row['email'] ?? 'N/A') ?><br>
                                 <strong>Address:</strong> <?= clean_input($row['address'] ?? 'N/A') ?><br>
                                 <?php if (!empty($row['school'])): ?>
                                     <strong>School:</strong> <?= clean_input($row['school']) ?><br>

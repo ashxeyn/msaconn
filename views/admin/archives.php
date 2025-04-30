@@ -13,6 +13,9 @@ $archivedCashOut = $adminObj->fetchArchivedTransactions('Cash Out');
 $archivedFAQs = $adminObj->fetchArchivedFAQs();
 $archivedAboutMsa = $adminObj->fetchArchivedAbouts();
 $archivedFiles = $adminObj->fetchArchivedFiles();
+$archivedOnsite = $adminObj->fetchArchivedStudents('On-site');
+$archivedOnline = $adminObj->fetchArchivedStudents('Online');
+
 ?>
 
 <head>
@@ -77,6 +80,13 @@ $archivedFiles = $adminObj->fetchArchivedFiles();
                                     type="button" role="tab" aria-controls="files" aria-selected="false">
                                 Files
                             </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="archived-students-tab" data-bs-toggle="tab" data-bs-target="#archived-students" 
+                                    type="button" role="tab" aria-controls="archived-students" aria-selected="false">
+                                Students
+                            </button>
+
                         </li>
                     </ul>
                     
@@ -490,6 +500,106 @@ $archivedFiles = $adminObj->fetchArchivedFiles();
                                 </table>
                             </div>
                         </div>
+                        <div class="tab-pane fade" id="archived-students" role="tabpanel" aria-labelledby="archived-students-tab">
+                            <ul class="nav nav-tabs" id="studentSubTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="onsite-tab" data-bs-toggle="tab" data-bs-target="#onsite-archived" 
+                                            type="button" role="tab" aria-controls="onsite-archived" aria-selected="true">
+                                        On-site Students
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="online-tab" data-bs-toggle="tab" data-bs-target="#online-archived" 
+                                            type="button" role="tab" aria-controls="online-archived" aria-selected="false">
+                                        Online Students
+                                    </button>
+                                </li>
+                            </ul>
+    
+                            <div class="tab-content" id="studentSubTabsContent">
+                                <div class="tab-pane fade show active" id="onsite-archived" role="tabpanel" aria-labelledby="onsite-tab">
+                                    <div class="table-responsive mt-3">
+                                        <table id="onsiteArchivedTab" class="table align-items-center mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Student Name</th>
+                                                    <th>Program</th>
+                                                    <th>Classification</th>
+                                                    <th>Reason</th>
+                                                    <th>Archived At</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php 
+                                                if (empty($archivedOnsite)): ?>
+                                                    <tr>
+                                                        <td colspan="6" class="text-center">No archived on-site students</td>
+                                                    </tr>
+                                                <?php else: ?>
+                                                    <?php foreach ($archivedOnsite as $student): ?>
+                                                        <tr>
+                                                            <td><?= clean_input($student['full_name']) ?></td>
+                                                            <td><?= clean_input($student['program_info']) ?></td>
+                                                            <td><?= clean_input($student['classification']) ?></td>
+                                                            <td><?= clean_input($student['reason']) ?></td>
+                                                            <td><?= $student['deleted_at'] ? date('M d, Y h:i A', strtotime($student['deleted_at'])) : 'N/A' ?></td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-success" 
+                                                                        onclick="openStudentModal('restoreStudentModal', <?= $student['enrollment_id'] ?>, 'restore')">
+                                                                    <i class="fas fa-undo"></i> Restore
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <div class="tab-pane fade" id="online-archived" role="tabpanel" aria-labelledby="online-tab">
+                                    <div class="table-responsive mt-3">
+                                        <table id="onlineArchivedTab" class="table align-items-center mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Student Name</th>
+                                                    <th>Program</th>
+                                                    <th>Classification</th>
+                                                    <th>Reason</th>
+                                                    <th>Archived At</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php 
+                                                if (empty($archivedOnline)): ?>
+                                                    <tr>
+                                                        <td colspan="6" class="text-center">No archived online students</td>
+                                                    </tr>
+                                                <?php else: ?>
+                                                    <?php foreach ($archivedOnline as $student): ?>
+                                                        <tr>
+                                                            <td><?= clean_input($student['full_name']) ?></td>
+                                                            <td><?= clean_input($student['program_info']) ?></td>
+                                                            <td><?= clean_input($student['classification']) ?></td>
+                                                            <td><?= clean_input($student['reason']) ?></td>
+                                                            <td><?= $student['deleted_at'] ? date('M d, Y h:i A', strtotime($student['deleted_at'])) : 'N/A' ?></td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-success" 
+                                                                        onclick="openStudentModal('restoreStudentModal', <?= $student['enrollment_id'] ?>, 'restore')">
+                                                                    <i class="fas fa-undo"></i> Restore
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -506,9 +616,10 @@ $archivedFiles = $adminObj->fetchArchivedFiles();
 <?php include_once '../adminModals/restoreFaq.html'; ?>
 <?php include_once '../adminModals/restoreAbouts.html'; ?>
 <?php include_once '../adminModals/restoreFile.html'; ?>
+<?php include_once '../adminModals/restoreStudent.html'; ?>
 
-<script>
+<!-- <script>
     $(document).ready(function() {
         new bootstrap.Tab(document.querySelector('#colleges-tab')).show();
     });
-</script>
+</script> -->

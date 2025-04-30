@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 29, 2025 at 02:08 PM
--- Server version: 10.4.32-MariaDB
+-- Generation Time: Apr 29, 2025 at 07:37 PM
+-- Server version: 11.4.5-MariaDB
 -- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -38,13 +38,6 @@ CREATE TABLE `about_msa` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `about_msa`
---
-
-INSERT INTO `about_msa` (`id`, `mission`, `vision`, `description`, `created_at`, `is_deleted`, `reason`, `deleted_at`) VALUES
-(1, 'dasd', 'asda', 'dasda', '2025-04-29 07:57:26', 0, NULL, NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -62,14 +55,6 @@ CREATE TABLE `calendar_activities` (
   `reason` varchar(255) DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `calendar_activities`
---
-
-INSERT INTO `calendar_activities` (`activity_id`, `title`, `description`, `activity_date`, `created_by`, `created_at`, `is_deleted`, `reason`, `deleted_at`) VALUES
-(1, 'waw', 'dasdad', '2025-04-30', 1, '2025-04-29 11:58:46', 0, NULL, NULL),
-(2, '123', 'dasd', '2025-05-01', 1, '2025-04-29 11:58:54', 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -95,7 +80,8 @@ INSERT INTO `colleges` (`college_id`, `college_name`, `is_deleted`, `reason`, `d
 (6, 'sd', 1, 'as', '2025-04-28 17:22:04'),
 (8, 'sads', 0, NULL, NULL),
 (9, 'sadsa', 1, 'sad', '2025-04-28 16:56:56'),
-(10, 'asddddddddddd', 1, 'w', '2025-04-28 17:03:22');
+(10, 'asddddddddddd', 0, NULL, NULL),
+(11, 'd', 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -191,15 +177,6 @@ CREATE TABLE `friday_prayers` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `friday_prayers`
---
-
-INSERT INTO `friday_prayers` (`prayer_id`, `khutbah_date`, `speaker`, `topic`, `location`, `created_by`, `created_at`, `is_deleted`, `reason`, `deleted_at`) VALUES
-(1, '2025-04-30', 'dasd', 'dsa', 'dsa', 1, '2025-04-29 11:59:11', 0, NULL, NULL),
-(2, '2025-05-01', 'dsadsa', 'sada', 'sadds', 1, '2025-04-29 11:59:28', 0, NULL, NULL),
-(3, '2025-04-28', '3213', '31231', '12313', 1, '2025-04-29 12:04:51', 0, NULL, NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -212,7 +189,7 @@ CREATE TABLE `madrasa_enrollment` (
   `middle_name` varchar(100) DEFAULT NULL,
   `last_name` varchar(100) NOT NULL,
   `email` varchar(255) NOT NULL,
-  `contact_number` varchar(20) DEFAULT NULL,
+  `contact_number` varchar(20) NOT NULL,
   `classification` enum('On-site','Online') NOT NULL,
   `address` varchar(255) DEFAULT NULL,
   `college_id` int(11) DEFAULT NULL,
@@ -230,13 +207,6 @@ CREATE TABLE `madrasa_enrollment` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `madrasa_enrollment`
---
-
-INSERT INTO `madrasa_enrollment` (`enrollment_id`, `first_name`, `middle_name`, `last_name`, `email`, `contact_number`, `classification`, `address`, `college_id`, `ol_college`, `program_id`, `ol_program`, `year_level`, `school`, `cor_path`, `status`, `created_at`, `updated_at`, `is_deleted`, `reason`, `deleted_at`) VALUES
-(1, 'sdad', 'dimain', 'bengil', 'hz123213@wmsu.edu.ph', '12332323', 'On-site', NULL, 2, NULL, 3, NULL, NULL, NULL, '1745913800_Screenshot (26).png', 'Pending', '2025-04-29 16:03:20', '2025-04-29 16:03:20', 0, NULL, NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -250,6 +220,33 @@ CREATE TABLE `officer_positions` (
   `reason` varchar(255) DEFAULT NULL,
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `officer_positions`
+--
+
+INSERT INTO `officer_positions` (`position_id`, `position_name`, `is_deleted`, `reason`, `deleted_at`) VALUES
+(1, 'President', 0, NULL, NULL),
+(2, 'Internal Vice President', 0, NULL, NULL),
+(3, 'External Vice President', 0, NULL, NULL),
+(4, 'Secretary', 0, NULL, NULL),
+(5, 'Treasurer', 0, NULL, NULL),
+(6, 'Auditor', 0, NULL, NULL),
+(7, 'P.I.O.', 0, NULL, NULL),
+(8, 'Project Manager', 0, NULL, NULL),
+(9, 'Vice President', 0, NULL, NULL),
+(10, 'P.I.O. Internal', 0, NULL, NULL),
+(11, 'P.I.O. External', 0, NULL, NULL),
+(12, 'Dahwa and Religious Instructions', 0, NULL, NULL),
+(13, 'Documentation and Publication', 0, NULL, NULL),
+(14, 'Logistics and Operations', 0, NULL, NULL),
+(15, 'Budget and Finance', 0, NULL, NULL),
+(16, 'Statistics and Evaluations', 0, NULL, NULL),
+(17, 'Registration and Membership', 0, NULL, NULL),
+(18, 'Tahara', 0, NULL, NULL),
+(19, 'Publication', 0, NULL, NULL),
+(20, 'Documentation', 0, NULL, NULL),
+(21, 'Registration', 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -272,8 +269,7 @@ CREATE TABLE `programs` (
 
 INSERT INTO `programs` (`program_id`, `program_name`, `college_id`, `is_deleted`, `reason`, `deleted_at`) VALUES
 (3, 'shheshDDd', 2, 0, NULL, NULL),
-(6, 'asdssasdasdads', 2, 1, 'sad', '2025-04-28 17:13:42'),
-(7, 'waw', 2, 0, NULL, NULL);
+(6, 'asdssasdasdads', 2, 1, 'sad', '2025-04-28 17:13:42');
 
 -- --------------------------------------------------------
 
@@ -543,19 +539,19 @@ ALTER TABLE `volunteers`
 -- AUTO_INCREMENT for table `about_msa`
 --
 ALTER TABLE `about_msa`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `calendar_activities`
 --
 ALTER TABLE `calendar_activities`
-  MODIFY `activity_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `activity_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `colleges`
 --
 ALTER TABLE `colleges`
-  MODIFY `college_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `college_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `downloadable_files`
@@ -585,25 +581,25 @@ ALTER TABLE `faqs`
 -- AUTO_INCREMENT for table `friday_prayers`
 --
 ALTER TABLE `friday_prayers`
-  MODIFY `prayer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `prayer_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `madrasa_enrollment`
 --
 ALTER TABLE `madrasa_enrollment`
-  MODIFY `enrollment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `enrollment_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `officer_positions`
 --
 ALTER TABLE `officer_positions`
-  MODIFY `position_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `position_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `programs`
 --
 ALTER TABLE `programs`
-  MODIFY `program_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `program_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `school_years`
@@ -707,6 +703,12 @@ ALTER TABLE `transparency_report`
 --
 ALTER TABLE `update_images`
   ADD CONSTRAINT `update_images_ibfk_1` FOREIGN KEY (`update_id`) REFERENCES `system_updates` (`update_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `users`
+--
+ALTER TABLE `users`
+  ADD CONSTRAINT `fk_users_officer_positions` FOREIGN KEY (`position_id`) REFERENCES `officer_positions` (`position_id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `volunteers`
