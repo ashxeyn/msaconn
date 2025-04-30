@@ -31,84 +31,6 @@ class Admin {
     }
 
     // Officer functions
-    function addOfficer($data) {
-        $sql = "INSERT INTO executive_officers (last_name, first_name, middle_name, position_id, program_id, school_year_id, image)
-                VALUES (:last_name, :first_name, :middle_name, :position, :program, :school_year, :image)";
-        
-        $query = $this->db->connect()->prepare($sql);
-
-        $query->bindParam(':last_name', $data['surname']);
-        $query->bindParam(':first_name', $data['firstName']);
-        $query->bindParam(':middle_name', $data['middleName']);
-        $query->bindParam(':position', $data['position']);
-        $query->bindParam(':program', $data['program']);
-        $query->bindParam(':school_year', $data['schoolYear']);
-        $query->bindParam(':image', $data['image']['name']);
-
-        if ($query->execute()) {
-            if (!empty($data['image']['tmp_name'])) {
-                move_uploaded_file($data['image']['tmp_name'], "../../assets/officers/" . $data['image']['name']);
-            }
-            return 1;
-        } else {
-            return "Failed to add officer.";
-        }
-    }
-    
-    function updateOfficer($officerId, $surname, $firstName, $middleName, $position, $schoolYear, $program, $existingImage, $image = null) {
-        $imageToSave = $existingImage;
-    
-        if (isset($image) && is_array($image) && !empty($image['name'])) {
-            $newImage = $image['name'];
-            $targetPath = "../../assets/officers/" . $newImage;
-            if (move_uploaded_file($image['tmp_name'], $targetPath)) {
-                $imageToSave = $newImage;
-            }
-        } elseif (empty($existingImage) && isset($image) && !empty($image['name'])) {
-            $newImage = $image['name'];
-            $targetPath = "../../assets/officers/" . $newImage;
-            if (move_uploaded_file($image['tmp_name'], $targetPath)) {
-                $imageToSave = $newImage;
-            }
-        }
-    
-        $sql = "UPDATE executive_officers 
-                SET last_name = :last_name, 
-                    first_name = :first_name, 
-                    middle_name = :middle_name, 
-                    position_id = :position_id, 
-                    school_year_id = :school_year_id, 
-                    program_id = :program_id, 
-                    image = :image 
-                WHERE officer_id = :officer_id";
-    
-        $query = $this->db->connect()->prepare($sql);
-    
-        $query->bindParam(':last_name', $surname);
-        $query->bindParam(':first_name', $firstName);
-        $query->bindParam(':middle_name', $middleName);
-        $query->bindParam(':position_id', $position);
-        $query->bindParam(':school_year_id', $schoolYear);
-        $query->bindParam(':program_id', $program);
-        $query->bindParam(':image', $imageToSave);  
-        $query->bindParam(':officer_id', $officerId);
-    
-        return $query->execute();
-    }
-    
-    
-    function deleteOfficer($officerId) {
-        $sql = "DELETE FROM executive_officers WHERE officer_id = :officer_id";
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':officer_id', $officerId);
-            
-        if ($query->execute()) {
-            return 1;
-        } else {
-            return "Failed to delete officer.";
-        }
-    }
-
     function fetchOfficers() {
         $sql = "SELECT 
                     v.officer_id,
@@ -116,41 +38,130 @@ class Admin {
                     p.program_name, 
                     op.position_name, 
                     sy.school_year, 
-                    v.image AS image 
+                    v.image AS image,
+                    v.deleted_at
                 FROM executive_officers v 
                 LEFT JOIN programs p ON v.program_id = p.program_id 
                 LEFT JOIN officer_positions op ON v.position_id = op.position_id 
-                LEFT JOIN school_years sy ON v.school_year_id = sy.school_year_id";
+                LEFT JOIN school_years sy ON v.school_year_id = sy.school_year_id
+                WHERE v.deleted_at IS NULL
+                ORDER BY v.officer_id DESC";
         
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         return $query->fetchAll();
     }
-    
+
     function getOfficerById($officerId) {
-    $sql = "SELECT 
-                eo.officer_id,
-                eo.last_name,
-                eo.first_name,
-                eo.middle_name,
-                eo.position_id,
-                eo.image,
-                eo.school_year_id,
-                eo.program_id,
-                p.program_name,
-                op.position_name,
-                sy.school_year
-            FROM executive_officers eo
-            LEFT JOIN programs p ON eo.program_id = p.program_id
-            LEFT JOIN officer_positions op ON eo.position_id = op.position_id
-            LEFT JOIN school_years sy ON eo.school_year_id = sy.school_year_id
-            WHERE eo.officer_id = :officer_id";
+        $sql = "SELECT 
+                    eo.officer_id,
+                    eo.last_name,
+                    eo.first_name,
+                    eo.middle_name,
+                    eo.position_id,
+                    eo.image,
+                    eo.school_year_id,
+                    eo.program_id,
+                    eo.deleted_at,
+                    p.program_name,
+                    op.position_name,
+                    sy.school_year
+                FROM executive_officers eo
+                LEFT JOIN programs p ON eo.program_id = p.program_id
+                LEFT JOIN officer_positions op ON eo.position_id = op.position_id
+                LEFT JOIN school_years sy ON eo.school_year_id = sy.school_year_id
+                WHERE eo.officer_id = :officer_id";
 
-    $query = $this->db->connect()->prepare($sql);
-    $query->bindParam(':officer_id', $officerId);
-    $query->execute();
-
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':officer_id', $officerId);
+        $query->execute();
         return $query->fetch();
+    }
+
+    function addOfficer($firstName, $middleName, $surname, $position, $program, $schoolYear, $image) {
+        $sql = "INSERT INTO executive_officers (last_name, first_name, middle_name, position_id, program_id, school_year_id, image)
+                VALUES (:last_name, :first_name, :middle_name, :position, :program, :school_year, :image)";
+        
+        $query = $this->db->connect()->prepare($sql);
+
+        $query->bindParam(':last_name', $surname);
+        $query->bindParam(':first_name', $firstName);
+        $query->bindParam(':middle_name', $middleName);
+        $query->bindParam(':position', $position);
+        $query->bindParam(':program', $program);
+        $query->bindParam(':school_year', $schoolYear);
+        $query->bindParam(':image', $image);
+
+        return $query->execute();
+    }
+
+    function updateOfficer($officerId, $firstName, $middleName, $surname, $position, $program, $schoolYear, $image) {
+        $sql = "UPDATE executive_officers 
+                SET last_name = :last_name, 
+                    first_name = :first_name, 
+                    middle_name = :middle_name, 
+                    position_id = :position_id, 
+                    program_id = :program_id, 
+                    school_year_id = :school_year_id, 
+                    image = :image 
+                WHERE officer_id = :officer_id";
+
+        $query = $this->db->connect()->prepare($sql);
+
+        $query->bindParam(':first_name', $firstName);
+        $query->bindParam(':middle_name', $middleName);
+        $query->bindParam(':last_name', $surname);
+        $query->bindParam(':position_id', $position);
+        $query->bindParam(':program_id', $program);
+        $query->bindParam(':school_year_id', $schoolYear);
+        $query->bindParam(':image', $image);
+        $query->bindParam(':officer_id', $officerId);
+
+        return $query->execute();
+    }
+
+    function softDeleteOfficer($officerId, $reason) {
+        $sql = "UPDATE executive_officers 
+                SET is_deleted = 1, deleted_at = NOW(), reason = :reason 
+                WHERE officer_id = :officer_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':reason', $reason);
+        $query->bindParam(':officer_id', $officerId);
+        return $query->execute();
+    }
+
+    function restoreOfficer($officerId) {
+        $sql = "UPDATE executive_officers 
+                SET deleted_at = NULL, reason = NULL 
+                WHERE officer_id = :officer_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':officer_id', $officerId);
+        return $query->execute();
+    }
+
+    function fetchArchivedOfficers() {
+        $sql = "SELECT 
+                    eo.officer_id,
+                    CONCAT(eo.last_name, ', ', eo.first_name, ' ', eo.middle_name) AS full_name, 
+                    p.program_name, 
+                    op.position_name, 
+                    sy.school_year, 
+                    eo.image,
+                    eo.reason,
+                    eo.deleted_at
+                FROM executive_officers eo
+                LEFT JOIN programs p ON eo.program_id = p.program_id 
+                LEFT JOIN officer_positions op ON eo.position_id = op.position_id 
+                LEFT JOIN school_years sy ON eo.school_year_id = sy.school_year_id
+                WHERE eo.deleted_at IS NOT NULL
+                AND eo.is_deleted = 1
+                ORDER BY eo.deleted_at DESC";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
     }
 
     // Volunteer functions
@@ -1655,7 +1666,7 @@ class Admin {
     }
 
     function fetchArchivedStudents($classification = null) {
-        $sql = "SELECT e.enrollment_id, 
+        $sql = "SELECT e.enrollment_id, e.email, e.contact_number,
                 CONCAT(e.last_name, ', ', e.first_name, ' ', IFNULL(e.middle_name, '')) AS full_name, 
                 e.classification, e.reason, e.deleted_at,
                 CASE 

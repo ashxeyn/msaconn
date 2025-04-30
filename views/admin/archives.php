@@ -15,6 +15,8 @@ $archivedAboutMsa = $adminObj->fetchArchivedAbouts();
 $archivedFiles = $adminObj->fetchArchivedFiles();
 $archivedOnsite = $adminObj->fetchArchivedStudents('On-site');
 $archivedOnline = $adminObj->fetchArchivedStudents('Online');
+$archivedOfficers = $adminObj->fetchArchivedOfficers();
+
 
 ?>
 
@@ -27,6 +29,8 @@ $archivedOnline = $adminObj->fetchArchivedStudents('Online');
         <div class="col-12">
             <div class="card">
                 <div class="card-body px-0 pb-2">
+
+                    <!-- NAV TABS -->
                     <ul class="nav nav-tabs" id="archivesTabs" role="tablist">
                         <li class="nav-item" role="presentation">
                             <button class="nav-link active" id="colleges-tab" data-bs-toggle="tab" data-bs-target="#colleges" 
@@ -41,7 +45,8 @@ $archivedOnline = $adminObj->fetchArchivedStudents('Online');
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="archived-events-tab" data-bs-toggle="tab" data-bs-target="#archived-events" type="button" role="tab" aria-controls="archived-events" aria-selected="false">
+                            <button class="nav-link" id="archived-events-tab" data-bs-toggle="tab" data-bs-target="#archived-events" 
+                                    type="button" role="tab" aria-controls="archived-events" aria-selected="false">
                                 Events
                             </button>
                         </li>
@@ -86,11 +91,16 @@ $archivedOnline = $adminObj->fetchArchivedStudents('Online');
                                     type="button" role="tab" aria-controls="archived-students" aria-selected="false">
                                 Students
                             </button>
-
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="officers-tab" data-bs-toggle="tab" data-bs-target="#officers"
+                                    type="button" role="tab" aria-controls="officers" aria-selected="false">
+                                Officers
+                            </button>
                         </li>
                     </ul>
                     
-                    <div class="tab-content" id="archivesTabsContent">
+                    <div class="tab-content pt-3" id="archivesTabsContent">
                         <div class="tab-pane fade show active" id="colleges" role="tabpanel" aria-labelledby="colleges-tab">
                             <div class="table-responsive">
                                 <table id="table" class="table align-items-center mb-0">
@@ -394,7 +404,7 @@ $archivedOnline = $adminObj->fetchArchivedStudents('Online');
                                             <th>Answer</th>
                                             <th>Category</th>
                                             <th>Reason</th>
-                                            <th>Archived Date</th>
+                                            <th>Archived At</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -433,7 +443,7 @@ $archivedOnline = $adminObj->fetchArchivedStudents('Online');
                                             <th>Vision</th>
                                             <th>Description</th>
                                             <th>Reason</th>
-                                            <th>Archived Date</th>
+                                            <th>Archived At</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -471,7 +481,7 @@ $archivedOnline = $adminObj->fetchArchivedStudents('Online');
                                             <th>File Type</th>
                                             <th>File Size</th>
                                             <th>Reason</th>
-                                            <th>Archived Date</th>
+                                            <th>Archived At</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
@@ -519,12 +529,13 @@ $archivedOnline = $adminObj->fetchArchivedStudents('Online');
                             <div class="tab-content" id="studentSubTabsContent">
                                 <div class="tab-pane fade show active" id="onsite-archived" role="tabpanel" aria-labelledby="onsite-tab">
                                     <div class="table-responsive mt-3">
-                                        <table id="onsiteArchivedTab" class="table align-items-center mb-0">
+                                        <table id="osTab" class="table align-items-center mb-0">
                                             <thead>
                                                 <tr>
                                                     <th>Student Name</th>
+                                                    <th>Contact Information</th>
                                                     <th>Program</th>
-                                                    <th>Classification</th>
+                                                    <th>Learning Mode</th>
                                                     <th>Reason</th>
                                                     <th>Archived At</th>
                                                     <th>Actions</th>
@@ -539,7 +550,11 @@ $archivedOnline = $adminObj->fetchArchivedStudents('Online');
                                                 <?php else: ?>
                                                     <?php foreach ($archivedOnsite as $student): ?>
                                                         <tr>
-                                                            <td><?= clean_input($student['full_name']) ?></td>
+                                                            <td><?= clean_input(strtoupper($student['full_name'])) ?></td>
+                                                            <td>
+                                                            <strong>Contact:</strong> <?= clean_input($student['contact_number'] ?? 'N/A') ?><br>
+                                                            <strong>Email:</strong> <?= clean_input($student['email'] ?? 'N/A') ?>
+                                                            </td>
                                                             <td><?= clean_input($student['program_info']) ?></td>
                                                             <td><?= clean_input($student['classification']) ?></td>
                                                             <td><?= clean_input($student['reason']) ?></td>
@@ -560,12 +575,13 @@ $archivedOnline = $adminObj->fetchArchivedStudents('Online');
                                 
                                 <div class="tab-pane fade" id="online-archived" role="tabpanel" aria-labelledby="online-tab">
                                     <div class="table-responsive mt-3">
-                                        <table id="onlineArchivedTab" class="table align-items-center mb-0">
+                                        <table id="olTab" class="table align-items-center mb-0">
                                             <thead>
                                                 <tr>
                                                     <th>Student Name</th>
+                                                    <th>Contact Information</th>
                                                     <th>Program</th>
-                                                    <th>Classification</th>
+                                                    <th>Learning Mode</th>
                                                     <th>Reason</th>
                                                     <th>Archived At</th>
                                                     <th>Actions</th>
@@ -580,7 +596,11 @@ $archivedOnline = $adminObj->fetchArchivedStudents('Online');
                                                 <?php else: ?>
                                                     <?php foreach ($archivedOnline as $student): ?>
                                                         <tr>
-                                                            <td><?= clean_input($student['full_name']) ?></td>
+                                                            <td><?= clean_input(strtoupper($student['full_name'])) ?></td>
+                                                            <td>
+                                                            <strong>Contact:</strong> <?= clean_input($student['contact_number'] ?? 'N/A') ?><br>
+                                                            <strong>Email:</strong> <?= clean_input($student['email'] ?? 'N/A') ?>
+                                                            </td>
                                                             <td><?= clean_input($student['program_info']) ?></td>
                                                             <td><?= clean_input($student['classification']) ?></td>
                                                             <td><?= clean_input($student['reason']) ?></td>
@@ -600,6 +620,49 @@ $archivedOnline = $adminObj->fetchArchivedStudents('Online');
                                 </div>
                             </div>
                         </div>
+
+                        <div class="tab-pane fade" id="officers" role="tabpanel" aria-labelledby="officers-tab">
+                            <div class="table-responsive">
+                                    <table id="officersTab" class="table align-items-center mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>Officer Name</th>
+                                                <th>Program</th>
+                                                <th>Position</th>
+                                                <th>School Year</th>
+                                                <th>Reason</th>
+                                                <th>Deleted At</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <?php if (empty($archivedOfficers)): ?>
+                                                <tr>
+                                                    <td colspan="7" class="text-center">No archived officers</td>
+                                                </tr>
+                                            <?php else: ?>
+                                                <?php foreach ($archivedOfficers as $officer): ?>
+                                                    <tr>
+                                                        <td><?= clean_input($officer['full_name']) ?></td>
+                                                        <td><?= clean_input($officer['program_name']) ?? 'N/A' ?></td>
+                                                        <td><?= clean_input($officer['position_name']) ?></td>
+                                                        <td><?= clean_input($officer['school_year']) ?></td>
+                                                        <td><?= clean_input($officer['reason']) ?></td>
+                                                        <td><?= $officer['deleted_at'] ? date('M d, Y h:i A', strtotime($officer['deleted_at'])) : 'N/A' ?></td>
+                                                        <td>
+                                                            <button class="btn btn-sm btn-success" 
+                                                                    onclick="openOfficerModal('restoreOfficerModal', <?= $officer['officer_id'] ?>, 'restore')">
+                                                                <i class="fas fa-undo"></i> Restore
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
                     </div>
                 </div>
             </div>
@@ -617,6 +680,7 @@ $archivedOnline = $adminObj->fetchArchivedStudents('Online');
 <?php include_once '../adminModals/restoreAbouts.html'; ?>
 <?php include_once '../adminModals/restoreFile.html'; ?>
 <?php include_once '../adminModals/restoreStudent.html'; ?>
+<?php include_once '../adminModals/restoreOfficer.html'; ?>
 
 <!-- <script>
     $(document).ready(function() {

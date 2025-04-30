@@ -1,9 +1,16 @@
 <?php
+session_start();
 require_once '../../classes/adminClass.php';
 require_once '../../tools/function.php';
 
 $adminObj = new Admin();
 
+if (!isset($_SESSION['user_id'])) {
+    echo "error: unauthorized";
+    exit;
+}
+
+$userId = $_SESSION['user_id'];
 $action = $_POST['action'] ?? '';
 $officerId = $_POST['officer_id'] ?? null;
 
@@ -11,46 +18,62 @@ if ($action === 'edit') {
     $firstName = clean_input($_POST['firstName']);
     $middleName = clean_input($_POST['middleName']);
     $surname = clean_input($_POST['surname']);
-    $programId = clean_input($_POST['program']);
-    $positionId = clean_input($_POST['position']);
-    $schoolYearId = clean_input($_POST['schoolYear']);
-    $existingImage = $_POST['existing_image'] ?? ''; 
+    $position = clean_input($_POST['position']);
+    $program = clean_input($_POST['program']);
+    $schoolYear = clean_input($_POST['schoolYear']);
+    $image = null;
 
-     if (isset($_FILES['image']) && $_FILES['image']['name'] != "") {
-        $imageName = time() . '_' . basename($_FILES['image']['name']);
+    $existingOfficer = $adminObj->getOfficerById($officerId);
+    if (!$existingOfficer) {
+        echo "error: officer_not_found";
+        exit;
+    }
+
+    if (!empty($_FILES['image']['name'])) {
         $targetDir = "../../assets/officers/";
-        $targetFile = $targetDir . $imageName;
+        $image = basename($_FILES['image']['name']);
+        $targetFile = $targetDir . $image;
         move_uploaded_file($_FILES['image']['tmp_name'], $targetFile);
     } else {
-        $imageName = basename($existingImage); 
+        $image = $existingOfficer['image']; 
     }
-    $result = $adminObj->updateOfficer(
-        $officerId,
-        $surname,
-        $firstName,
-        $middleName,
-        $positionId,
-        $schoolYearId,
-        $programId,
-        $imageName
-    );  
-    echo $result ? "success" : "error";
-} elseif ($action === 'delete') {
-    $result = $adminObj->deleteOfficer($officerId);
-    echo $result ? "success" : "error";
-} elseif ($action === 'add') {
-    $data = [
-        'surname' => clean_input($_POST['surname']),
-        'firstName' => clean_input($_POST['firstName']),
-        'middleName' => clean_input($_POST['middleName']),
-        'position' => clean_input($_POST['position']),
-        'schoolYear' => clean_input($_POST['schoolYear']),
-        'program' => clean_input($_POST['program']),
-        'image' => $_FILES['image'] ?? null
-    ];
 
-    $result = $adminObj->addOfficer($data);
+    $result = $adminObj->updateOfficer($officerId, $firstName, $middleName, $surname, $position, $program, $schoolYear, $image);
     echo $result ? "success" : "error";
+
+} elseif ($action === 'delete') {
+    $reason = clean_input($_POST['reason']);
+    if (empty($reason)) {
+        echo "error: reason_required";
+        exit;
+    }
+
+    $result = $adminObj->softDeleteOfficer($officerId, $reason);
+    echo $result ? "success" : "error";
+
+} elseif ($action === 'restore') {
+    $result = $adminObj->restoreOfficer($officerId);
+    echo $result ? "success" : "error";
+
+} elseif ($action === 'add') {
+    $firstName = clean_input($_POST['firstName']);
+    $middleName = clean_input($_POST['middleName']);
+    $surname = clean_input($_POST['surname']);
+    $position = clean_input($_POST['position']);
+    $program = clean_input($_POST['program']);
+    $schoolYear = clean_input($_POST['schoolYear']);
+    $image = null;
+
+    if (!empty($_FILES['image']['name'])) {
+        $targetDir = "../../assets/officers/";
+        $image = basename($_FILES['image']['name']);
+        $targetFile = $targetDir . $image;
+        move_uploaded_file($_FILES['image']['tmp_name'], $targetFile);
+    }
+
+    $result = $adminObj->addOfficer($firstName, $middleName, $surname, $position, $program, $schoolYear, $image);
+    echo $result ? "success" : "error";
+
 } else {
     echo "invalid_action";
 }

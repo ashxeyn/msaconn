@@ -29,6 +29,9 @@ $(document).ready(function() {
     $('#faqsTab').DataTable();
     $('#filesTab').DataTable();
     $('#aboutTab').DataTable();
+    $('#olTab').DataTable();
+    $('#osTab').DataTable();
+    $('#officersTab').DataTable();
 });
 
 function viewPhoto(photoName, folder) {
@@ -1984,6 +1987,198 @@ $(document).on('change', '#classification', function() {
     $('#emailError').text('');
 });
 
+// OFFICER FUNCTIONS
+function openOfficerModal(modalId, officerId, action) {
+    $('.modal').modal('hide');
+    $('.modal-backdrop').remove(); 
+    setTimeout(() => {
+        const modal = $('#' + modalId);
+        modal.modal('show'); 
+        setOfficerId(officerId, action);
+    }, 300);
+}
+
+function setOfficerId(officerId, action) {
+    if (action === 'edit') {
+        $.ajax({
+            url: "../../handler/admin/getOfficer.php",
+            type: "GET",
+            data: { officer_id: officerId },
+            success: function(response) {
+                try {
+                    const officer = JSON.parse(response);
+                    $('#editOfficerId').val(officer.officer_id);
+                    $('#editFirstName').val(officer.first_name);
+                    $('#editMiddleName').val(officer.middle_name);
+                    $('#editSurname').val(officer.last_name);
+                    $('#editProgram').val(officer.program_id);
+                    $('#editPosition').val(officer.position_id);
+                    $('#editSchoolYear').val(officer.school_year_id);
+                    clearValidationErrors();
+                    $('#editOfficerModal .modal-title').text('Edit Officer');
+                    $('#editOfficerFormSubmit').text('Update Officer');
+
+                    if (officer.image) {
+                        $('#image-preview').show();
+                        $('#preview-img').attr('src', `../../assets/officers/${officer.image}`);
+                    } else {
+                        $('#image-preview').hide();
+                    }
+                    
+                    $('#editOfficerModal').modal('show');
+                } catch (e) {
+                    console.error("Invalid JSON:", response);
+                    alert("Failed to load officer details.");
+                }
+            },
+            error: function() {
+                alert("Failed to load officer details.");
+            }
+        });
+
+        $('#editOfficerForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateOfficerForm()) {
+                processOfficer(officerId, 'edit');
+            }
+        });
+    } else if (action === 'add') {
+        $('#editOfficerForm')[0].reset();
+        $('#image-preview').hide();
+        clearValidationErrors();
+        $('#editOfficerModal .modal-title').text('Add Officer');
+        $('#editOfficerFormSubmit').text('Add Officer');
+        $('#editOfficerModal').modal('show');
+
+        $('#editOfficerForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateOfficerForm()) {
+                processOfficer(null, 'add');
+            }
+        });
+    } else if (action === 'delete') {
+        $('#archiveOfficerId').val(officerId);
+        $('#archiveOfficerModal').modal('show');
+    
+        $('#confirmArchiveOfficer').off('click').on('click', function () {
+            const reason = $('#archiveReason').val().trim();
+            if (reason === '') {
+                $('#archiveReasonError').text('Please provide a reason for archiving');
+                return;
+            }
+            $('#archiveReasonError').text('');
+            processOfficer(officerId, 'delete');
+        });
+    } else if (action === 'restore') {
+        $('#restoreOfficerId').val(officerId);
+        $('#restoreOfficerModal').modal('show');
+
+        $('#restoreOfficerForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            processOfficer(officerId, 'restore');
+        });
+    }
+}
+
+function validateOfficerForm() {
+    let isValid = true;
+    clearValidationErrors();
+
+    const firstName = $('#editFirstName').val().trim();
+    const surname = $('#editSurname').val().trim();
+    const position = $('#editPosition').val().trim();
+    const program = $('#editProgram').val().trim();
+    const schoolYear = $('#editSchoolYear').val().trim();
+    const imageInput = $('#editImage')[0];
+    const isEdit = $('#editOfficerId').val() !== "";
+
+    if (firstName === '') {
+        $('#editFirstNameError').text('First name is required');
+        isValid = false;
+    }
+
+    if (surname === '') {
+        $('#editSurnameError').text('Surname is required');
+        isValid = false;
+    }
+
+    if (position === '') {
+        $('#editPositionError').text('Position is required');
+        isValid = false;
+    }
+
+    if (program === '') {
+        $('#editProgramError').text('Program is required');
+        isValid = false;
+    }
+
+    if (schoolYear === '') {
+        $('#editSchoolYearError').text('School year is required');
+        isValid = false;
+    }
+
+    return isValid;
+}
+
+function clearValidationErrors() {
+    $('#editFirstNameError').text('');
+    $('#editMiddleNameError').text('');
+    $('#editSurnameError').text('');
+    $('#editPositionError').text('');
+    $('#editProgramError').text('');
+    $('#editSchoolYearError').text('');
+    $('#archiveReasonError').text('');
+}
+
+function processOfficer(officerId, action) {
+    let formData = new FormData();
+
+    if (action === 'add' || action === 'edit') {
+        formData = new FormData(document.getElementById('editOfficerForm'));
+    } else if (action === 'delete') {
+        formData.append('reason', $('#archiveReason').val());
+    } else if (action === 'restore') {
+        formData.append('officer_id', $('#restoreOfficerId').val());
+    }
+
+    if (officerId) {
+        formData.append('officer_id', officerId);
+    }
+    formData.append('action', action);
+
+    $.ajax({
+        url: "../../handler/admin/officersAction.php",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.trim() === "success") {
+                $(".modal").modal("hide");
+                $("body").removeClass("modal-open");
+                $(".modal-backdrop").remove();
+
+                if (action === 'restore') {
+                    loadArchives(); 
+                } else {
+                    loadOfficersSection(); 
+                }
+
+                showToast('Success', 
+                    action === 'delete' ? 'Officer has been archived.' :
+                    action === 'restore' ? 'Officer has been restored.' :
+                    'Officer has been ' + (action === 'edit' ? 'updated' : 'added') + '.', 
+                    'success');
+            } else {
+                alert("Failed to process request: " + response);
+            }
+        },
+        error: function() {
+            alert("An error occurred while processing the request.");
+        }
+    });
+}
+
 // REGISTRATION FUNCTIONS
 function openModal(modalId, volunteerId, action) {
     $('.modal').modal('hide'); 
@@ -2032,216 +2227,6 @@ function processRegistration(volunteerId, action) {
     });
 }
 
-// OFFICER FUNCTIONS
-function openOfficerModal(modalId, officerId, action) {
-    $('.modal').modal('hide');
-    $('.modal-backdrop').remove();
-    setTimeout(() => {
-        const modal = $('#' + modalId);
-        modal.attr('aria-hidden', 'false');
-        modal.modal('show');
-        setOfficerId(officerId, action);
-    }, 300);
-}
-
-function setOfficerId(officerId, action) {
-    if (action === 'edit') {
-        $.ajax({
-            url: "../../handler/admin/getOfficer.php",
-            type: "GET",
-            data: { officer_id: officerId },
-            success: function(response) {
-                const officer = JSON.parse(response);
-                $('#officerId').val(officer.officer_id);
-                $('#firstName').val(officer.first_name);
-                $('#middleName').val(officer.middle_name);
-                $('#surname').val(officer.last_name);
-                $('#program').val(officer.program_id);
-                $('#position').val(officer.position_id);
-                $('#schoolYear').val(officer.school_year_id);
-                $('#existing_image').val(officer.image);
-                $('#modalTitle').text('Edit Officer');
-                $('#confirmSaveOfficer').text('Update Officer');
-
-                if (officer.image) {
-                    $('#image-preview').show();
-                    $('#preview-img').attr('src', `../../assets/officers/${officer.image}`);
-                } else {
-                    $('#image-preview').hide();
-                }
-
-                $('#image').off('change').on('change', function () {
-                    if (this.files.length > 0) {
-                        $('#image-preview').show();
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            $('#preview-img').attr('src', e.target.result);
-                        };
-                        reader.readAsDataURL(this.files[0]);
-                    }
-                });
-            },
-            error: function() {
-                alert("An error occurred while fetching the officer data.");
-            }
-        });
-
-        $('#confirmSaveOfficer').off('click').on('click', function (e) {
-            e.preventDefault();
-            processOfficer(officerId, 'edit');
-        });
-    } else if (action === 'delete') {
-        $('#confirmDeleteOfficer').off('click').on('click', function () {
-            processOfficer(officerId, 'delete');
-        });
-    } else if (action === 'add') {
-        $('#officerForm')[0].reset();
-        $('#image-preview').hide();
-        $('#modalTitle').text('Add Officer');
-        $('#confirmSaveOfficer').text('Add Officer');
-
-        $('#confirmSaveOfficer').off('click').on('click', function (e) {
-            e.preventDefault();
-            processOfficer(null, 'add');
-        });
-    }
-}
-
-function processOfficer(officerId, action) {
-    let formData = new FormData(document.getElementById('officerForm'));
-    if (officerId) {
-        formData.append('officer_id', officerId);
-    }
-    formData.append('action', action);
-
-    $.ajax({
-        url: "../../handler/admin/officersAction.php",
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            if (response.trim() === "success") {
-                $(".modal").modal("hide");
-                $("body").removeClass("modal-open");
-                $(".modal-backdrop").remove();
-                loadOfficersSection();
-            } else {
-                console.log(response);
-            }
-        },
-        error: function() {
-            alert("An error occurred while processing the request.");
-        }
-    });
-}
-
-// VOLUNTEER FUNCTIONS
-function openVolunteerModal(modalId, volunteerId, action) {
-    $('.modal').modal('hide');
-    $('.modal-backdrop').remove();
-    setTimeout(() => {
-        const modal = $('#' + modalId);
-        modal.attr('aria-hidden', 'false');
-        modal.modal('show');
-        setVolunteerId(volunteerId, action);
-    }, 300);
-}
-
-function setVolunteerId(volunteerId, action) {
-    if (action === 'edit') {
-        $.ajax({
-            url: "../../handler/admin/getVolunteer.php",
-            type: "GET",
-            data: { volunteer_id: volunteerId },
-            success: function(response) {
-                const volunteer = JSON.parse(response);
-                $('#volunteerId').val(volunteer.volunteer_id);
-                $('#firstName').val(volunteer.first_name);
-                $('#surname').val(volunteer.last_name);
-                $('#program').val(volunteer.program_id);
-                $('#contact').val(volunteer.contact);
-                $('#section').val(volunteer.section);
-                $('#year_level').val(volunteer.year_level);
-                $('#email').val(volunteer.email);
-                $('#existing_image').val(volunteer.cor_file);
-                $('#modalTitle').text('Edit Volunteer');
-                $('#confirmSaveVolunteer').text('Update Volunteer');
-
-                if (volunteer.cor_file) {
-                    $('#image-preview').show();
-                    $('#preview-img').attr('src', '../../assets/cors/' + volunteer.cor_file);
-                } else {
-                    $('#image-preview').hide();
-                }
-
-                $('#image').off('change').on('change', function () {
-                    if (this.files.length > 0) {
-                        $('#image-preview').show();
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            $('#preview-img').attr('src', e.target.result);
-                        };
-                        reader.readAsDataURL(this.files[0]);
-                    }
-                });
-            },
-            error: function() {
-                alert("An error occurred while fetching the volunteer data.");
-            }
-        });
-
-        $('#confirmSaveVolunteer').off('click').on('click', function (e) {
-            e.preventDefault();
-            processVolunteer(volunteerId, 'edit');
-        });
-    } else if (action === 'delete') {
-        $('#confirmDeleteVolunteer').off('click').on('click', function () {
-            processVolunteer(volunteerId, 'delete');
-        });
-    } else if (action === 'add') {
-        $('#volunteerForm')[0].reset();
-        $('#image-preview').hide();
-        $('#modalTitle').text('Add Volunteer');
-        $('#confirmSaveVolunteer').text('Add Volunteer');
-
-        $('#confirmSaveVolunteer').off('click').on('click', function (e) {
-            e.preventDefault();
-            processVolunteer(null, 'add');
-        });
-    }
-}
-
-function processVolunteer(volunteerId, action) {
-    let formData = new FormData(document.getElementById('volunteerForm'));
-    if (volunteerId) {
-        formData.append('volunteer_id', volunteerId);
-    }
-    formData.append('action', action);
-
-    $.ajax({
-        url: "../../handler/admin/volunteerAction.php",
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
-        success: function(response) {
-            if (response.trim() === "success") {
-                $(".modal").modal("hide");
-                $("body").removeClass("modal-open");
-                $(".modal-backdrop").remove();
-                loadVolunteersSection(); // Reload the page to show updated data
-            } else {
-                console.log("Error response:", response);
-                alert("Failed to process the request. Please check the console for details.");
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error("AJAX Error:", error);
-            alert("An error occurred while processing the request.");
-        }
-    });
-}
 
 // MODERATOR FUNCTIONS
 function openModeratorModal(modalId, moderatorId, action) {
