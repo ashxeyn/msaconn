@@ -2443,8 +2443,6 @@ function processRegistration(volunteerId, action) {
     });
 }
 
-
-
 // ENROLLMENT FUNCTIONS
 function openEnrollmentModal(modalId, enrollmentId, action) {
     $('.modal').modal('hide');
@@ -2489,6 +2487,229 @@ function processEnrollment(enrollmentId, action) {
         error: function(xhr, status, error) {
             console.log("AJAX error:", status, error);
             alert("An error occurred while processing the request.");
+        }
+    });
+}
+
+// MODERATOR FUNCTIONS
+function openModeratorModal(modalId, moderatorId, action) {
+    $('.modal').modal('hide');
+    $('.modal-backdrop').remove();
+    setTimeout(() => {
+        const modal = $('#' + modalId);
+        modal.modal('show');
+        setModeratorId(moderatorId, action);
+    }, 300);
+}
+
+function setModeratorId(moderatorId, action) {
+    if (action === 'edit') {
+        $.ajax({
+            url: "../../handler/admin/getModerator.php",
+            type: "GET",
+            data: { user_id: moderatorId },
+            success: function(response) {
+                try {
+                    const moderator = JSON.parse(response);
+                    $('#editModeratorId').val(moderator.user_id);
+                    $('#editFirstName').val(moderator.first_name);
+                    $('#editMiddleName').val(moderator.middle_name);
+                    $('#editLastName').val(moderator.last_name);
+                    $('#editUsername').val(moderator.username);
+                    $('#editEmail').val(moderator.email);
+                    $('#editPositionId').val(moderator.position_id);
+                    $('#editModeratorModal .modal-title').text('Edit Moderator');
+                    $('#editModeratorFormSubmit').text('Update Moderator');
+                    clearValidationErrors();
+                    
+                    $('#passwordContainer').hide();
+                    
+                    $('#editModeratorModal').modal('show');
+                } catch (e) {
+                    console.error("Invalid JSON:", response);
+                    showToast('Error', 'Failed to load moderator details.', 'error');
+                }
+            },
+            error: function() {
+                showToast('Error', 'Failed to load moderator details.', 'error');
+            }
+        });
+
+        $('#editModeratorForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateModeratorForm()) {
+                processModerator(moderatorId, 'edit');
+            }
+        });
+    } else if (action === 'add') {
+        $('#editModeratorForm')[0].reset();
+        clearValidationErrors();
+        $('#editModeratorModal .modal-title').text('Add Moderator');
+        $('#editModeratorFormSubmit').text('Add Moderator');
+        
+        $('#passwordContainer').show();
+        
+        $('#editModeratorModal').modal('show');
+
+        $('#editModeratorForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateModeratorForm(true)) {
+                processModerator(null, 'add');
+            }
+        });
+    } else if (action === 'delete') {
+        $('#archiveModeratorId').val(moderatorId);
+        $('#archiveReason').val('');
+        $('#archiveReasonError').text('');
+        $('#archiveModeratorModal').modal('show');
+    
+        $('#confirmArchiveModerator').off('click').on('click', function() {
+            const reason = $('#archiveReason').val().trim();
+            if (reason === '') {
+                $('#archiveReasonError').text('Please provide a reason for archiving');
+                return;
+            }
+            $('#archiveReasonError').text('');
+            processModerator(moderatorId, 'delete');
+        });    
+    } else if (action === 'restore') {
+        $('#restoreModeratorId').val(moderatorId);
+        $('#restoreModeratorModal').modal('show');
+
+        $('#restoreModeratorForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            processModerator(moderatorId, 'restore');
+        });
+    }
+}
+
+function validateModeratorForm(isAdd = false) {
+    let isValid = true;
+    clearValidationErrors();
+
+    const firstName = $('#editFirstName').val().trim();
+    const lastName = $('#editLastName').val().trim();
+    const username = $('#editUsername').val().trim();
+    const email = $('#editEmail').val().trim();
+    const positionId = $('#editPositionId').val().trim();
+
+    if (firstName === '') {
+        $('#editFirstNameError').text('First name is required');
+        isValid = false;
+    }
+
+    if (lastName === '') {
+        $('#editLastNameError').text('Last name is required');
+        isValid = false;
+    }
+
+    if (username === '') {
+        $('#editUsernameError').text('Username is required');
+        isValid = false;
+    }
+
+    if (email === '') {
+        $('#editEmailError').text('Email is required');
+        isValid = false;
+    } 
+    
+    else if (!isValidEmail(email)) {
+        $('#editEmailError').text('Invalid email format');
+        isValid = false;
+    }
+
+    if (positionId === '') {
+        $('#editPositionIdError').text('Position is required');
+        isValid = false;
+    }
+
+    if (isAdd) {
+        const password = $('#editPassword').val().trim();
+        if (password === '') {
+            $('#editPasswordError').text('Password is required');
+            isValid = false;
+        } else if (password.length < 8) {
+            $('#editPasswordError').text('Password must be at least 8 characters');
+            isValid = false;
+        }
+    }
+
+    return isValid;
+}
+
+function isValidEmail(email) {
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return re.test(email);
+}
+
+function clearValidationErrors() {
+    $('#editFirstNameError, #editLastNameError, #editUsernameError, #editEmailError, #editPositionIdError, #editPasswordError, #archiveReasonError').text('');
+}
+
+function processModerator(moderatorId, action) {
+    let formData = new FormData();
+
+    if (action === 'add' || action === 'edit') {
+        formData.append('firstName', $('#editFirstName').val());
+        formData.append('middleName', $('#editMiddleName').val());
+        formData.append('lastName', $('#editLastName').val());
+        formData.append('username', $('#editUsername').val());
+        formData.append('email', $('#editEmail').val());
+        formData.append('positionId', $('#editPositionId').val());
+        
+        if (action === 'add') {
+            formData.append('password', $('#editPassword').val());
+        }
+    } else if (action === 'delete') {
+        formData.append('reason', $('#archiveReason').val());
+    } else if (action === 'restore') {
+        formData.append('user_id', $('#restoreModeratorId').val());
+    }
+
+    if (moderatorId) {
+        formData.append('user_id', moderatorId);
+    }
+    formData.append('action', action);
+
+    $.ajax({
+        url: "../../handler/admin/moderatorAction.php",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.includes("error:username_exists")) {
+                $('#editUsernameError').text('Username already exists');
+                return;
+            }
+            
+            if (response.includes("error:email_exists")) {
+                $('#editEmailError').text('Email already exists');
+                return;
+            }
+            
+            if (response.trim() === "success") {
+                $(".modal").modal("hide");
+                $("body").removeClass("modal-open");
+                $(".modal-backdrop").remove();
+
+                if (action === 'restore') {
+                    loadArchives(); 
+                } else {
+                    loadModeratorsSection(); 
+                }
+
+                showToast('Success', 
+                    action === 'delete' ? 'Moderator has been archived.' :
+                    action === 'restore' ? 'Moderator has been restored.' :
+                    'Moderator has been ' + (action === 'edit' ? 'updated' : 'added') + '.', 
+                    'success');
+            } else {
+                showToast('Error', 'Failed to process request.', 'error');
+            }
+        },
+        error: function() {
+            showToast('Error', 'An error occurred while processing the request.', 'error');
         }
     });
 }

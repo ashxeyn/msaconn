@@ -4,7 +4,7 @@ require_once '../../classes/adminClass.php';
 require_once '../../tools/function.php'; 
 
 $adminObj = new Admin();
-$result = $adminObj->fetchSubAdmins();
+$result = $adminObj->fetchModerators();
 ?>
 
 <!DOCTYPE html>
@@ -23,11 +23,8 @@ $result = $adminObj->fetchSubAdmins();
 <div>
     <h2 class="mb-4">Moderators</h2>
 
-    <button class="btn btn-success mb-3">
-        <a href="../../accounts/signup" class="text-white text-decoration-none">Add Moderator</a>
-    </button>
+    <button class="btn btn-success  mb-3" onclick="openModeratorModal('addModeratorModal', null, 'add')">Add Moderator</button>
 
-    
     <table id="table" class="table table-bordered table-striped">
         <thead>
             <tr>
@@ -54,7 +51,7 @@ $result = $adminObj->fetchSubAdmins();
                         <td>
                             <button class="btn btn-primary btn-sm" onclick="openModeratorModal('editModeratorModal', <?= $row['user_id'] ?>, 'edit')">Edit</button>
                             <button class="btn btn-danger btn-sm" onclick="openModeratorModal('deleteModeratorModal', <?= $row['user_id'] ?>, 'delete')">Delete</button>
-                        </td>
+                        </td> 
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>
@@ -67,9 +64,8 @@ $result = $adminObj->fetchSubAdmins();
 </div>
 
 <?php 
-include '../adminModals/editModerator.php'; 
+include '../adminModals/addEditModerator.php'; 
 include '../adminModals/deleteModerator.html';
-include '../adminModals/addModerator.php';
 ?>
 
 </body>

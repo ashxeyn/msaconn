@@ -339,23 +339,69 @@ class Admin {
     }
 
     //Moderator functions
-    function fetchSubAdmins() { 
+    function fetchModerators() { 
         $sql = "SELECT 
                     u.user_id, 
-                    CONCAT(u.last_name, ', ', u.first_name, ' ', u.middle_name) AS full_name, 
+                    CONCAT(u.last_name, ', ', u.first_name, ' ', COALESCE(u.middle_name, '')) AS full_name, 
                     u.username, 
                     u.email, 
                     op.position_name, 
-                    u.created_at 
+                    u.created_at,
+                    u.deleted_at
                 FROM users u 
                 LEFT JOIN officer_positions op ON u.position_id = op.position_id 
-                WHERE u.role = 'sub-admin'";
+                WHERE u.role = 'sub-admin'
+                AND u.deleted_at IS NULL
+                AND u.is_deleted = 0
+                ORDER BY u.user_id DESC";
     
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         return $query->fetchAll();
     }
+    
+    function getModeratorById($moderatorId) {
+        $sql = "SELECT 
+                    u.user_id,
+                    u.first_name,
+                    u.middle_name,
+                    u.last_name,
+                    u.username,
+                    u.email,
+                    u.position_id,
+                    op.position_name,
+                    u.created_at,
+                    u.is_deleted,
+                    u.deleted_at
+                FROM users u
+                LEFT JOIN officer_positions op ON u.position_id = op.position_id
+                WHERE u.user_id = :user_id";
+    
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':user_id', $moderatorId);
+        $query->execute();
+    
+        return $query->fetch();
+    }
 
+    function addModerator($firstName, $middleName, $lastName, $username, $email, $positionId, $password) {
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+        
+        $sql = "INSERT INTO users (first_name, middle_name, last_name, username, email, position_id, password, role) 
+                VALUES (:first_name, :middle_name, :last_name, :username, :email, :position_id, :password, 'sub-admin')";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':first_name', $firstName);
+        $query->bindParam(':middle_name', $middleName);
+        $query->bindParam(':last_name', $lastName);
+        $query->bindParam(':username', $username);
+        $query->bindParam(':email', $email);
+        $query->bindParam(':position_id', $positionId);
+        $query->bindParam(':password', $hashedPassword);
+        
+        return $query->execute();
+    }
+    
     function updateModerator($moderatorId, $firstName, $middleName, $lastName, $username, $email, $positionId) {
         $sql = "UPDATE users 
                 SET first_name = :first_name, 
@@ -376,42 +422,53 @@ class Admin {
         $query->bindParam(':position_id', $positionId);
         $query->bindParam(':user_id', $moderatorId);
     
-        if (!$query->execute()) {
-            return "Failed to update moderator.";
-        }
-        return 1;
+        return $query->execute();
     }
-
-    function getModeratorById($moderatorId) {
-        $sql = "SELECT 
-                    u.user_id,
-                    u.first_name,
-                    u.middle_name,
-                    u.last_name,
-                    u.username,
-                    u.email,
-                    u.position_id,
-                    op.position_name
-                FROM users u
-                LEFT JOIN officer_positions op ON u.position_id = op.position_id
-                WHERE u.user_id = :user_id";
-        
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':user_id', $moderatorId);
-        $query->execute();
-        
-        return $query->fetch();
-    }    
     
-    function deleteModerator($moderatorId) {
-        $sql = "DELETE FROM users WHERE user_id = :user_id";
+    function softDeleteModerator($moderatorId, $reason) {
+        $sql = "UPDATE users 
+                SET is_deleted = 1, deleted_at = NOW(), reason = :reason 
+                WHERE user_id = :user_id";
+    
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':reason', $reason);
+        $query->bindParam(':user_id', $moderatorId);
+        return $query->execute();
+    }
+    
+    function restoreModerator($moderatorId) {
+        $sql = "UPDATE users 
+                SET is_deleted = 0, deleted_at = NULL, reason = NULL 
+                WHERE user_id = :user_id";
+    
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':user_id', $moderatorId);
         return $query->execute();
     }
+    
+    function fetchArchivedModerators() {
+        $sql = "SELECT 
+                    u.user_id,
+                    CONCAT(u.last_name, ', ', u.first_name, ' ', COALESCE(u.middle_name, '')) AS full_name,
+                    u.username,
+                    u.email,
+                    op.position_name,
+                    u.reason,
+                    u.deleted_at
+                FROM users u
+                LEFT JOIN officer_positions op ON u.position_id = op.position_id
+                WHERE u.role = 'sub-admin'
+                AND u.is_deleted = 1
+                AND u.deleted_at IS NOT NULL
+                ORDER BY u.deleted_at DESC";
+    
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
 
     function getModerators() {
-        $sql = "SELECT COUNT(*) AS total FROM users WHERE role = 'sub-admin'";
+        $sql = "SELECT COUNT(*) AS total FROM users WHERE role = 'sub-admin' AND deleted_at IS NULL AND is_deleted = 0";   
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         
