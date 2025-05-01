@@ -1,23 +1,19 @@
 document.addEventListener('DOMContentLoaded', function () {
     const monthYearElement = document.getElementById('current-month-year');
     const calendarGrid = document.getElementById('calendar-grid');
-    const prevMonthButton = document.getElementById('prev-month');
-    const nextMonthButton = document.getElementById('next-month');
 
     let currentDate = new Date();
     let activities = [];
 
-    updateCalendar();    
+    // Fetch calendar activities from the server
     async function fetchCalendarActivities() {
         try {
             const response = await fetch('../../handler/user/fetchCalendarActivities.php');
             const data = await response.json();
-            
-            console.log(data); // Check if the data is returned successfully
-            
+
             if (data.status === 'success') {
                 activities = data.data;
-                updateCalendar(); // Call updateCalendar after fetching activities
+                updateCalendar(); // Update the calendar after fetching activities
             } else {
                 console.error('Error fetching calendar activities:', data.message);
             }
@@ -25,7 +21,6 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error fetching calendar activities:', error);
         }
     }
-    
 
     // Update the calendar header and grid
     function updateCalendar() {
@@ -77,17 +72,12 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Event listeners for navigation buttons
-    prevMonthButton.addEventListener('click', function () {
-        currentDate.setMonth(currentDate.getMonth() - 1);
-        updateCalendar();
-    });
+    // Poll for updates every 10 seconds
+    function startPolling() {
+        fetchCalendarActivities(); // Fetch activities initially
+        setInterval(fetchCalendarActivities, 5000); // Poll every 10 seconds
+    }
 
-    nextMonthButton.addEventListener('click', function () {
-        currentDate.setMonth(currentDate.getMonth() + 1);
-        updateCalendar();
-    });
-
-    // Initialize the calendar with the current month and year
-    fetchCalendarActivities(); // Fetch activities and initialize the calendar
+    // Initialize the calendar with polling
+    startPolling();
 });
