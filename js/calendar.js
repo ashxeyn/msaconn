@@ -1,14 +1,21 @@
 document.addEventListener('DOMContentLoaded', function () {
     const monthYearElement = document.getElementById('current-month-year');
     const calendarGrid = document.getElementById('calendar-grid');
+    const prevMonthButton = document.getElementById('prev-month');
+    const nextMonthButton = document.getElementById('next-month');
 
-    let currentDate = new Date();
+    let currentDate = new Date(); // Initialize with today's date
     let activities = [];
 
     // Fetch calendar activities from the server
     async function fetchCalendarActivities() {
         try {
-            const response = await fetch('../../handler/user/fetchCalendarActivities.php');
+            const month = currentDate.getMonth() + 1; // Months are 0-based
+            const year = currentDate.getFullYear();
+
+            console.log(`Fetching activities for: ${month}-${year}`); // Debugging log
+
+            const response = await fetch(`../../handler/user/fetchCalendarActivities.php?month=${month}&year=${year}`);
             const data = await response.json();
 
             if (data.status === 'success') {
@@ -28,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const year = currentDate.getFullYear();
         monthYearElement.textContent = `${month} ${year}`;
 
+        // Clear the calendar grid
         calendarGrid.innerHTML = `
             <div class="col text-center fw-medium">Sun</div>
             <div class="col text-center fw-medium">Mon</div>
@@ -72,12 +80,28 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Go to the previous month
+    function goToPrevMonth() {
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        fetchCalendarActivities();
+    }
+
+    // Go to the next month
+    function goToNextMonth() {
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        fetchCalendarActivities();
+    }
+
     // Poll for updates every 10 seconds
     function startPolling() {
         fetchCalendarActivities(); // Fetch activities initially
-        setInterval(fetchCalendarActivities, 5000); // Poll every 10 seconds
+        setInterval(fetchCalendarActivities, 10000); // Poll every 10 seconds
     }
 
-    // Initialize the calendar with polling
+    // Add event listeners for navigation buttons
+    prevMonthButton.addEventListener('click', goToPrevMonth);
+    nextMonthButton.addEventListener('click', goToNextMonth);
+
+    // Initialize the calendar and start polling
     startPolling();
 });

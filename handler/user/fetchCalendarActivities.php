@@ -2,17 +2,23 @@
 header('Content-Type: application/json');
 
 try {
-    require_once '../../classes/userClass.php'; // Ensure the path is correct
+    require_once '../../classes/userClass.php'; // Adjust path as needed
     $user = new User();
-    $files = $user->fetchDownloadableFiles(); // Fetch downloadable files from the database
 
-    // Debugging: Log the fetched files
-    error_log("Fetched files: " . print_r($files, true));
+    // Get month and year from query parameters
+    $month = isset($_GET['month']) ? intval($_GET['month']) : date('m');
+    $year = isset($_GET['year']) ? intval($_GET['year']) : date('Y');
 
-    echo json_encode(['status' => 'success', 'data' => $files]);
+    // Fetch activities for the specified month and year
+    $activities = $user->fetchCalendarActivities($month, $year);
+
+    echo json_encode([
+        'status' => 'success',
+        'data' => $activities
+    ]);
 } catch (Exception $e) {
-    // Debugging: Log the error message
-    error_log("Error fetching downloadable files: " . $e->getMessage());
-
-    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+    echo json_encode([
+        'status' => 'error',
+        'message' => $e->getMessage()
+    ]);
 }
