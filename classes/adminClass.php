@@ -1909,25 +1909,34 @@ function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $class
     }
 
     function updateOrgUpdate($updateId, $title, $content) {
-        $sql = "UPDATE org_updates 
-                SET title = :title, 
-                    content = :content 
-                WHERE update_id = :update_id";
+        try {
+            $sql = "UPDATE org_updates 
+                    SET title = :title, content = :content 
+                    WHERE update_id = :update_id";
 
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':title', $title);
-        $query->bindParam(':content', $content);
-        $query->bindParam(':update_id', $updateId);
-        return $query->execute();
+            $query = $this->db->connect()->prepare($sql);
+            $query->bindParam(':title', $title);
+            $query->bindParam(':content', $content);
+            $query->bindParam(':update_id', $updateId);
+            return $query->execute();
+        } catch (Exception $e) {
+            error_log("Error in updateOrgUpdate: " . $e->getMessage());
+            return false;
+        }
     }
 
     function deleteUpdateImages($updateId) {
-        $sql = "DELETE FROM update_images 
-                WHERE update_id = :update_id";
+        try {
+            $sql = "DELETE FROM update_images 
+                    WHERE update_id = :update_id";
 
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':update_id', $updateId);
-        return $query->execute();
+            $query = $this->db->connect()->prepare($sql);
+            $query->bindParam(':update_id', $updateId);
+            return $query->execute();
+        } catch (Exception $e) {
+            error_log("Error in deleteUpdateImages: " . $e->getMessage());
+            return false;
+        }
     }
 
     function deleteSpecificUpdateImages($imageIds) {
@@ -1935,42 +1944,59 @@ function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $class
             return true; 
         }
         
-        $imageIdsStr = implode(',', array_map('intval', $imageIds));
-        
-        $sql = "DELETE FROM update_images 
-                WHERE image_id IN ($imageIdsStr)";
+        try {
+            $imageIdsStr = implode(',', array_map('intval', $imageIds));
+            
+            $sql = "DELETE FROM update_images 
+                    WHERE image_id IN ($imageIdsStr)";
 
-        $query = $this->db->connect()->prepare($sql);
-        return $query->execute();
+            $query = $this->db->connect()->prepare($sql);
+            return $query->execute();
+        } catch (Exception $e) {
+            error_log("Error in deleteSpecificUpdateImages: " . $e->getMessage());
+            return false;
+        }
     }
 
     function softDeleteOrgUpdate($updateId, $reason) {
-        $sql = "UPDATE org_updates 
-                SET is_deleted = 1, 
-                    deleted_at = NOW(), 
-                    reason = :reason 
-                WHERE update_id = :update_id";
+        try {
+            $sql = "UPDATE org_updates 
+                    SET deleted_at = NOW(), reason = :reason, is_deleted = 1
+                    WHERE update_id = :update_id";
 
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':reason', $reason);
-        $query->bindParam(':update_id', $updateId);
-        return $query->execute();
+            $query = $this->db->connect()->prepare($sql);
+            $query->bindParam(':reason', $reason);
+            $query->bindParam(':update_id', $updateId);
+            return $query->execute();
+        } catch (Exception $e) {
+            error_log("Error in softDeleteOrgUpdate: " . $e->getMessage());
+            return false;
+        }
     }
 
     function restoreOrgUpdate($updateId) {
-        $sql = "UPDATE org_updates 
-                SET is_deleted = 0, 
-                    deleted_at = NULL, 
-                    reason = NULL 
-                WHERE update_id = :update_id";
+        try {
+            $sql = "UPDATE org_updates 
+                    SET deleted_at = NULL, reason = NULL, is_deleted = 0
+                    WHERE update_id = :update_id";
 
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':update_id', $updateId);
-        return $query->execute();
+            $query = $this->db->connect()->prepare($sql);
+            $query->bindParam(':update_id', $updateId);
+            return $query->execute();
+        } catch (Exception $e) {
+            error_log("Error in restoreOrgUpdate: " . $e->getMessage());
+            return false;
+        }
     }
 
     function fetchArchivedOrgUpdates() {
-        $sql = "SELECT ou.update_id, ou.title, ou.content, ou.reason, ou.deleted_at,
+        $sql = "SELECT 
+                    ou.update_id, 
+                    ou.title, 
+                    ou.content, 
+                    ou.reason, 
+                    ou.deleted_at, 
+                    ou.created_at,
                     u.username AS created_by,
                     GROUP_CONCAT(ui.file_path ORDER BY ui.upload_order SEPARATOR '||') AS image_paths
                 FROM org_updates ou
