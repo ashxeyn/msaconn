@@ -52,12 +52,6 @@ $colleges = $adminObj->fetchColleges();
             <?php endif; ?>
         </tbody>
     </table>
-
-    <div class="bottom-right">
-        <button class="btn btn-success" onclick="loadProgramSection()">
-            Go to <i class="bi bi-arrow-right"></i>
-        </button>    
-    </div>
 </div>
 
 <?php include '../adminModals/addEditCollege.php'; 

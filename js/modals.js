@@ -79,11 +79,14 @@ $(document).ready(function() {
 
 $(document).ready(function() {
     $('#table').DataTable();
+    $('#schoolYearsTab').DataTable();
+    $('#officerPositionsTab').DataTable();
+    $('#collegesTab').DataTable();
+    $('#programsTab').DataTable();
     $('#cashinTable').DataTable();
     $('#cashoutTable').DataTable();
     $('#moderatorsTab').DataTable();
     $('#eventTab').DataTable();
-    $('#progTab').DataTable();
     $('#prayerTab').DataTable();
     $('#calendarTab').DataTable();
     $('#cashinTab').DataTable();
@@ -96,5 +99,6 @@ $(document).ready(function() {
     $('#officersTab').DataTable();
     $('#volunteersTab').DataTable();
     $('#archivedUpdatesTab').DataTable();
+
 });
 

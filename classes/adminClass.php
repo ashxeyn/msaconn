@@ -45,7 +45,7 @@ class Admin {
                 LEFT JOIN officer_positions op ON v.position_id = op.position_id 
                 LEFT JOIN school_years sy ON v.school_year_id = sy.school_year_id
                 WHERE v.deleted_at IS NULL
-                ORDER BY v.officer_id DESC";
+                ORDER BY v.officer_id ASC";
         
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -157,7 +157,7 @@ class Admin {
                 LEFT JOIN school_years sy ON eo.school_year_id = sy.school_year_id
                 WHERE eo.deleted_at IS NOT NULL
                 AND eo.is_deleted = 1
-                ORDER BY eo.deleted_at DESC";
+                ORDER BY eo.deleted_at ASC";
         
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -173,7 +173,7 @@ class Admin {
                 FROM volunteers v
                 JOIN programs p ON v.program_id = p.program_id
                 WHERE v.deleted_at IS NULL
-                ORDER BY v.volunteer_id DESC";
+                ORDER BY v.volunteer_id ASC";
         
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -279,7 +279,7 @@ class Admin {
                 JOIN programs p ON v.program_id = p.program_id
                 WHERE v.deleted_at IS NOT NULL
                 AND v.is_deleted = 1
-                ORDER BY v.deleted_at DESC";
+                ORDER BY v.deleted_at ASC";
 
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -353,7 +353,7 @@ class Admin {
                 WHERE u.role = 'sub-admin'
                 AND u.deleted_at IS NULL
                 AND u.is_deleted = 0
-                ORDER BY u.user_id DESC";
+                ORDER BY u.user_id ASC";
     
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -460,7 +460,7 @@ class Admin {
                 WHERE u.role = 'sub-admin'
                 AND u.is_deleted = 1
                 AND u.deleted_at IS NOT NULL
-                ORDER BY u.deleted_at DESC";
+                ORDER BY u.deleted_at ASC";
     
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -875,7 +875,7 @@ class Admin {
                 FROM events e
                 LEFT JOIN users u ON e.uploaded_by = u.user_id
                 WHERE e.deleted_at IS NULL
-                ORDER BY e.event_id DESC";
+                ORDER BY e.event_id ASC";
         
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -948,7 +948,7 @@ class Admin {
                 FROM events e
                 LEFT JOIN users u ON e.uploaded_by = u.user_id
                 WHERE e.deleted_at IS NOT NULL
-                ORDER BY e.deleted_at DESC";
+                ORDER BY e.deleted_at ASC";
 
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -1033,7 +1033,7 @@ class Admin {
                 FROM calendar_activities ca
                 LEFT JOIN users u ON ca.created_by = u.user_id
                 WHERE ca.deleted_at IS NOT NULL
-                ORDER BY ca.deleted_at DESC";
+                ORDER BY ca.deleted_at ASC";
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         return $query->fetchAll();
@@ -1045,7 +1045,7 @@ class Admin {
                 FROM friday_prayers fp 
                 LEFT JOIN users u ON u.user_id = fp.created_by 
                 WHERE fp.deleted_at IS NULL
-                ORDER BY fp.khutbah_date DESC";
+                ORDER BY fp.khutbah_date ASC";
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         return $query->fetchAll();
@@ -1112,7 +1112,7 @@ class Admin {
         $sql = "SELECT prayer_id, khutbah_date, speaker, topic, location, reason, deleted_at
                 FROM friday_prayers
                 WHERE deleted_at IS NOT NULL
-                ORDER BY deleted_at DESC";
+                ORDER BY deleted_at ASC";
         
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -1189,7 +1189,7 @@ class Admin {
             $sql .= " AND MONTH(report_date) = :month";
         }
         
-        $sql .= " ORDER BY report_date DESC";
+        $sql .= " ORDER BY report_date ASC";
         
         $query = $this->db->connect()->prepare($sql);
         
@@ -1289,7 +1289,7 @@ class Admin {
         $sql = "SELECT * FROM transparency_report 
                 WHERE transaction_type = :transaction_type 
                 AND deleted_at IS NOT NULL 
-                ORDER BY deleted_at DESC";
+                ORDER BY deleted_at ASC";
 
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':transaction_type', $transactionType);
@@ -1315,7 +1315,7 @@ class Admin {
     function fetchAbouts() {
         $sql = "SELECT * FROM about_msa 
                 WHERE is_deleted = 0
-                ORDER BY id DESC";
+                ORDER BY id ASC";
         
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -1391,7 +1391,7 @@ class Admin {
     function fetchArchivedAbouts() {
         $sql = "SELECT * FROM about_msa 
                 WHERE is_deleted = 1
-                ORDER BY deleted_at DESC";
+                ORDER BY deleted_at ASC";
         
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -1407,7 +1407,7 @@ class Admin {
                 FROM downloadable_files f
                 LEFT JOIN users u ON f.user_id = u.user_id
                 WHERE f.deleted_at IS NULL
-                ORDER BY f.file_id DESC";
+                ORDER BY f.file_id ASC";
         
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -1482,7 +1482,7 @@ class Admin {
                 FROM downloadable_files f
                 LEFT JOIN users u ON f.user_id = u.user_id
                 WHERE f.deleted_at IS NOT NULL
-                ORDER BY f.deleted_at DESC";
+                ORDER BY f.deleted_at ASC";
 
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -1537,7 +1537,7 @@ class Admin {
                 LEFT JOIN colleges c ON e.college_id = c.college_id
                 LEFT JOIN programs p ON e.program_id = p.program_id
                 WHERE e.status = 'Pending'
-                ORDER BY e.created_at DESC";
+                ORDER BY e.created_at ASC";
         
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -1822,7 +1822,7 @@ function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $class
                 FROM org_updates ou
                 LEFT JOIN users u ON ou.created_by = u.user_id
                 WHERE ou.deleted_at IS NULL
-                ORDER BY ou.update_id DESC";
+                ORDER BY ou.update_id ASC";
         
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -2007,7 +2007,211 @@ function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $class
                 LEFT JOIN update_images ui ON ou.update_id = ui.update_id
                 WHERE ou.deleted_at IS NOT NULL
                 GROUP BY ou.update_id
-                ORDER BY ou.deleted_at DESC";
+                ORDER BY ou.deleted_at ASC";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    // Officer Position Functions
+    function fetchOfficerPositions() {
+        $sql = "SELECT position_id, position_name, is_deleted, reason, deleted_at 
+                FROM officer_positions
+                WHERE is_deleted = 0
+                ORDER BY position_id ASC";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    function getPositionById($positionId) {
+        $sql = "SELECT position_id, position_name, is_deleted, reason, deleted_at
+                FROM officer_positions
+                WHERE position_id = :position_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':position_id', $positionId);
+        $query->execute();
+        return $query->fetch();
+    }
+
+    function checkPositionExists($positionName, $excludeId = null) {
+        $sql = "SELECT COUNT(*) as count FROM officer_positions 
+                WHERE LOWER(position_name) = LOWER(:position_name)";
+        
+        if ($excludeId !== null) {
+            $sql .= " AND position_id != :exclude_id";
+        }
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':position_name', $positionName);
+        
+        if ($excludeId !== null) {
+            $query->bindParam(':exclude_id', $excludeId);
+        }
+        
+        $query->execute();
+        $result = $query->fetch();
+        return $result['count'] > 0;
+    }
+
+    function addOfficerPosition($positionName) {
+        if ($this->checkPositionExists($positionName)) {
+            return "duplicate";
+        }
+        
+        $sql = "INSERT INTO officer_positions (position_name) 
+                VALUES (:position_name)";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':position_name', $positionName);
+        return $query->execute() ? "success" : "error";
+    }
+
+    function updateOfficerPosition($positionId, $positionName) {
+        if ($this->checkPositionExists($positionName, $positionId)) {
+            return "duplicate";
+        }
+        
+        $sql = "UPDATE officer_positions 
+                SET position_name = :position_name 
+                WHERE position_id = :position_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':position_name', $positionName);
+        $query->bindParam(':position_id', $positionId);
+        return $query->execute() ? "success" : "error";
+    }
+
+    function softDeletePosition($positionId, $reason) {
+        $sql = "UPDATE officer_positions 
+                SET is_deleted = 1, reason = :reason, deleted_at = NOW() 
+                WHERE position_id = :position_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':reason', $reason);
+        $query->bindParam(':position_id', $positionId);
+        return $query->execute();
+    }
+
+    function restorePosition($positionId) {
+        $sql = "UPDATE officer_positions 
+                SET is_deleted = 0, reason = NULL, deleted_at = NULL 
+                WHERE position_id = :position_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':position_id', $positionId);
+        return $query->execute();
+    }
+
+    function fetchArchivedPositions() {
+        $sql = "SELECT position_id, position_name, reason, deleted_at
+                FROM officer_positions
+                WHERE is_deleted = 1
+                ORDER BY deleted_at DESC";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    // School Year Functions
+    function fetchSchoolYears() {
+        $sql = "SELECT school_year_id, school_year, is_deleted, reason, deleted_at
+                FROM school_years
+                WHERE is_deleted = 0
+                ORDER BY school_year_id ASC";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    function getSchoolYearById($schoolYearId) {
+        $sql = "SELECT school_year_id, school_year, is_deleted, reason, deleted_at
+                FROM school_years
+                WHERE school_year_id = :school_year_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':school_year_id', $schoolYearId);
+        $query->execute();
+        return $query->fetch();
+    }
+
+    function checkSchoolYearExists($schoolYear, $excludeId = null) {
+        if ($excludeId) {
+            $sql = "SELECT COUNT(*) as count FROM school_years 
+                    WHERE school_year = :school_year AND school_year_id != :exclude_id";
+            $query = $this->db->connect()->prepare($sql);
+            $query->bindParam(':exclude_id', $excludeId);
+        } else {
+            $sql = "SELECT COUNT(*) as count FROM school_years 
+                    WHERE school_year = :school_year";
+            $query = $this->db->connect()->prepare($sql);
+        }
+        
+        $query->bindParam(':school_year', $schoolYear);
+        $query->execute();
+        $result = $query->fetch();
+        return $result['count'] > 0;
+    }
+
+    function addSchoolYear($schoolYear) {
+        if ($this->checkSchoolYearExists($schoolYear)) {
+            return 'duplicate';
+        }
+
+        $sql = "INSERT INTO school_years (school_year) 
+                VALUES (:school_year)";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':school_year', $schoolYear);
+        return $query->execute() ? 'success' : 'error';
+    }
+
+    function updateSchoolYear($schoolYearId, $schoolYear) {
+        if ($this->checkSchoolYearExists($schoolYear, $schoolYearId)) {
+            return 'duplicate';
+        }
+
+        $sql = "UPDATE school_years 
+                SET school_year = :school_year 
+                WHERE school_year_id = :school_year_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':school_year', $schoolYear);
+        $query->bindParam(':school_year_id', $schoolYearId);
+        return $query->execute() ? 'success' : 'error';
+    }
+
+    function softDeleteSchoolYear($schoolYearId, $reason) {
+        $sql = "UPDATE school_years 
+                SET is_deleted = 1, deleted_at = NOW(), reason = :reason 
+                WHERE school_year_id = :school_year_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':reason', $reason);
+        $query->bindParam(':school_year_id', $schoolYearId);
+        return $query->execute() ? 'success' : 'error';
+    }
+
+    function restoreSchoolYear($schoolYearId) {
+        $sql = "UPDATE school_years 
+                SET is_deleted = 0, deleted_at = NULL, reason = NULL 
+                WHERE school_year_id = :school_year_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':school_year_id', $schoolYearId);
+        return $query->execute() ? 'success' : 'error';
+    }
+
+    function fetchArchivedSchoolYears() {
+        $sql = "SELECT school_year_id, school_year, is_deleted, reason, deleted_at
+                FROM school_years
+                WHERE is_deleted = 1
+                ORDER BY deleted_at ASC";
 
         $query = $this->db->connect()->prepare($sql);
         $query->execute();

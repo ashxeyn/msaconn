@@ -7,6 +7,7 @@ $userRole = $_SESSION['role'] ?? '';
 
 <head>
     <link rel="stylesheet" href="../../css/sideBar.css">
+    <link rel="stylesheet" href="header.css">
 </head>
 
 <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark sidebar" id="sidebar">
@@ -24,10 +25,16 @@ $userRole = $_SESSION['role'] ?? '';
             </a>
         </li>
 
-        <li class="nav-item">
-            <a href="#" onclick="loadSchoolConfigSection()" class="nav-link text-white">
+        <li class="nav-item dropdown">
+            <a href="#" class="nav-link text-white dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-gear me-2"></i> <span class="sidebar-text">School Configuration</span>
             </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#" onclick="loadSchoolConfigSection()">Colleges</a></li>
+                <li><a class="dropdown-item" href="#" onclick="loadSchoolConfigSection2()">Programs</a></li>
+                <li><a class="dropdown-item" href="#" onclick="loadExecutivePositionsSection()">Executive Positions</a></li>
+                <li><a class="dropdown-item" href="#" onclick="loadOthersSection()">Others</a></li>
+            </ul>
         </li>
 
         <li>
@@ -67,6 +74,7 @@ $userRole = $_SESSION['role'] ?? '';
             <a href="#" onclick="loadDownloadablesSection()" class="nav-link text-white">
                 <i class="bi bi-arrow-down-circle me-2"></i> <span class="sidebar-text">Downloadables</span>
             </a>
+        </li>
 
         <li>
             <hr class="text-white">
@@ -116,5 +124,4 @@ $userRole = $_SESSION['role'] ?? '';
         </li>
         <?php endif; ?>
     </ul>
-
 </div>

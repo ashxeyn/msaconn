@@ -41,6 +41,48 @@ function loadSchoolConfigSection() {
     });
 }
 
+function loadSchoolConfigSection2() {
+    $.ajax({
+        url: "../admin/schoolConfig2.php",
+        method: 'GET',
+        success: function (response) {
+            $('#contentArea').html(response);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error loading school configuration section:', error);
+            $('#contentArea').html('<p class="text-danger">Failed to load School Configuration section. Please try again.</p>');
+        }
+    });
+}
+
+function loadExecutivePositionsSection() {
+    $.ajax({
+        url: "../admin/executivePositions.php",
+        method: 'GET',
+        success: function (response) {
+            $('#contentArea').html(response);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error loading executive positions section:', error);
+            $('#contentArea').html('<p class="text-danger">Failed to load Executive Positions section. Please try again.</p>');
+        }
+    });
+}
+
+function loadOthersSection() {
+    $.ajax({
+        url: "../admin/others.php",
+        method: 'GET',
+        success: function (response) {
+            $('#contentArea').html(response);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error loading others section:', error);
+            $('#contentArea').html('<p class="text-danger">Failed to load Others section. Please try again.</p>');
+        }
+    });
+}
+
 function loadEventsSection() {
     $.ajax({
         url: "../admin/events.php",

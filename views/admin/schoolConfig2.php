@@ -55,12 +55,6 @@ $programs = $adminObj->fetchAllPrograms();
             <?php endif; ?>
         </tbody>
     </table>
-
-    <div class="bottom-nav">
-        <button class="btn btn-secondary" onclick="loadSchoolConfigSection()">
-            <i class="bi bi-arrow-left"></i> Back
-        </button>
-    </div>
 </div>
 
 <?php include '../adminModals/addEditProgram.php'; 

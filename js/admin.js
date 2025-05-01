@@ -16,27 +16,6 @@ function removeImage() {
     document.getElementById('image-preview').style.display = 'none'; 
 }
 
-$(document).ready(function() {
-    $('#table').DataTable();
-    $('#cashinTable').DataTable();
-    $('#cashoutTable').DataTable();
-    $('#moderatorsTab').DataTable();
-    $('#eventTab').DataTable();
-    $('#progTab').DataTable();
-    $('#prayerTab').DataTable();
-    $('#calendarTab').DataTable();
-    $('#cashinTab').DataTable();
-    $('#cashoutTab').DataTable();
-    $('#faqsTab').DataTable();
-    $('#filesTab').DataTable();
-    $('#aboutTab').DataTable();
-    $('#olTab').DataTable();
-    $('#osTab').DataTable();
-    $('#officersTab').DataTable();
-    $('#volunteersTab').DataTable();
-    $('#archivedUpdatesTab').DataTable();
-});
-
 function viewPhoto(photoName, folder) {
     $('.modal').modal('hide'); 
     setTimeout(() => {
@@ -3320,6 +3299,317 @@ $(document).on('hidden.bs.modal', function () {
         $('.modal-backdrop').remove();
     }
 });
+
+// EXECUTIVE POSITION FUNCTIONS
+function openPositionModal(modalId, positionId, action) {
+    $('.modal').modal('hide');
+    $('.modal-backdrop').remove(); 
+    setTimeout(() => {
+        const modal = $('#' + modalId);
+        modal.modal('show'); 
+        setPositionId(positionId, action);
+    }, 300);
+}
+
+function setPositionId(positionId, action) {
+    if (action === 'edit') {
+        $.ajax({
+            url: "../../handler/admin/getExePosition.php",
+            type: "GET",
+            data: { position_id: positionId },
+            success: function(response) {
+                try {
+                    const position = JSON.parse(response);
+                    $('#editPositionId').val(position.position_id);
+                    $('#editPositionName').val(position.position_name);
+                    $('#editExePositionModal .modal-title').text('Edit Executive Position');
+                    $('#editPositionFormSubmit').text('Update Position');
+                    clearValidationErrors();
+                    $('#editExePositionModal').modal('show');
+                } catch (e) {
+                    console.error("Invalid JSON:", response);
+                    alert("Failed to load position details.");
+                }
+            },
+            error: function() {
+                alert("Failed to load position details.");
+            }
+        });
+
+        $('#editPositionForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validatePositionForm()) {
+                processPosition(positionId, 'edit');
+            }
+        });
+    } else if (action === 'add') {
+        $('#editPositionForm')[0].reset();
+        clearValidationErrors();
+        $('#editExePositionModal .modal-title').text('Add Executive Position');
+        $('#editPositionFormSubmit').text('Add Position');
+        $('#editExePositionModal').modal('show');
+
+        $('#editPositionForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validatePositionForm()) {
+                processPosition(null, 'add');
+            }
+        });
+    } else if (action === 'delete') {
+        $('#archivePositionId').val(positionId);
+        $('#archiveExePositionModal').modal('show');
+    
+        $('#confirmArchivePosition').off('click').on('click', function () {
+            const reason = $('#archiveReason').val().trim();
+            if (reason === '') {
+                $('#archiveReasonError').text('Please provide a reason for archiving');
+                return;
+            }
+            $('#archiveReasonError').text('');
+            processPosition(positionId, 'delete');
+        });    
+    } else if (action === 'restore') {
+        $('#restorePositionId').val(positionId);
+        $('#restoreExePositionModal').modal('show');
+
+        $('#restoreExePositionForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            processPosition(positionId, 'restore');
+        });
+    }
+}
+
+function validatePositionForm() {
+    let isValid = true;
+    clearValidationErrors();
+
+    const positionName = $('#editPositionName').val().trim();
+
+    if (positionName === '') {
+        $('#editPositionNameError').text('Position name is required');
+        isValid = false;
+    }
+
+    return isValid;
+}
+
+function processPosition(positionId, action) {
+    let formData = new FormData();
+
+    if (action === 'add' || action === 'edit') {
+        formData = new FormData(document.getElementById('editPositionForm'));
+    } else if (action === 'delete') {
+        formData.append('reason', $('#archiveReason').val());
+    } else if (action === 'restore') {
+        formData.append('position_id', $('#restorePositionId').val());
+    }
+
+    if (positionId) {
+        formData.append('position_id', positionId);
+    }
+    formData.append('action', action);
+
+    $.ajax({
+        url: "../../handler/admin/exePositionAction.php",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.trim() === "success") {
+                $(".modal").modal("hide");
+                $("body").removeClass("modal-open");
+                $(".modal-backdrop").remove();
+
+                if (action === 'restore') {
+                    loadArchives(); 
+                } else {
+                    loadExecutivePositionsSection(); 
+                }
+
+                showToast('Success', 
+                    action === 'delete' ? 'Position has been archived.' :
+                    action === 'restore' ? 'Position has been restored.' :
+                    'Position has been ' + (action === 'edit' ? 'updated' : 'added') + '.', 
+                    'success');
+            } else if (response.trim() === "error: duplicate_position") {
+                if (action === 'add' || action === 'edit') {
+                    $('#editPositionNameError').text('This position already exists. Please use a different name.');
+                } else {
+                    alert("Duplicate position name detected.");
+                }
+            } else {
+                alert("Failed to process request: " + response);
+            }
+        },
+        error: function() {
+            alert("An error occurred while processing the request.");
+        }
+    });
+}
+
+// SCHOOL YEAR FUNCTIONS
+function openSchoolYearModal(modalId, schoolYearId, action) {
+    $('.modal').modal('hide');
+    $('.modal-backdrop').remove(); 
+    setTimeout(() => {
+        const modal = $('#' + modalId);
+        modal.modal('show'); 
+        setSchoolYearId(schoolYearId, action);
+    }, 300);
+}
+
+function setSchoolYearId(schoolYearId, action) {
+    if (action === 'edit') {
+        $.ajax({
+            url: "../../handler/admin/getSchoolYear.php",
+            type: "GET",
+            data: { school_year_id: schoolYearId },
+            success: function(response) {
+                try {
+                    const schoolYear = JSON.parse(response);
+                    $('#editSchoolYearId').val(schoolYear.school_year_id);
+                    $('#editSchoolYear').val(schoolYear.school_year);
+                    $('#editSchoolYearModal .modal-title').text('Edit School Year');
+                    $('#editSchoolYearFormSubmit').text('Update School Year');
+                    clearValidationErrors();
+                    $('#editSchoolYearModal').modal('show');
+                } catch (e) {
+                    console.error("Invalid JSON:", response);
+                    alert("Failed to load school year details.");
+                }
+            },
+            error: function() {
+                alert("Failed to load school year details.");
+            }
+        });
+
+        $('#editSchoolYearForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateSchoolYearForm()) {
+                processSchoolYear(schoolYearId, 'edit');
+            }
+        });
+    } else if (action === 'add') {
+        $('#editSchoolYearForm')[0].reset();
+        clearValidationErrors();
+        $('#editSchoolYearModal .modal-title').text('Add School Year');
+        $('#editSchoolYearFormSubmit').text('Add School Year');
+        $('#editSchoolYearModal').modal('show');
+
+        $('#editSchoolYearForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateSchoolYearForm()) {
+                processSchoolYear(null, 'add');
+            }
+        });
+    } else if (action === 'delete') {
+        $('#archiveSchoolYearId').val(schoolYearId);
+        $('#archiveSchoolYearModal').modal('show');
+    
+        $('#confirmArchiveSchoolYear').off('click').on('click', function () {
+            const reason = $('#archiveReason').val().trim();
+            if (reason === '') {
+                $('#archiveReasonError').text('Please provide a reason for archiving');
+                return;
+            }
+            $('#archiveReasonError').text('');
+            processSchoolYear(schoolYearId, 'delete');
+        });    
+    } else if (action === 'restore') {
+        $('#restoreSchoolYearId').val(schoolYearId);
+        $('#restoreSchoolYearModal').modal('show');
+
+        $('#restoreSchoolYearForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            processSchoolYear(schoolYearId, 'restore');
+        });
+    }
+}
+
+function validateSchoolYearForm() {
+    let isValid = true;
+    clearValidationErrors();
+
+    const schoolYear = $('#editSchoolYear').val().trim();
+    
+    if (schoolYear === '') {
+        $('#editSchoolYearError').text('School year is required');
+        isValid = false;
+    } else {
+        const regex = /^\d{4}-\d{4}$/;
+        if (!regex.test(schoolYear)) {
+            $('#editSchoolYearError').text('School year must be in format yyyy-yyyy (e.g. 2024-2025)');
+            isValid = false;
+        } else {
+            const years = schoolYear.split('-');
+            const firstYear = parseInt(years[0], 10);
+            const secondYear = parseInt(years[1], 10);
+            
+            if (secondYear !== firstYear + 1) {
+                $('#editSchoolYearError').text('The second year should be one year after the first year');
+                isValid = false;
+            }
+        }
+    }
+
+    return isValid;
+}
+
+function processSchoolYear(schoolYearId, action) {
+    let formData = new FormData();
+
+    if (action === 'add' || action === 'edit') {
+        formData = new FormData(document.getElementById('editSchoolYearForm'));
+    } else if (action === 'delete') {
+        formData.append('reason', $('#archiveReason').val());
+    } else if (action === 'restore') {
+        formData.append('school_year_id', $('#restoreSchoolYearId').val());
+    }
+
+    if (schoolYearId) {
+        formData.append('school_year_id', schoolYearId);
+    }
+    formData.append('action', action);
+
+    $.ajax({
+        url: "../../handler/admin/schoolYearAction.php",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.trim() === "success") {
+                $(".modal").modal("hide");
+                $("body").removeClass("modal-open");
+                $(".modal-backdrop").remove();
+
+                if (action === 'restore') {
+                    loadArchives(); 
+                } else {
+                    loadOthersSections(); 
+                }
+
+                showToast('Success', 
+                    action === 'delete' ? 'School year has been archived.' :
+                    action === 'restore' ? 'School year has been restored.' :
+                    'School year has been ' + (action === 'edit' ? 'updated' : 'added') + '.', 
+                    'success');
+            } else if (response.trim() === "duplicate") {
+                $('#editSchoolYearError').text('This school year already exists');
+            } else {
+                alert("Failed to process request: " + response);
+            }
+        },
+        error: function() {
+            alert("An error occurred while processing the request.");
+        }
+    });
+}
+
+function clearValidationErrors() {
+    $('.text-danger').text('');
+}
 
 $(document).ready(function() {
     initSearchOrgUpdates();

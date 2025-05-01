@@ -19,13 +19,15 @@ $archivedOfficers = $adminObj->fetchArchivedOfficers();
 $archivedVolunteers = $adminObj->fetchArchivedVolunteers();
 $archivedModerators = $adminObj->fetchArchivedModerators();
 $archivedUpdates = $adminObj->fetchArchivedOrgUpdates();
+$archivedPositions = $adminObj->fetchArchivedPositions();
+$archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
 
 
 ?>
 
 <head>
-    <script src="../../js/admin.js"></script>
     <script src="../../js/modals.js"></script>
+    <script src="../../js/admin.js"></script>
 </head>
 
 <div class="container-fluid py-4">
@@ -34,23 +36,11 @@ $archivedUpdates = $adminObj->fetchArchivedOrgUpdates();
             <div class="card">
                 <div class="card-body px-0 pb-2">
 
-                    <!-- NAV TABS -->
                     <ul class="nav nav-tabs" id="archivesTabs" role="tablist">
+
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="colleges-tab" data-bs-toggle="tab" data-bs-target="#colleges" 
-                                    type="button" role="tab" aria-controls="colleges" aria-selected="true">
-                                Colleges
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="programs-tab" data-bs-toggle="tab" data-bs-target="#programs" 
-                                    type="button" role="tab" aria-controls="programs" aria-selected="false">
-                                Programs
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="archived-events-tab" data-bs-toggle="tab" data-bs-target="#archived-events" 
-                                    type="button" role="tab" aria-controls="archived-events" aria-selected="false">
+                            <button class="nav-link active" id="archived-events-tab" data-bs-toggle="tab" data-bs-target="#archived-events" 
+                                    type="button" role="tab" aria-controls="archived-events" aria-selected="true">
                                 Events
                             </button>
                         </li>
@@ -117,85 +107,19 @@ $archivedUpdates = $adminObj->fetchArchivedOrgUpdates();
                         <li class="nav-item" role="presentation">
                             <button class="nav-link" id="archived-updates-tab" data-bs-toggle="tab" data-bs-target="#archived-updates"
                                     type="button" role="tab" aria-controls="archived-updates" aria-selected="false">
-                                Archived Updates
+                                Updates
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="schoolConfig-tab" data-bs-toggle="tab" data-bs-target="#schoolConfig"
+                                    type="button" role="tab" aria-controls="schoolConfig" aria-selected="false">
+                                School Configurations
                             </button>
                         </li>
                     </ul>
                     
                     <div class="tab-content pt-3" id="archivesTabsContent">
-                        <div class="tab-pane fade show active" id="colleges" role="tabpanel" aria-labelledby="colleges-tab">
-                            <div class="table-responsive">
-                                <table id="table" class="table align-items-center mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>College Name</th>
-                                            <th>Reason</th>
-                                            <th>Deleted At</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php if (empty($archivedColleges)): ?>
-                                            <tr>
-                                                <td colspan="4" class="text-center">No archived colleges</td>
-                                            </tr>
-                                        <?php else: ?>
-                                            <?php foreach ($archivedColleges as $college): ?>
-                                                <tr>
-                                                    <td><?= clean_input($college['college_name']) ?></td>
-                                                    <td><?= clean_input($college['reason']) ?></td>
-                                                    <td><?= $college['deleted_at'] ? date('M d, Y h:i A', strtotime($college['deleted_at'])) : 'N/A' ?></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-success" onclick="setCollegeId(<?= $college['college_id'] ?>, 'restore')">
-                                                            <i class="fas fa-undo"></i> Restore
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        
-                        <div class="tab-pane fade" id="programs" role="tabpanel" aria-labelledby="programs-tab">
-                            <div class="table-responsive">
-                                <table id="progTab" class="table align-items-center mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>Program Name</th>
-                                            <th>College</th>
-                                            <th>Reason</th>
-                                            <th>Deleted At</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php if (empty($archivedPrograms)): ?>
-                                            <tr>
-                                                <td colspan="5" class="text-center">No archived programs</td>
-                                            </tr>
-                                        <?php else: ?>
-                                            <?php foreach ($archivedPrograms as $program): ?>
-                                                <tr>
-                                                    <td><?= clean_input($program['program_name']) ?></td>
-                                                    <td><?= clean_input($program['college_name']) ?></td>
-                                                    <td><?= clean_input($program['reason']) ?></td>
-                                                    <td><?= $program['deleted_at'] ? date('M d, Y h:i A', strtotime($program['deleted_at'])) : 'N/A' ?></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-success" onclick="setProgramId(<?= $program['program_id'] ?>, 'restore')">
-                                                            <i class="fas fa-undo"></i> Restore
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="tab-pane fade" id="archived-events" role="tabpanel" aria-labelledby="archived-events-tab">
+                        <div class="tab-pane fade show active" id="archived-events" role="tabpanel" aria-labelledby="archived-events-tab">
                             <div class="table-responsive">
                                 <table id="eventTab" class="table align-items-center mb-0">
                                     <thead>
@@ -831,6 +755,180 @@ $archivedUpdates = $adminObj->fetchArchivedOrgUpdates();
                                 </table>
                             </div>
                         </div>
+                        <div class="tab-pane fade" id="schoolConfig" role="tabpanel" aria-labelledby="schoolConfig-tab">
+                            <ul class="nav nav-tabs" id="schoolConfigSubTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="schoolYears-tab" data-bs-toggle="tab" data-bs-target="#schoolYears" 
+                                            type="button" role="tab" aria-controls="schoolYears" aria-selected="true">
+                                        School Years
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="officerPositions-tab" data-bs-toggle="tab" data-bs-target="#officerPositions" 
+                                            type="button" role="tab" aria-controls="officerPositions" aria-selected="false">
+                                        Officer Positions
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="colleges-tab" data-bs-toggle="tab" data-bs-target="#colleges" 
+                                            type="button" role="tab" aria-controls="colleges" aria-selected="false">
+                                        Colleges
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="programs-tab" data-bs-toggle="tab" data-bs-target="#programs" 
+                                            type="button" role="tab" aria-controls="programs" aria-selected="false">
+                                        Programs
+                                    </button>
+                                </li>
+                            </ul>
+                            
+                            <div class="tab-content" id="schoolConfigSubTabsContent">
+                                <div class="tab-pane fade show active" id="schoolYears" role="tabpanel" aria-labelledby="schoolYears-tab">
+                                    <div class="table-responsive mt-3">
+                                        <table id="schoolYearsTab" class="table align-items-center mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>School Year</th>
+                                                    <th>Reason</th>
+                                                    <th>Archived At</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php if (empty($archivedSchoolYears)): ?>
+                                                    <tr>
+                                                        <td colspan="4" class="text-center">No archived school years</td>
+                                                    </tr>
+                                                <?php else: ?>
+                                                    <?php foreach ($archivedSchoolYears as $schoolYear): ?>
+                                                        <tr>
+                                                            <td><?= clean_input($schoolYear['school_year']) ?></td>
+                                                            <td><?= clean_input($schoolYear['reason']) ?></td>
+                                                            <td><?= $schoolYear['deleted_at'] ? date('M d, Y h:i A', strtotime($schoolYear['deleted_at'])) : 'N/A' ?></td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-success" 
+                                                                        onclick="openSchoolYearModal('restoreSchoolYearModal', <?= $schoolYear['school_year_id'] ?>, 'restore')">
+                                                                    <i class="fas fa-undo"></i> Restore
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <div class="tab-pane fade" id="officerPositions" role="tabpanel" aria-labelledby="officerPositions-tab">
+                                    <div class="table-responsive mt-3">
+                                        <table id="officerPositionsTab" class="table align-items-center mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Position Name</th>
+                                                    <th>Reason</th>
+                                                    <th>Archived At</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php if (empty($archivedPositions)): ?>
+                                                    <tr>
+                                                        <td colspan="4" class="text-center">No archived officer positions</td>
+                                                    </tr>
+                                                <?php else: ?>
+                                                    <?php foreach ($archivedPositions as $position): ?>
+                                                        <tr>
+                                                            <td><?= clean_input($position['position_name']) ?></td>
+                                                            <td><?= clean_input($position['reason']) ?></td>
+                                                            <td><?= $position['deleted_at'] ? date('M d, Y h:i A', strtotime($position['deleted_at'])) : 'N/A' ?></td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-success" 
+                                                                        onclick="openPositionModal('restorePositionModal', <?= $position['position_id'] ?>, 'restore')">
+                                                                    <i class="fas fa-undo"></i> Restore
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <div class="tab-pane fade" id="colleges" role="tabpanel" aria-labelledby="colleges-tab">
+                                    <div class="table-responsive">
+                                        <table id="collegesTab" class="table align-items-center mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>College Name</th>
+                                                    <th>Reason</th>
+                                                    <th>Deleted At</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php if (empty($archivedColleges)): ?>
+                                                    <tr>
+                                                        <td colspan="4" class="text-center">No archived colleges</td>
+                                                    </tr>
+                                                <?php else: ?>
+                                                    <?php foreach ($archivedColleges as $college): ?>
+                                                        <tr>
+                                                            <td><?= clean_input($college['college_name']) ?></td>
+                                                            <td><?= clean_input($college['reason']) ?></td>
+                                                            <td><?= $college['deleted_at'] ? date('M d, Y h:i A', strtotime($college['deleted_at'])) : 'N/A' ?></td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-success" onclick="setCollegeId(<?= $college['college_id'] ?>, 'restore')">
+                                                                    <i class="fas fa-undo"></i> Restore
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+                                <div class="tab-pane fade" id="programs" role="tabpanel" aria-labelledby="programs-tab">
+                                    <div class="table-responsive">
+                                        <table id="programsTab" class="table align-items-center mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Program Name</th>
+                                                    <th>College</th>
+                                                    <th>Reason</th>
+                                                    <th>Deleted At</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <?php if (empty($archivedPrograms)): ?>
+                                                    <tr>
+                                                        <td colspan="5" class="text-center">No archived programs</td>
+                                                    </tr>
+                                                <?php else: ?>
+                                                    <?php foreach ($archivedPrograms as $program): ?>
+                                                        <tr>
+                                                            <td><?= clean_input($program['program_name']) ?></td>
+                                                            <td><?= clean_input($program['college_name']) ?></td>
+                                                            <td><?= clean_input($program['reason']) ?></td>
+                                                            <td><?= $program['deleted_at'] ? date('M d, Y h:i A', strtotime($program['deleted_at'])) : 'N/A' ?></td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-success" onclick="setProgramId(<?= $program['program_id'] ?>, 'restore')">
+                                                                    <i class="fas fa-undo"></i> Restore
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    <?php endforeach; ?>
+                                                <?php endif; ?>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -852,6 +950,8 @@ $archivedUpdates = $adminObj->fetchArchivedOrgUpdates();
 <?php include_once '../adminModals/restoreVolunteer.html'; ?>
 <?php include_once '../adminModals/restoreModerator.html'; ?>
 <?php include_once '../adminModals/restoreUpdates.html'; ?>
+<?php include_once '../adminModals/restoreExePosition.html'; ?>
+<?php include_once '../adminModals/restoreSchoolYear.html'; ?>
 
 <!-- <script>
     $(document).ready(function() {

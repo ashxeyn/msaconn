@@ -26,8 +26,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" id="editFileFormSubmit" class="btn btn-primary">Save</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" id="editFileFormSubmit" class="btn btn-primary">Save</button>
                 </div>
             </div>
         </form>
