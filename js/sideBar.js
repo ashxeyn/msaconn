@@ -267,7 +267,7 @@ function loadOnlineSection () {
 
 function loadUpdatesSection () {
     $.ajax({
-        url: "../admin/updates.php",
+        url: "../admin/orgUpdates.php",
         method: 'GET',
         success: function (response) {
             $('#contentArea').html(response);

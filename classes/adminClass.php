@@ -1812,6 +1812,179 @@ function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $class
     }
     }
     
+    // Org Updates Functions
+    function fetchOrgUpdates() {
+        $sql = "SELECT ou.update_id, ou.title, ou.content, ou.created_at, ou.deleted_at,
+                    u.username AS created_by 
+                FROM org_updates ou
+                LEFT JOIN users u ON ou.created_by = u.user_id
+                WHERE ou.deleted_at IS NULL
+                ORDER BY ou.update_id DESC";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    function getUpdateById($updateId) {
+        $sql = "SELECT ou.update_id, ou.title, ou.content, ou.created_at, ou.deleted_at,
+                    u.username AS created_by 
+                FROM org_updates ou
+                LEFT JOIN users u ON ou.created_by = u.user_id
+                WHERE ou.update_id = :update_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':update_id', $updateId);
+        $query->execute();
+        return $query->fetch();
+    }
+
+    function getUpdateImages($updateId) {
+        $sql = "SELECT image_id, file_path, upload_order
+                FROM update_images 
+                WHERE update_id = :update_id
+                ORDER BY upload_order ASC";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':update_id', $updateId);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    function addOrgUpdate($title, $content, $userId) {
+        $pdo = $this->db->connect();
+        
+        try {
+            $pdo->beginTransaction();
+            
+            $sql = "INSERT INTO org_updates (title, content, created_by) 
+                    VALUES (:title, :content, :created_by)";
+
+            $query = $pdo->prepare($sql);
+            $query->bindParam(':title', $title);
+            $query->bindParam(':content', $content);
+            $query->bindParam(':created_by', $userId);
+            $query->execute();
+            
+            $updateId = $pdo->lastInsertId();
+            $pdo->commit();
+            return $updateId;
+        } catch (Exception $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            error_log("Error in addOrgUpdate: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    function addUpdateImages($updateId, $imagePaths) {
+        $pdo = $this->db->connect();
+        
+        try {
+            $pdo->beginTransaction();
+            
+            $sql = "INSERT INTO update_images (update_id, file_path, upload_order) 
+                    VALUES (:update_id, :file_path, :upload_order)";
+            
+            $query = $pdo->prepare($sql);
+            
+            foreach ($imagePaths as $index => $path) {
+                $query->bindParam(':update_id', $updateId);
+                $query->bindParam(':file_path', $path);
+                $uploadOrder = $index;
+                $query->bindParam(':upload_order', $uploadOrder);
+                $query->execute();
+            }
+            
+            $pdo->commit();
+            return true;
+        } catch (Exception $e) {
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+            error_log("Error in addUpdateImages: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    function updateOrgUpdate($updateId, $title, $content) {
+        $sql = "UPDATE org_updates 
+                SET title = :title, 
+                    content = :content 
+                WHERE update_id = :update_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':title', $title);
+        $query->bindParam(':content', $content);
+        $query->bindParam(':update_id', $updateId);
+        return $query->execute();
+    }
+
+    function deleteUpdateImages($updateId) {
+        $sql = "DELETE FROM update_images 
+                WHERE update_id = :update_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':update_id', $updateId);
+        return $query->execute();
+    }
+
+    function deleteSpecificUpdateImages($imageIds) {
+        if (empty($imageIds)) {
+            return true; 
+        }
+        
+        $imageIdsStr = implode(',', array_map('intval', $imageIds));
+        
+        $sql = "DELETE FROM update_images 
+                WHERE image_id IN ($imageIdsStr)";
+
+        $query = $this->db->connect()->prepare($sql);
+        return $query->execute();
+    }
+
+    function softDeleteOrgUpdate($updateId, $reason) {
+        $sql = "UPDATE org_updates 
+                SET is_deleted = 1, 
+                    deleted_at = NOW(), 
+                    reason = :reason 
+                WHERE update_id = :update_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':reason', $reason);
+        $query->bindParam(':update_id', $updateId);
+        return $query->execute();
+    }
+
+    function restoreOrgUpdate($updateId) {
+        $sql = "UPDATE org_updates 
+                SET is_deleted = 0, 
+                    deleted_at = NULL, 
+                    reason = NULL 
+                WHERE update_id = :update_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':update_id', $updateId);
+        return $query->execute();
+    }
+
+    function fetchArchivedOrgUpdates() {
+        $sql = "SELECT ou.update_id, ou.title, ou.content, ou.reason, ou.deleted_at,
+                    u.username AS created_by,
+                    GROUP_CONCAT(ui.file_path ORDER BY ui.upload_order SEPARATOR '||') AS image_paths
+                FROM org_updates ou
+                LEFT JOIN users u ON ou.created_by = u.user_id
+                LEFT JOIN update_images ui ON ou.update_id = ui.update_id
+                WHERE ou.deleted_at IS NOT NULL
+                GROUP BY ou.update_id
+                ORDER BY ou.deleted_at DESC";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
     // Others
     function fetchSy(){
         $sql = "SELECT * FROM school_years ORDER BY school_year_id ASC;";

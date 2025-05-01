@@ -34,6 +34,7 @@ $(document).ready(function() {
     $('#osTab').DataTable();
     $('#officersTab').DataTable();
     $('#volunteersTab').DataTable();
+    $('#archivedUpdatesTab').DataTable();
 });
 
 function viewPhoto(photoName, folder) {
@@ -2999,10 +3000,331 @@ function processModerator(moderatorId, action) {
     });
 }
 
+// UPDATES FUNCTIONS
+function initSearchOrgUpdates() {
+    $('#searchOrgUpdates').on('keyup', function() {
+        const searchTerm = $(this).val().toLowerCase();
+        $('.org-update-card').each(function() {
+            const title = $(this).find('.card-title').text().toLowerCase();
+            const content = $(this).find('.card-text').text().toLowerCase();
+            const author = $(this).find('.update-author').text().toLowerCase();
+
+            if (title.includes(searchTerm) || content.includes(searchTerm) || author.includes(searchTerm)) {
+                $(this).show();
+            } else {
+                $(this).hide();
+            }
+        });
+    });
+}
+
+function openUpdateModal(modalId, updateId, action) {
+    $('.modal').modal('hide');
+    $('.modal-backdrop').remove(); 
+    setTimeout(() => {
+        const modal = $('#' + modalId);
+        modal.modal('show'); 
+        setUpdateId(updateId, action);
+    }, 300);
+}
+
+function initImagePreview() {
+    $('#deletedImages').val('[]');
+    $('#selectedImagesPreview').empty();
+    
+    $('#editImages').off('change').on('change', function(e) {
+        updateImagePreview(this);
+    });
+
+    $('#addMoreImages').off('click').on('click', function() {
+        $('#editImages').click();
+    });
+}
+
+function updateImagePreview(input) {
+    if (input.files && input.files.length > 0) {
+        const existingFiles = Array.from($('#selectedImagesPreview .selected-image')).map(
+            el => $(el).data('file-name')
+        );
+        
+        const dataTransfer = new DataTransfer();
+        
+        if (input.files) {
+            Array.from(input.files).forEach(file => {
+                dataTransfer.items.add(file);
+            });
+        }
+        
+        for (let i = 0; i < input.files.length; i++) {
+            const file = input.files[i];
+            const reader = new FileReader();
+            
+            if (existingFiles.includes(file.name)) {
+                continue;
+            }
+            
+            reader.onload = function(e) {
+                const imgPreview = $(`
+                    <div class="position-relative selected-image mb-2 me-2" data-file-name="${file.name}">
+                        <img src="${e.target.result}" class="img-thumbnail" style="width: 100px; height: 70px; object-fit: cover;">
+                        <button type="button" class="btn btn-sm btn-danger position-absolute" style="top: 0; right: 0; padding: 0 5px;" onclick="removeSelectedImage(this)">×</button>
+                    </div>
+                `);
+                $('#selectedImagesPreview').append(imgPreview);
+            };
+            
+            reader.readAsDataURL(file);
+        }
+    }
+}
+
+function removeSelectedImage(btn) {
+    const fileNameToRemove = $(btn).closest('.selected-image').data('file-name');
+    $(btn).closest('.selected-image').remove();
+    removeFileFromInput(fileNameToRemove);
+}
+
+function removeFileFromInput(fileName) {
+    const input = document.getElementById('editImages');
+    
+    if (input.files && input.files.length > 0) {
+        const dt = new DataTransfer();
+        
+        for (let i = 0; i < input.files.length; i++) {
+            const file = input.files[i];
+            if (file.name !== fileName) {
+                dt.items.add(file);
+            }
+        }
+        
+        input.files = dt.files;
+    }
+    
+    updateFileInput();
+}
+
+function removeCurrentImage(btn, imageId) {
+    const deletedImageIds = JSON.parse($('#deletedImages').val() || '[]');
+    deletedImageIds.push(imageId);
+    $('#deletedImages').val(JSON.stringify(deletedImageIds));
+    
+    $(btn).closest('.current-image-item').remove();
+    
+    $('#editImagesError').text('Image marked for deletion. Changes will apply when form is submitted.').removeClass('text-danger').addClass('text-info');
+    setTimeout(() => {
+        $('#editImagesError').text('').removeClass('text-info');
+    }, 3000);
+}
+
+function updateFileInput() {
+    $('#editImagesError').text('Image removed from preview. Changes will apply when form is submitted.').removeClass('text-danger').addClass('text-info');
+    setTimeout(() => {
+        $('#editImagesError').text('').removeClass('text-info');
+    }, 3000);
+}
+
+function setUpdateId(updateId, action) {
+    $('#editUpdateForm')[0].reset();
+    $('#selectedImagesPreview').empty();
+    $('#deletedImages').val('[]');
+    
+    if (action === 'edit') {
+        $.ajax({
+            url: "../../handler/admin/getOrgUpdates.php",
+            type: "GET",
+            data: { update_id: updateId },
+            success: function(response) {
+                try {
+                    const data = JSON.parse(response);
+                    const update = data.update;
+                    const images = data.images;
+                    
+                    $('#editUpdateId').val(update.update_id);
+                    $('#editTitle').val(update.title);
+                    $('#editContent').val(update.content);
+                    
+                    if (images && images.length > 0) {
+                        $('#currentImagesContainer').removeClass('d-none');
+                        $('#currentImages').empty();
+                        
+                        images.forEach(image => {
+                            const imgPreview = $(`
+                                <div class="position-relative current-image-item me-2 mb-2">
+                                    <img src="../../assets/updates/${image.file_path}" class="img-thumbnail" style="width: 100px; height: 70px; object-fit: cover;">
+                                    <button type="button" class="btn btn-sm btn-danger position-absolute" style="top: 0; right: 0; padding: 0 5px;" onclick="removeCurrentImage(this, ${image.image_id})">×</button>
+                                </div>
+                            `);
+                            $('#currentImages').append(imgPreview);
+                        });
+                    } else {
+                        $('#currentImagesContainer').addClass('d-none');
+                    }
+                    
+                    $('#editUpdateModal .modal-title').text('Edit Organization Update');
+                    $('#editUpdateFormSubmit').text('Update');
+                    clearValidationErrors();
+                    initImagePreview();
+                    $('#editUpdateModal').modal('show');
+                } catch (e) {
+                    console.error("Invalid JSON:", response);
+                    alert("Failed to load update details.");
+                }
+            },
+            error: function() {
+                alert("Failed to load update details.");
+            }
+        });
+
+        $('#editUpdateForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateUpdateForm('edit')) {
+                processUpdate(updateId, 'edit');
+            }
+        });
+    } else if (action === 'add') {
+        $('#editUpdateForm')[0].reset();
+        clearValidationErrors();
+        $('#currentImagesContainer').addClass('d-none');
+        $('#editUpdateModal .modal-title').text('Add Organization Update');
+        $('#editUpdateFormSubmit').text('Add Update');
+        initImagePreview();
+        $('#editUpdateModal').modal('show');
+
+        $('#editUpdateForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateUpdateForm('add')) {
+                processUpdate(null, 'add');
+            }
+        });
+    } else if (action === 'delete') {
+        $('#archiveUpdateId').val(updateId);
+        $('#archiveUpdateModal').modal('show');
+    
+        $('#confirmArchiveUpdate').off('click').on('click', function () {
+            const reason = $('#archiveReason').val().trim();
+            if (reason === '') {
+                $('#archiveReasonError').text('Please provide a reason for archiving');
+                return;
+            }
+            $('#archiveReasonError').text('');
+            processUpdate(updateId, 'delete');
+        });    
+    } else if (action === 'restore') {
+        $('#restoreUpdateId').val(updateId);
+        $('#restoreUpdateModal').modal('show');
+
+        $('#restoreUpdateForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            processUpdate(updateId, 'restore');
+        });
+    }
+}
+
+function validateUpdateForm(action) {
+    let isValid = true;
+    clearValidationErrors();
+
+    const title = $('#editTitle').val().trim();
+    const content = $('#editContent').val().trim();
+    const imagesInput = $('#editImages')[0];
+    const hasSelectedImages = $('#selectedImagesPreview .selected-image').length > 0;
+
+    if (title === '') {
+        $('#editTitleError').text('Title is required');
+        isValid = false;
+    }
+
+    if (content === '') {
+        $('#editContentError').text('Content is required');
+        isValid = false;
+    }
+
+    if (action === 'add' && !hasSelectedImages && imagesInput.files.length === 0) {
+        $('#editImagesError').text('At least one image is required');
+        isValid = false;
+    }
+    
+    if (action === 'edit') {
+        const remainingCurrentImages = $('#currentImages .current-image-item').length;
+        const totalImagesAfterChanges = remainingCurrentImages + (imagesInput.files ? imagesInput.files.length : 0);
+        
+        if (totalImagesAfterChanges === 0) {
+            $('#editImagesError').text('At least one image is required. You cannot delete all images without adding new ones.')
+                .removeClass('text-info')
+                .addClass('text-danger');
+            isValid = false;
+        }
+    }
+
+    return isValid;
+}
+
+function processUpdate(updateId, action) {
+    let formData = new FormData();
+
+    if (action === 'add' || action === 'edit') {
+        formData = new FormData(document.getElementById('editUpdateForm'));
+    } else if (action === 'delete') {
+        formData.append('reason', $('#archiveReason').val());
+    } else if (action === 'restore') {
+        formData.append('update_id', $('#restoreUpdateId').val());
+    }
+
+    if (updateId) {
+        formData.append('update_id', updateId);
+    }
+    formData.append('action', action);
+
+    $.ajax({
+        url: "../../handler/admin/orgUpdatesAction.php",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.trim() === "success") {
+                $(".modal").modal("hide");
+                $("body").removeClass("modal-open");
+                $(".modal-backdrop").remove();
+
+                if (action === 'restore') {
+                    loadArchives(); 
+                } else {
+                    loadUpdatesSection(); 
+                }
+
+                showToast('Success', 
+                    action === 'delete' ? 'Organization update has been archived.' :
+                    action === 'restore' ? 'Organization update has been restored.' :
+                    'Organization update has been ' + (action === 'edit' ? 'updated' : 'added') + '.', 
+                    'success');
+            } else {
+                alert("Failed to process request: " + response);
+            }
+        },
+        error: function() {
+            alert("An error occurred while processing the request.");
+        }
+    });
+}
+
+function clearValidationErrors() {
+    $('#editTitleError, #editContentError, #editImagesError, #archiveReasonError').text('')
+    .removeClass('text-info text-danger')
+    .addClass('text-danger');
+}
 
 $(document).on('hidden.bs.modal', function () {
     if ($('.modal.show').length === 0) { 
         $('body').removeClass('modal-open'); 
         $('.modal-backdrop').remove();
     }
+});
+
+$(document).ready(function() {
+    initSearchOrgUpdates();
+});
+
+$(document).ready(function(){
+    $('[data-bs-toggle="tooltip"]').tooltip();
 });
