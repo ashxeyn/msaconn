@@ -1767,7 +1767,6 @@ function validateStudentForm() {
     let isValid = true;
     clearValidationErrors();
 
-    // Get all form values
     const firstName = $('#firstName').val().trim();
     const lastName = $('#lastName').val().trim();
     const classification = $('#classification').val();
@@ -1775,7 +1774,6 @@ function validateStudentForm() {
     const email = $('#email').val().trim();
     const isEdit = $('#enrollmentId').val() !== "";
 
-    // Basic Information Validation
     if (firstName === '') {
         $('#firstNameError').text('First name is required');
         $('#firstName').addClass('is-invalid');
@@ -1787,7 +1785,13 @@ function validateStudentForm() {
         $('#lastName').addClass('is-invalid');
         isValid = false;
     }
-
+    
+    if (!classification) {
+        $('#classificationError').text('Please select a learning mode');
+        $('#classification').addClass('is-invalid');
+        isValid = false;
+    }
+    
     if (contactNumber === '') {
         $('#contactNumberError').text('Contact number is required');
         $('#contactNumber').addClass('is-invalid');
@@ -1797,7 +1801,7 @@ function validateStudentForm() {
         $('#contactNumber').addClass('is-invalid');
         isValid = false;
     }
-
+    
     if (email === '') {
         $('#emailError').text('Email is required');
         $('#email').addClass('is-invalid');
@@ -1811,7 +1815,6 @@ function validateStudentForm() {
         }
     }
 
-    // Address Validation
     const region = $('#region').val();
     const province = $('#province').val();
     const city = $('#city').val();
@@ -1824,19 +1827,19 @@ function validateStudentForm() {
         $('#region').addClass('is-invalid');
         isValid = false;
     }
-
+    
     if (!province) {
         $('#provinceError').text('Province is required');
         $('#province').addClass('is-invalid');
         isValid = false;
     }
-
+    
     if (!city) {
         $('#cityError').text('City/Municipality is required');
         $('#city').addClass('is-invalid');
         isValid = false;
     }
-
+    
     if (!barangay) {
         $('#barangayError').text('Barangay is required');
         $('#barangay').addClass('is-invalid');
@@ -1848,66 +1851,50 @@ function validateStudentForm() {
         $('#street').addClass('is-invalid');
         isValid = false;
     }
-
+    
     if (!zipCode) {
         $('#zipCodeError').text('Zip code is required');
         $('#zipCode').addClass('is-invalid');
         isValid = false;
     }
 
-    // On-site specific validation
     if (classification === 'On-site') {
         const college = $('#college').val();
         const program = $('#program').val();
         const yearLevel = $('#yearLevel').val();
         const imageInput = $('#image')[0];
-
+        
         if (!college) {
             $('#collegeError').text('Please select a college');
             $('#college').addClass('is-invalid');
             isValid = false;
         }
-
+        
         if (!program) {
             $('#programError').text('Please select a program');
             $('#program').addClass('is-invalid');
             isValid = false;
         }
-
+        
         if (!yearLevel) {
             $('#yearLevelError').text('Please select a year level');
             $('#yearLevel').addClass('is-invalid');
             isValid = false;
         }
-
+        
         if (!isEdit && imageInput.files.length === 0 && !$('#existing_image').val()) {
             $('#imageError').text('Certificate of Registration (COR) is required');
             $('#image').addClass('is-invalid');
             isValid = false;
         }
     }
-
-    // If validation fails, scroll to the first error
-    if (!isValid) {
-        const firstError = $('.is-invalid:first');
-        if (firstError.length) {
-            firstError.focus();
-            const modalBody = firstError.closest('.modal-body');
-            if (modalBody.length) {
-                modalBody.scrollTop(firstError.offset().top - modalBody.offset().top);
-            }
-        }
-    }
-
+    
     return isValid;
 }
 
-// Clear validation errors
 function clearValidationErrors() {
-    $('.is-invalid').removeClass('is-invalid');
     $('.text-danger').text('');
-    $('.form-control').removeClass('is-invalid');
-    $('.form-select').removeClass('is-invalid');
+    $('.is-invalid').removeClass('is-invalid');
 }
 
 function nextStep() {
@@ -1982,36 +1969,23 @@ function processStudent(studentId, action) {
                 if (errorMsg === "invalid_email_format") {
                     $('#emailError').text('Email must be a valid @wmsu.edu.ph address');
                     $('#email').addClass('is-invalid');
-                    showToast('Error', 'Email must be a valid @wmsu.edu.ph address', 'danger');
                 } else if (errorMsg === "invalid_email") {
                     $('#emailError').text('Please enter a valid email address');
                     $('#email').addClass('is-invalid');
-                    showToast('Error', 'Please enter a valid email address', 'danger');
                 } else if (errorMsg === "reason_required") {
                     $('#archiveReasonError').text('Please provide a reason for archiving');
                     $('#archiveReason').addClass('is-invalid');
-                    showToast('Error', 'Please provide a reason for archiving', 'danger');
                 } else {
-                    showToast('Error', 'Failed to process request: ' + errorMsg, 'danger');
+                    alert("Failed to process request: " + errorMsg);
                 }
             } else {
                 console.log("Server response:", response);
-                showToast('Error', 'Failed to process request. Please try again.', 'danger');
+                alert("Failed to process request: " + response);
             }
         },
         error: function(xhr, status, error) {
             console.error("AJAX Error:", status, error);
-            let errorMessage = 'An error occurred while processing the request.';
-            
-            if (xhr.status === 404) {
-                errorMessage = 'The requested resource was not found.';
-            } else if (xhr.status === 500) {
-                errorMessage = 'An internal server error occurred.';
-            } else if (xhr.status === 403) {
-                errorMessage = 'You do not have permission to perform this action.';
-            }
-            
-            showToast('Error', errorMessage, 'danger');
+            alert("An error occurred while processing the request.");
         }
     });
 }
@@ -2031,12 +2005,6 @@ function loadPrograms(collegeId, selectedProgramId = null) {
                 const programs = JSON.parse(response);
                 let options = '<option value="">Select Program</option>';
                 
-                if (programs.length === 0) {
-                    $('#programError').text('No programs found for this college');
-                    $('#program').html(options);
-                    return;
-                }
-                
                 programs.forEach(program => {
                     const selected = (selectedProgramId && program.program_id == selectedProgramId) ? 'selected' : '';
                     options += `<option value="${program.program_id}" ${selected}>${program.program_name}</option>`;
@@ -2044,21 +2012,252 @@ function loadPrograms(collegeId, selectedProgramId = null) {
                 
                 $('#program').html(options);
                 $('#programError').text('');
-                
-                // Clear validation styling
-                $('#program').removeClass('is-invalid');
             } catch (e) {
                 console.error("Invalid JSON:", response);
-                $('#programError').text('Failed to load programs. Please try again.');
-                $('#program').addClass('is-invalid');
             }
         },
         error: function() {
-            $('#programError').text('Failed to load programs. Please try again.');
-            $('#program').addClass('is-invalid');
+            alert("Error loading programs");
         }
     });
 }
+
+$(document).ready(function() {
+    $('#contactNumber').on('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+
+    $(document).on('change', '#region', function() {
+        $('#province').val('').trigger('change');
+    });
+
+    $(document).on('change', '#province', function() {
+        const province = $(this).val();
+        const citySelect = $('#city');
+        
+        citySelect.html('<option value="">Select City/Municipality</option>');
+        $('#barangay').html('<option value="">Select Barangay</option>');
+        
+        if (province) {
+            const cities = regionData.cities[province] || [];
+            cities.forEach(city => {
+                citySelect.append(`<option value="${city}">${city}</option>`);
+            });
+        }
+    });
+
+    $(document).on('change', '#city', function() {
+        const city = $(this).val();
+        const barangaySelect = $('#barangay');
+        
+        barangaySelect.html('<option value="">Select Barangay</option>');
+        
+        if (city) {
+            const barangays = regionData.barangays[city] || [];
+            barangays.forEach(barangay => {
+                barangaySelect.append(`<option value="${barangay}">${barangay}</option>`);
+            });
+        }
+    });
+
+    $(document).on('change', '#college', function() {
+        const collegeId = $(this).val();
+        loadPrograms(collegeId);
+    });
+
+    $(document).on('change', '#classification', function() {
+        const classification = $(this).val();
+        
+        if (classification === 'On-site') {
+            $('#onsiteFields').removeClass('d-none');
+            $('#onlineFields').addClass('d-none');
+        } else if (classification === 'Online') {
+            $('#onsiteFields').addClass('d-none');
+            $('#onlineFields').removeClass('d-none');
+        }
+        
+        $('#email').val('');
+        $('#emailError').text('');
+    });
+});
+
+const regionData = {
+    regions: ['Zamboanga Peninsula'],
+    provinces: [
+        'Zamboanga del Norte',
+        'Zamboanga del Sur',
+        'Zamboanga Sibugay',
+        'Zamboanga City',
+        'Isabela City'
+    ],
+    cities: {
+        'Zamboanga del Norte': [
+            'Dapitan City',
+            'Dipolog City',
+            'Katipunan',
+            'La Libertad',
+            'Labason',
+            'Liloy',
+            'Manukan',
+            'Polanco',
+            'Rizal',
+            'Roxas',
+            'Sergio Osmeña Sr.',
+            'Siayan',
+            'Sindangan',
+            'Siocon',
+            'Tampilisan'
+        ],
+        'Zamboanga del Sur': [
+            'Aurora',
+            'Bayog',
+            'Dimataling',
+            'Dinas',
+            'Dumalinao',
+            'Dumingag',
+            'Guipos',
+            'Josefina',
+            'Kumalarang',
+            'Labangan',
+            'Lakewood',
+            'Lapuyan',
+            'Mahayag',
+            'Margosatubig',
+            'Midsalip',
+            'Molave',
+            'Pagadian City',
+            'Pitogo',
+            'Ramon Magsaysay',
+            'San Miguel',
+            'San Pablo',
+            'Sominot',
+            'Tabina',
+            'Tambulig',
+            'Tigbao',
+            'Tukuran',
+            'Vincenzo A. Sagun'
+        ],
+        'Zamboanga Sibugay': [
+            'Alicia',
+            'Buug',
+            'Diplahan',
+            'Imelda',
+            'Ipil',
+            'Kabasalan',
+            'Mabuhay',
+            'Malangas',
+            'Naga',
+            'Olutanga',
+            'Payao',
+            'Roseller Lim',
+            'Siay',
+            'Talusan',
+            'Titay',
+            'Tungawan'
+        ],
+        'Zamboanga City': ['Zamboanga City'],
+        'Isabela City': ['Isabela City']
+    },
+    barangays: {
+        'Zamboanga City': [
+            'Arena Blanco',
+            'Ayala',
+            'Baluno',
+            'Boalan',
+            'Bolong',
+            'Buenavista',
+            'Bunguiao',
+            'Busay',
+            'Cabaluay',
+            'Cabatangan',
+            'Calarian',
+            'Canelar',
+            'Divisoria',
+            'Guiwan',
+            'Lunzuran',
+            'Putik',
+            'Recodo',
+            'San Jose Gusu',
+            'Sta. Maria',
+            'Tetuan'
+        ],
+        'Dipolog City': [
+            'Barra',
+            'Biasong',
+            'Central',
+            'Cogon',
+            'Dicayas',
+            'Diwan',
+            'Estaka',
+            'Galas',
+            'Gulayon',
+            'Lugdungan',
+            'Magsaysay',
+            'Olingan',
+            'Sicayab',
+            'Sta. Isabel',
+            'Turno'
+        ],
+        'Pagadian City': [
+            'Balangasan',
+            'Balintawak',
+            'Baliwasan',
+            'Baloyboan',
+            'Banale',
+            'Bogo Capalaran',
+            'Buenavista',
+            'Bulatok',
+            'Bulatin',
+            'Dampalan',
+            'Dao',
+            'Gatas',
+            'Kahayagan',
+            'Lumbia',
+            'Muricay',
+            'Napolan',
+            'Pulangbato',
+            'San Jose',
+            'San Pedro',
+            'Tiguma'
+        ],
+        'Dapitan City': [
+            'Bagting',
+            'Baylimango',
+            'Burgos',
+            'Cogon',
+            'Ilihan',
+            'Kalipunan',
+            'La Libertad',
+            'Linguisan',
+            'Masidlakon',
+            'Sulangon'
+        ],
+        'Isabela City': [
+            'Aguada',
+            'Balatanay',
+            'Binuangan',
+            'Busay',
+            'Cabunbata',
+            'Candiis',
+            'Cauitan',
+            'Lanote',
+            'Malamawi',
+            'Tabuk'
+        ],
+        'Ipil': [
+            'Bacalan',
+            'Baluran',
+            'Bunguiao',
+            'Don Andres',
+            'Guintolan',
+            'Labrador',
+            'Sanito',
+            'Sibugay',
+            'Taway',
+            'Tiayon'
+        ]
+    }
+};
 
 // OFFICER FUNCTIONS
 function openOfficerModal(modalId, officerId, action) {
@@ -3426,11 +3625,9 @@ $(document).ready(function(){
     $('[data-bs-toggle="tooltip"]').tooltip();
 });
 
-// Add this at the end of the $(document).ready() function
 $(document).ready(function() {
     // ... existing document.ready code ...
 
-    // Add form submission handler
     $('#studentForm').on('submit', function(e) {
         e.preventDefault(); // Prevent default form submission
         
@@ -3441,7 +3638,6 @@ $(document).ready(function() {
         }
     });
 
-    // Clear validation errors when modal is hidden
     $('#addEditStudentModal').on('hidden.bs.modal', function () {
         clearValidationErrors();
         $('#studentForm')[0].reset();
@@ -3452,7 +3648,6 @@ $(document).ready(function() {
         $('#image-preview').hide();
     });
 
-    // Clear validation errors when Cancel button is clicked
     $('[data-bs-dismiss="modal"]').on('click', function() {
         clearValidationErrors();
         $('#studentForm')[0].reset();
@@ -3464,4 +3659,3 @@ $(document).ready(function() {
     });
 });
 
-// ... rest of the code ...

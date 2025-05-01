@@ -32,7 +32,6 @@ $profileColor = generateColor($username);
                     <li><h6 class="dropdown-header">Signed in as</h6></li>
                     <li><a class="dropdown-item disabled"><strong><?= clean_input($username) ?></strong></a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#" onclick="loadProfile()"><i class="bi bi-person me-2"></i> Profile</a></li>
                     <li><a class="dropdown-item" href="#" onclick="loadPersonalization()"><i class="bi bi-palette me-2"></i> Web Personalization</a></li>
                     <li><a class="dropdown-item" href="#" onclick="loadArchives()"><i class="bi bi-archive me-2"></i> Archives </a></li>
                     <li><hr class="dropdown-divider"></li>
