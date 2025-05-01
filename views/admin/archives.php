@@ -17,6 +17,7 @@ $archivedOnsite = $adminObj->fetchArchivedStudents('On-site');
 $archivedOnline = $adminObj->fetchArchivedStudents('Online');
 $archivedOfficers = $adminObj->fetchArchivedOfficers();
 $archivedVolunteers = $adminObj->fetchArchivedVolunteers();
+$archivedModerators = $adminObj->fetchArchivedModerators();
 
 
 ?>
@@ -103,6 +104,12 @@ $archivedVolunteers = $adminObj->fetchArchivedVolunteers();
                             <button class="nav-link" id="volunteers-tab" data-bs-toggle="tab" data-bs-target="#volunteers"
                                     type="button" role="tab" aria-controls="volunteers" aria-selected="false">
                                 Volunteers
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="moderators-tab" data-bs-toggle="tab" data-bs-target="#moderators"
+                                    type="button" role="tab" aria-controls="moderators" aria-selected="false">
+                                Moderators
                             </button>
                         </li>
                     </ul>
@@ -713,6 +720,48 @@ $archivedVolunteers = $adminObj->fetchArchivedVolunteers();
                                     </table>
                                 </div>
                             </div>
+
+                            <div class="tab-pane fade" id="moderators" role="tabpanel" aria-labelledby="moderators-tab">
+                            <div class="table-responsive">
+                                <table id="moderatorsTab" class="table align-items-center mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Username</th>
+                                            <th>Email</th>
+                                            <th>Position</th>
+                                            <th>Reason</th>
+                                            <th>Archived At</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if (empty($archivedModerators)): ?>
+                                            <tr>
+                                                <td colspan="7" class="text-center py-4">No archived moderators found</td>
+                                            </tr>
+                                        <?php else: ?>
+                                            <?php foreach ($archivedModerators as $moderator): ?>
+                                                <tr>
+                                                    <td><?= clean_input(strtoupper($moderator['full_name'])) ?></td>
+                                                    <td><?= clean_input($moderator['username']) ?></td>
+                                                    <td><?= clean_input($moderator['email']) ?></td>
+                                                    <td><?= clean_input($moderator['position_name']) ?></td>
+                                                    <td><?= clean_input($moderator['reason']) ?></td>
+                                                    <td><?= date('M j, Y', strtotime($moderator['deleted_at'])) ?></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-success" 
+                                                                onclick="openModeratorModal('restoreModeratorModal', <?= $moderator['user_id'] ?>, 'restore')">
+                                                            <i class="fas fa-rotate-left"></i> Restore
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table> 
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -732,6 +781,7 @@ $archivedVolunteers = $adminObj->fetchArchivedVolunteers();
 <?php include_once '../adminModals/restoreStudent.html'; ?>
 <?php include_once '../adminModals/restoreOfficer.html'; ?>
 <?php include_once '../adminModals/restoreVolunteer.html'; ?>
+<?php include_once '../adminModals/restoreModerator.html'; ?>
 
 <!-- <script>
     $(document).ready(function() {

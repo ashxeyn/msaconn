@@ -20,6 +20,7 @@ $(document).ready(function() {
     $('#table').DataTable();
     $('#cashinTable').DataTable();
     $('#cashoutTable').DataTable();
+    $('#moderatorsTab').DataTable();
     $('#eventTab').DataTable();
     $('#progTab').DataTable();
     $('#prayerTab').DataTable();
@@ -1672,7 +1673,6 @@ function setStudentId(studentId, action) {
                     $('#middleName').val(student.middle_name);
                     $('#lastName').val(student.last_name);
                     $('#classification').val(student.classification);
-                    $('#address').val(student.address);
                     $('#email').val(student.email);
                     $('#contactNumber').val(student.contact_number);
                     $('#existing_image').val(student.cor_path);
@@ -1697,6 +1697,18 @@ function setStudentId(studentId, action) {
                     } else {
                         $('#onsiteFields').addClass('d-none');
                         $('#onlineFields').removeClass('d-none');
+                        $('#region').val(student.region);
+                        $('#province').val(student.province);
+                        $('#province').trigger('change');
+                        setTimeout(() => {
+                            $('#city').val(student.city);
+                            $('#city').trigger('change');
+                            setTimeout(() => {
+                                $('#barangay').val(student.barangay);
+                            }, 100);
+                        }, 100);
+                        $('#street').val(student.street);
+                        $('#zipCode').val(student.zip_code);
                         $('#school').val(student.school);
                         $('#collegeText').val(student.ol_college || '');
                         $('#programText').val(student.ol_program || '');
@@ -1777,33 +1789,87 @@ function validateStudentForm() {
 
     if (firstName === '') {
         $('#firstNameError').text('First name is required');
+        $('#firstName').addClass('is-invalid');
         isValid = false;
     }
 
     if (lastName === '') {
         $('#lastNameError').text('Last name is required');
+        $('#lastName').addClass('is-invalid');
         isValid = false;
     }
     
     if (!classification) {
         $('#classificationError').text('Please select a learning mode');
+        $('#classification').addClass('is-invalid');
         isValid = false;
     }
     
     if (contactNumber === '') {
         $('#contactNumberError').text('Contact number is required');
+        $('#contactNumber').addClass('is-invalid');
+        isValid = false;
+    } else if (!/^[0-9]{11}$/.test(contactNumber)) {
+        $('#contactNumberError').text('Please enter a valid 11-digit phone number');
+        $('#contactNumber').addClass('is-invalid');
         isValid = false;
     }
     
     if (email === '') {
         $('#emailError').text('Email is required');
+        $('#email').addClass('is-invalid');
         isValid = false;
     } else {
         const emailPattern = classification === 'On-site' ? /@wmsu\.edu\.ph$/ : /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(email)) {
             $('#emailError').text(classification === 'On-site' ? 'Email must be a valid @wmsu.edu.ph address' : 'Please enter a valid email address');
+            $('#email').addClass('is-invalid');
             isValid = false;
         }
+    }
+
+    // Address validation for all students
+    const region = $('#region').val();
+    const province = $('#province').val();
+    const city = $('#city').val();
+    const barangay = $('#barangay').val();
+    const street = $('#street').val().trim();
+    const zipCode = $('#zipCode').val().trim();
+
+    if (!region) {
+        $('#regionError').text('Region is required');
+        $('#region').addClass('is-invalid');
+        isValid = false;
+    }
+    
+    if (!province) {
+        $('#provinceError').text('Province is required');
+        $('#province').addClass('is-invalid');
+        isValid = false;
+    }
+    
+    if (!city) {
+        $('#cityError').text('City/Municipality is required');
+        $('#city').addClass('is-invalid');
+        isValid = false;
+    }
+    
+    if (!barangay) {
+        $('#barangayError').text('Barangay is required');
+        $('#barangay').addClass('is-invalid');
+        isValid = false;
+    }
+
+    if (!street) {
+        $('#streetError').text('Street/House No./Blk/Lot is required');
+        $('#street').addClass('is-invalid');
+        isValid = false;
+    }
+    
+    if (!zipCode) {
+        $('#zipCodeError').text('Zip code is required');
+        $('#zipCode').addClass('is-invalid');
+        isValid = false;
     }
 
     if (classification === 'On-site') {
@@ -1814,28 +1880,25 @@ function validateStudentForm() {
         
         if (!college) {
             $('#collegeError').text('Please select a college');
+            $('#college').addClass('is-invalid');
             isValid = false;
         }
         
         if (!program) {
             $('#programError').text('Please select a program');
+            $('#program').addClass('is-invalid');
             isValid = false;
         }
         
         if (!yearLevel) {
             $('#yearLevelError').text('Please select a year level');
+            $('#yearLevel').addClass('is-invalid');
             isValid = false;
         }
         
         if (!isEdit && imageInput.files.length === 0 && !$('#existing_image').val()) {
             $('#imageError').text('Certificate of Registration (COR) is required');
-            isValid = false;
-        }
-    } else if (classification === 'Online') {
-        const address = $('#address').val().trim();
-        
-        if (address === '') {
-            $('#addressError').text('Address is required');
+            $('#image').addClass('is-invalid');
             isValid = false;
         }
     }
@@ -1852,10 +1915,12 @@ function nextStep() {
     const classification = $('#classification').val();
     if (!classification) {
         $('#classificationError').text('Please select a learning mode');
+        $('#classification').addClass('is-invalid');
         return;
     }
     
     $('#classificationError').text('');
+    $('#classification').removeClass('is-invalid');
     $('#classificationStep').hide();
     $('#studentDetailsStep').show();
     
@@ -1917,10 +1982,13 @@ function processStudent(studentId, action) {
                 const errorMsg = response.trim().replace("error:", "").trim();
                 if (errorMsg === "invalid_email_format") {
                     $('#emailError').text('Email must be a valid @wmsu.edu.ph address');
+                    $('#email').addClass('is-invalid');
                 } else if (errorMsg === "invalid_email") {
                     $('#emailError').text('Please enter a valid email address');
+                    $('#email').addClass('is-invalid');
                 } else if (errorMsg === "reason_required") {
                     $('#archiveReasonError').text('Please provide a reason for archiving');
+                    $('#archiveReason').addClass('is-invalid');
                 } else {
                     alert("Failed to process request: " + errorMsg);
                 }
@@ -1968,25 +2036,242 @@ function loadPrograms(collegeId, selectedProgramId = null) {
     });
 }
 
-$(document).on('change', '#college', function() {
-    const collegeId = $(this).val();
-    loadPrograms(collegeId);
+$(document).ready(function() {
+    $('#contactNumber').on('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+    });
+
+    $(document).on('change', '#region', function() {
+        $('#province').val('').trigger('change');
+    });
+
+    $(document).on('change', '#province', function() {
+        const province = $(this).val();
+        const citySelect = $('#city');
+        
+        citySelect.html('<option value="">Select City/Municipality</option>');
+        $('#barangay').html('<option value="">Select Barangay</option>');
+        
+        if (province) {
+            const cities = regionData.cities[province] || [];
+            cities.forEach(city => {
+                citySelect.append(`<option value="${city}">${city}</option>`);
+            });
+        }
+    });
+
+    $(document).on('change', '#city', function() {
+        const city = $(this).val();
+        const barangaySelect = $('#barangay');
+        
+        barangaySelect.html('<option value="">Select Barangay</option>');
+        
+        if (city) {
+            const barangays = regionData.barangays[city] || [];
+            barangays.forEach(barangay => {
+                barangaySelect.append(`<option value="${barangay}">${barangay}</option>`);
+            });
+        }
+    });
+
+    $(document).on('change', '#college', function() {
+        const collegeId = $(this).val();
+        loadPrograms(collegeId);
+    });
+
+    $(document).on('change', '#classification', function() {
+        const classification = $(this).val();
+        
+        if (classification === 'On-site') {
+            $('#onsiteFields').removeClass('d-none');
+            $('#onlineFields').addClass('d-none');
+        } else if (classification === 'Online') {
+            $('#onsiteFields').addClass('d-none');
+            $('#onlineFields').removeClass('d-none');
+        }
+        
+        $('#email').val('');
+        $('#emailError').text('');
+    });
 });
 
-$(document).on('change', '#classification', function() {
-    const classification = $(this).val();
-    
-    if (classification === 'On-site') {
-        $('#onsiteFields').removeClass('d-none');
-        $('#onlineFields').addClass('d-none');
-    } else if (classification === 'Online') {
-        $('#onsiteFields').addClass('d-none');
-        $('#onlineFields').removeClass('d-none');
+const regionData = {
+    regions: ['Zamboanga Peninsula'],
+    provinces: [
+        'Zamboanga del Norte',
+        'Zamboanga del Sur',
+        'Zamboanga Sibugay',
+        'Zamboanga City',
+        'Isabela City'
+    ],
+    cities: {
+        'Zamboanga del Norte': [
+            'Dapitan City',
+            'Dipolog City',
+            'Katipunan',
+            'La Libertad',
+            'Labason',
+            'Liloy',
+            'Manukan',
+            'Polanco',
+            'Rizal',
+            'Roxas',
+            'Sergio Osmeña Sr.',
+            'Siayan',
+            'Sindangan',
+            'Siocon',
+            'Tampilisan'
+        ],
+        'Zamboanga del Sur': [
+            'Aurora',
+            'Bayog',
+            'Dimataling',
+            'Dinas',
+            'Dumalinao',
+            'Dumingag',
+            'Guipos',
+            'Josefina',
+            'Kumalarang',
+            'Labangan',
+            'Lakewood',
+            'Lapuyan',
+            'Mahayag',
+            'Margosatubig',
+            'Midsalip',
+            'Molave',
+            'Pagadian City',
+            'Pitogo',
+            'Ramon Magsaysay',
+            'San Miguel',
+            'San Pablo',
+            'Sominot',
+            'Tabina',
+            'Tambulig',
+            'Tigbao',
+            'Tukuran',
+            'Vincenzo A. Sagun'
+        ],
+        'Zamboanga Sibugay': [
+            'Alicia',
+            'Buug',
+            'Diplahan',
+            'Imelda',
+            'Ipil',
+            'Kabasalan',
+            'Mabuhay',
+            'Malangas',
+            'Naga',
+            'Olutanga',
+            'Payao',
+            'Roseller Lim',
+            'Siay',
+            'Talusan',
+            'Titay',
+            'Tungawan'
+        ],
+        'Zamboanga City': ['Zamboanga City'],
+        'Isabela City': ['Isabela City']
+    },
+    barangays: {
+        'Zamboanga City': [
+            'Arena Blanco',
+            'Ayala',
+            'Baluno',
+            'Boalan',
+            'Bolong',
+            'Buenavista',
+            'Bunguiao',
+            'Busay',
+            'Cabaluay',
+            'Cabatangan',
+            'Calarian',
+            'Canelar',
+            'Divisoria',
+            'Guiwan',
+            'Lunzuran',
+            'Putik',
+            'Recodo',
+            'San Jose Gusu',
+            'Sta. Maria',
+            'Tetuan'
+        ],
+        'Dipolog City': [
+            'Barra',
+            'Biasong',
+            'Central',
+            'Cogon',
+            'Dicayas',
+            'Diwan',
+            'Estaka',
+            'Galas',
+            'Gulayon',
+            'Lugdungan',
+            'Magsaysay',
+            'Olingan',
+            'Sicayab',
+            'Sta. Isabel',
+            'Turno'
+        ],
+        'Pagadian City': [
+            'Balangasan',
+            'Balintawak',
+            'Baliwasan',
+            'Baloyboan',
+            'Banale',
+            'Bogo Capalaran',
+            'Buenavista',
+            'Bulatok',
+            'Bulatin',
+            'Dampalan',
+            'Dao',
+            'Gatas',
+            'Kahayagan',
+            'Lumbia',
+            'Muricay',
+            'Napolan',
+            'Pulangbato',
+            'San Jose',
+            'San Pedro',
+            'Tiguma'
+        ],
+        'Dapitan City': [
+            'Bagting',
+            'Baylimango',
+            'Burgos',
+            'Cogon',
+            'Ilihan',
+            'Kalipunan',
+            'La Libertad',
+            'Linguisan',
+            'Masidlakon',
+            'Sulangon'
+        ],
+        'Isabela City': [
+            'Aguada',
+            'Balatanay',
+            'Binuangan',
+            'Busay',
+            'Cabunbata',
+            'Candiis',
+            'Cauitan',
+            'Lanote',
+            'Malamawi',
+            'Tabuk'
+        ],
+        'Ipil': [
+            'Bacalan',
+            'Baluran',
+            'Bunguiao',
+            'Don Andres',
+            'Guintolan',
+            'Labrador',
+            'Sanito',
+            'Sibugay',
+            'Taway',
+            'Tiayon'
+        ]
     }
-    
-    $('#email').val('');
-    $('#emailError').text('');
-});
+};
 
 // OFFICER FUNCTIONS
 function openOfficerModal(modalId, officerId, action) {

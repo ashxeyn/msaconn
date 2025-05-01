@@ -23,6 +23,14 @@ if ($action === 'edit') {
     $email = clean_input($_POST['email']);
     $existingImage = $_POST['existing_image'] ?? null;
     
+    // Address fields
+    $region = clean_input($_POST['region']);
+    $province = clean_input($_POST['province']);
+    $city = clean_input($_POST['city']);
+    $barangay = clean_input($_POST['barangay']);
+    $street = clean_input($_POST['street']);
+    $zipCode = clean_input($_POST['zipCode']);
+    
     if (!$adminObj->validateEmail($email, $classification)) {
         if ($classification === 'On-site') {
             echo "error: invalid_email_format";
@@ -35,7 +43,6 @@ if ($action === 'edit') {
     $collegeId = null;
     $programId = null;
     $yearLevel = null;
-    $address = null;
     $school = null;
     $collegeText = null;
     $programText = null;
@@ -55,7 +62,6 @@ if ($action === 'edit') {
             }
         }
     } else {
-        $address = clean_input($_POST['address']);
         $school = clean_input($_POST['school'] ?? '');
         $collegeText = clean_input($_POST['collegeText'] ?? '');
         $programText = clean_input($_POST['programText'] ?? '');
@@ -67,7 +73,12 @@ if ($action === 'edit') {
         $middleName,
         $lastName,
         $classification,
-        $address,
+        $region,
+        $province,
+        $city,
+        $barangay,
+        $street,
+        $zipCode,
         $collegeId,
         $programId,
         $yearLevel,
@@ -81,20 +92,6 @@ if ($action === 'edit') {
 
     echo $result ? "success" : "error";
 
-} elseif ($action === 'delete') {
-    $reason = clean_input($_POST['reason']);
-    if (empty($reason)) {
-        echo "error: reason_required";
-        exit;
-    }
-
-    $result = $adminObj->softDeleteStudent($enrollmentId, $reason);
-    echo $result ? "success" : "error";
-
-} elseif ($action === 'restore') {
-    $result = $adminObj->restoreStudent($enrollmentId);
-    echo $result ? "success" : "error";
-
 } elseif ($action === 'add') {
     $firstName = clean_input($_POST['firstName']);
     $middleName = clean_input($_POST['middleName']);
@@ -102,6 +99,14 @@ if ($action === 'edit') {
     $classification = clean_input($_POST['classification']);
     $contactNumber = clean_input($_POST['contactNumber']);
     $email = clean_input($_POST['email']);
+    
+    // Address fields
+    $region = clean_input($_POST['region']);
+    $province = clean_input($_POST['province']);
+    $city = clean_input($_POST['city']);
+    $barangay = clean_input($_POST['barangay']);
+    $street = clean_input($_POST['street']);
+    $zipCode = clean_input($_POST['zipCode']);
     
     if (!$adminObj->validateEmail($email, $classification)) {
         if ($classification === 'On-site') {
@@ -115,7 +120,6 @@ if ($action === 'edit') {
     $collegeId = null;
     $programId = null;
     $yearLevel = null;
-    $address = null;
     $school = null;
     $collegeText = null;
     $programText = null;
@@ -135,7 +139,6 @@ if ($action === 'edit') {
             }
         }
     } else {
-        $address = clean_input($_POST['address']);
         $school = clean_input($_POST['school'] ?? '');
         $collegeText = clean_input($_POST['collegeText'] ?? '');
         $programText = clean_input($_POST['programText'] ?? '');
@@ -146,7 +149,12 @@ if ($action === 'edit') {
         $middleName,
         $lastName,
         $classification,
-        $address,
+        $region,
+        $province,
+        $city,
+        $barangay,
+        $street,
+        $zipCode,
         $collegeId,
         $programId,
         $yearLevel,
@@ -159,6 +167,24 @@ if ($action === 'edit') {
     );
 
     echo $result ? "success" : "error";
+
+} elseif ($action === 'delete') {
+    $enrollmentId = clean_input($_POST['enrollmentId']);
+    $reason = clean_input($_POST['reason']);
+    
+    if (empty($reason)) {
+        echo "error: reason_required";
+        exit;
+    }
+    
+    $result = $adminObj->softDeleteStudent($enrollmentId, $reason);
+    echo $result ? "success" : "error";
+
+} elseif ($action === 'restore') {
+    $enrollmentId = clean_input($_POST['enrollmentId']);
+    $result = $adminObj->restoreStudent($enrollmentId);
+    echo $result ? "success" : "error";
+
 } else {
     echo "invalid_action";
 }

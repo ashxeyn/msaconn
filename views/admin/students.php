@@ -55,6 +55,7 @@ $result = $adminObj->fetchOnsiteEnrolledStudents();
                         <td><?= clean_input(strtoupper($row['full_name'])) ?></td>
                         <td>
                             <?php if ($row['classification'] == 'On-site'): ?>
+                                <strong>Address:</strong> <?= clean_input($row['address'] ?? 'N/A') ?><br>
                                 <strong>Contact:</strong> <?= clean_input($row['contact_number'] ?? 'N/A') ?><br>
                                 <strong>Email:</strong> <?= clean_input($row['email'] ?? 'N/A') ?><br>
                                 <strong>Program:</strong> <?= clean_input($row['program_name'] ?? 'N/A') ?><br>

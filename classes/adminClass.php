@@ -1563,7 +1563,8 @@ class Admin {
     function fetchPendingEnrollments() {
         $sql = "SELECT e.enrollment_id, 
                 CONCAT(e.last_name, ', ', e.first_name, ' ', IFNULL(e.middle_name, '')) AS full_name, 
-                e.classification, e.address, 
+                e.classification, 
+                CONCAT(e.region, ', ', e.province, ', ', e.city, ', ', e.barangay, ', ', e.street, ', ', e.zip_code) AS address,
                 p.program_name, c.college_name, 
                 e.year_level, e.school, 
                 e.cor_path, e.status 
@@ -1576,11 +1577,12 @@ class Admin {
         $query->execute();
         return $query->fetchAll();
     }
-
+    
     function fetchOnsiteEnrolledStudents() {
         $sql = "SELECT e.enrollment_id, 
                 CONCAT(e.last_name, ', ', e.first_name, ' ', IFNULL(e.middle_name, '')) AS full_name, 
-                e.classification, e.address, 
+                e.classification, 
+                CONCAT(e.region, ', ', e.province, ', ', e.city, ', ', e.barangay, ', ', e.street, ', ', e.zip_code) AS address,
                 p.program_name, c.college_name, 
                 e.year_level, e.school, 
                 e.cor_path, e.status, e.contact_number, e.email 
@@ -1593,11 +1595,12 @@ class Admin {
         $query->execute();
         return $query->fetchAll();
     }
-
+    
     function fetchOnlineEnrolledStudents() {
         $sql = "SELECT e.enrollment_id, 
                 CONCAT(e.last_name, ', ', e.first_name, ' ', IFNULL(e.middle_name, '')) AS full_name, 
-                e.classification, e.address, 
+                e.classification, 
+                CONCAT(e.region, ', ', e.province, ', ', e.city, ', ', e.barangay, ', ', e.street, ', ', e.zip_code) AS address,
                 e.ol_college, e.ol_program, 
                 e.year_level, e.school, 
                 e.cor_path, e.status, e.contact_number, e.email
@@ -1610,9 +1613,10 @@ class Admin {
         $query->execute();
         return $query->fetchAll();
     }
-
+    
     function getEnrollmentById($enrollmentId) {
         $sql = "SELECT e.*, 
+                CONCAT(e.region, ', ', e.province, ', ', e.city, ', ', e.barangay, ', ', e.street, ', ', e.zip_code) AS address,
                 p.program_name, c.college_name, e.ol_college, e.ol_program, 
                 e.email, e.contact_number
                 FROM madrasa_enrollment e
@@ -1654,23 +1658,32 @@ class Admin {
     }
 
     function addStudent($firstName, $middleName, $lastName, $classification, 
-    $address, $collegeId, $programId, $yearLevel, $school, $corPath, 
+    $region, $province, $city, $barangay, $street, $zipCode,
+    $collegeId, $programId, $yearLevel, $school, $corPath, 
     $email, $contactNumber, $collegeText = null, $programText = null) {
+    
     $sql = "INSERT INTO madrasa_enrollment (
-    first_name, middle_name, last_name, classification, address, 
-    college_id, program_id, year_level, school, cor_path, 
-    ol_college, ol_program, email, contact_number, status) 
-    VALUES (
-    :first_name, :middle_name, :last_name, :classification, :address, 
-    :college_id, :program_id, :year_level, :school, :cor_path,
-    :ol_college, :ol_program, :email, :contact_number, 'Enrolled')";
+        first_name, middle_name, last_name, classification, 
+        region, province, city, barangay, street, zip_code,
+        college_id, program_id, year_level, school, cor_path, 
+        ol_college, ol_program, email, contact_number, status) 
+        VALUES (
+        :first_name, :middle_name, :last_name, :classification, 
+        :region, :province, :city, :barangay, :street, :zip_code,
+        :college_id, :program_id, :year_level, :school, :cor_path,
+        :ol_college, :ol_program, :email, :contact_number, 'Enrolled')";
 
     $query = $this->db->connect()->prepare($sql);
     $query->bindParam(':first_name', $firstName);
     $query->bindParam(':middle_name', $middleName);
     $query->bindParam(':last_name', $lastName);
     $query->bindParam(':classification', $classification);
-    $query->bindParam(':address', $address);
+    $query->bindParam(':region', $region);
+    $query->bindParam(':province', $province);
+    $query->bindParam(':city', $city);
+    $query->bindParam(':barangay', $barangay);
+    $query->bindParam(':street', $street);
+    $query->bindParam(':zip_code', $zipCode);
     $query->bindParam(':college_id', $collegeId);
     $query->bindParam(':program_id', $programId);
     $query->bindParam(':year_level', $yearLevel);
@@ -1682,28 +1695,35 @@ class Admin {
     $query->bindParam(':contact_number', $contactNumber);
 
     return $query->execute();
-    }
+}
 
-    function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $classification, 
-        $address, $collegeId, $programId, $yearLevel, $school, $corPath, 
-        $email, $contactNumber, $collegeText = null, $programText = null) {
+function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $classification, 
+    $region, $province, $city, $barangay, $street, $zipCode,
+    $collegeId, $programId, $yearLevel, $school, $corPath, 
+    $email, $contactNumber, $collegeText = null, $programText = null) {
+    
     $sql = "UPDATE madrasa_enrollment SET 
-    first_name = :first_name, 
-    middle_name = :middle_name, 
-    last_name = :last_name, 
-    classification = :classification, 
-    address = :address, 
-    college_id = :college_id, 
-    program_id = :program_id, 
-    year_level = :year_level, 
-    school = :school,
-    email = :email,
-    contact_number = :contact_number,
-    ol_college = :ol_college,
-    ol_program = :ol_program";
+        first_name = :first_name, 
+        middle_name = :middle_name, 
+        last_name = :last_name, 
+        classification = :classification, 
+        region = :region,
+        province = :province,
+        city = :city,
+        barangay = :barangay,
+        street = :street,
+        zip_code = :zip_code,
+        college_id = :college_id, 
+        program_id = :program_id, 
+        year_level = :year_level, 
+        school = :school,
+        email = :email,
+        contact_number = :contact_number,
+        ol_college = :ol_college,
+        ol_program = :ol_program";
 
     if (!empty($corPath)) {
-    $sql .= ", cor_path = :cor_path";
+        $sql .= ", cor_path = :cor_path";
     }
 
     $sql .= ", updated_at = NOW() WHERE enrollment_id = :enrollment_id";
@@ -1713,7 +1733,12 @@ class Admin {
     $query->bindParam(':middle_name', $middleName);
     $query->bindParam(':last_name', $lastName);
     $query->bindParam(':classification', $classification);
-    $query->bindParam(':address', $address);
+    $query->bindParam(':region', $region);
+    $query->bindParam(':province', $province);
+    $query->bindParam(':city', $city);
+    $query->bindParam(':barangay', $barangay);
+    $query->bindParam(':street', $street);
+    $query->bindParam(':zip_code', $zipCode);
     $query->bindParam(':college_id', $collegeId);
     $query->bindParam(':program_id', $programId);
     $query->bindParam(':year_level', $yearLevel);
@@ -1724,13 +1749,13 @@ class Admin {
     $query->bindParam(':ol_program', $programText);
 
     if (!empty($corPath)) {
-    $query->bindParam(':cor_path', $corPath);
+        $query->bindParam(':cor_path', $corPath);
     }
 
     $query->bindParam(':enrollment_id', $enrollmentId);
 
     return $query->execute();
-    }
+}
 
     function softDeleteStudent($enrollmentId, $reason) {
     $sql = "UPDATE madrasa_enrollment 

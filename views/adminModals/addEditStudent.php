@@ -13,6 +13,129 @@ if ($enrollmentId) {
 $colleges = $adminObj->fetchAllColleges();
 $programs = $student && $student['college_id'] ? $adminObj->fetchProgramsByCollege($student['college_id']) : [];
 $yearLevels = ['1st year', '2nd year', '3rd year', '4th year', 'Others'];
+
+$regionData = [
+    'regions' => [
+        'Region IX (Zamboanga Peninsula)'
+    ],
+    'provinces' => [
+        'Zamboanga del Norte',
+        'Zamboanga del Sur',
+        'Zamboanga Sibugay',
+        'Zamboanga City',
+        'Isabela City'
+    ],
+    'cities' => [
+        'Zamboanga del Norte' => [
+            'Dapitan City',
+            'Dipolog City',
+            'Katipunan',
+            'La Libertad',
+            'Labason',
+            'Liloy',
+            'Manukan',
+            'Polanco',
+            'Rizal',
+            'Roxas',
+            'Sergio Osmeña Sr.',
+            'Siayan',
+            'Sindangan',
+            'Siocon',
+            'Tampilisan'
+        ],
+        'Zamboanga del Sur' => [
+            'Aurora',
+            'Bayog',
+            'Dimataling',
+            'Dinas',
+            'Dumalinao',
+            'Dumingag',
+            'Guipos',
+            'Josefina',
+            'Kumalarang',
+            'Labangan',
+            'Lakewood',
+            'Lapuyan',
+            'Mahayag',
+            'Margosatubig',
+            'Midsalip',
+            'Molave',
+            'Pagadian City',
+            'Pitogo',
+            'Ramon Magsaysay',
+            'San Miguel',
+            'San Pablo',
+            'Sominot',
+            'Tabina',
+            'Tambulig',
+            'Tigbao',
+            'Tukuran',
+            'Vincenzo A. Sagun'
+        ],
+        'Zamboanga Sibugay' => [
+            'Alicia',
+            'Buug',
+            'Diplahan',
+            'Imelda',
+            'Ipil',
+            'Kabasalan',
+            'Mabuhay',
+            'Malangas',
+            'Naga',
+            'Olutanga',
+            'Payao',
+            'Roseller Lim',
+            'Siay',
+            'Talusan',
+            'Titay',
+            'Tungawan'
+        ],
+        'Zamboanga City' => [
+            'Zamboanga City'
+        ],
+        'Isabela City' => [
+            'Isabela City'
+        ]
+    ],
+    'barangays' => [
+        'Zamboanga City' => [
+            'Arena Blanco',
+            'Ayala',
+            'Baluno',
+            'Boalan',
+            'Bolong',
+            'Buenavista',
+            'Bunguiao',
+            'Busay',
+            'Cabaluay',
+            'Cabatangan'
+        ],
+        'Dipolog City' => [
+            'Barra',
+            'Biasong',
+            'Central',
+            'Cogon',
+            'Dicayas',
+            'Diwan',
+            'Estaka',
+            'Galas',
+            'Gulayon',
+            'Lugdungan'
+        ],
+        'Pagadian City' => [
+            'Balangasan',
+            'Balintawak',
+            'Baliwasan',
+            'Baloyboan',
+            'Banale',
+            'Bogo Capalaran',
+            'Buenavista',
+            'Bulatok',
+            'Bulatin',
+            'Dampalan'
+        ]
+    ]
+];
 ?>
 
 <div class="modal fade" id="addEditStudentModal" tabindex="-1" aria-labelledby="addEditStudentModalLabel" aria-hidden="true">
@@ -71,7 +194,7 @@ $yearLevels = ['1st year', '2nd year', '3rd year', '4th year', 'Others'];
 
                         <div class="mb-3">
                             <label for="contactNumber" class="form-label">Contact Number</label>
-                            <input type="text" class="form-control" id="contactNumber" name="contactNumber" value="<?= $student['contact_number'] ?? '' ?>">
+                            <input type="text" class="form-control" id="contactNumber" name="contactNumber" placeholder="09XXXXXXXXX" value="<?= $student['contact_number'] ?? '' ?>">
                             <div id="contactNumberError" class="text-danger"></div>
                         </div>
 
@@ -79,6 +202,78 @@ $yearLevels = ['1st year', '2nd year', '3rd year', '4th year', 'Others'];
                             <label for="email" class="form-label">Email Address</label>
                             <input type="email" class="form-control" id="email" name="email" value="<?= $student['email'] ?? '' ?>">
                             <div id="emailError" class="text-danger"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="region" class="form-label">Region</label>
+                            <select class="form-select" id="region" name="region">
+                                <option value="">Select Region</option>
+                                <?php foreach ($regionData['regions'] as $region): ?>
+                                    <option value="<?= $region ?>" 
+                                        <?= ($student && $student['region'] == $region) ? 'selected' : '' ?>>
+                                        <?= $region ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div id="regionError" class="text-danger"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="province" class="form-label">Province</label>
+                            <select class="form-select" id="province" name="province">
+                                <option value="">Select Province</option>
+                                <?php foreach ($regionData['provinces'] as $province): ?>
+                                    <option value="<?= $province ?>" 
+                                        <?= ($student && $student['province'] == $province) ? 'selected' : '' ?>>
+                                        <?= $province ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <div id="provinceError" class="text-danger"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="city" class="form-label">City/Municipality</label>
+                            <select class="form-select" id="city" name="city">
+                                <option value="">Select City/Municipality</option>
+                                <?php if ($student && $student['province'] && isset($regionData['cities'][$student['province']])): ?>
+                                    <?php foreach ($regionData['cities'][$student['province']] as $city): ?>
+                                        <option value="<?= $city ?>" 
+                                            <?= ($student && $student['city'] == $city) ? 'selected' : '' ?>>
+                                            <?= $city ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
+                            <div id="cityError" class="text-danger"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="barangay" class="form-label">Barangay</label>
+                            <select class="form-select" id="barangay" name="barangay">
+                                <option value="">Select Barangay</option>
+                                <?php if ($student && $student['city'] && isset($regionData['barangays'][$student['city']])): ?>
+                                    <?php foreach ($regionData['barangays'][$student['city']] as $barangay): ?>
+                                        <option value="<?= $barangay ?>" 
+                                            <?= ($student && $student['barangay'] == $barangay) ? 'selected' : '' ?>>
+                                            <?= $barangay ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </select>
+                            <div id="barangayError" class="text-danger"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="street" class="form-label">Street/House No./Blk/Lot</label>
+                            <input type="text" class="form-control" id="street" name="street" value="<?= $student['street'] ?? '' ?>">
+                            <div id="streetError" class="text-danger"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="zipCode" class="form-label">Zip Code</label>
+                            <input type="text" class="form-control" id="zipCode" name="zipCode" value="<?= $student['zip_code'] ?? '' ?>">
+                            <div id="zipCodeError" class="text-danger"></div>
                         </div>
 
                         <div id="onsiteFields" class="<?= ($student && $student['classification'] == 'Online') ? 'd-none' : '' ?>">
@@ -130,18 +325,12 @@ $yearLevels = ['1st year', '2nd year', '3rd year', '4th year', 'Others'];
                                 <div id="imageError" class="text-danger"></div>
 
                                 <div id="image-preview" class="mt-2" <?= ($student && !empty($student['cor_path'])) ? '' : 'style="display:none;"' ?>>
-                                    <img id="preview-img" src="<?= $student && !empty($student['cor_path']) ? '../../assets/cors/' . $student['cor_path'] : '' ?>" alt="Student COR Image" class="img-thumbnail" width="150">
+                                    <img id="preview-img" src="<?= $student && !empty($student['cor_path']) ? '../../assets/enrollment/' . $student['cor_path'] : '' ?>" alt="Student COR Image" class="img-thumbnail" width="150">
                                 </div>
                             </div>
                         </div>
 
                         <div id="onlineFields" class="<?= ($student && $student['classification'] == 'On-site') ? 'd-none' : '' ?>">
-                            <div class="mb-3">
-                                <label for="address" class="form-label">Address</label>
-                                <input type="text" class="form-control" id="address" name="address" value="<?= $student['address'] ?? '' ?>">
-                                <div id="addressError" class="text-danger"></div>
-                            </div>
-
                             <div class="mb-3">
                                 <label for="school" class="form-label">School (Optional)</label>
                                 <input type="text" class="form-control" id="school" name="school" value="<?= $student['school'] ?? '' ?>">
@@ -166,8 +355,9 @@ $yearLevels = ['1st year', '2nd year', '3rd year', '4th year', 'Others'];
                             <button type="submit" id="confirmSaveStudent" class="btn btn-primary">Add Student</button>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 </div>
+
