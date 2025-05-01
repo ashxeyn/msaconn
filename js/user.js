@@ -215,52 +215,45 @@ function initializeAboutContent() {
     // Poll for updates every 10 seconds
     setInterval(fetchAboutContent, 3000);
 }
-function initializeDownloadableFiles() {
-    const downloadsList = document.getElementById('downloads-list');
+// Fetch and display downloadable files
+async function fetchDownloadableFiles() {
+    const container = document.getElementById('downloads-container');
+    try {
+        const response = await fetch('../../handler/user/fetchDownloadableFiles.php');
+        const result = await response.json();
 
-    async function fetchDownloadableFiles() {
-        try {
-            const response = await fetch('../../handler/user/fetchDownloadableFiles.php');
-            const data = await response.json();
-
-            if (data.status === 'success') {
-                updateDownloadsList(data.data);
+        if (result.status === 'success') {
+            const files = result.data;
+            if (files.length > 0) {
+                container.innerHTML = '';
+                files.forEach(file => {
+                    const fileDiv = document.createElement('div');
+                    fileDiv.classList.add('file-item');
+                    fileDiv.innerHTML = `
+                        <p>${file.file_name} (Uploaded: ${new Date(file.uploaded_at).toLocaleDateString()})</p>
+                        <button onclick="downloadFile(${file.file_id})">Download</button>
+                    `;
+                    container.appendChild(fileDiv);
+                });
             } else {
-                console.error('Error fetching downloadable files:', data.message);
-                downloadsList.innerHTML = '<p>Failed to load downloadable files.</p>';
+                container.innerHTML = '<p>No files available for download.</p>';
             }
-        } catch (error) {
-            console.error('Error fetching downloadable files:', error);
-            downloadsList.innerHTML = '<p>Failed to load downloadable files.</p>';
-        }
-    }
-
-    function updateDownloadsList(files) {
-        downloadsList.innerHTML = ''; // Clear existing content
-
-        if (files.length > 0) {
-            files.forEach(file => {
-                const fileItem = document.createElement('div');
-                fileItem.classList.add('download-item');
-                fileItem.innerHTML = `
-                    <p class="file-name">${file.file_name}</p>
-                    <a href="../../handler/user/download.php?file_id=${file.file_id}" class="download-link" download>
-                        Download
-                    </a>
-                `;
-                downloadsList.appendChild(fileItem);
-            });
         } else {
-            downloadsList.innerHTML = '<p>No downloadable files available.</p>';
+            container.innerHTML = '<p>Error loading files.</p>';
         }
+    } catch (error) {
+        console.error('Error fetching files:', error);
+        container.innerHTML = '<p>Error loading files.</p>';
     }
-
-    // Fetch downloadable files on page load
-    fetchDownloadableFiles();
-
-    // Poll for updates every 10 seconds
-    setInterval(fetchDownloadableFiles, 5000);
 }
+
+// Trigger file download
+function downloadFile(fileId) {
+    window.location.href = `../../handler/user/download.php?file_id=${fileId}`;
+}
+
+// Load files on page load
+document.addEventListener('DOMContentLoaded', fetchDownloadableFiles);
 
 
 

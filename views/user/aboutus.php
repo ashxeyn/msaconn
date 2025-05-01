@@ -177,37 +177,13 @@ if (!isset($base_url)) {
         </div>
     </section>
 
+    <!-- Downloadable Files Section -->
     <section class="downloads-section">
-    <div class="content-wrapper">
-        <h2 class="section-title">Downloadable Files</h2>
-        <div id="downloads-list" class="downloads-list">
-            <?php if (!empty($downloadableFiles)): ?>
-                <?php foreach ($downloadableFiles as $file): ?>
-                    <div class="download-item" data-file-id="<?= $file['file_id'] ?>">
-                        <div class="file-info">
-                            <div class="file-icon"><?= getFileIcon($file['file_type']) ?></div>
-                            <div class="file-details">
-                                <h3 class="file-name"><?= htmlspecialchars($file['file_name']) ?></h3>
-                                <div class="file-meta">
-                                    <span class="file-size"><?= formatFileSize($file['file_size']) ?></span>
-                                    <span class="file-date"><?= formatDate($file['created_at']) ?></span>
-                                </div>
-                            </div>
-                        </div>
-                        <a href="../../handler/user/download.php?file_id=<?= $file['file_id'] ?>" 
-                           class="download-btn" 
-                           download="<?= htmlspecialchars($file['file_name']) ?>"
-                           title="Download <?= htmlspecialchars($file['file_name']) ?>">
-                            Download
-                        </a>
-                    </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <div class="no-files">No downloadable files available.</div>
-            <?php endif; ?>
+        <h2>Downloadable Files</h2>
+        <div id="downloads-container">
+            <p>Loading files...</p>
         </div>
-    </div>
-</section>
+    </section>
 
     <script src="<?php echo $base_url; ?>js/user.js"></script>
     <?php include '../../includes/footer.php'; ?>

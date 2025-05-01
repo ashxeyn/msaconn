@@ -1,13 +1,17 @@
 <?php
-header('Content-Type: application/json');
-
-require_once '../../classes/userClass.php';
+require_once '../../classes/databaseClass.php';
 
 try {
-    $user = new User();
-    $files = $user->fetchDownloadableFiles();
+    $db = new Database();
+    $conn = $db->connect();
+
+    // Use created_at instead of uploaded_at
+    $sql = "SELECT file_id, file_name, file_type, created_at FROM downloadable_files WHERE is_deleted = 0";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute();
+    $files = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
     echo json_encode(['status' => 'success', 'data' => $files]);
 } catch (Exception $e) {
-    http_response_code(500);
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }

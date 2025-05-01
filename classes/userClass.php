@@ -87,26 +87,7 @@ class User {
         $query->execute();
         return $query->fetch(PDO::FETCH_ASSOC);
     }
-    public function fetchDownloadableFiles() {
-        $sql = "SELECT file_id, file_name, file_path, file_type, file_size, created_at 
-                FROM downloadable_files 
-                WHERE is_deleted = 0 
-                ORDER BY created_at DESC";
-        
-        $query = $this->db->connect()->prepare($sql);
-        $query->execute();
-        
-        return $query->fetchAll(PDO::FETCH_ASSOC);
-    }
-    public function getFileById($fileId) {
-        $sql = "SELECT file_name, file_path, file_type 
-                FROM downloadable_files 
-                WHERE file_id = :file_id AND is_deleted = 0";
-        $query = $this->db->connect()->prepare($sql);
-        $query->bindParam(':file_id', $fileId, PDO::PARAM_INT);
-        $query->execute();
-        return $query->fetch(PDO::FETCH_ASSOC);
-    }
+   
      // Volunteer functions
      function addVolunteer() {
         $sql = "INSERT INTO volunteers (last_name, first_name, middle_name, year, section, program_id, contact, email, cor_file)
@@ -125,6 +106,12 @@ class User {
         $query->bindParam(':program', $this->program);
 
         $query->execute();
+    }
+    public function fetchDownloadableFiles() {
+        $sql = "SELECT file_id, file_name, file_type, created_at FROM downloadable_files WHERE is_deleted = 0";
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
     }
     
     public function fetchPrayerSchedules() {
