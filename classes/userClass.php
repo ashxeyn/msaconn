@@ -73,7 +73,7 @@ class User {
 
     // Fetch all FAQs
     function fetchUserFaqs() {
-        $sql = "SELECT * FROM faqs ORDER BY category ASC, created_at DESC";
+        $sql = "SELECT * FROM faqs WHERE is_deleted = 0 ORDER BY category ASC, created_at DESC";
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         return $query->fetchAll(PDO::FETCH_ASSOC);
@@ -90,10 +90,22 @@ class User {
     public function fetchDownloadableFiles() {
         $sql = "SELECT file_id, file_name, file_path, file_type, file_size, created_at 
                 FROM downloadable_files 
+                WHERE is_deleted = 0 
                 ORDER BY created_at DESC";
+        
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
+        
         return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+    public function getFileById($fileId) {
+        $sql = "SELECT file_name, file_path, file_type 
+                FROM downloadable_files 
+                WHERE file_id = :file_id AND is_deleted = 0";
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':file_id', $fileId, PDO::PARAM_INT);
+        $query->execute();
+        return $query->fetch(PDO::FETCH_ASSOC);
     }
      // Volunteer functions
      function addVolunteer() {
@@ -118,12 +130,13 @@ class User {
     public function fetchPrayerSchedules() {
         $sql = "SELECT khutbah_date, speaker, topic, location 
                 FROM friday_prayers 
-                WHERE khutbah_date >= CURDATE() 
+                WHERE khutbah_date >= CURDATE() AND is_deleted = 0 
                 ORDER BY khutbah_date ASC";
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         return $query->fetchAll(PDO::FETCH_ASSOC);
-}
+    }
+
     public function fetchCalendarActivities() {
         $sql = "SELECT activity_id, title, description, activity_date FROM calendar_activities WHERE is_deleted = 0 ORDER BY activity_date ASC";
         $query = $this->db->connect()->prepare($sql);
@@ -135,8 +148,13 @@ class User {
         
         return $result;
     }
+    
+    
     public function fetchVolunteers() {
-        $sql = "SELECT first_name, last_name FROM volunteers WHERE is_deleted = 0 ORDER BY created_at DESC";
+        $sql = "SELECT first_name, last_name 
+                FROM volunteers 
+                WHERE is_deleted = 0 AND status = 'approved' 
+                ORDER BY created_at DESC";
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         return $query->fetchAll(PDO::FETCH_ASSOC);

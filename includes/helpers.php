@@ -13,6 +13,19 @@ function formatFileSize($bytes) {
     }
 }
 
+function formatDate($dateString) {
+    if (empty($dateString)) {
+        return '';
+    }
+    try {
+        $date = new DateTime($dateString);
+        return $date->format('F j, Y'); // Format example: "January 12, 2023"
+    } catch (Exception $e) {
+        error_log("Date formatting error: " . $e->getMessage());
+        return $dateString; // Return original string if formatting fails
+    }
+}
+
 function getFileIcon($fileType) {
     $icons = [
         'application/pdf' => '📄',
@@ -27,4 +40,11 @@ function getFileIcon($fileType) {
     
     return $icons[$fileType] ?? '📁';
 }
-?>
+
+// Add this function if you're using it for file uploads
+function clean_input($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}

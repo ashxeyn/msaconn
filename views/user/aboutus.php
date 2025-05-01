@@ -1,7 +1,7 @@
 <?php
 // Include necessary files
 require_once __DIR__.'/../../classes/userClass.php';
-require_once __DIR__.'/../../includes/helpers.php';
+require_once __DIR__.'/../../includes/helpers.php'; // Make sure this includes the helper functions
 
 // Initialize User class
 $user = new User();
@@ -14,12 +14,16 @@ try {
     $mission = $about_data['mission'] ?? "Default mission text if none in database";
     $vision = $about_data['vision'] ?? "Default vision text if none in database";
     $description = $about_data['description'] ?? "Our website is dedicated to connecting volunteers...";
+    
+    // Fetch downloadable files
+    $downloadableFiles = $user->fetchDownloadableFiles();
 } catch (Exception $e) {
     // Handle the error gracefully
     error_log($e->getMessage());
     $mission = "Our mission statement";
     $vision = "Our vision statement";
     $description = "Our website is dedicated to connecting volunteers...";
+    $downloadableFiles = [];
 }
 
 // Get base_url from header.php or define it here if not available
@@ -36,7 +40,6 @@ if (!isset($base_url)) {
     <title>About Us</title>
     <link rel="stylesheet" href="<?php echo $base_url; ?>css/aboutus.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
-
 </head>
 <body>
     <?php include '../../includes/header.php'; ?>
@@ -65,149 +68,148 @@ if (!isset($base_url)) {
             </div>
         </div>
     </section>
-  <!-- Executive Team Section -->
-  <section class="org-chart">
-    <h2>Executive Officers</h2>
-    <div class="org-tree">
-      <!-- Level 1 - CEO -->
-      <div class="level-1">
-        <div class="org-node">
-          <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="Sarah Johnson">
-          <div class="org-details">
-            <p class="org-name">Sarah Johnson</p>
-            <p class="org-position">Chief Executive Officer</p>
-          </div>
-          <div class="connector connector-1"></div>
-        </div>
-      </div>
-      
-      <!-- Level 2 - Department Heads -->
-      <div class="level-2">
-        <div class="connector connector-2"></div>
-        
-        <!-- CTO -->
-        <div class="org-node">
-          <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="Michael Chen">
-          <div class="org-details">
-            <p class="org-name">Michael Chen</p>
-            <p class="org-position">Chief Technology Officer</p>
-          </div>
-          <div class="connector connector-3"></div>
-        </div>
-        
-        <!-- CFO -->
-        <div class="org-node">
-          <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="David Wilson">
-          <div class="org-details">
-            <p class="org-name">David Wilson</p>
-            <p class="org-position">Chief Financial Officer</p>
-          </div>
-          <div class="connector connector-3"></div>
-        </div>
-        
-        <!-- CMO -->
-        <div class="org-node">
-          <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="Emily Rodriguez">
-          <div class="org-details">
-            <p class="org-name">Emily Rodriguez</p>
-            <p class="org-position">Chief Marketing Officer</p>
-          </div>
-          <div class="connector connector-3"></div>
-        </div>
-      </div>
-      
-      <!-- Level 3 - Managers -->
-      <div class="level-3">
-        <!-- Tech Department -->
-        <div class="org-node">
-          <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="James Park">
-          <div class="org-details">
-            <p class="org-name">James Park</p>
-            <p class="org-position">Tech Lead</p>
-          </div>
-        </div>
-        
-        <div class="org-node">
-          <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="Lisa Wong">
-          <div class="org-details">
-            <p class="org-name">Lisa Wong</p>
-            <p class="org-position">UX Manager</p>
-          </div>
-        </div>
-        
-        <!-- Finance Department -->
-        <div class="org-node">
-          <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="Robert Kim">
-          <div class="org-details">
-            <p class="org-name">Robert Kim</p>
-            <p class="org-position">Finance Manager</p>
-          </div>
-        </div>
-        
-        <!-- Marketing Department -->
-        <div class="org-node">
-          <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="Sophia Martinez">
-          <div class="org-details">
-            <p class="org-name">Sophia Martinez</p>
-            <p class="org-position">Digital Marketing Manager</p>
-          </div>
-        </div>
-        
-        <div class="org-node">
-          <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="Thomas Brown">
-          <div class="org-details">
-            <p class="org-name">Thomas Brown</p>
-            <p class="org-position">Community Manager</p>
-          </div>
-        </div>
-        
-        <!-- HR Department -->
-        <div class="org-node">
-          <img src="<?php echo $base_url; ?>assets/images/officer.jpg " alt="Jennifer Lee">
-          <div class="org-details">
-            <p class="org-name">Jennifer Lee</p>
-            <p class="org-position">HR Manager</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
 
-  <section class="downloads-section">
+    <!-- Executive Team Section -->
+    <section class="org-chart">
+        <h2>Executive Officers</h2>
+        <div class="org-tree">
+            <!-- Level 1 - CEO -->
+            <div class="level-1">
+                <div class="org-node">
+                    <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="Sarah Johnson">
+                    <div class="org-details">
+                        <p class="org-name">Sarah Johnson</p>
+                        <p class="org-position">Chief Executive Officer</p>
+                    </div>
+                    <div class="connector connector-1"></div>
+                </div>
+            </div>
+            
+            <!-- Level 2 - Department Heads -->
+            <div class="level-2">
+                <div class="connector connector-2"></div>
+                
+                <!-- CTO -->
+                <div class="org-node">
+                    <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="Michael Chen">
+                    <div class="org-details">
+                        <p class="org-name">Michael Chen</p>
+                        <p class="org-position">Chief Technology Officer</p>
+                    </div>
+                    <div class="connector connector-3"></div>
+                </div>
+                
+                <!-- CFO -->
+                <div class="org-node">
+                    <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="David Wilson">
+                    <div class="org-details">
+                        <p class="org-name">David Wilson</p>
+                        <p class="org-position">Chief Financial Officer</p>
+                    </div>
+                    <div class="connector connector-3"></div>
+                </div>
+                
+                <!-- CMO -->
+                <div class="org-node">
+                    <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="Emily Rodriguez">
+                    <div class="org-details">
+                        <p class="org-name">Emily Rodriguez</p>
+                        <p class="org-position">Chief Marketing Officer</p>
+                    </div>
+                    <div class="connector connector-3"></div>
+                </div>
+            </div>
+            
+            <!-- Level 3 - Managers -->
+            <div class="level-3">
+                <!-- Tech Department -->
+                <div class="org-node">
+                    <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="James Park">
+                    <div class="org-details">
+                        <p class="org-name">James Park</p>
+                        <p class="org-position">Tech Lead</p>
+                    </div>
+                </div>
+                
+                <div class="org-node">
+                    <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="Lisa Wong">
+                    <div class="org-details">
+                        <p class="org-name">Lisa Wong</p>
+                        <p class="org-position">UX Manager</p>
+                    </div>
+                </div>
+                
+                <!-- Finance Department -->
+                <div class="org-node">
+                    <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="Robert Kim">
+                    <div class="org-details">
+                        <p class="org-name">Robert Kim</p>
+                        <p class="org-position">Finance Manager</p>
+                    </div>
+                </div>
+                
+                <!-- Marketing Department -->
+                <div class="org-node">
+                    <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="Sophia Martinez">
+                    <div class="org-details">
+                        <p class="org-name">Sophia Martinez</p>
+                        <p class="org-position">Digital Marketing Manager</p>
+                    </div>
+                </div>
+                
+                <div class="org-node">
+                    <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="Thomas Brown">
+                    <div class="org-details">
+                        <p class="org-name">Thomas Brown</p>
+                        <p class="org-position">Community Manager</p>
+                    </div>
+                </div>
+                
+                <!-- HR Department -->
+                <div class="org-node">
+                    <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="Jennifer Lee">
+                    <div class="org-details">
+                        <p class="org-name">Jennifer Lee</p>
+                        <p class="org-position">HR Manager</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="downloads-section">
     <div class="content-wrapper">
         <h2 class="section-title">Downloadable Files</h2>
-        
-        <div class="downloads-list">
-            <?php
-            // Fetch downloadable files from the database
-            $files = $user->fetchDownloadableFiles();
-            
-            if (empty($files)): ?>
-                <p class="no-files">No downloadable files available yet.</p>
-            <?php else: 
-                foreach ($files as $file): 
-                    $fileSize = formatFileSize($file['file_size']);
-                    $uploadDate = date('m/d/Y', strtotime($file['created_at']));
-                    $fileIcon = getFileIcon($file['file_type']); // Use the getFileIcon function
-                    $downloadUrl = htmlspecialchars($base_url . 'assets/downloadables/' . $file['file_path']);
-                    $fileName = htmlspecialchars($file['file_name']);
-                    ?>
-                    <div class="file-item">
+        <div id="downloads-list" class="downloads-list">
+            <?php if (!empty($downloadableFiles)): ?>
+                <?php foreach ($downloadableFiles as $file): ?>
+                    <div class="download-item" data-file-id="<?= $file['file_id'] ?>">
                         <div class="file-info">
-                            <span class="file-icon"><?= $fileIcon ?></span>
+                            <div class="file-icon"><?= getFileIcon($file['file_type']) ?></div>
                             <div class="file-details">
-                                <h3><?= $fileName ?></h3>
-                                <p><?= $fileSize ?> • Updated <?= $uploadDate ?></p>
+                                <h3 class="file-name"><?= htmlspecialchars($file['file_name']) ?></h3>
+                                <div class="file-meta">
+                                    <span class="file-size"><?= formatFileSize($file['file_size']) ?></span>
+                                    <span class="file-date"><?= formatDate($file['created_at']) ?></span>
+                                </div>
                             </div>
                         </div>
-                        <a href="<?= $downloadUrl ?>" class="download-link" download>Download</a>
+                        <a href="../../handler/user/download.php?file_id=<?= $file['file_id'] ?>" 
+                           class="download-btn" 
+                           download="<?= htmlspecialchars($file['file_name']) ?>"
+                           title="Download <?= htmlspecialchars($file['file_name']) ?>">
+                            Download
+                        </a>
                     </div>
-                <?php endforeach;
-            endif; ?>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <div class="no-files">No downloadable files available.</div>
+            <?php endif; ?>
         </div>
     </div>
 </section>
 
-  <?php include '../../includes/footer.php'; ?>
+    <script src="<?php echo $base_url; ?>js/user.js"></script>
+    <?php include '../../includes/footer.php'; ?>
 </body>
 </html>

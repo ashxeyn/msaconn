@@ -1,9 +1,6 @@
 <?php
 require_once '../../classes/userClass.php';
 $user = new User();
-
-// Fetch FAQs from the database
-$faqs = $user->fetchUserFaqs();
 ?>
 
 <!DOCTYPE html>
@@ -29,37 +26,11 @@ $faqs = $user->fetchUserFaqs();
     </div>
 
     <!-- FAQs Content -->
-    <div class="faqs-content">
-        <?php
-        $currentCategory = null;
-        foreach ($faqs as $faq) {
-            if ($currentCategory !== $faq['category']) {
-                if ($currentCategory !== null) {
-                    echo '</div>'; // Close previous category section
-                }
-                $currentCategory = $faq['category'];
-                echo '<h3>' . htmlspecialchars($currentCategory) . '</h3>';
-                echo '<div class="faq-category">';
-            }
-            ?>
-            <div class="faq-item">
-                <div class="faq-question">
-                    <?php echo htmlspecialchars($faq['question']); ?>
-                    <span class="arrow">▼</span>
-                </div>
-                <div class="faq-answer">
-                    <?php echo nl2br(htmlspecialchars($faq['answer'])); ?>
-                </div>
-            </div>
-            <?php
-        }
-        if ($currentCategory !== null) {
-            echo '</div>'; // Close the last category section
-        }
-        ?>
+    <div class="faqs-content" id="faqs-content">  
+        <!-- FAQs will be dynamically loaded here -->
     </div>
 
     <?php include '../../includes/footer.php'; ?>
-    <script src="<?php echo $base_url; ?>js/faqs.js"></script>
+    <script src="<?php echo $base_url; ?>js/user.js"></script>
 </body>
 </html>

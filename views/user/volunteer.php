@@ -3,7 +3,6 @@ session_start();
 require_once '../../classes/userClass.php';
 
 $user = new User();
-$volunteers = $user->fetchVolunteers();
 ?>
 
 <!DOCTYPE html>
@@ -14,7 +13,6 @@ $volunteers = $user->fetchVolunteers();
     <title>Volunteer</title>
     <link rel="stylesheet" href="../../css/volunteering.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">  
-
 </head>
 <body>
     <?php include '../../includes/header.php'; ?>
@@ -40,16 +38,8 @@ $volunteers = $user->fetchVolunteers();
     <!-- Volunteer Section -->
     <div class="volunteer-section">
         <h3>VOLUNTEERS</h3>
-        <div class="volunteer-grid">
-            <?php if (!empty($volunteers)): ?>
-                <?php foreach ($volunteers as $volunteer): ?>
-                    <div class="volunteer">
-                        <p class="name"><?= htmlspecialchars($volunteer['first_name'] . ' ' . $volunteer['last_name']); ?></p>
-                    </div>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <p>No volunteers have registered yet.</p>
-            <?php endif; ?>
+        <div id="volunteer-grid" class="volunteer-grid">
+            <!-- Volunteer data will be dynamically loaded here -->
         </div>
     </div>
 
@@ -62,5 +52,7 @@ $volunteers = $user->fetchVolunteers();
         unset($_SESSION['registration_success']); // Clear the flag
     }
     ?>
+
+    <script src="<?php echo $base_url; ?>js/user.js"></script>
 </body>
 </html>
