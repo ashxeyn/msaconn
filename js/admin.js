@@ -1677,6 +1677,18 @@ function setStudentId(studentId, action) {
                     $('#email').val(student.email);
                     $('#contactNumber').val(student.contact_number);
                     $('#existing_image').val(student.cor_path);
+                    $('#region').val(student.region);
+                    $('#province').val(student.province);
+                    $('#province').trigger('change');
+                    setTimeout(() => {
+                        $('#city').val(student.city);
+                        $('#city').trigger('change');
+                        setTimeout(() => {
+                            $('#barangay').val(student.barangay);
+                        }, 100);
+                    }, 100);
+                    $('#street').val(student.street);
+                    $('#zipCode').val(student.zip_code);
 
                     $('#modalTitle').text('Edit Student');
                     $('#confirmSaveStudent').text('Update Student');
@@ -1698,18 +1710,7 @@ function setStudentId(studentId, action) {
                     } else {
                         $('#onsiteFields').addClass('d-none');
                         $('#onlineFields').removeClass('d-none');
-                        $('#region').val(student.region);
-                        $('#province').val(student.province);
-                        $('#province').trigger('change');
-                        setTimeout(() => {
-                            $('#city').val(student.city);
-                            $('#city').trigger('change');
-                            setTimeout(() => {
-                                $('#barangay').val(student.barangay);
-                            }, 100);
-                        }, 100);
-                        $('#street').val(student.street);
-                        $('#zipCode').val(student.zip_code);
+
                         $('#school').val(student.school);
                         $('#collegeText').val(student.ol_college || '');
                         $('#programText').val(student.ol_program || '');
@@ -1829,7 +1830,6 @@ function validateStudentForm() {
         }
     }
 
-    // Address validation for all students
     const region = $('#region').val();
     const province = $('#province').val();
     const city = $('#city').val();

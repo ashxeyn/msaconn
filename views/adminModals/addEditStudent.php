@@ -16,7 +16,7 @@ $yearLevels = ['1st year', '2nd year', '3rd year', '4th year', 'Others'];
 
 $regionData = [
     'regions' => [
-        'Region IX (Zamboanga Peninsula)'
+        'Zamboanga Peninsula'
     ],
     'provinces' => [
         'Zamboanga del Norte',

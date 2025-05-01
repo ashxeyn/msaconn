@@ -15,6 +15,7 @@ $result = $adminObj->fetchPendingEnrollments();
     <title>Approve Madrasa Enrollments</title>
     <link rel="stylesheet" href="../../css/adminenrollment.css?v=<?php echo time(); ?>">
     <script src="../../js/admin.js"></script>
+    <script src="../../js/modals.js"></script>
     <!-- <?php include '../../includes/head.php'; ?>  -->
 </head>
 <body>
@@ -28,6 +29,7 @@ $result = $adminObj->fetchPendingEnrollments();
                     <th>Full Name</th>
                     <th>Classification</th>
                     <th>Details</th>
+                    <th>Contacts</th>
                     <th>COR</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -43,16 +45,22 @@ $result = $adminObj->fetchPendingEnrollments();
                             <td><?= clean_input($row['classification']) ?></td>
                             <td>
                                 <?php if ($row['classification'] == 'On-site'): ?>
+                                    <strong>Address:</strong> <?= clean_input($row['address'] ?? 'N/A') ?><br>
                                     <strong>Program:</strong> <?= clean_input($row['program_name'] ?? 'N/A') ?><br>
                                     <strong>College:</strong> <?= clean_input($row['college_name'] ?? 'N/A') ?><br>
                                     <strong>Year Level:</strong> <?= clean_input($row['year_level'] ?? 'N/A') ?>
                                 <?php else: ?>
                                     <strong>Address:</strong> <?= clean_input($row['address'] ?? 'N/A') ?><br>
+                                    <strong>Program:</strong> <?= clean_input($row['ol_program'] ?? 'N/A') ?><br>
+                                    <strong>College:</strong> <?= clean_input($row['ol_college'] ?? 'N/A') ?><br>
                                     <?php if (!empty($row['school'])): ?>
                                         <strong>School:</strong> <?= clean_input($row['school']) ?>
                                     <?php endif; ?>
                                 <?php endif; ?>
                             </td>
+                            <td>
+                                <strong>Contact No.:</strong> <?= clean_input($row['contact_number'] ?? 'N/A') ?><br>
+                                <strong>Email:</strong> <?= clean_input($row['email'] ?? 'N/A') ?><br>
                             <td>
                                 <?php if (!empty($row['cor_path'])): ?>
                                     <a href="#" data-bs-toggle="modal" data-bs-target="#photoModal" onclick="viewPhoto('<?= clean_input($row['cor_path']) ?>', 'cors')">

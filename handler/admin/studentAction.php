@@ -23,7 +23,6 @@ if ($action === 'edit') {
     $email = clean_input($_POST['email']);
     $existingImage = $_POST['existing_image'] ?? null;
     
-    // Address fields
     $region = clean_input($_POST['region']);
     $province = clean_input($_POST['province']);
     $city = clean_input($_POST['city']);
@@ -100,7 +99,6 @@ if ($action === 'edit') {
     $contactNumber = clean_input($_POST['contactNumber']);
     $email = clean_input($_POST['email']);
     
-    // Address fields
     $region = clean_input($_POST['region']);
     $province = clean_input($_POST['province']);
     $city = clean_input($_POST['city']);

@@ -16,6 +16,8 @@ $calEvents = $adminObj->fetchCalendarEvents();
     <link rel="stylesheet" href="../../css/admincalendar.css?v=<?php echo time(); ?>">
     <!-- <?php include '../../includes/head.php'; ?> -->
     <script src="../../js/admin.js"></script>
+    <script src="../../js/modals.js"></script>
+
 </head>
 <body>
     <div class="container">
@@ -36,26 +38,40 @@ $calEvents = $adminObj->fetchCalendarEvents();
                 </tr>
             </thead>
             <tbody>
-                <?php if ($calEvents): ?>
-                    <?php foreach ($calEvents as $calEv): ?>
-                        <tr>
-                            <td><?= formatDate2($calEv['activity_date']) ?></td>
-                            <td><?= date('l', strtotime($calEv['activity_date'])) ?></td>
-                            <td><?= clean_input($calEv['title']) ?></td>
-                            <td><?= clean_input($calEv['description']) ?></td>
-                            <td><?= clean_input($calEv['username'] ?? 'N/A') ?></td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" onclick="openCalendarModal('addEditCalendarModal', <?= $calEv['activity_id'] ?>, 'edit')">Edit</button>
-                                <button class="btn btn-danger btn-sm" onclick="openCalendarModal('deleteCalendarModal', <?= $calEv['activity_id'] ?>, 'delete')">Delete</button>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php else: ?>
+            <?php if ($calEvents): ?>
+                <?php 
+                $today = date('Y-m-d');
+                foreach ($calEvents as $calEv): 
+                    $isPast = ($calEv['activity_date'] < $today);
+                    $isToday = ($calEv['activity_date'] == $today);
+                ?>
                     <tr>
-                        <td colspan="5" class="text-center">No events found.</td>
+                        <td data-order="<?= $calEv['activity_date'] ?>">
+                            <?= formatDate2($calEv['activity_date']) ?>
+                            <?php if ($isPast): ?>
+                                <br><span class="badge bg-secondary">Done</span>
+                            <?php elseif ($isToday): ?>
+                                <br><span class="badge bg-danger">Today</span>
+                            <?php else: ?>
+                                <br><span class="badge bg-primary">Upcoming</span>
+                            <?php endif; ?>
+                        </td>
+                        <td><?= date('l', strtotime($calEv['activity_date'])) ?></td>
+                        <td><?= clean_input($calEv['title']) ?></td>
+                        <td><?= clean_input($calEv['description']) ?></td>
+                        <td><?= clean_input($calEv['username'] ?? 'N/A') ?></td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" onclick="openCalendarModal('addEditCalendarModal', <?= $calEv['activity_id'] ?>, 'edit')">Edit</button>
+                            <button class="btn btn-danger btn-sm" onclick="openCalendarModal('deleteCalendarModal', <?= $calEv['activity_id'] ?>, 'delete')">Delete</button>
+                        </td>
                     </tr>
-                <?php endif; ?>
-            </tbody>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="6" class="text-center">No events found.</td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
         </table>
 
         <div class="bottom-right">

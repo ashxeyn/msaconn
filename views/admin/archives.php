@@ -25,6 +25,7 @@ $archivedUpdates = $adminObj->fetchArchivedOrgUpdates();
 
 <head>
     <script src="../../js/admin.js"></script>
+    <script src="../../js/modals.js"></script>
 </head>
 
 <div class="container-fluid py-4">

@@ -15,6 +15,7 @@ $result = $adminObj->fetchPendingVolunteer();
     <title>Approve Volunteer Registrations</title>
     <link rel="stylesheet" href="../../css/adminregistration.css?v=<?php echo time(); ?>">
     <script src="../../js/admin.js"></script>
+    <script src="../../js/modals.js"></script>
     <!-- <?php include '../../includes/head.php'; ?> -->
     
     <style>

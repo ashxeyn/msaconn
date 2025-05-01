@@ -12,6 +12,7 @@ $abouts = $adminObj->fetchAbouts();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>About MSA</title>
     <script src="../../js/admin.js"></script>
+    <script src="../../js/modals.js"></script>
     <!-- <?php include '../../includes/head.php'; ?>  -->
     <style>
         .about-card {

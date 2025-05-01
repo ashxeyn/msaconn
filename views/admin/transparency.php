@@ -35,7 +35,7 @@ $totalFunds = $totalCashIn - $totalCashOut;
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>Transparency Report</title> 
     <!-- <link rel="stylesheet" href="../../css/admintransparency.css?v=<?php echo time(); ?>">  -->
-    <!-- <?php include '../../includes/head.php'; ?>  -->
+    <?php include '../../includes/head.php'; ?> 
     <script src="../../js/admin.js"></script>
 </head> 
 <body> 

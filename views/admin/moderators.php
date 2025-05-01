@@ -16,6 +16,7 @@ $result = $adminObj->fetchModerators();
     <link rel="stylesheet" href="../../css/adminregistration.css?v=<?php echo time(); ?>">
     <!-- <script src="../../testing/testing.js"></script> -->
     <script src="../../js/admin.js"></script>
+    <script src="../../js/modals.js"></script>
     <!-- <?php include '../../includes/head.php'; ?>  -->
 </head>
 <body>

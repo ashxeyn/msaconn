@@ -77,3 +77,24 @@ $(document).ready(function() {
     });
 });
 
+$(document).ready(function() {
+    $('#table').DataTable();
+    $('#cashinTable').DataTable();
+    $('#cashoutTable').DataTable();
+    $('#moderatorsTab').DataTable();
+    $('#eventTab').DataTable();
+    $('#progTab').DataTable();
+    $('#prayerTab').DataTable();
+    $('#calendarTab').DataTable();
+    $('#cashinTab').DataTable();
+    $('#cashoutTab').DataTable();
+    $('#faqsTab').DataTable();
+    $('#filesTab').DataTable();
+    $('#aboutTab').DataTable();
+    $('#olTab').DataTable();
+    $('#osTab').DataTable();
+    $('#officersTab').DataTable();
+    $('#volunteersTab').DataTable();
+    $('#archivedUpdatesTab').DataTable();
+});
+

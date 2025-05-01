@@ -15,6 +15,8 @@ $prayers = $adminObj->fetchFridayPrayers();
     <link rel="stylesheet" href="../../css/admincalendar.css?v=<?php echo time(); ?>">
     <!-- <?php include '../../includes/head.php'; ?> -->
     <script src="../../js/admin.js"></script>
+    <script src="../../js/modals.js"></script>
+
 </head>
 <body>
     <div class="container">
@@ -33,9 +35,27 @@ $prayers = $adminObj->fetchFridayPrayers();
             </thead>
             <tbody>
                 <?php if ($prayers): ?>
-                    <?php foreach ($prayers as $p): ?>
+                    <?php 
+                    $today = date('Y-m-d');
+                    usort($prayers, function($a, $b) {
+                        return strtotime($a['khutbah_date']) - strtotime($b['khutbah_date']);
+                    });
+                    
+                    foreach ($prayers as $p): 
+                        $isPast = ($p['khutbah_date'] < $today);
+                        $isToday = ($p['khutbah_date'] == $today);
+                    ?>
                         <tr>
-                            <td><?= formatDate2($p['khutbah_date']) ?></td>
+                            <td data-order="<?= strtotime($p['khutbah_date']) ?>">
+                                <?= formatDate2($p['khutbah_date']) ?>
+                                <?php if ($isPast): ?>
+                                    <br><span class="badge bg-secondary">Done</span>
+                                <?php elseif ($isToday): ?>
+                                    <br><span class="badge bg-danger">Today</span>
+                                <?php else: ?>
+                                    <br><span class="badge bg-primary">Upcoming</span>
+                                <?php endif; ?>
+                            </td>
                             <td><?= clean_input($p['speaker']) ?></td>
                             <td><?= clean_input($p['topic']) ?></td>
                             <td><?= clean_input($p['location']) ?></td>

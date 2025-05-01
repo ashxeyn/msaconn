@@ -15,6 +15,7 @@ $result = $adminObj->fetchApprovedVolunteer();
     <title>Volunteers</title>
     <link rel="stylesheet" href="../../css/adminvolunteers.css?v=<?php echo time(); ?>">
     <script src="../../js/admin.js"></script>
+    <script src="../../js/modals.js"></script>
     <!-- <?php include '../../includes/head.php'; ?>  -->
 
     <style>

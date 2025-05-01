@@ -15,6 +15,7 @@ $result = $adminObj->fetchOnlineEnrolledStudents();
     <title>Madrasa Students</title>
     <link rel="stylesheet" href="../../css/adminstudents.css?v=<?php echo time(); ?>">
     <script src="../../js/admin.js"></script>
+    <script src="../../js/modals.js"></script>
     <!-- <?php include '../../includes/head.php'; ?>  -->
 
     <style>

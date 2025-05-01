@@ -962,7 +962,7 @@ class Admin {
                 FROM calendar_activities ca
                 LEFT JOIN users u ON ca.created_by = u.user_id
                 WHERE ca.deleted_at IS NULL
-                ORDER BY ca.activity_date DESC";
+                ORDER BY ca.activity_date ASC";
         
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -1305,7 +1305,7 @@ class Admin {
     }
 
     function getCurrentSchoolYear() {
-        $sql = "SELECT * FROM school_years ORDER BY school_year DESC LIMIT 1";
+        $sql = "SELECT * FROM school_years ORDER BY school_year ASC LIMIT 1";
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         return $query->fetch();
@@ -1457,7 +1457,7 @@ class Admin {
 
     function softDeleteFile($fileId, $reason) {
         $sql = "UPDATE downloadable_files 
-                SET deleted_at = NOW(), reason = :reason 
+                SET is_deleted = 1, deleted_at = NOW(), reason = :reason 
                 WHERE file_id = :file_id";
 
         $query = $this->db->connect()->prepare($sql);
@@ -1567,7 +1567,9 @@ class Admin {
                 CONCAT(e.region, ', ', e.province, ', ', e.city, ', ', e.barangay, ', ', e.street, ', ', e.zip_code) AS address,
                 p.program_name, c.college_name, 
                 e.year_level, e.school, 
-                e.cor_path, e.status 
+                e.cor_path, e.status,
+                e.contact_number, e.email,
+                e.ol_college, e.ol_program
                 FROM madrasa_enrollment e
                 LEFT JOIN programs p ON e.program_id = p.program_id
                 LEFT JOIN colleges c ON e.college_id = c.college_id
@@ -1615,10 +1617,11 @@ class Admin {
     }
     
     function getEnrollmentById($enrollmentId) {
-        $sql = "SELECT e.*, 
-                CONCAT(e.region, ', ', e.province, ', ', e.city, ', ', e.barangay, ', ', e.street, ', ', e.zip_code) AS address,
-                p.program_name, c.college_name, e.ol_college, e.ol_program, 
-                e.email, e.contact_number
+        $sql = "SELECT e.enrollment_id, e.first_name, e.middle_name, e.last_name, 
+                e.classification, e.region, e.province, e.city, e.barangay, e.street, 
+                e.zip_code, e.college_id, e.program_id, e.year_level, e.school, 
+                e.cor_path, e.ol_college, e.ol_program, e.email, e.contact_number,
+                p.program_name, c.college_name
                 FROM madrasa_enrollment e
                 LEFT JOIN programs p ON e.program_id = p.program_id
                 LEFT JOIN colleges c ON e.college_id = c.college_id
