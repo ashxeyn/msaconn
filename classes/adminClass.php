@@ -1289,7 +1289,7 @@ class Admin {
         $sql = "SELECT * FROM transparency_report 
                 WHERE transaction_type = :transaction_type 
                 AND deleted_at IS NOT NULL 
-                ORDER BY deleted_at ASC";
+                ORDER BY deleted_at DESC";
 
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':transaction_type', $transactionType);
@@ -1298,14 +1298,14 @@ class Admin {
     }
 
     function getAllSchoolYears() {
-        $sql = "SELECT * FROM school_years ORDER BY school_year DESC";
+        $sql = "SELECT * FROM school_years ORDER BY school_year ASC";
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         return $query->fetchAll();
     }
 
     function getCurrentSchoolYear() {
-        $sql = "SELECT * FROM school_years ORDER BY school_year ASC LIMIT 1";
+        $sql = "SELECT * FROM school_years ORDER BY school_year DESC LIMIT 1";
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         return $query->fetch();
@@ -2122,7 +2122,7 @@ function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $class
         $sql = "SELECT school_year_id, school_year, is_deleted, reason, deleted_at
                 FROM school_years
                 WHERE is_deleted = 0
-                ORDER BY school_year_id ASC";
+                ORDER BY school_year_id DESC";
         
         $query = $this->db->connect()->prepare($sql);
         $query->execute();

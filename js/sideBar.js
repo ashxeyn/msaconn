@@ -112,11 +112,24 @@ function loadCalendarSection() {
 }
 
 function loadTransparencySection() {
+    const schoolYearId = $('#schoolYearSelect').val();
+    const semester = $('#semesterSelect').val();
+    const startDate = $('#startDate').val();
+    const endDate = $('#endDate').val();
+    
+    const params = {};
+    if (schoolYearId) params.school_year_id = schoolYearId;
+    if (semester) params.semester = semester;
+    if (startDate) params.start_date = startDate;
+    if (endDate) params.end_date = endDate;
+    
     $.ajax({
         url: "../admin/transparency.php",
         method: 'GET',
+        data: params,
         success: function (response) {
             $('#contentArea').html(response);
+            initDatepickers(); 
         },
         error: function (xhr, status, error) {
             console.error('Error loading transparency section:', error);

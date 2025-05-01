@@ -37,6 +37,8 @@ $totalFunds = $totalCashIn - $totalCashOut;
     <!-- <link rel="stylesheet" href="../../css/admintransparency.css?v=<?php echo time(); ?>">  -->
     <?php include '../../includes/head.php'; ?> 
     <script src="../../js/admin.js"></script>
+    <script src="../../js/sideBar.js"></script>
+    <script src="../../js/modals.js"></script>
 </head> 
 <body> 
     <div class="container"> 

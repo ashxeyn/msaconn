@@ -820,7 +820,6 @@ function processPrayer(prayerId, action) {
     });
 }
 
-
 // TRANSPARENCY FUNCTIONS
 function openTransactionModal(modalId, reportId, action, transactionType) {
     $('.modal').modal('hide'); 
@@ -1074,39 +1073,45 @@ function processTransaction(reportId, action, type) {
     });
 }
 
-// Transparency Filter Functions
-$(document).ready(function() {
+function initDatepickers() {
     $('.input-group.date').datepicker({
         format: 'yyyy-mm-dd',
         autoclose: true,
-        todayHighlight: true
+        todayHighlight: true,
+        zIndexOffset: 1000 // Fix for calendar being behind the navbar
     });
+}
+
+// Transparency Filter Functions
+$(document).ready(function() {
+    // Initialize datepickers
+    initDatepickers();
     
-    $('.filter-control, .filter-date').change(function() {
+    $(document).on('change', '.filter-control, .filter-date', function() {
         applyFilters();
     });
     
-    $('#clearDates').click(function() {
+    $(document).on('click', '#clearDates', function() {
         $('#startDate').val('');
         $('#endDate').val('');
         applyFilters();
     });
-    
-    function applyFilters() {
-        const schoolYearId = $('#schoolYearSelect').val();
-        const semester = $('#semesterSelect').val();
-        const startDate = $('#startDate').val();
-        const endDate = $('#endDate').val();
-        
-        const params = {};
-        if (schoolYearId) params.school_year_id = schoolYearId;
-        if (semester) params.semester = semester;
-        if (startDate) params.start_date = startDate;
-        if (endDate) params.end_date = endDate;
-        
-        loadFilteredTransparencySection(params);
-    }
 });
+
+function applyFilters() {
+    const schoolYearId = $('#schoolYearSelect').val();
+    const semester = $('#semesterSelect').val();
+    const startDate = $('#startDate').val();
+    const endDate = $('#endDate').val();
+    
+    const params = {};
+    if (schoolYearId) params.school_year_id = schoolYearId;
+    if (semester) params.semester = semester;
+    if (startDate) params.start_date = startDate;
+    if (endDate) params.end_date = endDate;
+    
+    loadFilteredTransparencySection(params);
+}
 
 function loadFilteredTransparencySection(params) {
     $.ajax({
@@ -1115,6 +1120,7 @@ function loadFilteredTransparencySection(params) {
         data: params,
         success: function (response) {
             $('#contentArea').html(response);
+            initDatepickers(); 
         },
         error: function (xhr, status, error) {
             console.error('Error loading transparency section:', error);

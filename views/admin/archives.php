@@ -28,6 +28,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
 <head>
     <script src="../../js/modals.js"></script>
     <script src="../../js/admin.js"></script>
+    <link rel="stylesheet" href="../../css/archives.css">
 </head>
 
 <div class="container-fluid py-4">
