@@ -388,7 +388,6 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                         <tr>
                                             <th>Mission</th>
                                             <th>Vision</th>
-                                            <th>Description</th>
                                             <th>Reason</th>
                                             <th>Archived At</th>
                                             <th>Actions</th>
@@ -397,14 +396,13 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                     <tbody>
                                         <?php if (empty($archivedAboutMsa)): ?>
                                             <tr>
-                                                <td colspan="6" class="text-center">No archived About MSA content found</td>
+                                                <td colspan="5" class="text-center">No archived About MSA content found</td>
                                             </tr>
                                         <?php else: ?>
                                             <?php foreach ($archivedAboutMsa as $about): ?>
                                                 <tr>
                                                     <td><?= clean_input($about['mission']) ?></td>
                                                     <td><?= clean_input($about['vision']) ?></td>
-                                                    <td><?= clean_input($about['description']) ?></td>
                                                     <td><?= clean_input($about['reason']) ?></td>
                                                     <td><?= date('M j, Y', strtotime($about['deleted_at'])) ?></td>
                                                     <td>

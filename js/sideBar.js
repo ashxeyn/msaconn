@@ -351,7 +351,7 @@ function loadArchives () {
 
 function loadPersonalization () {
     $.ajax({
-        url: "../admin/personalization.php",
+        url: "../admin/site.php",
         method: 'GET',
         success: function (response) {
             $('#contentArea').html(response);
@@ -373,6 +373,20 @@ function loadProfile () {
         error: function (xhr, status, error) {
             console.error('Error loading profile section:', error);
             $('#contentArea').html('<p class="text-danger">Failed to load Profile section. Please try again.</p>');
+        }
+    });
+}
+
+function loadSettings () {
+    $.ajax({
+        url: "../admin/profileSettings.php",
+        method: 'GET',
+        success: function (response) {
+            $('#contentArea').html(response);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error loading settings section:', error);
+            $('#contentArea').html('<p class="text-danger">Failed to load Settings section. Please try again.</p>');
         }
     });
 }

@@ -48,9 +48,6 @@ $abouts = $adminObj->fetchAbouts();
                 <h5><strong>Vision:</strong></h5>
                 <p><?= clean_input($about['vision']) ?></p>
 
-                <h5><strong>Description:</strong></h5>
-                <p><?= clean_input($about['description']) ?></p>
-
                 <small><strong>Created At:</strong> <?= formatDate($about['created_at']) ?></small>
 
                 <div class="card-actions">

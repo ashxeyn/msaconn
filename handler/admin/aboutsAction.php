@@ -17,7 +17,6 @@ $aboutId = $_POST['id'] ?? null;
 if ($action === 'edit') {
     $mission = clean_input($_POST['mission']);
     $vision = clean_input($_POST['vision']);
-    $description = clean_input($_POST['description']);
 
     $existingAbout = $adminObj->getAboutById($aboutId);
     if (!$existingAbout) {
@@ -25,7 +24,7 @@ if ($action === 'edit') {
         exit;
     }
 
-    $result = $adminObj->updateAbout($aboutId, $mission, $vision, $description);
+    $result = $adminObj->updateAbout($aboutId, $mission, $vision);
     echo $result ? "success" : "error";
 
 } elseif ($action === 'delete') {
@@ -47,7 +46,7 @@ if ($action === 'edit') {
     $vision = clean_input($_POST['vision']);
     $description = clean_input($_POST['description']);
 
-    $result = $adminObj->addAbout($mission, $vision, $description);
+    $result = $adminObj->addAbout($mission, $vision);
     echo $result ? "success" : "error";
 
 } else {

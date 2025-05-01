@@ -1316,7 +1316,6 @@ function setAboutId(aboutId, action) {
                     $('#editAboutId').val(about.id);
                     $('#editMission').val(about.mission);
                     $('#editVision').val(about.vision);
-                    $('#editDescription').val(about.description);
                     $('#editAboutModal .modal-title').text('Edit About MSA');
                     $('#editAboutFormSubmit').text('Update About');
                     clearValidationErrors();
@@ -1380,7 +1379,6 @@ function validateAboutForm() {
 
     const mission = $('#editMission').val().trim();
     const vision = $('#editVision').val().trim();
-    const description = $('#editDescription').val().trim();
 
     if (mission === '') {
         $('#editMissionError').text('Mission statement is required');
@@ -1392,18 +1390,12 @@ function validateAboutForm() {
         isValid = false;
     }
 
-    if (description === '') {
-        $('#editDescriptionError').text('Description is required');
-        isValid = false;
-    }
-
     return isValid;
 }
 
 function clearValidationErrors() {
     $('#editMissionError').text('');
     $('#editVisionError').text('');
-    $('#editDescriptionError').text('');
     $('#archiveReasonError').text('');
 }
 
@@ -3613,6 +3605,137 @@ function processSchoolYear(schoolYearId, action) {
     });
 }
 
+// SITE MANAGEMENT FUNCTIONS
+function openSiteModal(modalId, pageId, action, isActive) {
+    $('.modal').modal('hide');
+    $('.modal-backdrop').remove(); 
+    setTimeout(() => {
+        const modal = $('#' + modalId);
+        modal.modal('show'); 
+        setSitePageId(pageId, action, isActive);
+    }, 300);
+}
+
+function setSitePageId(pageId, action, isActive) {
+    if (action === 'edit') {
+        $.ajax({
+            url: "../../handler/admin/getSite.php",
+            type: "GET",
+            data: { page_id: pageId },
+            success: function(response) {
+                try {
+                    const page = JSON.parse(response);
+                    $('#editSiteId').val(page.page_id);
+                    $('#editTitle').val(page.title);
+                    $('#editDescription').val(page.description);
+                    $('#editContent').val(page.content);
+                    clearSiteValidationErrors();
+                    $('#editSiteModal').modal('show');
+                } catch (e) {
+                    console.error("Invalid JSON:", response);
+                    alert("Failed to load page details.");
+                }
+            },
+            error: function() {
+                alert("Failed to load page details.");
+            }
+        });
+
+        $('#editSiteForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateSiteForm()) {
+                processSite(pageId, 'edit');
+            }
+        });
+    } else if (action === 'toggle') {
+        $('#toggleSiteId').val(pageId);
+        
+        // Update modal text based on current status
+        if (isActive) {
+            $('#toggleSiteTitle').text('Deactivate Page');
+            $('#toggleSiteMessage').text('Are you sure you want to deactivate this page? It will be hidden from the website.');
+            $('#confirmToggleSite').removeClass('btn-success').addClass('btn-warning').text('Deactivate');
+        } else {
+            $('#toggleSiteTitle').text('Activate Page');
+            $('#toggleSiteMessage').text('Are you sure you want to activate this page? It will be visible on the website.');
+            $('#confirmToggleSite').removeClass('btn-warning').addClass('btn-success').text('Activate');
+        }
+        
+        $('#toggleSiteModal').modal('show');
+
+        $('#toggleSiteForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            processSite(pageId, 'toggle');
+        });
+    }
+}
+
+function validateSiteForm() {
+    let isValid = true;
+    clearSiteValidationErrors();
+
+    const title = $('#editTitle').val().trim();
+    const description = $('#editDescription').val().trim();
+
+    if (title === '') {
+        $('#editTitleError').text('Page title is required');
+        isValid = false;
+    }
+
+    if (description === '') {
+        $('#editDescriptionError').text('Page description is required');
+        isValid = false;
+    }
+
+    return isValid;
+}
+
+function clearSiteValidationErrors() {
+    $('#editTitleError').text('');
+    $('#editDescriptionError').text('');
+    $('#editContentError').text('');
+}
+
+function processSite(pageId, action) {
+    let formData = new FormData();
+
+    if (action === 'edit') {
+        formData = new FormData(document.getElementById('editSiteForm'));
+    } else if (action === 'toggle') {
+        formData.append('page_id', $('#toggleSiteId').val());
+    }
+
+    formData.append('page_id', pageId);
+    formData.append('action', action);
+
+    $.ajax({
+        url: "../../handler/admin/siteAction.php",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.trim() === "success") {
+                $(".modal").modal("hide");
+                $("body").removeClass("modal-open");
+                $(".modal-backdrop").remove();
+
+                loadPersonalization();
+
+                showToast('Success', 
+                    action === 'toggle' ? 'Page status has been updated.' :
+                    'Page content has been updated.', 
+                    'success');
+            } else {
+                alert("Failed to process request: " + response);
+            }
+        },
+        error: function() {
+            alert("An error occurred while processing the request.");
+        }
+    });
+}
+
 function clearValidationErrors() {
     $('.text-danger').text('');
 }
@@ -3626,10 +3749,9 @@ $(document).ready(function(){
 });
 
 $(document).ready(function() {
-    // ... existing document.ready code ...
 
     $('#studentForm').on('submit', function(e) {
-        e.preventDefault(); // Prevent default form submission
+        e.preventDefault();
         
         if (validateStudentForm()) {
             const studentId = $('#enrollmentId').val();

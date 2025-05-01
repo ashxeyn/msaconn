@@ -17,11 +17,6 @@
                         <textarea class="form-control" id="editVision" name="vision"></textarea>
                         <div id="editVisionError" class="text-danger"></div>
                     </div>
-                    <div class="mb-3">
-                        <label for="editDescription" class="form-label">Description</label>
-                        <textarea class="form-control" id="editDescription" name="description"></textarea>
-                        <div id="editDescriptionError" class="text-danger"></div>
-                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

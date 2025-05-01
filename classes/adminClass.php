@@ -1333,29 +1333,26 @@ class Admin {
         return $query->fetch();
     }
 
-    function addAbout($mission, $vision, $description) {
-        $sql = "INSERT INTO about_msa (mission, vision, description) 
-                VALUES (:mission, :vision, :description)";
+    function addAbout($mission, $vision) {
+        $sql = "INSERT INTO about_msa (mission, vision) 
+                VALUES (:mission, :vision)";
         
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':mission', $mission);
         $query->bindParam(':vision', $vision);
-        $query->bindParam(':description', $description);
 
         return $query->execute();
     }
 
-    function updateAbout($aboutId, $mission, $vision, $description) {
+    function updateAbout($aboutId, $mission, $vision) {
         $sql = "UPDATE about_msa 
                 SET mission = :mission, 
                     vision = :vision, 
-                    description = :description
                 WHERE id = :about_id";
 
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':mission', $mission);
         $query->bindParam(':vision', $vision);
-        $query->bindParam(':description', $description);
         $query->bindParam(':about_id', $aboutId);
 
         return $query->execute();
@@ -2216,6 +2213,207 @@ function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $class
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         return $query->fetchAll();
+    }
+
+    // Profile Functions
+    function getUserProfile($userId) {
+        $sql = "SELECT user_id, first_name, middle_name, last_name, username, email, 
+                role, created_at, position_id
+                FROM users 
+                WHERE user_id = :user_id AND is_deleted = 0";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':user_id', $userId);
+        $query->execute();
+        return $query->fetch();
+    }
+    
+    function updateProfile($userId, $firstName, $middleName, $lastName, $email) {
+        if ($this->isEmailExistForOtherUser($userId, $email)) {
+            return "error_email_exists";
+        }
+        
+        $sql = "UPDATE users 
+                SET first_name = :first_name, middle_name = :middle_name, 
+                    last_name = :last_name, email = :email 
+                WHERE user_id = :user_id";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':first_name', $firstName);
+        $query->bindParam(':middle_name', $middleName);
+        $query->bindParam(':last_name', $lastName);
+        $query->bindParam(':email', $email);
+        $query->bindParam(':user_id', $userId);
+        
+        if ($query->execute()) {
+            return "success";
+        }
+        return "error";
+    }
+    
+    function updateUsername($userId, $username) {
+        if ($this->isUsernameExistForOtherUser($userId, $username)) {
+            return "error_username_exists";
+        }
+        
+        $sql = "UPDATE users 
+                SET username = :username 
+                WHERE user_id = :user_id";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':username', $username);
+        $query->bindParam(':user_id', $userId);
+        
+        if ($query->execute()) {
+            return "success";
+        }
+        return "error";
+    }
+    
+    function changePassword($userId, $currentPassword, $newPassword) {
+        $sql = "SELECT password FROM users WHERE user_id = :user_id";
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':user_id', $userId);
+        $query->execute();
+        $user = $query->fetch();
+        
+        if (!$user || !password_verify($currentPassword, $user['password'])) {
+            return "error_incorrect_password";
+        }
+        
+        $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+        $sql = "UPDATE users 
+                SET password = :password 
+                WHERE user_id = :user_id";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':password', $hashedPassword);
+        $query->bindParam(':user_id', $userId);
+        
+        if ($query->execute()) {
+            return "success";
+        }
+        return "error";
+    }
+    
+    function deleteAccount($userId, $password) {
+        $sql = "SELECT password FROM users WHERE user_id = :user_id";
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':user_id', $userId);
+        $query->execute();
+        $user = $query->fetch();
+        
+        if (!$user || !password_verify($password, $user['password'])) {
+            return "error_incorrect_password";
+        }
+        
+        $sql = "UPDATE users 
+                SET is_deleted = 1, deleted_at = NOW(), reason = 'User requested account deletion' 
+                WHERE user_id = :user_id";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':user_id', $userId);
+        
+        if ($query->execute()) {
+            return "success";
+        }
+        return "error";
+    }
+    
+    private function isEmailExistForOtherUser($userId, $email) {
+        $sql = "SELECT user_id FROM users 
+                WHERE email = :email AND user_id != :user_id AND is_deleted = 0";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':email', $email);
+        $query->bindParam(':user_id', $userId);
+        $query->execute();
+        
+        return $query->rowCount() > 0;
+    }
+    
+    private function isUsernameExistForOtherUser($userId, $username) {
+        $sql = "SELECT user_id FROM users 
+                WHERE username = :username AND user_id != :user_id AND is_deleted = 0";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':username', $username);
+        $query->bindParam(':user_id', $userId);
+        $query->execute();
+        
+        return $query->rowCount() > 0;
+    }
+
+    // Site Management Functions
+    function fetchSitePages() {
+        $sql = "SELECT page_id, page_type, title, description, is_active, 
+                       created_at, updated_at
+                FROM site_pages
+                ORDER BY page_type ASC";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    function getSitePageById($pageId) {
+        $sql = "SELECT page_id, page_type, title, description, is_active,
+                       created_at, updated_at
+                FROM site_pages
+                WHERE page_id = :page_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':page_id', $pageId);
+        $query->execute();
+        return $query->fetch();
+    }
+
+    function getSitePageByType($pageType) {
+        $sql = "SELECT page_id, page_type, title, description, is_active,
+                       created_at, updated_at
+                FROM site_pages
+                WHERE page_type = :page_type";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':page_type', $pageType);
+        $query->execute();
+        return $query->fetch();
+    }
+
+    function updateSitePage($pageId, $title, $description) {
+        $sql = "UPDATE site_pages 
+                SET title = :title, description = :description
+                WHERE page_id = :page_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':title', $title);
+        $query->bindParam(':description', $description);
+        $query->bindParam(':page_id', $pageId);
+        return $query->execute();
+    }
+
+    function toggleSitePageStatus($pageId) {
+        $sql = "UPDATE site_pages 
+                SET is_active = NOT is_active 
+                WHERE page_id = :page_id";
+
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':page_id', $pageId);
+        return $query->execute();
+    }
+
+    function getPageTypeLabel($pageType) {
+        $labels = [
+            'registration' => 'Registration Page',
+            'about' => 'About Us Page',
+            'volunteer' => 'Volunteer Page',
+            'calendar' => 'Calendar Page',
+            'faqs' => 'FAQs Page',
+            'transparency' => 'Transparency Page',
+            'home' => 'Home Page'
+        ];
+        
+        return $labels[$pageType] ?? ucfirst($pageType);
     }
 
     // Others

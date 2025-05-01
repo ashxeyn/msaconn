@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 01, 2025 at 03:52 PM
+-- Generation Time: May 01, 2025 at 10:28 PM
 -- Server version: 11.4.5-MariaDB
 -- PHP Version: 8.2.12
 
@@ -31,7 +31,6 @@ CREATE TABLE `about_msa` (
   `id` int(11) NOT NULL,
   `mission` text NOT NULL,
   `vision` text NOT NULL,
-  `description` text NOT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
   `reason` varchar(255) DEFAULT NULL,
@@ -42,8 +41,9 @@ CREATE TABLE `about_msa` (
 -- Dumping data for table `about_msa`
 --
 
-INSERT INTO `about_msa` (`id`, `mission`, `vision`, `description`, `created_at`, `is_deleted`, `reason`, `deleted_at`) VALUES
-(1, 'To seek the pleasure of Allah (SWT) by empowering Muslim students with resources aimed at fostering character and leadership development (tarbiyyah), campus activism and da’wah, and connecting for a unified vision.', 'A unifying movement, rooted in deen, of all Muslim Student Associations, cultivating safe and transformative spaces for all Muslims on campus and continuing to serve the Ummah beyond graduation.', 'Established in January 1963, the Muslim Students Association of the U.S. &amp; Canada — also known as MSA National — continues to serve Muslim students during their college and university careers by facilitating their efforts to establish, maintain, and develop local MSA chapters.', '2025-05-01 09:51:01', 0, NULL, NULL);
+INSERT INTO `about_msa` (`id`, `mission`, `vision`, `created_at`, `is_deleted`, `reason`, `deleted_at`) VALUES
+(1, 'To seek the pleasure of Allah (SWT) by empowering Muslim students with resources aimed at fostering character and leadership development (tarbiyyah), campus activism and da’wah, and connecting for a unified vision.', 'A unifying movement, rooted in deen, of all Muslim Student Associations, cultivating safe and transformative spaces for all Muslims on campus and continuing to serve the Ummah beyond graduation.', '2025-05-01 09:51:01', 0, NULL, NULL),
+(2, 'try', 'try', '2025-05-01 15:15:51', 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -71,7 +71,7 @@ INSERT INTO `calendar_activities` (`activity_id`, `title`, `description`, `activ
 (1, 'Quran Recitation Workshop', 'Learn proper Quran recitation techniques. Open to all levels. Bring your mushaf.', '2025-05-02', 3, '2025-05-01 08:47:30', 0, NULL, NULL),
 (2, 'Islamic Finance Seminar', 'Practical workshop on Islamic banking principles and halal career paths.', '2025-05-14', 3, '2025-05-01 08:48:02', 0, NULL, NULL),
 (3, 'Cultural Fair', 'Celebrate Eid with traditional foods, henna art, and cultural performances from Muslim student groups.', '2025-05-01', 3, '2025-05-01 08:50:22', 0, NULL, NULL),
-(4, 'Ramadan Iftar Program', 'Community iftars with short tafsir sessions after Maghrib prayers.', '2025-03-15', 3, '2025-05-01 08:53:06', 0, NULL, NULL),
+(4, 'Ramadan Iftar Program', 'Community iftars with short tafsir sessions after Maghrib prayers.', '2025-03-15', 3, '2025-05-01 08:53:06', 1, 'try', '2025-05-01 15:12:06'),
 (5, 'Muslim Activity for Madrasa', 'Madrasa activity workshop.', '2025-04-02', 3, '2025-05-01 09:26:23', 0, NULL, NULL);
 
 -- --------------------------------------------------------
@@ -101,7 +101,7 @@ INSERT INTO `colleges` (`college_id`, `college_name`, `is_deleted`, `reason`, `d
 (6, 'College of Engineering', 0, NULL, NULL),
 (7, 'College of Forestry and Environmental Studies', 0, NULL, NULL),
 (8, 'College of Home Economics', 0, NULL, NULL),
-(9, 'College of Law', 0, NULL, NULL),
+(9, 'College of Law', 1, 'Try', '2025-05-01 15:02:17'),
 (10, 'College of Liberal Arts', 0, NULL, NULL),
 (11, 'College of Medicine', 0, NULL, NULL),
 (12, 'College of Nursing', 0, NULL, NULL),
@@ -137,7 +137,7 @@ CREATE TABLE `downloadable_files` (
 
 INSERT INTO `downloadable_files` (`file_id`, `user_id`, `file_name`, `file_path`, `file_type`, `file_size`, `created_at`, `updated_at`, `is_deleted`, `reason`, `deleted_at`) VALUES
 (1, 3, 'Total Students Paid (SY. 2023-2024)', '1746093280_Introduction to Machine Learning.pdf', 'application/pdf', 270063, '2025-05-01 17:54:40', '2025-05-01 17:54:40', 0, NULL, NULL),
-(2, 3, 'Rules and Bylaws', '1746093300_Study Mats.pdf.docx', 'application/vnd.openxmlformats-officedocument.word', 22363, '2025-05-01 17:55:00', '2025-05-01 17:55:00', 0, NULL, NULL);
+(2, 3, 'Rules and Bylaws', '1746093300_Study Mats.pdf.docx', 'application/vnd.openxmlformats-officedocument.word', 22363, '2025-05-01 17:55:00', '2025-05-01 23:12:43', 1, 'try', '2025-05-01 15:12:43');
 
 -- --------------------------------------------------------
 
@@ -162,7 +162,7 @@ CREATE TABLE `events` (
 
 INSERT INTO `events` (`event_id`, `image`, `description`, `created_at`, `uploaded_by`, `is_deleted`, `reason`, `deleted_at`) VALUES
 (1, '489978008_1075409894607449_3806741056660008067_n.jpg', 'Ramadan Donation', '2025-05-01 08:44:01', 3, 0, NULL, NULL),
-(2, '487126878_1066796692135436_2620514646350456280_n.jpg', 'Ramadan Celebration', '2025-05-01 08:44:41', 3, 0, NULL, NULL);
+(2, '487126878_1066796692135436_2620514646350456280_n.jpg', 'Ramadan Celebration', '2025-05-01 08:44:41', 3, 1, 'try', '2025-05-01 15:14:54');
 
 -- --------------------------------------------------------
 
@@ -190,7 +190,7 @@ CREATE TABLE `executive_officers` (
 --
 
 INSERT INTO `executive_officers` (`officer_id`, `last_name`, `first_name`, `middle_name`, `position_id`, `program_id`, `image`, `school_year_id`, `created_at`, `is_deleted`, `reason`, `deleted_at`) VALUES
-(1, 'Kulong', 'Rone', '', 1, 7, 'Screenshot 2025-02-18 222613.png', 2, '2025-05-01 13:28:30', 0, NULL, NULL),
+(1, 'Kulong', 'Rone', '', 1, 7, 'Screenshot 2025-02-18 222613.png', 2, '2025-05-01 13:28:30', 1, 'try', '2025-05-01 15:16:08'),
 (2, 'Jimenez', 'Shane', 'Duran', 2, 7, 'webcam-toy-photo14.jpg', 2, '2025-05-01 13:30:56', 0, NULL, NULL),
 (3, 'Jaafar', 'Rhamirl', '', 20, 8, 'Screenshot 2025-01-03 151758.png', 2, '2025-05-01 13:32:01', 0, NULL, NULL);
 
@@ -234,7 +234,7 @@ INSERT INTO `faqs` (`faq_id`, `question`, `answer`, `category`, `created_at`, `i
 (16, 'How can I contact your support team?', 'You can reach us by phone at (555) 123-4567, by email at support@organization.org, or through our contact form.', 'Contact and Support', '2023-01-05 00:15:00', 0, NULL, NULL),
 (17, 'What is your response time for inquiries?', 'We aim to respond to all inquiries within 2 business days. Urgent matters may be addressed sooner.', 'Contact and Support', '2023-02-12 01:30:00', 0, NULL, NULL),
 (18, 'Do you have regional offices?', 'Our main office is in New York, but we have representatives in 5 other states. See our Contact page for details.', 'Contact and Support', '2023-03-18 02:45:00', 0, NULL, NULL),
-(19, 'Can I schedule a meeting with a staff member?', 'Yes, please contact our office to schedule an appointment with the appropriate staff member.', 'Contact and Support', '2023-04-22 04:00:00', 1, 'Contact method changed', '2023-05-15 06:30:00'),
+(19, 'Can I schedule a meeting with a staff member?', 'Yes, please contact our office to schedule an appointment with the appropriate staff member.', 'Contact and Support', '2023-04-22 04:00:00', 0, NULL, NULL),
 (20, 'Where can I find your annual reports?', 'Our annual reports are available in the About Us section of our website under \"Financials\".', 'Contact and Support', '2023-05-30 05:15:00', 0, NULL, NULL);
 
 -- --------------------------------------------------------
@@ -261,7 +261,7 @@ CREATE TABLE `friday_prayers` (
 --
 
 INSERT INTO `friday_prayers` (`prayer_id`, `khutbah_date`, `speaker`, `topic`, `location`, `created_by`, `created_at`, `is_deleted`, `reason`, `deleted_at`) VALUES
-(1, '2025-03-28', 'Ahmad Eldani', 'Virtue of Reading Quran', 'MSA Center', 3, '2025-05-01 08:57:38', 0, NULL, NULL),
+(1, '2025-03-28', 'Ahmad Eldani', 'Virtue of Reading Quran', 'MSA Center', 3, '2025-05-01 08:57:38', 1, 'try', '2025-05-01 15:15:31'),
 (2, '2025-04-04', 'Khalid Mohammad Ali', 'Special Prayers', 'COE, 2nd Floor', 3, '2025-05-01 08:59:03', 0, NULL, NULL),
 (3, '2025-05-01', 'Rhamirl Jaafar', 'Balancing Deen and Studies: Islamic Time Management', 'CCS, Lab 2', 3, '2025-05-01 09:21:25', 0, NULL, NULL);
 
@@ -315,7 +315,8 @@ INSERT INTO `madrasa_enrollment` (`enrollment_id`, `first_name`, `middle_name`, 
 (8, 'Amina', '', 'Fernandez', 'afernandez@wmsu.edu.ph', '09881234567', 'On-site', 'Zamboanga Peninsula', 'Zamboanga del Norte', 'Dapitan City', 'Baylimango', 'Blk 3', '7200', 2, NULL, 4, NULL, '3rd year', NULL, '1746101038_Screenshot (6).png', 'Enrolled', '2023-03-10 10:45:00', '2025-05-01 20:03:58', 0, NULL, NULL),
 (9, 'Omar', 'Farouk', 'Lim', 'omar.lim@email.com', '09991234567', 'Online', 'Zamboanga Peninsula', 'Zamboanga Sibugay', 'Ipil', 'Sanito', '111 Iman Road', '7001', NULL, 'Virtual Islamic School', NULL, 'Fiqh Studies', '1st Year', NULL, NULL, 'Pending', '2023-03-15 14:00:00', '2023-03-15 14:00:00', 0, NULL, NULL),
 (10, 'Khadija', 'Amina', 'Tan', 'ktan@wmsu.edu.ph', '09101234567', 'On-site', 'Zamboanga Peninsula', 'Zamboanga del Norte', 'Dipolog City', 'Estaka', '222 Sunnah Avenue', '7100', 3, NULL, 2, NULL, '2nd Year', 'Western Mindanao State University - Dipolog', NULL, 'Rejected', '2023-03-20 15:30:00', '2023-03-22 17:15:00', 0, 'Ineligible for program', NULL),
-(11, 'Shane', 'Duran', 'Jimenez', 'shanehart1001@wmsu.edu.ph', '09066998688', 'On-site', 'Zamboanga Peninsula', 'Zamboanga City', 'Zamboanga City', 'Putik', 'Sapphire', '7000', 3, NULL, 7, NULL, '2nd year', NULL, '1746094541_Screenshot (6).png', 'Enrolled', '2025-05-01 18:15:41', '2025-05-01 20:36:25', 1, 'a', '2025-05-01 12:36:25');
+(11, 'Shane', 'Duran', 'Jimenez', 'shanehart1001@wmsu.edu.ph', '09066998688', 'On-site', 'Zamboanga Peninsula', 'Zamboanga City', 'Zamboanga City', 'Putik', 'Sapphire', '7000', 3, NULL, 7, NULL, '2nd year', NULL, '1746094541_Screenshot (6).png', 'Enrolled', '2025-05-01 18:15:41', '2025-05-01 20:36:25', 1, 'a', '2025-05-01 12:36:25'),
+(12, 'Shane', '', 'Jimenez', 'shane@wmsu.edu.ph', '09876545323', 'On-site', 'Zamboanga Peninsula', 'Zamboanga del Norte', 'Dipolog City', 'Biasong', 'Sapphire', '7900', 3, NULL, 7, NULL, '3rd year', NULL, '1746123154_Screenshot 2025-02-21 203438.png', 'Enrolled', '2025-05-02 02:12:34', '2025-05-02 02:12:34', 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -356,7 +357,8 @@ INSERT INTO `officer_positions` (`position_id`, `position_name`, `is_deleted`, `
 (18, 'Tahara', 0, NULL, NULL),
 (19, 'Publication', 0, NULL, NULL),
 (20, 'Documentation', 0, NULL, NULL),
-(21, 'Registration', 0, NULL, NULL);
+(21, 'Registration', 0, NULL, NULL),
+(23, 'Sheesh', 1, 'Trip lang', '2025-05-01 14:23:12');
 
 -- --------------------------------------------------------
 
@@ -380,7 +382,8 @@ CREATE TABLE `org_updates` (
 --
 
 INSERT INTO `org_updates` (`update_id`, `title`, `content`, `created_by`, `created_at`, `is_deleted`, `reason`, `deleted_at`) VALUES
-(1, 'Eid Fiest Celebration', 'The Muslim Student Association (MSA Connect) is pleased to announce its annual Eid al-Fitr Celebration, marking the conclusion of Ramadan 1446H. This community event aims to foster unity, gratitude, and Islamic brotherhood among students, faculty, and staff.\r\n\r\nTheme: &quot;Blessings of Unity: Sharing Joy, Strengthening Faith&quot;\r\n\r\nDate:March 2025\r\n\r\nTime: 7:00 AM - 3:00 PM\r\n\r\nVenue: WMSU, Campus A', 3, '2025-05-01 08:42:00', 0, NULL, NULL);
+(1, 'Eid Fiest Celebration', 'The Muslim Student Association (MSA Connect) is pleased to announce its annual Eid al-Fitr Celebration, marking the conclusion of Ramadan 1446H. This community event aims to foster unity, gratitude, and Islamic brotherhood among students, faculty, and staff.\r\n\r\nTheme: &quot;Blessings of Unity: Sharing Joy, Strengthening Faith&quot;\r\n\r\nDate:March 2025\r\n\r\nTime: 7:00 AM - 3:00 PM\r\n\r\nVenue: WMSU, Campus A', 3, '2025-05-01 08:42:00', 1, 'try', '2025-05-01 15:10:50'),
+(2, 'Muslim Activity', 'WMSU activity conducted by MSA.', 3, '2025-05-01 15:10:36', 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -406,7 +409,7 @@ INSERT INTO `programs` (`program_id`, `program_name`, `college_id`, `is_deleted`
 (2, 'BS Agricultural Economics', 1, 0, NULL, NULL),
 (3, 'BS Agribusiness', 1, 0, NULL, NULL),
 (4, 'BS Architecture', 2, 0, NULL, NULL),
-(5, 'BS Interior Design', 2, 0, NULL, NULL),
+(5, 'BS Interior Design', 2, 1, 'No program like this in WMSU.', '2025-05-01 15:02:36'),
 (6, 'BS Information Technology', 3, 0, NULL, NULL),
 (7, 'BS Computer Science', 3, 0, NULL, NULL),
 (8, 'Associate in Computer Technology', 3, 0, NULL, NULL),
@@ -469,8 +472,38 @@ INSERT INTO `school_years` (`school_year_id`, `school_year`, `is_deleted`, `reas
 (1, '2023-2024', 0, NULL, NULL),
 (2, '2024-2025', 0, NULL, NULL),
 (3, '2026-2027', 0, NULL, NULL),
-(4, '2028-2029', 0, NULL, NULL),
-(5, '2029-2030', 0, NULL, NULL);
+(4, '2028-2029', 1, 'trip', '2025-05-01 15:09:06'),
+(5, '2029-2030', 1, 'trip', '2025-05-01 15:07:31'),
+(6, '2031-2032', 0, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `site_pages`
+--
+
+CREATE TABLE `site_pages` (
+  `page_id` int(11) NOT NULL,
+  `page_type` enum('registration','about','volunteer','calendar','faqs','transparency','home') NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `description` text DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `site_pages`
+--
+
+INSERT INTO `site_pages` (`page_id`, `page_type`, `title`, `description`, `is_active`, `created_at`, `updated_at`) VALUES
+(1, 'home', 'Home Page', 'Welcome to our website', 1, '2025-05-01 19:53:07', '2025-05-01 20:06:33'),
+(2, 'about', 'About Us', 'Established in January 1963, the Muslim Students Association of the U.S. Canada — also known as MSA National — continues to serve Muslim students during their college and university careers by facilitating their efforts to establish, maintain, and develop local MSA chapters.', 1, '2025-05-01 19:53:07', '2025-05-01 20:05:15'),
+(3, 'volunteer', 'Volunteer', 'Opportunities to get involved', 1, '2025-05-01 19:53:07', '2025-05-01 19:53:07'),
+(4, 'calendar', 'Calendar', 'Stay up-to-date with MSA events and activities by checking our calendar regularly. From community service projects to social gatherings, something for everyone to enjoy and participate in.', 1, '2025-05-01 19:53:07', '2025-05-01 20:27:45'),
+(5, 'faqs', 'FAQs', 'Frequently asked questions. Tanong nang tanong eh oh eto basahin niyo', 1, '2025-05-01 19:53:07', '2025-05-01 20:06:26'),
+(6, 'transparency', 'Transparency', 'Financial reports and disclosures.', 1, '2025-05-01 19:53:07', '2025-05-01 20:27:58'),
+(7, 'registration', 'Registration', 'Registration for madrasa classes is now open for the upcoming term. Parents and guardians are encouraged to enroll their children early to secure a spot, as spaces are limited. The registration process is simple and can be completed online or in person at the madrasa office. Classes will cover Quranic studies, Islamic teachings, and basic Arabic, tailored to different age groups. Don’t miss the opportunity to give your child a strong foundation in faith and knowledge.', 1, '2025-05-01 19:53:07', '2025-05-01 20:26:27');
 
 -- --------------------------------------------------------
 
@@ -503,10 +536,10 @@ INSERT INTO `transparency_report` (`report_id`, `report_date`, `expense_detail`,
 (4, '2024-07-15', 'Purchase of Quran copies', 'Islamic Materials', 1500.75, 'Cash Out', '1st', 2, 0, NULL, NULL),
 (5, '2024-08-01', 'Campus iftar program', 'Charity', 2800.00, 'Cash Out', '1st', 2, 0, NULL, NULL),
 (6, '2024-11-10', 'Islamic lecture series honorarium', 'Events', 1200.00, 'Cash Out', '2nd', 2, 0, NULL, NULL),
-(7, '2024-11-25', 'Fundraising dinner proceeds', 'Fundraising', 7500.00, 'Cash In', '2nd', 2, 0, NULL, NULL),
+(7, '2024-11-25', 'Fundraising dinner proceeds', 'Fundraising', 7500.00, 'Cash In', '2nd', 2, 1, 'try', '2025-05-01 15:11:06'),
 (8, '2024-12-05', 'Winter charity drive for orphans', 'Charity', 4000.00, 'Cash Out', '2nd', 2, 0, NULL, NULL),
 (9, '2023-06-10', 'Initial semester budget from university', 'University Funds', 10000.00, 'Cash In', '1st', 1, 0, NULL, NULL),
-(10, '2023-07-20', 'Ramadan preparation materials', 'Islamic Materials', 2200.00, 'Cash Out', '1st', 1, 0, NULL, NULL),
+(10, '2023-07-20', 'Ramadan preparation materials', 'Islamic Materials', 2200.00, 'Cash Out', '1st', 1, 1, 'try', '2025-05-01 15:11:13'),
 (11, '2023-08-15', 'New student orientation event', 'Events', 1800.50, 'Cash Out', '1st', 1, 0, NULL, NULL),
 (12, '2023-11-05', 'Islamic book fair proceeds', 'Fundraising', 3200.00, 'Cash In', '2nd', 1, 0, NULL, NULL),
 (13, '2023-11-20', 'Guest speaker transportation', 'Events', 800.00, 'Cash Out', '2nd', 1, 0, NULL, NULL),
@@ -530,7 +563,10 @@ CREATE TABLE `update_images` (
 --
 
 INSERT INTO `update_images` (`image_id`, `update_id`, `file_path`, `upload_order`) VALUES
-(1, 1, '681333d810dee_eid.jpg', 0);
+(1, 1, '681333d810dee_eid.jpg', 0),
+(2, 2, '68138eec3c5b4_487126878_1066796692135436_2620514646350456280_n.jpg', 0),
+(3, 2, '68138eec3c851_489978008_1075409894607449_3806741056660008067_n.jpg', 1),
+(4, 2, '68138eec3ca0d_eid.jpg', 2);
 
 -- --------------------------------------------------------
 
@@ -559,8 +595,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `first_name`, `middle_name`, `last_name`, `username`, `email`, `password`, `role`, `created_at`, `position_id`, `is_deleted`, `reason`, `deleted_at`) VALUES
-(3, 'admin', NULL, 'admin', 'admin', 'admin@wmsu.edu.ph', '$2y$10$KAdv0xz.zhTFVv76tbW.YOdb602FSIvjwjPj3cZHeXGnmzAV0Gzz6', 'admin', '2025-05-01 08:20:18', NULL, 0, NULL, NULL),
-(4, 'sub', 'sub', 'sub', 'sub', 'sub@wmsu.edu.ph', '$2y$10$TkNyqLP29O8syY9h/0Yl1ukM5jQ9WNPVrbWjmAhNsY0q1J7n1A/kq', 'sub-admin', '2025-05-01 12:51:55', 3, 0, NULL, NULL);
+(3, 'admin', '', 'admin', 'admin', 'admin@wmsu.edu.ph', '$2y$10$KAdv0xz.zhTFVv76tbW.YOdb602FSIvjwjPj3cZHeXGnmzAV0Gzz6', 'admin', '2025-05-01 08:20:18', NULL, 0, NULL, NULL),
+(4, 'sub', 'sub', 'sub', 'sub', 'sub@wmsu.edu.ph', '$2y$10$TkNyqLP29O8syY9h/0Yl1ukM5jQ9WNPVrbWjmAhNsY0q1J7n1A/kq', 'sub-admin', '2025-05-01 12:51:55', 3, 0, NULL, NULL),
+(5, 'Shane', '', 'Jimenez', 'ashxeynx', 'ashxeynx@wmsu.edu.ph', '$2y$10$UIDkASXpuBfVsXVUJ2B58.yIATNoUkScXWpEL5DY0n2kAdZsuQn.e', 'sub-admin', '2025-05-01 15:13:29', 19, 1, 'try', '2025-05-01 15:13:34');
 
 -- --------------------------------------------------------
 
@@ -592,8 +629,9 @@ CREATE TABLE `volunteers` (
 --
 
 INSERT INTO `volunteers` (`volunteer_id`, `first_name`, `middle_name`, `last_name`, `year`, `section`, `program_id`, `contact`, `email`, `cor_file`, `status`, `user_id`, `created_at`, `is_deleted`, `reason`, `deleted_at`) VALUES
-(1, 'Marlo', '', 'Manonog', 2, 'C', 7, '09926314071', 'sdfsfd@wmsu.edu.ph', '1746107236_Screenshot 2024-09-10 100740.png', 'pending', NULL, '2025-05-01 13:47:16', 0, NULL, NULL),
-(2, 'Brixell Lloyd', '', 'Mesa', 2, 'A', 20, '09926314073', 'shanehart1001@gmil.com', '1746107335_Screenshot 2025-01-26 143128.png', 'approved', 3, '2025-05-01 13:48:55', 0, NULL, NULL);
+(1, 'Marlo', '', 'Manonog', 2, 'C', 7, '09926314071', 'sdfsfd@wmsu.edu.ph', '1746107236_Screenshot 2024-09-10 100740.png', 'approved', 3, '2025-05-01 13:47:16', 1, 'try', '2025-05-01 15:25:43'),
+(2, 'Brixell Lloyd', '', 'Mesa', 2, 'A', 20, '09926314073', 'shanehart1001@gmil.com', '1746107335_Screenshot 2025-01-26 143128.png', 'approved', 3, '2025-05-01 13:48:55', 0, NULL, NULL),
+(3, 'Ronie', '', 'Kulonggies', 4, 'B', 27, '09926314073', 'shhesh@gmail.com', '1746112696_Screenshot 2024-12-26 172643.png', 'pending', NULL, '2025-05-01 15:18:16', 0, NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -693,6 +731,13 @@ ALTER TABLE `school_years`
   ADD UNIQUE KEY `school_year` (`school_year`);
 
 --
+-- Indexes for table `site_pages`
+--
+ALTER TABLE `site_pages`
+  ADD PRIMARY KEY (`page_id`),
+  ADD UNIQUE KEY `page_type` (`page_type`);
+
+--
 -- Indexes for table `transparency_report`
 --
 ALTER TABLE `transparency_report`
@@ -730,7 +775,7 @@ ALTER TABLE `volunteers`
 -- AUTO_INCREMENT for table `about_msa`
 --
 ALTER TABLE `about_msa`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `calendar_activities`
@@ -778,19 +823,19 @@ ALTER TABLE `friday_prayers`
 -- AUTO_INCREMENT for table `madrasa_enrollment`
 --
 ALTER TABLE `madrasa_enrollment`
-  MODIFY `enrollment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `enrollment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `officer_positions`
 --
 ALTER TABLE `officer_positions`
-  MODIFY `position_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `position_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `org_updates`
 --
 ALTER TABLE `org_updates`
-  MODIFY `update_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `update_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `programs`
@@ -802,7 +847,13 @@ ALTER TABLE `programs`
 -- AUTO_INCREMENT for table `school_years`
 --
 ALTER TABLE `school_years`
-  MODIFY `school_year_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `school_year_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `site_pages`
+--
+ALTER TABLE `site_pages`
+  MODIFY `page_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `transparency_report`
@@ -814,19 +865,19 @@ ALTER TABLE `transparency_report`
 -- AUTO_INCREMENT for table `update_images`
 --
 ALTER TABLE `update_images`
-  MODIFY `image_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `image_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `volunteers`
 --
 ALTER TABLE `volunteers`
-  MODIFY `volunteer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `volunteer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
