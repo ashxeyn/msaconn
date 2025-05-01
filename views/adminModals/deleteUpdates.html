@@ -1,0 +1,24 @@
+<div class="modal fade" id="archiveUpdateModal" tabindex="-1" aria-labelledby="archiveUpdateModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="archiveUpdateForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Archive Organization Update</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to archive this organization update?</p>
+                    <input type="hidden" id="archiveUpdateId">
+                    <div class="mb-3">
+                        <label for="archiveReason" class="form-label">Reason for Archiving</label>
+                        <textarea class="form-control" name="archiveReason" id="archiveReason" rows="3" placeholder="Please provide a reason for archiving this update"></textarea>
+                        <div id="archiveReasonError" class="text-danger"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="confirmArchiveUpdate" class="btn btn-danger">Archive</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

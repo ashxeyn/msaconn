@@ -410,7 +410,7 @@ INSERT INTO `school_years` (`school_year_id`, `school_year`, `is_deleted`, `reas
 -- Table structure for table `system_updates`
 --
 
-CREATE TABLE `system_updates` (
+CREATE TABLE `org_updates` (
   `update_id` int(11) NOT NULL,
   `title` varchar(255) NOT NULL,
   `content` text NOT NULL,

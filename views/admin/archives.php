@@ -18,6 +18,7 @@ $archivedOnline = $adminObj->fetchArchivedStudents('Online');
 $archivedOfficers = $adminObj->fetchArchivedOfficers();
 $archivedVolunteers = $adminObj->fetchArchivedVolunteers();
 $archivedModerators = $adminObj->fetchArchivedModerators();
+$archivedUpdates = $adminObj->fetchArchivedOrgUpdates();
 
 
 ?>
@@ -110,6 +111,12 @@ $archivedModerators = $adminObj->fetchArchivedModerators();
                             <button class="nav-link" id="moderators-tab" data-bs-toggle="tab" data-bs-target="#moderators"
                                     type="button" role="tab" aria-controls="moderators" aria-selected="false">
                                 Moderators
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="archived-updates-tab" data-bs-toggle="tab" data-bs-target="#archived-updates"
+                                    type="button" role="tab" aria-controls="archived-updates" aria-selected="false">
+                                Archived Updates
                             </button>
                         </li>
                     </ul>
@@ -762,6 +769,67 @@ $archivedModerators = $adminObj->fetchArchivedModerators();
                                 </table> 
                             </div>
                         </div>
+                        <div class="tab-pane fade" id="archived-updates" role="tabpanel" aria-labelledby="archived-updates-tab">
+                            <div class="table-responsive">
+                                <table id="archivedUpdatesTab" class="table align-items-center mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Content Preview</th>
+                                            <th>Created By</th>
+                                            <th>Created At</th>
+                                            <th>Images</th>
+                                            <th>Reason</th>
+                                            <th>Deleted At</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if (empty($archivedUpdates)): ?>
+                                            <tr>
+                                                <td colspan="8" class="text-center">No archived updates</td>
+                                            </tr>
+                                        <?php else: ?>
+                                            <?php foreach ($archivedUpdates as $update): ?>
+                                                <tr>
+                                                    <td><?= clean_input($update['title']) ?></td>
+                                                    <td><?= clean_input(substr($update['content'], 0, 50)) . (strlen($update['content']) > 50 ? '...' : '') ?></td>
+                                                    <td><?= clean_input($update['created_by']) ?></td>
+                                                    <td><?= date('M d, Y', strtotime($update['created_at'])) ?></td>
+                                                    <td>
+                                                        <?php if (!empty($update['image_paths'])): ?>
+                                                            <div class="d-flex flex-wrap gap-1" style="max-width: 200px;">
+                                                                <?php 
+                                                                $images = explode('||', $update['image_paths']);
+                                                                foreach ($images as $path): 
+                                                                    if (!empty($path)): ?>
+                                                                        <img src="../../assets/updates/<?= clean_input($path) ?>" 
+                                                                            class="img-thumbnail" 
+                                                                            style="width: 50px; height: 50px; object-fit: cover;"
+                                                                            data-bs-toggle="tooltip" 
+                                                                            data-bs-title="<?= clean_input(basename($path)) ?>">
+                                                                    <?php endif;
+                                                                endforeach; ?>
+                                                            </div>
+                                                        <?php else: ?>
+                                                            No images
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td><?= clean_input($update['reason']) ?></td>
+                                                    <td><?= date('M d, Y h:i A', strtotime($update['deleted_at'])) ?></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-success" 
+                                                                onclick="openUpdateModal('restoreUpdateModal', <?= $update['update_id'] ?>, 'restore')">
+                                                            <i class="fas fa-undo"></i> Restore
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -782,6 +850,7 @@ $archivedModerators = $adminObj->fetchArchivedModerators();
 <?php include_once '../adminModals/restoreOfficer.html'; ?>
 <?php include_once '../adminModals/restoreVolunteer.html'; ?>
 <?php include_once '../adminModals/restoreModerator.html'; ?>
+<?php include_once '../adminModals/restoreUpdates.html'; ?>
 
 <!-- <script>
     $(document).ready(function() {
