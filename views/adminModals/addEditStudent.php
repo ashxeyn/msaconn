@@ -140,7 +140,7 @@ $regionData = [
 
 <div class="modal fade" id="addEditStudentModal" tabindex="-1" aria-labelledby="addEditStudentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form id="studentForm" enctype="multipart/form-data">
+        <form id="studentForm" enctype="multipart/form-data" novalidate>
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalTitle">Add Student</h5>
@@ -169,7 +169,7 @@ $regionData = [
                         <?php if (!$student): ?>
                         <div class="mb-3">
                             <button type="button" class="btn btn-secondary btn-sm" onclick="prevStep()">
-                                <i class="fas fa-arrow-left"></i> Back to Classification
+                                <i class="fas fa-arrow-left"></i> Learning Mode
                             </button>
                         </div>
                         <?php endif; ?>
