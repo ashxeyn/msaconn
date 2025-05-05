@@ -85,6 +85,8 @@ $(document).ready(function() {
     $('#officersTab').DataTable();
     $('#volunteersTab').DataTable();
     $('#archivedUpdatesTab').DataTable();
+    $('#dailyPrayerTable').DataTable();
+    $('#prayerTable').DataTable();
 
 });
 

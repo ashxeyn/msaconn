@@ -8,7 +8,9 @@
 
 /* Modal Base Styles */
 .modal .modal-dialog {
-  margin: 1.75rem auto;
+  margin: 1rem auto;
+  width: 95%;
+  max-width: 600px;
 }
 
 .modal .modal-content {
@@ -23,7 +25,7 @@
 .modal .modal-header {
   background: var(--palestine-black);
   border-bottom: none;
-  padding: 1rem 1.5rem;
+  padding: 1rem;
 }
 
 .modal .modal-title {
@@ -49,7 +51,7 @@
 
 /* Modal Body */
 .modal .modal-body {
-  padding: 1.5rem;
+  padding: 1.25rem;
 }
 
 /* Book Style Layout for Student/Moderator Modals */
@@ -80,6 +82,7 @@
   color: var(--palestine-black);
   font-weight: 500;
   margin-bottom: 0.5rem;
+  display: block;
 }
 
 .modal .form-control,
@@ -89,7 +92,7 @@
   padding: 0.5rem 0.75rem;
   transition: all 0.3s ease;
   width: 100%;
-  height: auto;
+  font-size: 16px;
 }
 
 .modal .form-control:focus,
@@ -120,11 +123,13 @@
 /* Modal Footer */
 .modal .modal-footer {
   border-top: none;
-  padding: 1rem 1.5rem;
+  padding: 1rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  justify-content: flex-end;
+  gap: 0.5rem;
   background-color: var(--palestine-light);
+  flex-wrap: wrap;
 }
 
 /* Back Link Styling */
@@ -158,7 +163,8 @@
   border-radius: 8px;
   font-weight: 500;
   transition: all 0.3s ease;
-  min-width: 100px;
+  min-width: 90px;
+  font-size: 0.9rem;
 }
 
 .modal .modal-footer .btn + .btn {
@@ -174,7 +180,6 @@
 .modal .btn-primary:hover {
   background-color: var(--palestine-hover);
   border-color: var(--palestine-hover);
-  transform: translateY(-1px);
 }
 
 .modal .btn-secondary {
@@ -192,11 +197,6 @@
 .modal .btn-danger {
   background-color: #dc3545;
   border-color: #dc3545;
-}
-
-.modal .btn-danger:hover {
-  background-color: #bb2d3b;
-  border-color: #bb2d3b;
   transform: translateY(-1px);
 }
 

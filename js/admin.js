@@ -723,7 +723,7 @@ function processCalendar(activityId, action) {
     });
 }
 
-// PRAYER FUNCTIONS
+// PRAYER SCHEDULE FUNCTIONS
 function openPrayerModal(modalId, prayerId, action) {
     $('.modal').modal('hide');
     $('.modal-backdrop').remove(); 
@@ -743,57 +743,57 @@ function setPrayerId(prayerId, action) {
             success: function(response) {
                 try {
                     const prayer = JSON.parse(response);
-                    $('#prayerId').val(prayer.prayer_id);
-                    $('#khutbahDate').val(prayer.khutbah_date);
-                    $('#speaker').val(prayer.speaker);
-                    $('#topic').val(prayer.topic);
-                    $('#location').val(prayer.location);
-                    $('#prayerModalTitle').text('Edit Prayer Schedule');
-                    $('#prayerFormSubmit').text('Update Schedule');
+                    $('#editPrayerId').val(prayer.prayer_id);
+                    $('#editDate').val(prayer.date);
+                    $('#editTopic').val(prayer.topic);
+                    $('#editSpeaker').val(prayer.speaker);
+                    $('#editLocation').val(prayer.location);
+                    $('#addEditPrayerModal .modal-title').text('Edit Prayer Schedule');
+                    $('#editPrayerFormSubmit').text('Update Prayer Schedule');
                     clearPrayerValidationErrors();
                     $('#addEditPrayerModal').modal('show');
                 } catch (e) {
                     console.error("Invalid JSON:", response);
-                    alert("Failed to load prayer details.");
+                    alert("Failed to load prayer schedule details.");
                 }
             },
             error: function() {
-                alert("Failed to load prayer details.");
+                alert("Failed to load prayer schedule details.");
             }
         });
 
-        $('#prayerForm').off('submit').on('submit', function(e) {
+        $('#editPrayerForm').off('submit').on('submit', function(e) {
             e.preventDefault();
             if (validatePrayerForm()) {
                 processPrayer(prayerId, 'edit');
             }
         });
     } else if (action === 'add') {
-        $('#prayerForm')[0].reset();
+        $('#editPrayerForm')[0].reset();
         clearPrayerValidationErrors();
-        $('#prayerModalTitle').text('Add Prayer Schedule');
-        $('#prayerFormSubmit').text('Add Schedule');
+        $('#addEditPrayerModal .modal-title').text('Add Prayer Schedule');
+        $('#editPrayerFormSubmit').text('Add Prayer Schedule');
         $('#addEditPrayerModal').modal('show');
 
-        $('#prayerForm').off('submit').on('submit', function(e) {
+        $('#editPrayerForm').off('submit').on('submit', function(e) {
             e.preventDefault();
             if (validatePrayerForm()) {
                 processPrayer(null, 'add');
             }
         });
     } else if (action === 'delete') {
-        $('#archivePrayerId').val(prayerId);
+        $('#deletePrayerId').val(prayerId);
         $('#deletePrayerModal').modal('show');
     
-        $('#confirmArchivePrayer').off('click').on('click', function () {
-            const reason = $('#archiveReason').val().trim();
+        $('#confirmDeletePrayer').off('click').on('click', function () {
+            const reason = $('#deleteReason').val().trim();
             if (reason === '') {
-                $('#archiveReason').addClass('is-invalid');
-                $('#archiveReasonIcon').show();
-                $('#archiveReasonError').text('Please provide a reason for archiving');
+                $('#deleteReason').addClass('is-invalid');
+                $('#deleteReasonIcon').show();
+                $('#deleteReasonError').text('Please provide a reason for archiving');
                 return;
             }
-            $('#archiveReasonError').text('');
+            $('#deleteReasonError').text('');
             processPrayer(prayerId, 'delete');
         });    
     } else if (action === 'restore') {
@@ -811,49 +811,87 @@ function validatePrayerForm() {
     let isValid = true;
     clearPrayerValidationErrors();
 
-    const date = $('#khutbahDate').val().trim();
-    const speaker = $('#speaker').val().trim();
-    const topic = $('#topic').val().trim();
-    const location = $('#location').val().trim();
-
+    const date = $('#editDate').val().trim();
     if (date === '') {
-        $('#khutbahDateError').text('Date is required');
+        $('#editDate').addClass('is-invalid');
+        $('#editDateIcon').show();
+        $('#editDateError').text('Date is required');
         isValid = false;
+    } else {
+        const selectedDate = new Date(date);
+        if (selectedDate.getDay() !== 5) { 
+            $('#editDate').addClass('is-invalid');
+            $('#editDateIcon').show();
+            $('#editDateError').text('Date must be a Friday');
+            isValid = false;
+        } else {
+            $('#editDate').removeClass('is-invalid');
+            $('#editDateIcon').hide();
+            $('#editDateError').text('');
+        }
     }
 
-    if (speaker === '') {
-        $('#speakerError').text('Speaker name is required');
-        isValid = false;
-    }
-
+    const topic = $('#editTopic').val().trim();
     if (topic === '') {
-        $('#topicError').text('Topic is required');
+        $('#editTopic').addClass('is-invalid');
+        $('#editTopicIcon').show();
+        $('#editTopicError').text('Topic is required');
         isValid = false;
+    } else {
+        $('#editTopic').removeClass('is-invalid');
+        $('#editTopicIcon').hide();
+        $('#editTopicError').text('');
     }
 
-    if (location === '') {
-        $('#locationError').text('Location is required');
+    const speaker = $('#editSpeaker').val().trim();
+    if (speaker === '') {
+        $('#editSpeaker').addClass('is-invalid');
+        $('#editSpeakerIcon').show();
+        $('#editSpeakerError').text('Speaker is required');
         isValid = false;
+    } else {
+        $('#editSpeaker').removeClass('is-invalid');
+        $('#editSpeakerIcon').hide();
+        $('#editSpeakerError').text('');
+    }
+
+    const location = $('#editLocation').val().trim();
+    if (location === '') {
+        $('#editLocation').addClass('is-invalid');
+        $('#editLocationIcon').show();
+        $('#editLocationError').text('Location is required');
+        isValid = false;
+    } else {
+        $('#editLocation').removeClass('is-invalid');
+        $('#editLocationIcon').hide();
+        $('#editLocationError').text('');
     }
 
     return isValid;
 }
 
 function clearPrayerValidationErrors() {
-    $('#khutbahDateError').text('');
-    $('#speakerError').text('');
-    $('#topicError').text('');
-    $('#locationError').text('');
-    $('#archiveReasonError').text('');
+    $('#editDateError').text('');
+    $('#editTopicError').text('');
+    $('#editSpeakerError').text('');
+    $('#editLocationError').text('');
+    $('#editDate').removeClass('is-invalid');
+    $('#editTopic').removeClass('is-invalid');
+    $('#editSpeaker').removeClass('is-invalid');
+    $('#editLocation').removeClass('is-invalid');
+    $('#editDateIcon').hide();
+    $('#editTopicIcon').hide();
+    $('#editSpeakerIcon').hide();
+    $('#editLocationIcon').hide();
 }
 
 function processPrayer(prayerId, action) {
     let formData = new FormData();
 
     if (action === 'add' || action === 'edit') {
-        formData = new FormData(document.getElementById('prayerForm'));
+        formData = new FormData(document.getElementById('editPrayerForm'));
     } else if (action === 'delete') {
-        formData.append('reason', $('#archiveReason').val());
+        formData.append('reason', $('#deleteReason').val());
     } else if (action === 'restore') {
         formData.append('prayer_id', $('#restorePrayerId').val());
     }
@@ -4063,6 +4101,221 @@ function processSite(pageId, action) {
                 showToast('Success', 
                     action === 'toggle' ? 'Page status has been updated.' :
                     'Page content has been updated.', 
+                    'success');
+            } else {
+                alert("Failed to process request: " + response);
+            }
+        },
+        error: function() {
+            alert("An error occurred while processing the request.");
+        }
+    });
+}
+
+// DAILY PRAYER FUNCTIONS
+function openDailyPrayerModal(modalId, prayerId, action) {
+    $('.modal').modal('hide');
+    $('.modal-backdrop').remove(); 
+    setTimeout(() => {
+        const modal = $('#' + modalId);
+        modal.modal('show'); 
+        setDailyPrayerId(prayerId, action);
+    }, 300);
+}
+
+function setDailyPrayerId(prayerId, action) {
+    if (action === 'edit') {
+        $.ajax({
+            url: "../../handler/admin/getDailyPrayer.php",
+            type: "GET",
+            data: { prayer_id: prayerId },
+            success: function(response) {
+                try {
+                    const prayer = JSON.parse(response);
+                    $('#editPrayerId').val(prayer.prayer_id);
+                    $('#editPrayerType').val(prayer.prayer_type);
+                    $('#editPrayerDate').val(prayer.date);
+                    $('#editSpeaker').val(prayer.speaker);
+                    $('#editTopic').val(prayer.topic);
+                    $('#editLocation').val(prayer.location);
+                    $('#editDailyPrayerModal .modal-title').text('Edit Prayer Schedule');
+                    $('#editDailyPrayerFormSubmit').text('Update Prayer Schedule');
+                    clearDailyPrayerValidationErrors();
+                    $('#editDailyPrayerModal').modal('show');
+                } catch (e) {
+                    console.error("Invalid JSON:", response);
+                    alert("Failed to load prayer details.");
+                }
+            },
+            error: function() {
+                alert("Failed to load prayer details.");
+            }
+        });
+
+        $('#editDailyPrayerForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateDailyPrayerForm()) {
+                processDailyPrayer(prayerId, 'edit');
+            }
+        });
+    } else if (action === 'add') {
+        $('#editDailyPrayerForm')[0].reset();
+        clearDailyPrayerValidationErrors();
+        $('#editDailyPrayerModal .modal-title').text('Add Prayer Schedule');
+        $('#editDailyPrayerFormSubmit').text('Add Prayer Schedule');
+        $('#editDailyPrayerModal').modal('show');
+
+        $('#editDailyPrayerForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            if (validateDailyPrayerForm()) {
+                processDailyPrayer(null, 'add');
+            }
+        });
+    } else if (action === 'delete') {
+        $('#archivePrayerId').val(prayerId);
+        $('#archiveDailyPrayerModal').modal('show');
+    
+        $('#confirmArchivePrayer').off('click').on('click', function () {
+            const reason = $('#archivePrayerReason').val().trim();
+            if (reason === '') {
+                $('#archivePrayerReason').addClass('is-invalid');
+                $('#archivePrayerReasonIcon').show();
+                $('#archivePrayerReasonError').text('Please provide a reason for archiving');
+                return;
+            }
+            $('#archivePrayerReasonError').text('');
+            processDailyPrayer(prayerId, 'delete');
+        });    
+    } else if (action === 'restore') {
+        $('#restorePrayerId').val(prayerId);
+        $('#restoreDailyPrayerModal').modal('show');
+
+        $('#restoreDailyPrayerForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            processDailyPrayer(prayerId, 'restore');
+        });
+    }
+}
+
+function validateDailyPrayerForm() {
+    let isValid = true;
+    clearDailyPrayerValidationErrors();
+
+    const prayerType = $('#editPrayerType').val().trim();
+    if (prayerType === '') {
+        $('#editPrayerType').addClass('is-invalid');
+        $('#editPrayerTypeIcon').show();
+        $('#editPrayerTypeError').text('Prayer type is required');
+        isValid = false;
+    } else {
+        $('#editPrayerType').removeClass('is-invalid');
+        $('#editPrayerTypeIcon').hide();
+        $('#editPrayerTypeError').text('');
+    }
+
+    const prayerDate = $('#editPrayerDate').val().trim();
+    if (prayerDate === '') {
+        $('#editPrayerDate').addClass('is-invalid');
+        $('#editPrayerDateIcon').show();
+        $('#editPrayerDateError').text('Date is required');
+        isValid = false;
+    } else {
+        $('#editPrayerDate').removeClass('is-invalid');
+        $('#editPrayerDateIcon').hide();
+        $('#editPrayerDateError').text('');
+    }
+
+    const speaker = $('#editSpeaker').val().trim();
+    if (speaker === '') {
+        // If speaker is empty, set it to 'TBA'
+        $('#editSpeaker').val('TBA');
+    }
+
+    const topic = $('#editTopic').val().trim();
+    if (topic === '') {
+        $('#editTopic').addClass('is-invalid');
+        $('#editTopicIcon').show();
+        $('#editTopicError').text('Topic is required');
+        isValid = false;
+    } else {
+        $('#editTopic').removeClass('is-invalid');
+        $('#editTopicIcon').hide();
+        $('#editTopicError').text('');
+    }
+
+    const location = $('#editLocation').val().trim();
+    if (location === '') {
+        $('#editLocation').addClass('is-invalid');
+        $('#editLocationIcon').show();
+        $('#editLocationError').text('Location is required');
+        isValid = false;
+    } else {
+        $('#editLocation').removeClass('is-invalid');
+        $('#editLocationIcon').hide();
+        $('#editLocationError').text('');
+    }
+
+    return isValid;
+}
+
+function clearDailyPrayerValidationErrors() {
+    $('#editPrayerTypeError').text('');
+    $('#editPrayerDateError').text('');
+    $('#editSpeakerError').text('');
+    $('#editTopicError').text('');
+    $('#editLocationError').text('');
+    
+    $('#editPrayerType').removeClass('is-invalid');
+    $('#editPrayerDate').removeClass('is-invalid');
+    $('#editSpeaker').removeClass('is-invalid');
+    $('#editTopic').removeClass('is-invalid');
+    $('#editLocation').removeClass('is-invalid');
+    
+    $('#editPrayerTypeIcon').hide();
+    $('#editPrayerDateIcon').hide();
+    $('#editSpeakerIcon').hide();
+    $('#editTopicIcon').hide();
+    $('#editLocationIcon').hide();
+}
+
+function processDailyPrayer(prayerId, action) {
+    let formData = new FormData();
+
+    if (action === 'add' || action === 'edit') {
+        formData = new FormData(document.getElementById('editDailyPrayerForm'));
+    } else if (action === 'delete') {
+        formData.append('reason', $('#archivePrayerReason').val());
+    } else if (action === 'restore') {
+        formData.append('prayer_id', $('#restorePrayerId').val());
+    }
+
+    if (prayerId) {
+        formData.append('prayer_id', prayerId);
+    }
+    formData.append('action', action);
+
+    $.ajax({
+        url: "../../handler/admin/dailyPrayerAction.php",
+        type: "POST",
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            if (response.trim() === "success") {
+                $(".modal").modal("hide");
+                $("body").removeClass("modal-open");
+                $(".modal-backdrop").remove();
+
+                if (action === 'restore') {
+                    loadArchives(); 
+                } else {
+                    loadDailyPrayerSection(); 
+                }
+
+                showToast('Success', 
+                    action === 'delete' ? 'Prayer schedule has been archived.' :
+                    action === 'restore' ? 'Prayer schedule has been restored.' :
+                    'Prayer schedule has been ' + (action === 'edit' ? 'updated' : 'added') + '.', 
                     'success');
             } else {
                 alert("Failed to process request: " + response);

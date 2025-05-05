@@ -27,7 +27,7 @@ if ($programId) {
 
                     <div class="mb-3">
                         <label for="collegeSelect" class="form-label">Select College</label>
-                        <select class="form-select" id="collegeSelect" name="collegeSelect" required>
+                        <select class="form-select" id="collegeSelect" name="collegeSelect">
                             <option value="">Select College</option>
                             <?php foreach ($colleges as $college): ?>
                                 <option value="<?= $college['college_id'] ?>" <?= ($program && $program['college_id'] == $college['college_id']) ? 'selected' : '' ?>>

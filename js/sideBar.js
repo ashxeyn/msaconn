@@ -236,6 +236,20 @@ function loadPrayerSchedSection() {
     });
 }
 
+function loadDailyPrayerSection() {
+    $.ajax({
+        url: "../admin/dailyPrayer.php",
+        method: 'GET',
+        success: function (response) {
+            $('#contentArea').html(response);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error loading prayer schedule section:', error);
+            $('#contentArea').html('<p class="text-danger">Failed to load Prayer Schedule section. Please try again.</p>');
+        }
+    });
+}
+
 function loadDownloadablesSection() {
     $.ajax({
         url: "../admin/downloadables.php",

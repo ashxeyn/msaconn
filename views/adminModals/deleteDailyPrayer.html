@@ -1,0 +1,25 @@
+<div class="modal fade" id="archiveDailyPrayerModal" tabindex="-1" aria-labelledby="archiveDailyPrayerModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form id="archiveDailyPrayerForm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Archive Prayer Schedule</h5>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to archive this prayer schedule?</p>
+                    <input type="hidden" id="archivePrayerId">
+                    <div class="mb-3">
+                        <label for="archivePrayerReason" class="form-label">Reason for Archiving</label>
+                        <textarea class="form-control" name="archivePrayerReason" id="archivePrayerReason" rows="3" placeholder="Please provide a reason for archiving this prayer schedule"></textarea>
+                        <span class="invalid-icon" id="archivePrayerReasonIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
+                        <div id="archivePrayerReasonError" class="text-danger"></div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" id="confirmArchivePrayer" class="btn btn-danger">Archive</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

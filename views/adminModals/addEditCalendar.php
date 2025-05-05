@@ -10,7 +10,6 @@
                     <div class="mb-3 position-relative">
                         <label for="editActivityDate" class="form-label">Date</label>
                         <input type="date" class="form-control" id="editActivityDate" name="activity_date">
-                        <span class="invalid-icon" id="editActivityDateIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
                         <div id="editActivityDateError" class="text-danger"></div>
                     </div>
                     <div class="mb-3 position-relative">

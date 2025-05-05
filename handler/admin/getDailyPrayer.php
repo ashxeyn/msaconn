@@ -6,7 +6,7 @@ $adminObj = new Admin();
 $prayerId = $_GET['prayer_id'] ?? null;
 
 if ($prayerId) {
-    $prayer = $adminObj->getPrayerById($prayerId);
+    $prayer = $adminObj->getDailyPrayerById($prayerId);
     echo json_encode($prayer);
 } else {
     echo json_encode([]);
