@@ -29,70 +29,70 @@ if ($officerId) {
                     <div class="modal-section flex-fill" style="min-width:300px;">
                         <h6 class="section-title">Personal Information</h6>
                         <div class="mb-3 position-relative">
-                            <label for="editFirstName" class="form-label">First Name </label>
+                        <label for="editFirstName" class="form-label">First Name</label>
                             <input type="text" class="form-control" id="editFirstName" name="firstName" value="<?= $officer['first_name'] ?? '' ?>">
                             <span class="invalid-icon" id="editFirstNameIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
-                            <div id="editFirstNameError" class="text-danger"></div>
-                        </div>
+                        <div id="editFirstNameError" class="text-danger"></div>
+                    </div>
                         <div class="mb-3 position-relative">
-                            <label for="editMiddleName" class="form-label">Middle Name</label>
+                        <label for="editMiddleName" class="form-label">Middle Name</label>
                             <input type="text" class="form-control" id="editMiddleName" name="middleName" value="<?= $officer['middle_name'] ?? '' ?>">
                             <span class="invalid-icon" id="editMiddleNameIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
-                            <div id="editMiddleNameError" class="text-danger"></div>
-                        </div>
+                        <div id="editMiddleNameError" class="text-danger"></div>
+                    </div>
                         <div class="mb-3 position-relative">
-                            <label for="editSurname" class="form-label">Last Name </label>
+                        <label for="editSurname" class="form-label">Surname</label>
                             <input type="text" class="form-control" id="editSurname" name="surname" value="<?= $officer['surname'] ?? '' ?>">
                             <span class="invalid-icon" id="editSurnameIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
-                            <div id="editSurnameError" class="text-danger"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editProgram" class="form-label">Program </label>
-                            <select class="form-select" id="editProgram" name="program">
-                                <option value="">Select Program</option>
-                                <?php foreach ($programs as $program): ?>
+                        <div id="editSurnameError" class="text-danger"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editProgram" class="form-label">Program</label>
+                        <select class="form-select" id="editProgram" name="program">
+                            <option value="">Select Program</option>
+                            <?php foreach ($programs as $program): ?>
                                     <option value="<?= $program['program_id'] ?>" <?= ($officer && $officer['program_id'] == $program['program_id']) ? 'selected' : '' ?>>
-                                        <?= clean_input($program['program_name']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                            <div id="editProgramError" class="text-danger"></div>
-                        </div>
+                                    <?= clean_input($program['program_name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div id="editProgramError" class="text-danger"></div>
+                    </div>
 
                     </div>
                     <!-- Right Column -->
                     <div class="modal-section flex-fill" style="min-width:300px;">
                         <h6 class="section-title">Officer Details</h6>
-                        <div class="mb-3">
-                            <label for="editPosition" class="form-label">Position </label>
-                            <select class="form-select" id="editPosition" name="position">
-                                <option value="">Select Position</option>
-                                <?php foreach ($positions as $position): ?>
+                    <div class="mb-3">
+                        <label for="editPosition" class="form-label">Position</label>
+                        <select class="form-select" id="editPosition" name="position">
+                            <option value="">Select Position</option>
+                            <?php foreach ($positions as $position): ?>
                                     <option value="<?= $position['position_id'] ?>" <?= ($officer && $officer['position_id'] == $position['position_id']) ? 'selected' : '' ?>>
-                                        <?= clean_input($position['position_name']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                            <div id="editPositionError" class="text-danger"></div>
-                        </div>
-                        <div class="mb-3">
-                            <label for="editSchoolYear" class="form-label">School Year </label>
-                            <select class="form-select" id="editSchoolYear" name="schoolYear">
-                                <option value="">Select School Year</option>
-                                <?php foreach ($schoolYears as $schoolYear): ?>
+                                    <?= clean_input($position['position_name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div id="editPositionError" class="text-danger"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editSchoolYear" class="form-label">School Year</label>
+                        <select class="form-select" id="editSchoolYear" name="schoolYear">
+                            <option value="">Select School Year</option>
+                            <?php foreach ($schoolYears as $schoolYear): ?>
                                     <option value="<?= $schoolYear['school_year_id'] ?>" <?= ($officer && $officer['school_year_id'] == $schoolYear['school_year_id']) ? 'selected' : '' ?>>
-                                        <?= clean_input($schoolYear['school_year']) ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                            <div id="editSchoolYearError" class="text-danger"></div>
-                        </div>
+                                    <?= clean_input($schoolYear['school_year']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <div id="editSchoolYearError" class="text-danger"></div>
+                    </div>
                         <div class="mb-3 position-relative">
-                            <label for="editImage" class="form-label">Officer Image</label>
-                            <input class="form-control" type="file" id="editImage" name="image">
+                        <label for="editImage" class="form-label">Officer Image</label>
+                        <input class="form-control" type="file" id="editImage" name="image">
                             <span class="invalid-icon" id="editImageIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
-                            <small class="text-muted">Leave blank to keep current image.</small>
-                            <div id="image-preview" class="mt-2" style="display:none;">
+                        <small class="text-muted">Leave blank to keep current image.</small>
+                        <div id="image-preview" class="mt-2" style="display:none;">
                                 <img id="preview-img" src="<?= $officer && !empty($officer['image']) ? '../../assets/officers/' . $officer['image'] : '' ?>" alt="Officer Image" class="img-thumbnail" width="150">
                             </div>
                             <div id="editImageError" class="text-danger"></div>

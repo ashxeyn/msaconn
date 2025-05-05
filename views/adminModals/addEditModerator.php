@@ -22,7 +22,7 @@ $positions = $accountObj->fetchOfficerPositions();
                     <div class="modal-section">
                         <h6 class="section-title">Personal Information</h6>
                     <div class="mb-3 position-relative">
-                        <label for="editFirstName" class="form-label">First Name </label>
+                        <label for="editFirstName" class="form-label">First Name <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="editFirstName" name="firstName">
                         <span class="invalid-icon" id="editFirstNameIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
                         <div id="editFirstNameError" class="text-danger"></div>
@@ -36,14 +36,14 @@ $positions = $accountObj->fetchOfficerPositions();
                     </div>
 
                     <div class="mb-3 position-relative">
-                        <label for="editLastName" class="form-label">Last Name </label>
+                        <label for="editLastName" class="form-label">Last Name <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="editLastName" name="lastName">
                         <span class="invalid-icon" id="editLastNameIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
                         <div id="editLastNameError" class="text-danger"></div>
                     </div>
 
                     <div class="mb-3">
-                        <label for="editPositionId" class="form-label">Position </label>
+                        <label for="editPositionId" class="form-label">Position <span class="text-danger">*</span></label>
                         <select class="form-select" id="editPositionId" name="positionId">
                             <option value="">Select Position</option>
                             <?php foreach ($positions as $position): ?>
@@ -60,21 +60,21 @@ $positions = $accountObj->fetchOfficerPositions();
                     <div class="modal-section">
                         <h6 class="section-title">Account Information</h6>
                     <div class="mb-3 position-relative">
-                        <label for="editUsername" class="form-label">Username </label>
+                        <label for="editUsername" class="form-label">Username <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="editUsername" name="username">
                         <span class="invalid-icon" id="editUsernameIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
                         <div id="editUsernameError" class="text-danger"></div>
                     </div>
 
                     <div class="mb-3 position-relative">
-                        <label for="editEmail" class="form-label">Email </label>
+                        <label for="editEmail" class="form-label">Email <span class="text-danger">*</span></label>
                         <input type="email" class="form-control" id="editEmail" name="email">
                         <span class="invalid-icon" id="editEmailIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
                         <div id="editEmailError" class="text-danger"></div>
                     </div>
 
                     <div class="mb-3 position-relative" id="passwordContainer">
-                        <label for="editPassword" class="form-label">Password </label>
+                        <label for="editPassword" class="form-label">Password <span class="text-danger">*</span></label>
                         <input type="password" class="form-control" id="editPassword" name="password">
                         <span class="invalid-icon" id="editPasswordIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
                         <div id="editPasswordError" class="text-danger"></div>

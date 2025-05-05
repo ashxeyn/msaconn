@@ -1,14 +1,11 @@
-// Handle dropdown icon state
 document.addEventListener('DOMContentLoaded', function() {
     const selects = document.querySelectorAll('.modal .form-select');
     
     selects.forEach(select => {
-        // Reset icon when dropdown closes
         select.addEventListener('change', function() {
-            this.blur(); // Remove focus to reset icon
+            this.blur(); 
         });
         
-        // Reset icon when clicking outside
         document.addEventListener('click', function(e) {
             if (!select.contains(e.target)) {
                 select.blur();
@@ -87,7 +84,6 @@ function validateProgramForm() {
     let isValid = true;
     clearProgramValidationErrors();
 
-    // Program Name
     const programName = $('#programName').val().trim();
     if (programName === '') {
         $('#programName').addClass('is-invalid');
@@ -100,7 +96,6 @@ function validateProgramForm() {
         $('#programNameError').text('');
     }
 
-    // College (dropdown)
     const collegeSelect = $('#collegeSelect').val();
     if (collegeSelect === '') {
         $('#collegeSelect').addClass('is-invalid');
@@ -170,6 +165,8 @@ function setCollegeId(collegeId, action) {
         $('#confirmDeleteCollege').off('click').on('click', function () {
             const reason = $('#collegeDeleteReason').val().trim();
             if (reason === '') {
+                $('#collegeDeleteReason').addClass('is-invalid');
+                $('#collogeDeleteReasonIcon').show();
                 $('#collegeDeleteReasonError').text('Please provide a reason for deletion');
                 return;
             }
@@ -200,7 +197,6 @@ function validateCollegeForm() {
     let isValid = true;
     clearCollegeValidationErrors();
 
-    // College Name
     const collegeName = $('#collegeName').val().trim();
     if (collegeName === '') {
         $('#collegeName').addClass('is-invalid');
@@ -314,6 +310,8 @@ function setProgramId(programId, action) {
         $('#confirmDeleteProgram').off('click').on('click', function () {
             const reason = $('#programDeleteReason').val().trim();
             if (reason === '') {
+                $('#programDeleteReason').addClass('is-invalid');
+                $('#programDeleteReasonIcon').show();
                 $('#programDeleteReasonError').text('Please provide a reason for deletion');
                 return;
             }
@@ -602,6 +600,8 @@ function setCalendarId(activityId, action) {
         $('#confirmArchiveActivity').off('click').on('click', function () {
             const reason = $('#archiveReason').val().trim();
             if (reason === '') {
+                $('#archiveReason').addClass('is-invalid');
+                $('#archiveReasonIcon').show();
                 $('#archiveReasonError').text('Please provide a reason for archiving');
                 return;
             }
@@ -623,7 +623,6 @@ function validateCalendarForm() {
     let isValid = true;
     clearCalendarValidationErrors();
 
-    // Date
     const activityDate = $('#editActivityDate').val().trim();
     if (activityDate === '') {
         $('#editActivityDate').addClass('is-invalid');
@@ -636,7 +635,6 @@ function validateCalendarForm() {
         $('#editActivityDateError').text('');
     }
 
-    // Title
     const title = $('#editTitle').val().trim();
     if (title === '') {
         $('#editTitle').addClass('is-invalid');
@@ -649,7 +647,6 @@ function validateCalendarForm() {
         $('#editTitleError').text('');
     }
 
-    // Description
     const description = $('#editDescription').val().trim();
     if (description === '') {
         $('#editDescription').addClass('is-invalid');
@@ -791,6 +788,8 @@ function setPrayerId(prayerId, action) {
         $('#confirmArchivePrayer').off('click').on('click', function () {
             const reason = $('#archiveReason').val().trim();
             if (reason === '') {
+                $('#archiveReason').addClass('is-invalid');
+                $('#archiveReasonIcon').show();
                 $('#archiveReasonError').text('Please provide a reason for archiving');
                 return;
             }
@@ -971,6 +970,8 @@ function setTransactionId(reportId, action, transactionType) {
             $('#confirmArchiveCashIn').off('click').on('click', function() {
                 const reason = $('#archiveCashInReason').val().trim();
                 if (reason === '') {
+                    $('#archiveReason').addClass('is-invalid');
+                    $('#archiveReasonIcon').show();
                     $('#archiveCashInReasonError').text('Please provide a reason for archiving');
                     return;
                 }
@@ -984,6 +985,8 @@ function setTransactionId(reportId, action, transactionType) {
             $('#confirmArchiveCashOut').off('click').on('click', function() {
                 const reason = $('#archiveCashOutReason').val().trim();
                 if (reason === '') {
+                    $('#archiveReason').addClass('is-invalid');
+                    $('#archiveReasonIcon').show();
                     $('#archiveCashOutReasonError').text('Please provide a reason for archiving');
                     return;
                 }
@@ -1037,7 +1040,6 @@ function validateCashForm(type) {
     let isValid = true;
     clearCashValidationErrors(type);
 
-    // Date
     const date = $(`#cash${type}Date`).val().trim();
     if (date === '') {
         $(`#cash${type}Date`).addClass('is-invalid');
@@ -1050,7 +1052,6 @@ function validateCashForm(type) {
         $(`#cash${type}DateError`).text('');
     }
 
-    // Detail
     const detail = $(`#cash${type}Detail`).val().trim();
     if (detail === '') {
         $(`#cash${type}Detail`).addClass('is-invalid');
@@ -1063,7 +1064,6 @@ function validateCashForm(type) {
         $(`#cash${type}DetailError`).text('');
     }
 
-    // Category
     const category = $(`#cash${type}Category`).val().trim();
     if (category === '') {
         $(`#cash${type}Category`).addClass('is-invalid');
@@ -1076,7 +1076,6 @@ function validateCashForm(type) {
         $(`#cash${type}CategoryError`).text('');
     }
 
-    // Amount
     const amount = $(`#cash${type}Amount`).val().trim();
     if (amount === '') {
         $(`#cash${type}Amount`).addClass('is-invalid');
@@ -1094,7 +1093,6 @@ function validateCashForm(type) {
         $(`#cash${type}AmountError`).text('');
     }
 
-    // Semester (dropdown)
     const semester = $(`#cash${type}Semester`).val();
     if (!semester) {
         $(`#cash${type}Semester`).addClass('is-invalid');
@@ -1213,13 +1211,12 @@ function initDatepickers() {
         format: 'yyyy-mm-dd',
         autoclose: true,
         todayHighlight: true,
-        zIndexOffset: 1000 // Fix for calendar being behind the navbar
+        zIndexOffset: 1000 
     });
 }
 
 // Transparency Filter Functions
 $(document).ready(function() {
-    // Initialize datepickers
     initDatepickers();
     
     $(document).on('change', '.filter-control, .filter-date', function() {
@@ -1329,6 +1326,8 @@ function setFaqId(faqId, action) {
         $('#confirmArchiveFaq').off('click').on('click', function () {
             const reason = $('#archiveReason').val().trim();
             if (reason === '') {
+                $('#archiveReason').addClass('is-invalid');
+                $('#archiveReasonIcon').show();
                 $('#archiveReasonError').text('Please provide a reason for archiving');
                 return;
             }
@@ -1354,7 +1353,6 @@ function validateFaqForm() {
     const answer = $('#editAnswer').val().trim();
     const category = $('#editCategory').val();
 
-    // Question
     if (question === '') {
         $('#editQuestion').addClass('is-invalid');
         $('#editQuestionIcon').show();
@@ -1366,7 +1364,6 @@ function validateFaqForm() {
         $('#editQuestionError').text('');
     }
 
-    // Answer
     if (answer === '') {
         $('#editAnswer').addClass('is-invalid');
         $('#editAnswerIcon').show();
@@ -1378,7 +1375,6 @@ function validateFaqForm() {
         $('#editAnswerError').text('');
     }
 
-    // Category (dropdown)
     if (category === '') {
         $('#editCategory').addClass('is-invalid');
         $('#editCategoryError').text('Category is required');
@@ -1521,6 +1517,8 @@ function setAboutId(aboutId, action) {
         $('#confirmArchiveAbout').off('click').on('click', function () {
             const reason = $('#archiveReason').val().trim();
             if (reason === '') {
+                $('#archiveReason').addClass('is-invalid');
+                $('#archiveReasonIcon').show();
                 $('#archiveReasonError').text('Please provide a reason for archiving');
                 return;
             }
@@ -1545,7 +1543,6 @@ function validateAboutForm() {
     const mission = $('#editMission').val().trim();
     const vision = $('#editVision').val().trim();
 
-    // Mission
     if (mission === '') {
         $('#editMission').addClass('is-invalid');
         $('#editMissionIcon').show();
@@ -1557,7 +1554,6 @@ function validateAboutForm() {
         $('#editMissionError').text('');
     }
 
-    // Vision
     if (vision === '') {
         $('#editVision').addClass('is-invalid');
         $('#editVisionIcon').show();
@@ -1708,6 +1704,8 @@ function setFileId(fileId, action) {
         $('#confirmArchiveFile').off('click').on('click', function () {
             const reason = $('#archiveReason').val().trim();
             if (reason === '') {
+                $('#archiveReason').addClass('is-invalid');
+                $('#archiveReasonIcon').show();
                 $('#archiveReasonError').text('Please provide a reason for archiving');
                 return;
             }
@@ -1733,7 +1731,6 @@ function validateFileForm() {
     const fileInput = $('#editFile')[0];
     const isEdit = $('#editFileId').val() !== "";
 
-    // Validate file name
     if (fileName === '') {
         $('#editFileName').addClass('is-invalid');
         $('#editFileNameIcon').show();
@@ -1744,7 +1741,6 @@ function validateFileForm() {
         $('#editFileNameIcon').hide();
     }
 
-    // Validate file input for new files
     if (!isEdit) {
         if (fileInput.files.length === 0) {
             $('#editFile').addClass('is-invalid');
@@ -1944,6 +1940,7 @@ function setStudentId(studentId, action) {
             
             if (!reason) {
                 $('#archiveReason').addClass('is-invalid');
+                $('#studentDeleteReasonIcon').show();
                 $('#archiveReasonError').text('Please provide a reason for archiving');
                 return;
             }
@@ -2533,6 +2530,8 @@ function setOfficerId(officerId, action) {
         $('#confirmArchiveOfficer').off('click').on('click', function () {
             const reason = $('#archiveReason').val().trim();
             if (reason === '') {
+                $('#archiveReason').addClass('is-invalid');
+                $('#archiveReasonIcon').show();
                 $('#archiveReasonError').text('Please provide a reason for archiving');
                 return;
             }
@@ -2562,7 +2561,6 @@ function validateOfficerForm() {
     const imageInput = $('#editImage')[0];
     const isEdit = $('#editOfficerId').val() !== "";
 
-    // First Name
     if (firstName === '') {
         $('#editFirstNameError').text('First name is required');
         $('#editFirstName').addClass('is-invalid');
@@ -2573,7 +2571,6 @@ function validateOfficerForm() {
         $('#editFirstNameIcon').hide();
     }
 
-    // Surname
     if (surname === '') {
         $('#editSurnameError').text('Surname is required');
         $('#editSurname').addClass('is-invalid');
@@ -2584,7 +2581,6 @@ function validateOfficerForm() {
         $('#editSurnameIcon').hide();
     }
 
-    // Program (dropdown)
     if (program === '') {
         $('#editProgramError').text('Program is required');
         $('#editProgram').addClass('is-invalid');
@@ -2593,7 +2589,6 @@ function validateOfficerForm() {
         $('#editProgram').removeClass('is-invalid');
     }
 
-    // Position (dropdown)
     if (position === '') {
         $('#editPositionError').text('Position is required');
         $('#editPosition').addClass('is-invalid');
@@ -2602,7 +2597,6 @@ function validateOfficerForm() {
         $('#editPosition').removeClass('is-invalid');
     }
 
-    // School Year (dropdown)
     if (schoolYear === '') {
         $('#editSchoolYearError').text('School year is required');
         $('#editSchoolYear').addClass('is-invalid');
@@ -2611,7 +2605,6 @@ function validateOfficerForm() {
         $('#editSchoolYear').removeClass('is-invalid');
     }
 
-    // Image (file input, only for add)
     if (!isEdit && imageInput && imageInput.files.length === 0) {
         $('#editImageError').text('Officer image is required');
         $('#editImage').addClass('is-invalid');
@@ -2634,7 +2627,6 @@ function clearValidationErrors() {
     $('#editSchoolYearError').text('');
     $('#archiveReasonError').text('');
 
-    // Remove error classes and hide icons
     $('#editFirstName').removeClass('is-invalid');
     $('#editFirstNameIcon').hide();
     $('#editSurname').removeClass('is-invalid');
@@ -2774,6 +2766,8 @@ function setVolunteerId(volunteerId, action) {
         $('#confirmArchiveVolunteer').off('click').on('click', function () {
             const reason = $('#archiveReason').val().trim();
             if (reason === '') {
+                $('#archiveReason').addClass('is-invalid');
+                $('#archiveReasonIcon').show();
                 $('#archiveReasonError').text('Please provide a reason for archiving');
                 return;
             }
@@ -3081,6 +3075,8 @@ function setModeratorId(moderatorId, action) {
         $('#confirmArchiveModerator').off('click').on('click', function() {
             const reason = $('#archiveReason').val().trim();
             if (reason === '') {
+                $('#archiveReason').addClass('is-invalid');
+                $('#archiveReasonIcon').show();
                 $('#archiveReasonError').text('Please provide a reason for archiving');
                 return;
             }
@@ -3109,7 +3105,6 @@ function validateModeratorForm(isAdd = false) {
     const positionId = $('#editPositionId').val().trim();
     const password = $('#editPassword').val() ? $('#editPassword').val().trim() : '';
 
-    // First Name
     if (firstName === '') {
         $('#editFirstNameError').text('First name is required');
         $('#editFirstName').addClass('is-invalid');
@@ -3120,7 +3115,6 @@ function validateModeratorForm(isAdd = false) {
         $('#editFirstNameIcon').hide();
     }
 
-    // Last Name
     if (lastName === '') {
         $('#editLastNameError').text('Last name is required');
         $('#editLastName').addClass('is-invalid');
@@ -3131,7 +3125,6 @@ function validateModeratorForm(isAdd = false) {
         $('#editLastNameIcon').hide();
     }
 
-    // Username
     if (username === '') {
         $('#editUsernameError').text('Username is required');
         $('#editUsername').addClass('is-invalid');
@@ -3142,7 +3135,6 @@ function validateModeratorForm(isAdd = false) {
         $('#editUsernameIcon').hide();
     }
 
-    // Email
     if (email === '') {
         $('#editEmailError').text('Email is required');
         $('#editEmail').addClass('is-invalid');
@@ -3158,7 +3150,6 @@ function validateModeratorForm(isAdd = false) {
         $('#editEmailIcon').hide();
     }
 
-    // Position (dropdown)
     if (positionId === '') {
         $('#editPositionIdError').text('Position is required');
         $('#editPositionId').addClass('is-invalid');
@@ -3167,7 +3158,6 @@ function validateModeratorForm(isAdd = false) {
         $('#editPositionId').removeClass('is-invalid');
     }
 
-    // Password (only for add)
     if (isAdd) {
         if (password === '') {
             $('#editPasswordError').text('Password is required');
@@ -3482,6 +3472,8 @@ function setUpdateId(updateId, action) {
         $('#confirmArchiveUpdate').off('click').on('click', function () {
             const reason = $('#archiveReason').val().trim();
             if (reason === '') {
+                $('#archiveReason').addClass('is-invalid');
+                $('#archiveReasonIcon').show();
                 $('#archiveReasonError').text('Please provide a reason for archiving');
                 return;
             }
@@ -3503,7 +3495,6 @@ function validateUpdateForm(action) {
     let isValid = true;
     clearUpdateValidationErrors();
 
-    // Title
     const title = $('#editTitle').val().trim();
     if (title === '') {
         $('#editTitle').addClass('is-invalid');
@@ -3516,7 +3507,6 @@ function validateUpdateForm(action) {
         $('#editTitleError').text('');
     }
 
-    // Content
     const content = $('#editContent').val().trim();
     if (content === '') {
         $('#editContent').addClass('is-invalid');
@@ -3529,7 +3519,6 @@ function validateUpdateForm(action) {
         $('#editContentError').text('');
     }
 
-    // Images (file input)
     const imagesInput = $('#editImages')[0];
     const hasSelectedImages = $('#selectedImagesPreview .selected-image').length > 0;
     if (action === 'add' && !hasSelectedImages && imagesInput.files.length === 0) {
@@ -3695,6 +3684,8 @@ function setPositionId(positionId, action) {
         $('#confirmArchivePosition').off('click').on('click', function () {
             const reason = $('#archiveReason').val().trim();
             if (reason === '') {
+                $('#archiveReason').addClass('is-invalid');
+                $('#archiveReasonIcon').show();
                 $('#archiveReasonError').text('Please provide a reason for archiving');
                 return;
             }
@@ -3716,7 +3707,6 @@ function validatePositionForm() {
     let isValid = true;
     clearPositionValidationErrors();
 
-    // Position Name
     const positionName = $('#editPositionName').val().trim();
     if (positionName === '') {
         $('#editPositionName').addClass('is-invalid');
@@ -3855,6 +3845,8 @@ function setSchoolYearId(schoolYearId, action) {
         $('#confirmArchiveSchoolYear').off('click').on('click', function () {
             const reason = $('#archiveReason').val().trim();
             if (reason === '') {
+                $('#archiveReason').addClass('is-invalid');
+                $('#archiveReasonIcon').show();
                 $('#archiveReasonError').text('Please provide a reason for archiving');
                 return;
             }
@@ -3997,7 +3989,6 @@ function setSitePageId(pageId, action, isActive) {
     } else if (action === 'toggle') {
         $('#toggleSiteId').val(pageId);
         
-        // Update modal text based on current status
         if (isActive) {
             $('#toggleSiteTitle').text('Deactivate Page');
             $('#toggleSiteMessage').text('Are you sure you want to deactivate this page? It will be hidden from the website.');
