@@ -1,3 +1,22 @@
+// Handle dropdown icon state
+document.addEventListener('DOMContentLoaded', function() {
+    const selects = document.querySelectorAll('.modal .form-select');
+    
+    selects.forEach(select => {
+        // Reset icon when dropdown closes
+        select.addEventListener('change', function() {
+            this.blur(); // Remove focus to reset icon
+        });
+        
+        // Reset icon when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!select.contains(e.target)) {
+                select.blur();
+            }
+        });
+    });
+});
+
 // GENERAL FUNCTIONS
 function previewImage(event) {
     const file = event.target.files[0];
@@ -66,21 +85,41 @@ function showToast(title, message, type) {
 // SCHOOL CONFIG FUNCTIONS
 function validateProgramForm() {
     let isValid = true;
-    clearValidationErrors();
-    
+    clearProgramValidationErrors();
+
+    // Program Name
     const programName = $('#programName').val().trim();
     if (programName === '') {
+        $('#programName').addClass('is-invalid');
+        $('#programNameIcon').show();
         $('#programNameError').text('Program name is required');
         isValid = false;
+    } else {
+        $('#programName').removeClass('is-invalid');
+        $('#programNameIcon').hide();
+        $('#programNameError').text('');
     }
-    
+
+    // College (dropdown)
     const collegeSelect = $('#collegeSelect').val();
     if (collegeSelect === '') {
+        $('#collegeSelect').addClass('is-invalid');
         $('#collegeSelectError').text('Please select a college');
         isValid = false;
+    } else {
+        $('#collegeSelect').removeClass('is-invalid');
+        $('#collegeSelectError').text('');
     }
-    
+
     return isValid;
+}
+
+function clearProgramValidationErrors() {
+    $('#programNameError').text('');
+    $('#collegeSelectError').text('');
+    $('#programName').removeClass('is-invalid');
+    $('#collegeSelect').removeClass('is-invalid');
+    $('#programNameIcon').hide();
 }
 
 function openCollegeModal(modalId, collegeId, action) {
@@ -159,15 +198,28 @@ function setCollegeId(collegeId, action) {
 
 function validateCollegeForm() {
     let isValid = true;
-    clearValidationErrors();
-    
+    clearCollegeValidationErrors();
+
+    // College Name
     const collegeName = $('#collegeName').val().trim();
     if (collegeName === '') {
+        $('#collegeName').addClass('is-invalid');
+        $('#collegeNameIcon').show();
         $('#collegeNameError').text('College name is required');
         isValid = false;
+    } else {
+        $('#collegeName').removeClass('is-invalid');
+        $('#collegeNameIcon').hide();
+        $('#collegeNameError').text('');
     }
-    
+
     return isValid;
+}
+
+function clearCollegeValidationErrors() {
+    $('#collegeNameError').text('');
+    $('#collegeName').removeClass('is-invalid');
+    $('#collegeNameIcon').hide();
 }
 
 function processCollege(collegeId, action) {
@@ -571,23 +623,43 @@ function validateCalendarForm() {
     let isValid = true;
     clearCalendarValidationErrors();
 
+    // Date
     const activityDate = $('#editActivityDate').val().trim();
-    const title = $('#editTitle').val().trim();
-    const description = $('#editDescription').val().trim();
-
     if (activityDate === '') {
+        $('#editActivityDate').addClass('is-invalid');
+        $('#editActivityDateIcon').show();
         $('#editActivityDateError').text('Activity date is required');
         isValid = false;
+    } else {
+        $('#editActivityDate').removeClass('is-invalid');
+        $('#editActivityDateIcon').hide();
+        $('#editActivityDateError').text('');
     }
 
+    // Title
+    const title = $('#editTitle').val().trim();
     if (title === '') {
+        $('#editTitle').addClass('is-invalid');
+        $('#editTitleIcon').show();
         $('#editTitleError').text('Title is required');
         isValid = false;
+    } else {
+        $('#editTitle').removeClass('is-invalid');
+        $('#editTitleIcon').hide();
+        $('#editTitleError').text('');
     }
 
+    // Description
+    const description = $('#editDescription').val().trim();
     if (description === '') {
+        $('#editDescription').addClass('is-invalid');
+        $('#editDescriptionIcon').show();
         $('#editDescriptionError').text('Description is required');
         isValid = false;
+    } else {
+        $('#editDescription').removeClass('is-invalid');
+        $('#editDescriptionIcon').hide();
+        $('#editDescriptionError').text('');
     }
 
     return isValid;
@@ -597,7 +669,12 @@ function clearCalendarValidationErrors() {
     $('#editActivityDateError').text('');
     $('#editTitleError').text('');
     $('#editDescriptionError').text('');
-    $('#archiveReasonError').text('');
+    $('#editActivityDate').removeClass('is-invalid');
+    $('#editTitle').removeClass('is-invalid');
+    $('#editDescription').removeClass('is-invalid');
+    $('#editActivityDateIcon').hide();
+    $('#editTitleIcon').hide();
+    $('#editDescriptionIcon').hide();
 }
 
 function processCalendar(activityId, action) {
@@ -958,36 +1035,94 @@ function setTransactionId(reportId, action, transactionType) {
 
 function validateCashForm(type) {
     let isValid = true;
-    clearTransactionValidationErrors();
-    
+    clearCashValidationErrors(type);
+
+    // Date
     const date = $(`#cash${type}Date`).val().trim();
     if (date === '') {
+        $(`#cash${type}Date`).addClass('is-invalid');
+        $(`#cash${type}DateIcon`).show();
         $(`#cash${type}DateError`).text('Date is required');
         isValid = false;
+    } else {
+        $(`#cash${type}Date`).removeClass('is-invalid');
+        $(`#cash${type}DateIcon`).hide();
+        $(`#cash${type}DateError`).text('');
     }
-    
+
+    // Detail
     const detail = $(`#cash${type}Detail`).val().trim();
     if (detail === '') {
+        $(`#cash${type}Detail`).addClass('is-invalid');
+        $(`#cash${type}DetailIcon`).show();
         $(`#cash${type}DetailError`).text('Detail is required');
         isValid = false;
+    } else {
+        $(`#cash${type}Detail`).removeClass('is-invalid');
+        $(`#cash${type}DetailIcon`).hide();
+        $(`#cash${type}DetailError`).text('');
     }
-    
+
+    // Category
     const category = $(`#cash${type}Category`).val().trim();
     if (category === '') {
+        $(`#cash${type}Category`).addClass('is-invalid');
+        $(`#cash${type}CategoryIcon`).show();
         $(`#cash${type}CategoryError`).text('Category is required');
         isValid = false;
+    } else {
+        $(`#cash${type}Category`).removeClass('is-invalid');
+        $(`#cash${type}CategoryIcon`).hide();
+        $(`#cash${type}CategoryError`).text('');
     }
-    
+
+    // Amount
     const amount = $(`#cash${type}Amount`).val().trim();
     if (amount === '') {
+        $(`#cash${type}Amount`).addClass('is-invalid');
+        $(`#cash${type}AmountIcon`).show();
         $(`#cash${type}AmountError`).text('Amount is required');
         isValid = false;
     } else if (parseFloat(amount) <= 0) {
+        $(`#cash${type}Amount`).addClass('is-invalid');
+        $(`#cash${type}AmountIcon`).show();
         $(`#cash${type}AmountError`).text('Amount must be greater than zero');
         isValid = false;
+    } else {
+        $(`#cash${type}Amount`).removeClass('is-invalid');
+        $(`#cash${type}AmountIcon`).hide();
+        $(`#cash${type}AmountError`).text('');
     }
-    
+
+    // Semester (dropdown)
+    const semester = $(`#cash${type}Semester`).val();
+    if (!semester) {
+        $(`#cash${type}Semester`).addClass('is-invalid');
+        $(`#cash${type}Semester`).siblings('.invalid-feedback, .text-danger').text('Semester is required');
+        isValid = false;
+    } else {
+        $(`#cash${type}Semester`).removeClass('is-invalid');
+        $(`#cash${type}Semester`).siblings('.invalid-feedback, .text-danger').text('');
+    }
+
     return isValid;
+}
+
+function clearCashValidationErrors(type) {
+    $(`#cash${type}DateError`).text('');
+    $(`#cash${type}DetailError`).text('');
+    $(`#cash${type}CategoryError`).text('');
+    $(`#cash${type}AmountError`).text('');
+    $(`#cash${type}Date`).removeClass('is-invalid');
+    $(`#cash${type}Detail`).removeClass('is-invalid');
+    $(`#cash${type}Category`).removeClass('is-invalid');
+    $(`#cash${type}Amount`).removeClass('is-invalid');
+    $(`#cash${type}DateIcon`).hide();
+    $(`#cash${type}DetailIcon`).hide();
+    $(`#cash${type}CategoryIcon`).hide();
+    $(`#cash${type}AmountIcon`).hide();
+    $(`#cash${type}Semester`).removeClass('is-invalid');
+    $(`#cash${type}Semester`).siblings('.invalid-feedback, .text-danger').text('');
 }
 
 function clearTransactionValidationErrors() {
@@ -1213,28 +1348,58 @@ function setFaqId(faqId, action) {
 
 function validateFaqForm() {
     let isValid = true;
-    clearValidationErrors();
+    clearFaqValidationErrors();
 
     const question = $('#editQuestion').val().trim();
     const answer = $('#editAnswer').val().trim();
     const category = $('#editCategory').val();
 
+    // Question
     if (question === '') {
+        $('#editQuestion').addClass('is-invalid');
+        $('#editQuestionIcon').show();
         $('#editQuestionError').text('Question is required');
         isValid = false;
+    } else {
+        $('#editQuestion').removeClass('is-invalid');
+        $('#editQuestionIcon').hide();
+        $('#editQuestionError').text('');
     }
 
+    // Answer
     if (answer === '') {
+        $('#editAnswer').addClass('is-invalid');
+        $('#editAnswerIcon').show();
         $('#editAnswerError').text('Answer is required');
         isValid = false;
+    } else {
+        $('#editAnswer').removeClass('is-invalid');
+        $('#editAnswerIcon').hide();
+        $('#editAnswerError').text('');
     }
 
+    // Category (dropdown)
     if (category === '') {
+        $('#editCategory').addClass('is-invalid');
         $('#editCategoryError').text('Category is required');
         isValid = false;
+    } else {
+        $('#editCategory').removeClass('is-invalid');
+        $('#editCategoryError').text('');
     }
 
     return isValid;
+}
+
+function clearFaqValidationErrors() {
+    $('#editQuestionError').text('');
+    $('#editAnswerError').text('');
+    $('#editCategoryError').text('');
+    $('#editQuestion').removeClass('is-invalid');
+    $('#editAnswer').removeClass('is-invalid');
+    $('#editCategory').removeClass('is-invalid');
+    $('#editQuestionIcon').hide();
+    $('#editAnswerIcon').hide();
 }
 
 function clearValidationErrors() {
@@ -1375,28 +1540,45 @@ function setAboutId(aboutId, action) {
 
 function validateAboutForm() {
     let isValid = true;
-    clearValidationErrors();
+    clearAboutValidationErrors();
 
     const mission = $('#editMission').val().trim();
     const vision = $('#editVision').val().trim();
 
+    // Mission
     if (mission === '') {
+        $('#editMission').addClass('is-invalid');
+        $('#editMissionIcon').show();
         $('#editMissionError').text('Mission statement is required');
         isValid = false;
+    } else {
+        $('#editMission').removeClass('is-invalid');
+        $('#editMissionIcon').hide();
+        $('#editMissionError').text('');
     }
 
+    // Vision
     if (vision === '') {
+        $('#editVision').addClass('is-invalid');
+        $('#editVisionIcon').show();
         $('#editVisionError').text('Vision statement is required');
         isValid = false;
+    } else {
+        $('#editVision').removeClass('is-invalid');
+        $('#editVisionIcon').hide();
+        $('#editVisionError').text('');
     }
 
     return isValid;
 }
 
-function clearValidationErrors() {
+function clearAboutValidationErrors() {
     $('#editMissionError').text('');
     $('#editVisionError').text('');
-    $('#archiveReasonError').text('');
+    $('#editMission').removeClass('is-invalid');
+    $('#editVision').removeClass('is-invalid');
+    $('#editMissionIcon').hide();
+    $('#editVisionIcon').hide();
 }
 
 function processAbout(aboutId, action) {
@@ -1451,9 +1633,10 @@ function processAbout(aboutId, action) {
 // DOWNLOADS FUNCTIONS
 function openFileModal(modalId, fileId, action) {
     $('.modal').modal('hide');
-    $('.modal-backdrop').remove(); 
+    $('.modal-backdrop').remove();
     setTimeout(() => {
         const modal = $('#' + modalId);
+        modal.modal('show');
         modal.modal('show'); 
         setFileId(fileId, action);
     }, 300);
@@ -1550,15 +1733,38 @@ function validateFileForm() {
     const fileInput = $('#editFile')[0];
     const isEdit = $('#editFileId').val() !== "";
 
+    // Validate file name
     if (fileName === '') {
+        $('#editFileName').addClass('is-invalid');
+        $('#editFileNameIcon').show();
         $('#editFileNameError').text('File name is required');
         isValid = false;
+    } else {
+        $('#editFileName').removeClass('is-invalid');
+        $('#editFileNameIcon').hide();
     }
 
+    // Validate file input for new files
     if (!isEdit) {
         if (fileInput.files.length === 0) {
+            $('#editFile').addClass('is-invalid');
+            $('#editFileIcon').show();
             $('#editFileError').text('File is required');
             isValid = false;
+        } else {
+            const file = fileInput.files[0];
+            const fileType = file.type;
+            const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+            
+            if (!validTypes.includes(fileType)) {
+                $('#editFile').addClass('is-invalid');
+                $('#editFileIcon').show();
+                $('#editFileError').text('Only PDF and DOCX files are allowed');
+                isValid = false;
+            } else {
+                $('#editFile').removeClass('is-invalid');
+                $('#editFileIcon').hide();
+            }
         }
     }
 
@@ -2356,29 +2562,64 @@ function validateOfficerForm() {
     const imageInput = $('#editImage')[0];
     const isEdit = $('#editOfficerId').val() !== "";
 
+    // First Name
     if (firstName === '') {
         $('#editFirstNameError').text('First name is required');
+        $('#editFirstName').addClass('is-invalid');
+        $('#editFirstNameIcon').show();
         isValid = false;
+    } else {
+        $('#editFirstName').removeClass('is-invalid');
+        $('#editFirstNameIcon').hide();
     }
 
+    // Surname
     if (surname === '') {
         $('#editSurnameError').text('Surname is required');
+        $('#editSurname').addClass('is-invalid');
+        $('#editSurnameIcon').show();
         isValid = false;
+    } else {
+        $('#editSurname').removeClass('is-invalid');
+        $('#editSurnameIcon').hide();
     }
 
-    if (position === '') {
-        $('#editPositionError').text('Position is required');
-        isValid = false;
-    }
-
+    // Program (dropdown)
     if (program === '') {
         $('#editProgramError').text('Program is required');
+        $('#editProgram').addClass('is-invalid');
         isValid = false;
+    } else {
+        $('#editProgram').removeClass('is-invalid');
     }
 
+    // Position (dropdown)
+    if (position === '') {
+        $('#editPositionError').text('Position is required');
+        $('#editPosition').addClass('is-invalid');
+        isValid = false;
+    } else {
+        $('#editPosition').removeClass('is-invalid');
+    }
+
+    // School Year (dropdown)
     if (schoolYear === '') {
         $('#editSchoolYearError').text('School year is required');
+        $('#editSchoolYear').addClass('is-invalid');
         isValid = false;
+    } else {
+        $('#editSchoolYear').removeClass('is-invalid');
+    }
+
+    // Image (file input, only for add)
+    if (!isEdit && imageInput && imageInput.files.length === 0) {
+        $('#editImageError').text('Officer image is required');
+        $('#editImage').addClass('is-invalid');
+        $('#editImageIcon').show();
+        isValid = false;
+    } else {
+        $('#editImage').removeClass('is-invalid');
+        $('#editImageIcon').hide();
     }
 
     return isValid;
@@ -2392,6 +2633,17 @@ function clearValidationErrors() {
     $('#editProgramError').text('');
     $('#editSchoolYearError').text('');
     $('#archiveReasonError').text('');
+
+    // Remove error classes and hide icons
+    $('#editFirstName').removeClass('is-invalid');
+    $('#editFirstNameIcon').hide();
+    $('#editSurname').removeClass('is-invalid');
+    $('#editSurnameIcon').hide();
+    $('#editProgram').removeClass('is-invalid');
+    $('#editPosition').removeClass('is-invalid');
+    $('#editSchoolYear').removeClass('is-invalid');
+    $('#editImage').removeClass('is-invalid');
+    $('#editImageIcon').hide();
 }
 
 function processOfficer(officerId, action) {
@@ -2855,46 +3107,85 @@ function validateModeratorForm(isAdd = false) {
     const username = $('#editUsername').val().trim();
     const email = $('#editEmail').val().trim();
     const positionId = $('#editPositionId').val().trim();
+    const password = $('#editPassword').val() ? $('#editPassword').val().trim() : '';
 
+    // First Name
     if (firstName === '') {
         $('#editFirstNameError').text('First name is required');
+        $('#editFirstName').addClass('is-invalid');
+        $('#editFirstNameIcon').show();
         isValid = false;
+    } else {
+        $('#editFirstName').removeClass('is-invalid');
+        $('#editFirstNameIcon').hide();
     }
 
+    // Last Name
     if (lastName === '') {
         $('#editLastNameError').text('Last name is required');
+        $('#editLastName').addClass('is-invalid');
+        $('#editLastNameIcon').show();
         isValid = false;
+    } else {
+        $('#editLastName').removeClass('is-invalid');
+        $('#editLastNameIcon').hide();
     }
 
+    // Username
     if (username === '') {
         $('#editUsernameError').text('Username is required');
+        $('#editUsername').addClass('is-invalid');
+        $('#editUsernameIcon').show();
         isValid = false;
+    } else {
+        $('#editUsername').removeClass('is-invalid');
+        $('#editUsernameIcon').hide();
     }
 
+    // Email
     if (email === '') {
         $('#editEmailError').text('Email is required');
+        $('#editEmail').addClass('is-invalid');
+        $('#editEmailIcon').show();
         isValid = false;
-    } 
-    
-    else if (!isValidEmail(email)) {
+    } else if (!isValidEmail(email)) {
         $('#editEmailError').text('Invalid email format');
+        $('#editEmail').addClass('is-invalid');
+        $('#editEmailIcon').show();
         isValid = false;
+    } else {
+        $('#editEmail').removeClass('is-invalid');
+        $('#editEmailIcon').hide();
     }
 
+    // Position (dropdown)
     if (positionId === '') {
         $('#editPositionIdError').text('Position is required');
+        $('#editPositionId').addClass('is-invalid');
         isValid = false;
+    } else {
+        $('#editPositionId').removeClass('is-invalid');
     }
 
+    // Password (only for add)
     if (isAdd) {
-        const password = $('#editPassword').val().trim();
         if (password === '') {
             $('#editPasswordError').text('Password is required');
+            $('#editPassword').addClass('is-invalid');
+            $('#editPasswordIcon').show();
             isValid = false;
         } else if (password.length < 8) {
             $('#editPasswordError').text('Password must be at least 8 characters');
+            $('#editPassword').addClass('is-invalid');
+            $('#editPasswordIcon').show();
             isValid = false;
+        } else {
+            $('#editPassword').removeClass('is-invalid');
+            $('#editPasswordIcon').hide();
         }
+    } else {
+        $('#editPassword').removeClass('is-invalid');
+        $('#editPasswordIcon').hide();
     }
 
     return isValid;
@@ -2907,6 +3198,17 @@ function isValidEmail(email) {
 
 function clearValidationErrors() {
     $('#editFirstNameError, #editLastNameError, #editUsernameError, #editEmailError, #editPositionIdError, #editPasswordError, #archiveReasonError').text('');
+    $('#editFirstName').removeClass('is-invalid');
+    $('#editFirstNameIcon').hide();
+    $('#editLastName').removeClass('is-invalid');
+    $('#editLastNameIcon').hide();
+    $('#editUsername').removeClass('is-invalid');
+    $('#editUsernameIcon').hide();
+    $('#editEmail').removeClass('is-invalid');
+    $('#editEmailIcon').hide();
+    $('#editPassword').removeClass('is-invalid');
+    $('#editPasswordIcon').hide();
+    $('#editPositionId').removeClass('is-invalid');
 }
 
 function processModerator(moderatorId, action) {
@@ -3199,41 +3501,74 @@ function setUpdateId(updateId, action) {
 
 function validateUpdateForm(action) {
     let isValid = true;
-    clearValidationErrors();
+    clearUpdateValidationErrors();
 
+    // Title
     const title = $('#editTitle').val().trim();
-    const content = $('#editContent').val().trim();
-    const imagesInput = $('#editImages')[0];
-    const hasSelectedImages = $('#selectedImagesPreview .selected-image').length > 0;
-
     if (title === '') {
+        $('#editTitle').addClass('is-invalid');
+        $('#editTitleIcon').show();
         $('#editTitleError').text('Title is required');
         isValid = false;
+    } else {
+        $('#editTitle').removeClass('is-invalid');
+        $('#editTitleIcon').hide();
+        $('#editTitleError').text('');
     }
 
+    // Content
+    const content = $('#editContent').val().trim();
     if (content === '') {
+        $('#editContent').addClass('is-invalid');
+        $('#editContentIcon').show();
         $('#editContentError').text('Content is required');
         isValid = false;
+    } else {
+        $('#editContent').removeClass('is-invalid');
+        $('#editContentIcon').hide();
+        $('#editContentError').text('');
     }
 
+    // Images (file input)
+    const imagesInput = $('#editImages')[0];
+    const hasSelectedImages = $('#selectedImagesPreview .selected-image').length > 0;
     if (action === 'add' && !hasSelectedImages && imagesInput.files.length === 0) {
+        $('#editImages').addClass('is-invalid');
+        $('#editImagesIcon').show();
         $('#editImagesError').text('At least one image is required');
         isValid = false;
-    }
-    
-    if (action === 'edit') {
+    } else if (action === 'edit') {
         const remainingCurrentImages = $('#currentImages .current-image-item').length;
         const totalImagesAfterChanges = remainingCurrentImages + (imagesInput.files ? imagesInput.files.length : 0);
-        
         if (totalImagesAfterChanges === 0) {
-            $('#editImagesError').text('At least one image is required. You cannot delete all images without adding new ones.')
-                .removeClass('text-info')
-                .addClass('text-danger');
+            $('#editImages').addClass('is-invalid');
+            $('#editImagesIcon').show();
+            $('#editImagesError').text('At least one image is required. You cannot delete all images without adding new ones.').removeClass('text-info').addClass('text-danger');
             isValid = false;
+        } else {
+            $('#editImages').removeClass('is-invalid');
+            $('#editImagesIcon').hide();
+            $('#editImagesError').text('');
         }
+    } else {
+        $('#editImages').removeClass('is-invalid');
+        $('#editImagesIcon').hide();
+        $('#editImagesError').text('');
     }
 
     return isValid;
+}
+
+function clearUpdateValidationErrors() {
+    $('#editTitleError').text('');
+    $('#editContentError').text('');
+    $('#editImagesError').text('');
+    $('#editTitle').removeClass('is-invalid');
+    $('#editContent').removeClass('is-invalid');
+    $('#editImages').removeClass('is-invalid');
+    $('#editTitleIcon').hide();
+    $('#editContentIcon').hide();
+    $('#editImagesIcon').hide();
 }
 
 function processUpdate(updateId, action) {
@@ -3379,16 +3714,28 @@ function setPositionId(positionId, action) {
 
 function validatePositionForm() {
     let isValid = true;
-    clearValidationErrors();
+    clearPositionValidationErrors();
 
+    // Position Name
     const positionName = $('#editPositionName').val().trim();
-
     if (positionName === '') {
+        $('#editPositionName').addClass('is-invalid');
+        $('#editPositionNameIcon').show();
         $('#editPositionNameError').text('Position name is required');
         isValid = false;
+    } else {
+        $('#editPositionName').removeClass('is-invalid');
+        $('#editPositionNameIcon').hide();
+        $('#editPositionNameError').text('');
     }
 
     return isValid;
+}
+
+function clearPositionValidationErrors() {
+    $('#editPositionNameError').text('');
+    $('#editPositionName').removeClass('is-invalid');
+    $('#editPositionNameIcon').hide();
 }
 
 function processPosition(positionId, action) {

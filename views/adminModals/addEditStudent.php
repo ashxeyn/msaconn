@@ -138,20 +138,25 @@ $regionData = [
 ];
 ?>
 
+<!-- Student Modal -->
 <div class="modal fade" id="addEditStudentModal" tabindex="-1" aria-labelledby="addEditStudentModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg student-modal">
         <form id="studentForm" enctype="multipart/form-data" novalidate>
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="modalTitle">Add Student</h5>
                 </div>
-                <div class="modal-body">
+                
                     <input type="hidden" id="enrollmentId" name="enrollmentId" value="<?= $student ? $student['enrollment_id'] : '' ?>">
                     <input type="hidden" id="existing_image" name="existing_image" value="<?= $student['cor_path'] ?? '' ?>">
 
+                <!-- Classification Step -->
                     <div id="classificationStep" style="display: <?= $student ? 'none' : 'block' ?>;">
+                    <div class="modal-body">
+                        <div class="modal-section">
+                            <h6 class="section-title">Learning Mode Selection</h6>
                         <div class="mb-3">
-                            <label for="classification" class="form-label">Learning Mode</label>
+                                <label for="classification" class="form-label">Select Learning Mode</label>
                             <select class="form-select" id="classification" name="classification">
                                 <option value="">Select Classification</option>
                                 <option value="On-site" <?= ($student && $student['classification'] == 'On-site') ? 'selected' : '' ?>>On-site</option>
@@ -159,21 +164,20 @@ $regionData = [
                             </select>
                             <div id="classificationError" class="text-danger"></div>
                         </div>
-                        <div class="text-end mt-3">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                             <button type="button" class="btn btn-primary" onclick="nextStep()">Next</button>
                         </div>
                     </div>
 
+                <!-- Student Details Step -->
                     <div id="studentDetailsStep" style="display: <?= $student ? 'block' : 'none' ?>;">
-                        <?php if (!$student): ?>
-                        <div class="mb-3">
-                            <button type="button" class="btn btn-secondary btn-sm" onclick="prevStep()">
-                                <i class="fas fa-arrow-left"></i> Learning Mode
-                            </button>
-                        </div>
-                        <?php endif; ?>
-
+                    <div class="modal-body">
+                        <!-- Left Column -->
+                        <div class="modal-section">
+                            <h6 class="section-title">Personal Information</h6>
                         <div class="mb-3">
                             <label for="firstName" class="form-label">First Name</label>
                             <input type="text" class="form-control" id="firstName" name="firstName" value="<?= $student['first_name'] ?? '' ?>">
@@ -192,6 +196,7 @@ $regionData = [
                             <div id="lastNameError" class="text-danger"></div>
                         </div>
 
+                            <h6 class="section-title">Contact Information</h6>
                         <div class="mb-3">
                             <label for="contactNumber" class="form-label">Contact Number</label>
                             <input type="text" class="form-control" id="contactNumber" name="contactNumber" placeholder="09XXXXXXXXX" value="<?= $student['contact_number'] ?? '' ?>">
@@ -202,15 +207,18 @@ $regionData = [
                             <label for="email" class="form-label">Email Address</label>
                             <input type="email" class="form-control" id="email" name="email" value="<?= $student['email'] ?? '' ?>">
                             <div id="emailError" class="text-danger"></div>
+                            </div>
                         </div>
 
+                        <!-- Right Column -->
+                        <div class="modal-section">
+                            <h6 class="section-title">Address Information</h6>
                         <div class="mb-3">
                             <label for="region" class="form-label">Region</label>
                             <select class="form-select" id="region" name="region">
                                 <option value="">Select Region</option>
                                 <?php foreach ($regionData['regions'] as $region): ?>
-                                    <option value="<?= $region ?>" 
-                                        <?= ($student && $student['region'] == $region) ? 'selected' : '' ?>>
+                                        <option value="<?= $region ?>" <?= ($student && $student['region'] == $region) ? 'selected' : '' ?>>
                                         <?= $region ?>
                                     </option>
                                 <?php endforeach; ?>
@@ -223,8 +231,7 @@ $regionData = [
                             <select class="form-select" id="province" name="province">
                                 <option value="">Select Province</option>
                                 <?php foreach ($regionData['provinces'] as $province): ?>
-                                    <option value="<?= $province ?>" 
-                                        <?= ($student && $student['province'] == $province) ? 'selected' : '' ?>>
+                                        <option value="<?= $province ?>" <?= ($student && $student['province'] == $province) ? 'selected' : '' ?>>
                                         <?= $province ?>
                                     </option>
                                 <?php endforeach; ?>
@@ -238,8 +245,7 @@ $regionData = [
                                 <option value="">Select City/Municipality</option>
                                 <?php if ($student && $student['province'] && isset($regionData['cities'][$student['province']])): ?>
                                     <?php foreach ($regionData['cities'][$student['province']] as $city): ?>
-                                        <option value="<?= $city ?>" 
-                                            <?= ($student && $student['city'] == $city) ? 'selected' : '' ?>>
+                                            <option value="<?= $city ?>" <?= ($student && $student['city'] == $city) ? 'selected' : '' ?>>
                                             <?= $city ?>
                                         </option>
                                     <?php endforeach; ?>
@@ -254,8 +260,7 @@ $regionData = [
                                 <option value="">Select Barangay</option>
                                 <?php if ($student && $student['city'] && isset($regionData['barangays'][$student['city']])): ?>
                                     <?php foreach ($regionData['barangays'][$student['city']] as $barangay): ?>
-                                        <option value="<?= $barangay ?>" 
-                                            <?= ($student && $student['barangay'] == $barangay) ? 'selected' : '' ?>>
+                                            <option value="<?= $barangay ?>" <?= ($student && $student['barangay'] == $barangay) ? 'selected' : '' ?>>
                                             <?= $barangay ?>
                                         </option>
                                     <?php endforeach; ?>
@@ -276,14 +281,15 @@ $regionData = [
                             <div id="zipCodeError" class="text-danger"></div>
                         </div>
 
+                            <!-- Academic Information -->
                         <div id="onsiteFields" class="<?= ($student && $student['classification'] == 'Online') ? 'd-none' : '' ?>">
+                                <h6 class="section-title">Academic Information</h6>
                             <div class="mb-3">
                                 <label for="college" class="form-label">College</label>
                                 <select class="form-select" id="college" name="college">
                                     <option value="">Select College</option>
                                     <?php foreach ($colleges as $college): ?>
-                                        <option value="<?= $college['college_id'] ?>" 
-                                            <?= ($student && $student['college_id'] == $college['college_id']) ? 'selected' : '' ?>>
+                                            <option value="<?= $college['college_id'] ?>" <?= ($student && $student['college_id'] == $college['college_id']) ? 'selected' : '' ?>>
                                             <?= clean_input($college['college_name']) ?>
                                         </option>
                                     <?php endforeach; ?>
@@ -296,8 +302,7 @@ $regionData = [
                                 <select class="form-select" id="program" name="program">
                                     <option value="">Select Program</option>
                                     <?php foreach ($programs as $program): ?>
-                                        <option value="<?= $program['program_id'] ?>" 
-                                            <?= ($student && $student['program_id'] == $program['program_id']) ? 'selected' : '' ?>>
+                                            <option value="<?= $program['program_id'] ?>" <?= ($student && $student['program_id'] == $program['program_id']) ? 'selected' : '' ?>>
                                             <?= clean_input($program['program_name']) ?>
                                         </option>
                                     <?php endforeach; ?>
@@ -310,8 +315,7 @@ $regionData = [
                                 <select class="form-select" id="yearLevel" name="yearLevel">
                                     <option value="">Select Year Level</option>
                                     <?php foreach ($yearLevels as $level): ?>
-                                        <option value="<?= $level ?>" 
-                                            <?= ($student && $student['year_level'] == $level) ? 'selected' : '' ?>>
+                                            <option value="<?= $level ?>" <?= ($student && $student['year_level'] == $level) ? 'selected' : '' ?>>
                                             <?= $level ?>
                                         </option>
                                     <?php endforeach; ?>
@@ -330,7 +334,9 @@ $regionData = [
                             </div>
                         </div>
 
+                            <!-- Online Fields -->
                         <div id="onlineFields" class="<?= ($student && $student['classification'] == 'On-site') ? 'd-none' : '' ?>">
+                                <h6 class="section-title">School Information</h6>
                             <div class="mb-3">
                                 <label for="school" class="form-label">School (Optional)</label>
                                 <input type="text" class="form-control" id="school" name="school" value="<?= $student['school'] ?? '' ?>">
@@ -347,10 +353,19 @@ $regionData = [
                                 <label for="programText" class="form-label">Program (Optional)</label>
                                 <input type="text" class="form-control" id="programText" name="programText" value="<?= $student['ol_program'] ?? '' ?>">
                                 <div id="programTextError" class="text-danger"></div>
+                                </div>
+                            </div>
                             </div>
                         </div>
                         
                         <div class="modal-footer">
+                        <?php if (!$student): ?>
+                        <a href="#" class="back-link" onclick="prevStep(); return false;">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Back to Learning Mode</span>
+                        </a>
+                        <?php endif; ?>
+                        <div class="ms-auto">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                             <button type="submit" id="confirmSaveStudent" class="btn btn-primary">Add Student</button>
                         </div>

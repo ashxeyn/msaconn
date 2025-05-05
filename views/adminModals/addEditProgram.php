@@ -38,9 +38,10 @@ if ($programId) {
                         <div id="collegeSelectError" class="text-danger error-message"></div>
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-3 position-relative">
                         <label for="programName" class="form-label">Program Name</label>
                         <input type="text" class="form-control" id="programName" name="programName" value="<?= $program ? clean_input($program['program_name']) : '' ?>" required>
+                        <span class="invalid-icon" id="programNameIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
                         <div id="programNameError" class="text-danger error-message"></div>
                     </div>
 

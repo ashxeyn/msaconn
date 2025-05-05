@@ -23,9 +23,10 @@ if ($collegeId) {
             <div class="modal-body">
                 <form id="collegeForm">
                     <input type="hidden" id="collegeId" name="collegeId" value="<?= $college ? $college['college_id'] : '' ?>">
-                    <div class="mb-3">
+                    <div class="mb-3 position-relative">
                         <label for="collegeName" class="form-label">College Name</label>
                         <input type="text" class="form-control" id="collegeName" name="collegeName" value="<?= $college ? clean_input($college['college_name']) : '' ?>" required>
+                        <span class="invalid-icon" id="collegeNameIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
                         <div id="collegeNameError" class="text-danger error-message"></div>
                     </div>
                     <div class="modal-footer">

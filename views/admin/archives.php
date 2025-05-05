@@ -5,7 +5,6 @@ require_once '../../tools/function.php';
 $adminObj = new Admin();
 $archivedColleges = $adminObj->fetchArchivedColleges();
 $archivedPrograms = $adminObj->fetchArchivedPrograms();
-$archivedEvents = $adminObj->fetchArchivedEvents();
 $archivedCalendar = $adminObj->fetchArchivedCalendar();
 $archivedPrayers = $adminObj->fetchArchivedPrayers();
 $archivedCashIn = $adminObj->fetchArchivedTransactions('Cash In');
@@ -40,13 +39,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                     <ul class="nav nav-tabs" id="archivesTabs" role="tablist">
 
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="archived-events-tab" data-bs-toggle="tab" data-bs-target="#archived-events" 
-                                    type="button" role="tab" aria-controls="archived-events" aria-selected="true">
-                                Events
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="calendar-tab" data-bs-toggle="tab" data-bs-target="#calendar" 
+                            <button class="nav-link active" id="calendar-tab" data-bs-toggle="tab" data-bs-target="#calendar" 
                                     type="button" role="tab" aria-controls="calendar" aria-selected="false">
                                 Calendar Activities
                             </button>
@@ -120,44 +113,8 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                     </ul>
                     
                     <div class="tab-content pt-3" id="archivesTabsContent">
-                        <div class="tab-pane fade show active" id="archived-events" role="tabpanel" aria-labelledby="archived-events-tab">
-                            <div class="table-responsive">
-                                <table id="eventTab" class="table align-items-center mb-0">
-                                    <thead>
-                                        <tr>
-                                            <th>Description</th>
-                                            <th>Archived By</th>
-                                            <th>Reason</th>
-                                            <th>Archived At</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php if (empty($archivedEvents)): ?>
-                                            <tr>
-                                                <td colspan="5" class="text-center">No archived events</td>
-                                            </tr>
-                                        <?php else: ?>
-                                            <?php foreach ($archivedEvents as $event): ?>
-                                                <tr>
-                                                    <td><?= clean_input($event['description']) ?></td>
-                                                    <td><?= clean_input($event['uploaded_by']) ?></td>
-                                                    <td><?= clean_input($event['reason']) ?></td>
-                                                    <td><?= $event['deleted_at'] ? date('M d, Y h:i A', strtotime($event['deleted_at'])) : 'N/A' ?></td>
-                                                    <td>
-                                                        <button class="btn btn-sm btn-success" onclick="setEventId(<?= $event['event_id'] ?>, 'restore')">
-                                                            <i class="fas fa-undo"></i> Restore
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
 
-                        <div class="tab-pane fade" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
+                        <div class="tab-pane fade show active" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
                             <div class="table-responsive">
                                 <table id="calendarTab" class="table align-items-center mb-0">
                                     <thead>

@@ -7,14 +7,16 @@
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="file_id" id="editFileId">
-                    <div class="mb-3">
+                    <div class="mb-3 position-relative">
                         <label for="editFileName" class="form-label">File Name</label>
                         <input type="text" class="form-control" id="editFileName" name="file_name">
+                        <span class="invalid-icon" id="editFileNameIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
                         <div id="editFileNameError" class="text-danger"></div>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 position-relative">
                         <label for="editFile" class="form-label">File</label>
                         <input type="file" class="form-control" id="editFile" name="file" accept=".pdf,.docx">
+                        <span class="invalid-icon" id="editFileIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
                         <div id="editFileError" class="text-danger"></div>
                         <small class="text-muted">Only PDF and DOCX files are accepted.</small>
                         <div id="current-file-info" class="mt-2" style="display: none;">

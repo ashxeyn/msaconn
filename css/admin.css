@@ -1,0 +1,380 @@
+/* adminofficers.css */
+
+/* Table Styling */
+.table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    background: white !important;
+    border-radius: 8px !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Table Header */
+.table thead {
+    background-color: #2dcc70 !important; /* Updated Green */
+    color: white !important;
+}
+
+/* Table Header Cells */
+.table thead th {
+    background-color: #2dcc70 !important;
+    color: white !important;
+    padding: 12px !important;
+    font-size: 16px !important;
+    text-align: left !important;
+    border: 1px solid #1fa456 !important; /* Slightly darker border */
+}
+
+/* Table Body Rows */
+.table tbody tr {
+    background: white !important;
+    border-bottom: 1px solid #ddd !important;
+}
+
+/* Alternate Row Color */
+.table tbody tr:nth-child(even) {
+    background: #f2f2f2 !important;
+}
+
+/* Table Data Cells */
+.table tbody td {
+    padding: 12px !important;
+    font-size: 14px !important;
+    border: 1px solid #ddd !important;
+}
+
+/* Primary Action Buttons (Edit) */
+.btn-primary {
+    background-color: #2dcc70 !important;
+    color: white !important;
+    border: none !important;
+    padding: 6px 12px !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+}
+
+/* Danger Action Buttons (Delete) */
+.btn-danger {
+    background-color: #d32f2f !important;
+    color: white !important;
+    border: none !important;
+    padding: 6px 12px !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+}
+
+/* Success Buttons (Add College, Go to) */
+.btn-success {
+    background-color: #2dcc70 !important;
+    border-color: #2dcc70 !important;
+    color: white !important;
+    border: none !important;
+
+    font-weight: bold !important;
+    padding: 6px 12px !important;
+    border-radius: 4px !important;
+    transition: background-color 0.3s ease;
+}
+
+.btn-success:hover {
+    background-color: #28b862 !important;
+    border-color: #28b862 !important;
+}
+
+/* Pagination Styling */
+.dataTables_paginate {
+    margin-top: 10px !important;
+}
+
+.dataTables_paginate .paginate_button.previous,
+.dataTables_paginate .paginate_button.next {
+    background: none !important;
+    color: #2dcc70 !important;
+    border: none !important;
+    padding: 5px 10px !important;
+}
+
+/* Current Page Button */
+.dataTables_paginate .paginate_button.current {
+    background: white !important;
+    color: black !important;
+    border: 1px solid #ddd !important;
+}
+
+/* DataTable Sorting Icons */
+table.dataTable thead th.sorting:before,
+table.dataTable thead th.sorting:after,
+table.dataTable thead th.sorting_asc:before,
+table.dataTable thead th.sorting_desc:before {
+    color: white !important;
+}
+
+/* Yellow Edit Button */
+.btn-edit {
+    background-color: #ffd254 !important; /* Yellow */
+    color: rgb(255, 255, 255) !important;
+    border: none !important;
+    padding: 6px 12px !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+}
+
+
+.btn-enroll {
+    background-color: #2dcc70 !important; 
+    color: rgb(255, 255, 255) !important;
+    border: none !important;
+    padding: 6px 12px !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    
+}
+
+
+.btn-info {
+    background-color: #0dcaf0 !important; 
+    color: rgb(0, 0, 0) !important;
+    border: none !important;
+    padding: 6px 12px !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    
+}
+
+.action-btn {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.action-btn:hover {
+    opacity: 0.9;
+}
+
+
+
+
+.col-action {
+    width: 90px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+}
+
+
+
+
+
+
+
+
+/* Show entries (filter dropdown) */
+.dataTables_length label {
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    color: #333 !important;
+    margin-bottom: 0 !important;
+}
+
+.dataTables_length select {
+    padding: 8px 12px !important;
+    border: 1.5px solid #28a745 !important;
+    border-radius: 8px !important;
+    background-color: #f4fff4 !important;
+    color: #333 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    outline: none !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.1) !important;
+}
+
+.dataTables_length select:focus {
+    border-color: #1e7e34 !important;
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2) !important;
+}
+
+/* Search input */
+.dataTables_filter label {
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    color: #333 !important;
+}
+
+.dataTables_filter input[type="search"] {
+    padding: 8px 12px !important;
+    border: 1.5px solid #28a745 !important;
+    border-radius: 8px !important;
+    background-color: #f4fff4 !important;
+    color: #333 !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    outline: none !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 4px rgba(40, 167, 69, 0.1) !important;
+}
+
+.dataTables_filter input[type="search"]:focus {
+    border-color: #1e7e34 !important;
+    box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.2) !important;
+}
+
+
+
+/* .dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+    margin-top: -10px !important; 
+} */
+
+
+
+
+
+/* archive */
+
+
+
+/* Tabs Container */
+.nav-tabs {
+    border-bottom: 2px solid #2dcc70 !important;
+    background-color: #ffffff !important;
+    border-radius: 10px 10px 0 0 !important;
+    padding: 10px 15px !important;
+}
+
+/* Tab Buttons */
+.nav-tabs .nav-link {
+    background: transparent !important;
+    border: none !important;
+    font-weight: 600 !important;
+    font-size: 15px !important;
+    color: #444 !important;
+    padding: 10px 18px !important;
+    margin-right: 6px !important;
+    border-radius: 8px !important;
+    transition: background 0.3s ease, color 0.3s ease !important;
+}
+
+/* Hover effect */
+.nav-tabs .nav-link:hover {
+    background-color: #ffffff !important;
+    color: #2dcc70 !important;
+}
+
+/* Active Tab */
+.nav-tabs .nav-link.active {
+    background-color: #2dcc70 !important;
+    color: white !important;
+    font-weight: 700 !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Make sure tab buttons are evenly spaced on smaller screens */
+@media (max-width: 768px) {
+    .nav-tabs .nav-link {
+        font-size: 14px !important;
+        padding: 8px 12px !important;
+        margin-bottom: 5px !important;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Modal Styling - Consistent with Admin Theme */
+.modal-content {
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+    border: none;
+}
+
+.modal-header {
+    background-color: #2dcc70; /* Bootstrap Success Green */
+    color: white;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    padding: 1rem 1.5rem;
+}
+
+.modal-title {
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-body label {
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+}
+
+.modal-body input,
+.modal-body textarea {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.95rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.modal-body input:focus,
+.modal-body textarea:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+    outline: none;
+}
+
+.modal-footer {
+    padding: 1rem 1.5rem;
+    background-color: #f8f9fa;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+.modal-footer .btn-primary {
+    background-color: #198754;
+    border: none;
+}
+
+.modal-footer .btn-primary:hover {
+    background-color: #157347;
+}
+
+.modal-footer .btn-secondary {
+    background-color: #6c757d;
+    border: none;
+}
+
+.modal-footer .btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.text-danger {
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}

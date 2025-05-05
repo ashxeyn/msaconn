@@ -1,13 +1,18 @@
-<div class="modal fade" id="restoreStudentModal" tabindex="-1" aria-labelledby="restoreStudentModalLabel" aria-hidden="true">
+<div class="modal fade restore-modal" id="restoreStudentModal" tabindex="-1" aria-labelledby="restoreStudentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <form id="restoreStudentForm">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">Restore Student</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <div class="modal-section text-center">
+                        <i class="fas fa-undo-alt fa-3x mb-3 text-success"></i>
                     <input type="hidden" name="enrollmentId" id="restoreStudentId">
-                    <p>Are you sure you want to restore this student?</p>
+                        <p class="mb-4">Are you sure you want to restore this student?</p>
+                        <p class="text-muted small">This will make the student record active again.</p>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>

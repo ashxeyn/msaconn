@@ -46,11 +46,6 @@ $userRole = $_SESSION['role'] ?? '';
             </a>
         </li>
         <li class="nav-item">
-            <a href="#" onclick="loadEventsSection()" class="nav-link text-white">
-                <i class="bi bi-calendar-event me-2"></i> <span class="sidebar-text">Events</span>
-            </a>
-        </li>
-        <li class="nav-item">
             <a href="#" onclick="loadCalendarSection()" class="nav-link text-white">
                 <i class="bi bi-calendar3 me-2"></i> <span class="sidebar-text">Calendar</span>
             </a>

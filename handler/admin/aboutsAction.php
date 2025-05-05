@@ -44,7 +44,6 @@ if ($action === 'edit') {
 } elseif ($action === 'add') {
     $mission = clean_input($_POST['mission']);
     $vision = clean_input($_POST['vision']);
-    $description = clean_input($_POST['description']);
 
     $result = $adminObj->addAbout($mission, $vision);
     echo $result ? "success" : "error";

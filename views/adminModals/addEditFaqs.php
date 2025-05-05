@@ -7,14 +7,16 @@
                 </div>
                 <div class="modal-body">
                     <input type="hidden" name="faq_id" id="editFaqId">
-                    <div class="mb-3">
+                    <div class="mb-3 position-relative">
                         <label for="editQuestion" class="form-label">Question</label>
                         <input type="text" class="form-control" id="editQuestion" name="question">
+                        <span class="invalid-icon" id="editQuestionIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
                         <div id="editQuestionError" class="text-danger"></div>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 position-relative">
                         <label for="editAnswer" class="form-label">Answer</label>
                         <textarea class="form-control" id="editAnswer" name="answer" rows="3"></textarea>
+                        <span class="invalid-icon" id="editAnswerIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
                         <div id="editAnswerError" class="text-danger"></div>
                     </div>
                     <div class="mb-3">
