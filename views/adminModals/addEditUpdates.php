@@ -1,5 +1,5 @@
 <div class="modal fade" id="editUpdateModal" tabindex="-1" aria-labelledby="editUpdateModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog"> 
         <form id="editUpdateForm" enctype="multipart/form-data">
             <div class="modal-content">
                 <div class="modal-header">
@@ -11,8 +11,7 @@
                     <div class="mb-3 position-relative">
                         <label for="editTitle" class="form-label">Title</label>
                         <input type="text" class="form-control" id="editTitle" name="title">
-                        <span class="invalid-icon" id="editTitleIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
-                        <div id="editTitleError" class="text-danger"></div>
+ 
                     </div>
                     <div class="mb-3 position-relative">
                         <label for="editContent" class="form-label">Content</label>

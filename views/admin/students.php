@@ -33,6 +33,20 @@ $result = $adminObj->fetchOnsiteEnrolledStudents();
 <div>
     <h2 class="mb-4">Madrasa On-Site Students</h2>
     
+    <div class="tabs-container mb-4">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" id="onsite-tab" data-toggle="tab" href="#" role="tab">Onsite Students</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="prayers-tab" data-toggle="tab" href="#" role="tab" onclick="loadOnlineSection()">Online Students</a>
+                </li>
+            </ul>
+        </div>
+        
+        <div class="tab-content">
+            <div class="tab-pane fade show active" id="onsite-content" role="tabpanel">
+
     <button class="btn btn-primary mb-3" onclick="openStudentModal('addEditStudentModal', null, 'add')">
         <i class="fas fa-plus"></i> Add New Student
     </button>
@@ -99,12 +113,9 @@ $result = $adminObj->fetchOnsiteEnrolledStudents();
             <?php endif; ?>
         </tbody>
     </table>
-    <div class="bottom-right">
-        <button class="btn btn-success" onclick="loadOnlineSection()">
-            Go to <i class="bi bi-arrow-right"></i>
-        </button>    
-    </div>
 </div>
+        </div>
+    </div>
 
 <?php include '../adminModals/corView.html'; 
 include '../adminModals/addEditStudent.php';

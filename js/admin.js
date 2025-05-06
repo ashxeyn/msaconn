@@ -1033,7 +1033,8 @@ function setTransactionId(reportId, action, transactionType) {
             $('#confirmArchiveCashIn').off('click').on('click', function() {
                 const reason = $('#archiveCashInReason').val().trim();
                 if (reason === '') {
-                    $('#archiveReason').addClass('is-invalid');
+                    $('#archiveCashInReason').addClass('is-invalid');
+                    $('#archiveCashInReasonIcon').show();
                     $('#archiveCashInReasonError').text('Please provide a reason for archiving');
                     return;
                 }
@@ -1047,7 +1048,8 @@ function setTransactionId(reportId, action, transactionType) {
             $('#confirmArchiveCashOut').off('click').on('click', function() {
                 const reason = $('#archiveCashOutReason').val().trim();
                 if (reason === '') {
-                    $('#archiveReason').addClass('is-invalid');
+                    $('#archiveCashOutReason').addClass('is-invalid');
+                    $('#archiveCashOutReasonIcon').show();
                     $('#archiveCashOutReasonError').text('Please provide a reason for archiving');
                     return;
                 }
@@ -1111,7 +1113,6 @@ function validateCashForm(type) {
         $(`#cash${type}DateError`).text('');
     }
     
-    // Validate end date if provided (should be >= start date)
     const endDate = $(`#cash${type}EndDate`).val().trim();
     if (endDate !== '' && date !== '') {
         if (new Date(endDate) < new Date(date)) {
