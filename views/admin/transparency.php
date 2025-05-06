@@ -34,7 +34,6 @@ $totalFunds = $totalCashIn - $totalCashOut;
     <meta charset="UTF-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>Transparency Report</title> 
-    <!-- <link rel="stylesheet" href="../../css/admintransparency.css?v=<?php echo time(); ?>">  -->
     <!-- <?php include '../../includes/head.php'; ?>  -->
     <script src="../../js/admin.js"></script>
     <script src="../../js/modals.js"></script>
@@ -99,7 +98,7 @@ $totalFunds = $totalCashIn - $totalCashOut;
         <div class="mb-4">
             <h3>Cash-In Transactions</h3>
             <button class="btn btn-success mb-3" onclick="openTransactionModal('addEditCashInModal', null, 'add', 'Cash In')"> 
-                Add Cash-In 
+            <i class="bi bi-plus-lg"></i>
             </button>
             
             <table id="cashinTable" class="table table-bordered table-striped">
@@ -149,7 +148,7 @@ $totalFunds = $totalCashIn - $totalCashOut;
                                 <td><?= clean_input($transaction['expense_category']) ?></td>
                                 <td>₱<?= number_format($transaction['amount'], 2) ?></td> 
                                 <td> 
-                                    <button class="btn btn-primary btn-sm" onclick="openTransactionModal('addEditCashInModal', <?= $transaction['report_id'] ?>, 'edit', 'Cash In')">Edit</button> 
+                                    <button class="btn btn-primary btn-sm" onclick="openTransactionModal('addEditCashInModal', <?= $transaction['report_id'] ?>, 'edit', 'Cash In')"><i class="bi bi-pencil"></i></button> 
                                     <button class="btn btn-danger btn-sm" onclick="openTransactionModal('deleteCashInModal', <?= $transaction['report_id'] ?>, 'delete', 'Cash In')">Delete</button> 
                                 </td> 
                             </tr> 
@@ -173,7 +172,7 @@ $totalFunds = $totalCashIn - $totalCashOut;
         <div class="mb-4">
             <h3>Cash-Out Transactions</h3>
             <button class="btn btn-success mb-3" onclick="openTransactionModal('addEditCashOutModal', null, 'add', 'Cash Out')"> 
-                Add Cash-Out 
+            <i class="bi bi-plus-lg"></i>
             </button>
             
             <table id="cashoutTable" class="table table-bordered table-striped">
@@ -223,8 +222,8 @@ $totalFunds = $totalCashIn - $totalCashOut;
                                 <td><?= clean_input($transaction['expense_category']) ?></td>
                                 <td>₱<?= number_format($transaction['amount'], 2) ?></td> 
                                 <td> 
-                                    <button class="btn btn-primary btn-sm" onclick="openTransactionModal('addEditCashOutModal', <?= $transaction['report_id'] ?>, 'edit', 'Cash Out')">Edit</button> 
-                                    <button class="btn btn-danger btn-sm" onclick="openTransactionModal('deleteCashOutModal', <?= $transaction['report_id'] ?>, 'delete', 'Cash Out')">Delete</button> 
+                                    <button class="btn btn-primary btn-sm" onclick="openTransactionModal('addEditCashOutModal', <?= $transaction['report_id'] ?>, 'edit', 'Cash Out')"><i class="bi bi-pencil"></i></button> 
+                                    <button class="btn btn-danger btn-sm" onclick="openTransactionModal('deleteCashOutModal', <?= $transaction['report_id'] ?>, 'delete', 'Cash Out')"><i class="bi bi-trash"></i></button> 
                                 </td> 
                             </tr> 
                         <?php endforeach; ?> 

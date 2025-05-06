@@ -13,7 +13,6 @@ $downloadableFiles = $adminObj->fetchDownloadableFiles();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Downloadable Files</title>
-    <link rel="stylesheet" href="../../css/adminRegistration.css?v=<?php echo time(); ?>">
     <script src="../../js/admin.js"></script>
     <script src="../../js/modals.js"></script>
     <!-- <?php include '../../includes/head.php'; ?>  -->
@@ -35,7 +34,7 @@ $downloadableFiles = $adminObj->fetchDownloadableFiles();
 <div>
 <h2 class="mb-4">File Management</h2>
 
-    <button class="btn btn-success mb-3" onclick="openFileModal('addEditFileModal', null, 'add')">Add File</button>
+    <button class="btn btn-success mb-3" onclick="openFileModal('addEditFileModal', null, 'add')"><i class="bi bi-plus-lg"></i></button>
 
     <table id="table" class="table table-bordered table-striped">
         <thead>
@@ -60,9 +59,9 @@ $downloadableFiles = $adminObj->fetchDownloadableFiles();
                         <td><?= clean_input($file['username']) ?></td>
                         <td><?= formatDate($file['created_at']) ?></td>
                         <td>
-                            <button class="btn btn-success btn-sm" onclick="openFileModal('addEditFileModal', <?= $file['file_id'] ?>, 'edit')">Edit</button>
-                            <button class="btn btn-danger btn-sm" onclick="openFileModal('deleteFileModal', <?= $file['file_id'] ?>, 'delete')">Delete</button>
-                            <a href="../../assets/downloadables/<?= clean_input($file['file_path']) ?>" class="btn btn-info btn-sm" download>Download</a>
+                            <button class="btn btn-success btn-sm" onclick="openFileModal('addEditFileModal', <?= $file['file_id'] ?>, 'edit')"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-danger btn-sm" onclick="openFileModal('deleteFileModal', <?= $file['file_id'] ?>, 'delete')"><i class="bi bi-trash"></i></button>
+                            <a href="../../assets/downloadables/<?= clean_input($file['file_path']) ?>" class="btn btn-info btn-sm" download><i class="bi bi-download"></i></a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

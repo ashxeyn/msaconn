@@ -13,7 +13,6 @@ $orgUpdates = $adminObj->fetchOrgUpdates();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Organization Updates</title>
-    <link rel="stylesheet" href="../../css/adminRegistration.css?v=<?php echo time(); ?>">
     <script src="../../js/admin.js"></script>
     <script src="../../js/modals.js"></script>
    <!-- <?php include '../../includes/head.php'; ?>  -->
@@ -58,7 +57,7 @@ $orgUpdates = $adminObj->fetchOrgUpdates();
     <div class="row mb-4">
         <div class="col-md-6">
             <button class="btn btn-success" onclick="openUpdateModal('editUpdateModal', null, 'add')">
-                <i class="fas fa-plus-circle"></i> Add New Update
+                <i class="bi bi-plus-lg"></i>
             </button>
         </div>
         <div class="col-md-6">
@@ -95,11 +94,11 @@ $orgUpdates = $adminObj->fetchOrgUpdates();
                             <?php endif; ?>
                             
                             <div class="mt-3">
-                                <button class="btn btn-info btn-sm" onclick="openUpdateModal('editUpdateModal', <?= $update['update_id'] ?>, 'edit')">
-                                    <i class="fas fa-edit"></i> Edit
+                                <button class="btn btn-primary btn-sm" onclick="openUpdateModal('editUpdateModal', <?= $update['update_id'] ?>, 'edit')">
+                                    <i class="fas fa-edit"></i><i class="bi bi-pencil"></i>
                                 </button>
                                 <button class="btn btn-danger btn-sm" onclick="openUpdateModal('archiveUpdateModal', <?= $update['update_id'] ?>, 'delete')">
-                                    <i class="fas fa-archive"></i> Archive
+                                    <i class="fas fa-archive"></i><i class="bi bi-trash"></i>
                                 </button>
                             </div>
                         </div>

@@ -13,7 +13,6 @@ $result = $adminObj->fetchPendingEnrollments();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Approve Madrasa Enrollments</title>
-    <link rel="stylesheet" href="../../css/adminenrollment.css?v=<?php echo time(); ?>">
     <script src="../../js/admin.js"></script>
     <script src="../../js/modals.js"></script>
     <!-- <?php include '../../includes/head.php'; ?>  -->
@@ -72,8 +71,8 @@ $result = $adminObj->fetchPendingEnrollments();
                             </td>
                             <td><?= ucfirst(clean_input($row['status'])) ?></td>
                             <td>
-                                <button class="btn btn-success btn-sm" onclick="openEnrollmentModal('enrollModal', <?= $row['enrollment_id'] ?>, 'enroll')">Enroll</button>
-                                <button class="btn btn-danger btn-sm" onclick="openEnrollmentModal('rejectEnrollmentModal', <?= $row['enrollment_id'] ?>, 'reject')">Reject</button>
+                                <button class="btn btn-success btn-sm" onclick="openEnrollmentModal('enrollModal', <?= $row['enrollment_id'] ?>, 'enroll')"><i class="bi bi-person-check-fill"></i></button>
+                                <button class="btn btn-danger btn-sm" onclick="openEnrollmentModal('rejectEnrollmentModal', <?= $row['enrollment_id'] ?>, 'reject')"><i class="bi bi-person-dash-fill"></i></button>
                             </td>
                         </tr>
                     <?php endforeach; ?>

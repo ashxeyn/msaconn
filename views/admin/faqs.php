@@ -22,7 +22,7 @@ $faqs = $adminObj->fetchFaqs();
 <div class="container mt-4">    
     <h2 class="mb-4">FAQs Management</h2>
 
-    <button class="btn btn-success mb-3" onclick="openFaqModal('addEditFaqModal', null, 'add')">Add FAQ</button>
+    <button class="btn btn-success mb-3" onclick="openFaqModal('addEditFaqModal', null, 'add')"><i class="bi bi-plus-lg"></i></button>
     
     <div class="table-responsive">
         <table id="table" class="table table-bordered table-striped">
@@ -45,8 +45,8 @@ $faqs = $adminObj->fetchFaqs();
                             <td><?= clean_input($faq['answer']) ?></td>
                             <td><?= clean_input($faq['category']) ?></td>
                             <td>
-                                <button class="btn btn-success btn-sm editBtn" onclick="openFaqModal('addEditFaqModal', <?= $faq['faq_id'] ?>, 'edit')">Edit</button>
-                                <button class="btn btn-danger btn-sm deleteBtn" onclick="openFaqModal('deleteFaqModal', <?= $faq['faq_id'] ?>, 'delete')">Delete</button>
+                                <button class="btn btn-success btn-sm editBtn" onclick="openFaqModal('addEditFaqModal', <?= $faq['faq_id'] ?>, 'edit')"><i class="bi bi-pencil"></i></button>
+                                <button class="btn btn-danger btn-sm deleteBtn" onclick="openFaqModal('deleteFaqModal', <?= $faq['faq_id'] ?>, 'delete')"><i class="bi bi-trash"></i></button>
                             </td>
                         </tr>
                     <?php endforeach; ?>

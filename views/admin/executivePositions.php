@@ -13,7 +13,6 @@ $positions = $adminObj->fetchOfficerPositions();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Executive Positions</title>
-    <link rel="stylesheet" href="../../css/adminRegistration.css?v=<?php echo time(); ?>">
     <script src="../../js/admin.js"></script>
     <script src="../../js/modals.js"></script>
     <script src="../../js/sideBar.js"></script>
@@ -24,7 +23,7 @@ $positions = $adminObj->fetchOfficerPositions();
 <div>
     <h2 class="mb-4">Executive Positions Management</h2>
 
-    <button class="btn btn-success mb-3" onclick="openPositionModal('editExePositionModal', null, 'add')">Add Position</button>
+    <button class="btn btn-success mb-3" onclick="openPositionModal('editExePositionModal', null, 'add')"><i class="bi bi-plus-lg"></i></button>
 
     <table id="table" class="table table-bordered table-striped">
         <thead>
@@ -42,8 +41,8 @@ $positions = $adminObj->fetchOfficerPositions();
                         <td><?= $counter++ ?></td>
                         <td><?= clean_input($position['position_name']) ?></td>
                         <td>
-                            <button class="btn btn-success btn-sm" onclick="openPositionModal('editExePositionModal', <?= $position['position_id'] ?>, 'edit')">Edit</button>
-                            <button class="btn btn-danger btn-sm" onclick="openPositionModal('archiveExePositionModal', <?= $position['position_id'] ?>, 'delete')">Archive</button>
+                            <button class="btn btn-success btn-sm" onclick="openPositionModal('editExePositionModal', <?= $position['position_id'] ?>, 'edit')"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-danger btn-sm" onclick="openPositionModal('archiveExePositionModal', <?= $position['position_id'] ?>, 'delete')"><i class="bi bi-trash"></i></button>
                         </td>
                     </tr>
                 <?php endforeach; ?>

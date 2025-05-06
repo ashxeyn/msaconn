@@ -142,7 +142,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                     <td><?= $activity['deleted_at'] ? date('M d, Y h:i A', strtotime($activity['deleted_at'])) : 'N/A' ?></td>
                                                     <td>
                                                         <button class="btn btn-sm btn-success" onclick="setCalendarId(<?= $activity['activity_id'] ?>, 'restore')">
-                                                            <i class="fas fa-undo"></i> Restore
+                                                            <i class="bi bi-arrow-clockwise"></i>
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -183,7 +183,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                     <td><?= date('M d, Y h:i A', strtotime($prayer['deleted_at'])) ?></td>
                                                     <td>
                                                         <button class="btn btn-sm btn-success" onclick="setPrayerId(<?= $prayer['prayer_id'] ?>, 'restore')">
-                                                            <i class="fas fa-undo"></i> Restore
+                                                            <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -243,7 +243,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" 
                                                                         onclick="openTransactionModal('restoreTransactionModal', <?= $transaction['report_id'] ?>, 'restore', 'Cash In')">
-                                                                    <i class="fas fa-undo"></i> Restore
+                                                                    <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -287,7 +287,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" 
                                                                         onclick="openTransactionModal('restoreTransactionModal', <?= $transaction['report_id'] ?>, 'restore', 'Cash Out')">
-                                                                    <i class="fas fa-undo"></i> Restore
+                                                                    <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -464,7 +464,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" 
                                                                         onclick="openStudentModal('restoreStudentModal', <?= $student['enrollment_id'] ?>, 'restore')">
-                                                                    <i class="fas fa-undo"></i> Restore
+                                                                    <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -510,7 +510,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" 
                                                                         onclick="openStudentModal('restoreStudentModal', <?= $student['enrollment_id'] ?>, 'restore')">
-                                                                    <i class="fas fa-undo"></i> Restore
+                                                                    <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -554,7 +554,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                         <td>
                                                             <button class="btn btn-sm btn-success" 
                                                                     onclick="openOfficerModal('restoreOfficerModal', <?= $officer['officer_id'] ?>, 'restore')">
-                                                                <i class="fas fa-undo"></i> Restore
+                                                                <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
                                                             </button>
                                                         </td>
                                                     </tr>
@@ -598,7 +598,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                         <td>
                                                             <button class="btn btn-sm btn-success" 
                                                                     onclick="openVolunteerModal('restoreVolunteerModal', <?= $volunteer['volunteer_id'] ?>, 'restore')">
-                                                                <i class="fas fa-undo"></i> Restore
+                                                                <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
                                                             </button>
                                                         </td>
                                                     </tr>
@@ -701,7 +701,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                     <td>
                                                         <button class="btn btn-sm btn-success" 
                                                                 onclick="openUpdateModal('restoreUpdateModal', <?= $update['update_id'] ?>, 'restore')">
-                                                            <i class="fas fa-undo"></i> Restore
+                                                            <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -765,7 +765,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" 
                                                                         onclick="openSchoolYearModal('restoreSchoolYearModal', <?= $schoolYear['school_year_id'] ?>, 'restore')">
-                                                                    <i class="fas fa-undo"></i> Restore
+                                                                    <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -801,7 +801,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" 
                                                                         onclick="openPositionModal('restorePositionModal', <?= $position['position_id'] ?>, 'restore')">
-                                                                    <i class="fas fa-undo"></i> Restore
+                                                                    <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -836,7 +836,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td><?= $college['deleted_at'] ? date('M d, Y h:i A', strtotime($college['deleted_at'])) : 'N/A' ?></td>
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" onclick="setCollegeId(<?= $college['college_id'] ?>, 'restore')">
-                                                                    <i class="fas fa-undo"></i> Restore
+                                                                    <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -873,7 +873,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td><?= $program['deleted_at'] ? date('M d, Y h:i A', strtotime($program['deleted_at'])) : 'N/A' ?></td>
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" onclick="setProgramId(<?= $program['program_id'] ?>, 'restore')">
-                                                                    <i class="fas fa-undo"></i> Restore
+                                                                    <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>

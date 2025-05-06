@@ -13,7 +13,6 @@ $programs = $adminObj->fetchAllPrograms();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Programs</title>
-    <link rel="stylesheet" href="../../css/adminregistration.css?v=<?php echo time(); ?>">
     <script src="../../js/admin.js"></script>
     <script src="../../js/modals.js"></script>
     <!-- <?php include '../../includes/head.php'; ?>  -->
@@ -22,7 +21,7 @@ $programs = $adminObj->fetchAllPrograms();
 <div>
     <h2 class="mb-4">Programs</h2>
 
-    <button class="btn btn-success mb-3" onclick="openProgramModal('addEditProgramModal', null, 'add')">Add Programs</button>
+    <button class="btn btn-success mb-3" onclick="openProgramModal('addEditProgramModal', null, 'add')"><i class="bi bi-plus-lg"></i></button>
 
     <table id="table" class="table table-bordered table-striped">
         <thead>
@@ -42,8 +41,8 @@ $programs = $adminObj->fetchAllPrograms();
                         <td><?= clean_input($program['college_name']) ?></td>
                         <td><?= clean_input($program['program_name']) ?></td>
                         <td>
-                            <button class="btn btn-primary btn-sm" onclick="openProgramModal('addEditProgramModal', <?= $program['program_id'] ?>, 'edit')">Edit</button>
-                            <button class="btn btn-danger btn-sm" onclick="openProgramModal('deleteProgramModal', <?= $program['program_id'] ?>, 'delete')">Delete</button>
+                            <button class="btn btn-primary btn-sm" onclick="openProgramModal('addEditProgramModal', <?= $program['program_id'] ?>, 'edit')"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-danger btn-sm" onclick="openProgramModal('deleteProgramModal', <?= $program['program_id'] ?>, 'delete')"><i class="bi bi-trash"></i></button>
                         </td>
 
                     </tr>

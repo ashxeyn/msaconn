@@ -13,7 +13,6 @@ $eventPhotos = $adminObj->fetchEventPhotos();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Event Photos</title>
-    <link rel="stylesheet" href="../../css/adminRegistration.css?v=<?php echo time(); ?>">
     <script src="../../js/admin.js"></script>
     <script src="../../js/modals.js"></script>
     <!-- <script src="../../js/sideBar.js"></script> -->
@@ -35,7 +34,7 @@ $eventPhotos = $adminObj->fetchEventPhotos();
 <div>
 <h2 class="mb-4">Event Management</h2>
 
-    <button class="btn btn-success mb-3" onclick="openEventModal('addEditEventModal', null, 'add')">Add Event</button>
+    <button class="btn btn-success mb-3" onclick="openEventModal('addEditEventModal', null, 'add')"><i class="bi bi-plus-lg"></i></button>
 
     <table id="table" class="table table-bordered table-striped">
         <thead>
@@ -65,8 +64,8 @@ $eventPhotos = $adminObj->fetchEventPhotos();
                         </td>
                         <td><?= clean_input($event['uploaded_by']) ?></td>
                         <td>
-                            <button class="btn btn-success btn-sm" onclick="openEventModal('addEditEventModal', <?= $event['event_id'] ?>, 'edit')">Edit</button>
-                            <button class="btn btn-danger btn-sm" onclick="openEventModal('deleteEventModal', <?= $event['event_id'] ?>, 'delete')">Delete</button>
+                            <button class="btn btn-success btn-sm" onclick="openEventModal('addEditEventModal', <?= $event['event_id'] ?>, 'edit')"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-danger btn-sm" onclick="openEventModal('deleteEventModal', <?= $event['event_id'] ?>, 'delete')"><i class="bi bi-trash"></i></button>
                         </td>
                     </tr>
                 <?php endforeach; ?>

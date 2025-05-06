@@ -69,8 +69,8 @@ $result = $adminObj->fetchPendingVolunteer();
                             </td>
                             <td><?= ucfirst(clean_input($row['status'])) ?></td>
                             <td>
-                                <button class="btn btn-success btn-sm" onclick="openModal('approveModal', <?= $row['volunteer_id'] ?>, 'approve')">Approve</button>
-                                <button class="btn btn-danger btn-sm" onclick="openModal('rejectModal', <?= $row['volunteer_id'] ?>, 'reject')">Reject</button>
+                                <button class="btn btn-success btn-sm" onclick="openModal('approveModal', <?= $row['volunteer_id'] ?>, 'approve')"><i class="bi bi-person-check-fill"></i></button>
+                                <button class="btn btn-danger btn-sm" onclick="openModal('rejectModal', <?= $row['volunteer_id'] ?>, 'reject')"><i class="bi bi-person-dash-fill"></i></button>
                             </td>
                         </tr>
                     <?php endforeach; ?>

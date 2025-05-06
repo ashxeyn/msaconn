@@ -13,7 +13,6 @@ $calEvents = $adminObj->fetchCalendarEvents();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendar Management</title>
-    <link rel="stylesheet" href="../../css/admincalendar.css?v=<?php echo time(); ?>">
     <!-- <?php include '../../includes/head.php'; ?> -->
     <script src="../../js/admin.js"></script>
     <script src="../../js/modals.js"></script>
@@ -40,7 +39,7 @@ $calEvents = $adminObj->fetchCalendarEvents();
         <div class="tab-content">
             <div class="tab-pane fade show active" id="calendar-content" role="tabpanel">
                 <button class="btn btn-success mb-3" onclick="openCalendarModal('addEditCalendarModal', null, 'add')">
-                    Add Event
+                    <i class="bi bi-plus-lg"></i>
                 </button>
 
                 <table id="table" class="table table-bordered table-striped">
@@ -98,8 +97,8 @@ $calEvents = $adminObj->fetchCalendarEvents();
                                 <td><?= clean_input($calEv['description']) ?></td>
                                 <td><?= clean_input($calEv['username'] ?? 'N/A') ?></td>
                                 <td>
-                                    <button class="btn btn-primary btn-sm" onclick="openCalendarModal('addEditCalendarModal', <?= $calEv['activity_id'] ?>, 'edit')">Edit</button>
-                                    <button class="btn btn-danger btn-sm" onclick="openCalendarModal('deleteCalendarModal', <?= $calEv['activity_id'] ?>, 'delete')">Delete</button>
+                                    <button class="btn btn-primary btn-sm" onclick="openCalendarModal('addEditCalendarModal', <?= $calEv['activity_id'] ?>, 'edit')"><i class="bi bi-pencil"></i></button>
+                                    <button class="btn btn-danger btn-sm" onclick="openCalendarModal('deleteCalendarModal', <?= $calEv['activity_id'] ?>, 'delete')"><i class="bi bi-trash"></i></button>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

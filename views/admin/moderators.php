@@ -13,7 +13,6 @@ $result = $adminObj->fetchModerators();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moderators</title>
-    <link rel="stylesheet" href="../../css/adminregistration.css?v=<?php echo time(); ?>">
     <!-- <script src="../../testing/testing.js"></script> -->
     <script src="../../js/admin.js"></script>
     <script src="../../js/modals.js"></script>
@@ -24,7 +23,7 @@ $result = $adminObj->fetchModerators();
 <div>
     <h2 class="mb-4">Moderators</h2>
 
-    <button class="btn btn-success  mb-3" onclick="openModeratorModal('addModeratorModal', null, 'add')">Add Moderator</button>
+    <button class="btn btn-success  mb-3" onclick="openModeratorModal('addModeratorModal', null, 'add')"><i class="bi bi-plus-lg"></i></button>
 
     <table id="table" class="table table-bordered table-striped">
         <thead>
@@ -50,8 +49,8 @@ $result = $adminObj->fetchModerators();
                         <td><?= clean_input($row['position_name'] ?? 'N/A') ?></td>
                         <td><?= clean_input($row['created_at']) ?></td>
                         <td>
-                            <button class="btn btn-primary btn-sm" onclick="openModeratorModal('editModeratorModal', <?= $row['user_id'] ?>, 'edit')">Edit</button>
-                            <button class="btn btn-danger btn-sm" onclick="openModeratorModal('deleteModeratorModal', <?= $row['user_id'] ?>, 'delete')">Delete</button>
+                            <button class="btn btn-primary btn-sm" onclick="openModeratorModal('editModeratorModal', <?= $row['user_id'] ?>, 'edit')"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-danger btn-sm" onclick="openModeratorModal('deleteModeratorModal', <?= $row['user_id'] ?>, 'delete')"><i class="bi bi-trash"></i></button>
                         </td> 
                     </tr>
                 <?php endforeach; ?>

@@ -13,7 +13,6 @@ $result = $adminObj->fetchApprovedVolunteer();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Volunteers</title>
-    <link rel="stylesheet" href="../../css/adminvolunteers.css?v=<?php echo time(); ?>">
     <script src="../../js/admin.js"></script>
     <script src="../../js/modals.js"></script>
     <!-- <?php include '../../includes/head.php'; ?>  -->
@@ -69,8 +68,8 @@ $result = $adminObj->fetchApprovedVolunteer();
                         </td>
                         <td><?= clean_input($row['registered_by']) ?></td>
                         <td>
-                            <button class="btn btn-primary btn-sm" onclick="openVolunteerModal('editVolunteerModal', <?= $row['volunteer_id'] ?>, 'edit')">Edit</button>
-                            <button class="btn btn-danger btn-sm" onclick="openVolunteerModal('deleteVolunteerModal', <?= $row['volunteer_id'] ?>, 'delete')">Delete</button>
+                            <button class="btn btn-primary btn-sm" onclick="openVolunteerModal('editVolunteerModal', <?= $row['volunteer_id'] ?>, 'edit')"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-danger btn-sm" onclick="openVolunteerModal('deleteVolunteerModal', <?= $row['volunteer_id'] ?>, 'delete')"><i class="bi bi-trash"></i></button>
                         </td>
                     </tr>
                 <?php endforeach; ?>

@@ -13,7 +13,6 @@ $prayers = $adminObj->fetchPrayerSchedule();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prayer Schedule Management</title>
-    <!-- <link rel="stylesheet" href="../../css/admincalendar.css?v=<?php echo time(); ?>"> -->
     <!-- <?php include '../../includes/head.php'; ?> -->
     <script src="../../js/admin.js"></script>
     <script src="../../js/modals.js"></script>
@@ -40,7 +39,7 @@ $prayers = $adminObj->fetchPrayerSchedule();
         <div class="tab-content">
             <div class="tab-pane fade show active" id="prayers-content" role="tabpanel">
                 <button class="btn btn-success mb-3" onclick="openPrayerModal('addEditPrayerModal', null, 'add')">
-                    Add Khutba Prayer
+                    <i class="bi bi-plus-lg"></i>
                 </button>
 
                 <table id="table" class="table table-bordered table-striped">
@@ -78,8 +77,8 @@ $prayers = $adminObj->fetchPrayerSchedule();
                                 <td><?= clean_input($prayer['location']) ?></td>
                                 <td><?= clean_input($prayer['username'] ?? 'N/A') ?></td>
                                 <td>
-                                    <button class="btn btn-primary btn-sm" onclick="openPrayerModal('addEditPrayerModal', <?= $prayer['prayer_id'] ?>, 'edit')">Edit</button>
-                                    <button class="btn btn-danger btn-sm" onclick="openPrayerModal('deletePrayerModal', <?= $prayer['prayer_id'] ?>, 'delete')">Delete</button>
+                                    <button class="btn btn-primary btn-sm" onclick="openPrayerModal('addEditPrayerModal', <?= $prayer['prayer_id'] ?>, 'edit')"><i class="bi bi-pencil"></i></button>
+                                    <button class="btn btn-danger btn-sm" onclick="openPrayerModal('deletePrayerModal', <?= $prayer['prayer_id'] ?>, 'delete')"><i class="bi bi-trash"></i></button>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

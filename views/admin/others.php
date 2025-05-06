@@ -14,7 +14,6 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage School Years</title>
-    <link rel="stylesheet" href="../../css/adminRegistration.css?v=<?php echo time(); ?>">
     <script src="../../js/admin.js"></script>
     <!-- <script src="../../js/modals.js"></script> -->
     <script src="../../js/sideBar.js"></script>
@@ -25,7 +24,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
 <div>
     <h2 class="mb-4">School Year Management</h2>
 
-    <button class="btn btn-success mb-3" onclick="openSchoolYearModal('editSchoolYearModal', null, 'add')">Add School Year</button>
+    <button class="btn btn-success mb-3" onclick="openSchoolYearModal('editSchoolYearModal', null, 'add')"><i class="bi bi-plus-lg"></i></button>
 
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="active" role="tabpanel" aria-labelledby="active-tab">
@@ -45,8 +44,8 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                 <td><?= $counter++ ?></td>
                                 <td><?= clean_input($schoolYear['school_year']) ?></td>
                                 <td>
-                                    <button class="btn btn-success btn-sm" onclick="openSchoolYearModal('editSchoolYearModal', <?= $schoolYear['school_year_id'] ?>, 'edit')">Edit</button>
-                                    <button class="btn btn-danger btn-sm" onclick="openSchoolYearModal('archiveSchoolYearModal', <?= $schoolYear['school_year_id'] ?>, 'delete')">Archive</button>
+                                    <button class="btn btn-success btn-sm" onclick="openSchoolYearModal('editSchoolYearModal', <?= $schoolYear['school_year_id'] ?>, 'edit')"><i class="bi bi-pencil"></i></button>
+                                    <button class="btn btn-danger btn-sm" onclick="openSchoolYearModal('archiveSchoolYearModal', <?= $schoolYear['school_year_id'] ?>, 'delete')"><i class="bi bi-trash"></i></button>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
