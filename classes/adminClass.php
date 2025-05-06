@@ -667,7 +667,8 @@ class Admin {
     function getVolunteersPerMonth($startDate = null, $endDate = null) {
         $sql = "SELECT DATE_FORMAT(created_at, '%Y-%m') AS month, COUNT(*) AS total
                 FROM volunteers
-                WHERE status = 'approved'";
+                WHERE status = 'approved'
+                AND is_deleted = 0";
 
         if ($startDate && $endDate) {
             $sql .= " AND created_at BETWEEN :start_date AND :end_date";
@@ -701,7 +702,8 @@ class Admin {
                     (SELECT SUM(CASE WHEN transaction_type = 'Cash In' THEN amount ELSE 0 END) -
                             SUM(CASE WHEN transaction_type = 'Cash Out' THEN amount ELSE 0 END)
                      FROM transparency_report AS sub
-                     WHERE DATE_FORMAT(sub.report_date, '%Y-%m') <= DATE_FORMAT(main.report_date, '%Y-%m')";
+                     WHERE DATE_FORMAT(sub.report_date, '%Y-%m') <= DATE_FORMAT(main.report_date, '%Y-%m')
+                     AND is_deleted = 0";
         if ($startDate && $endDate) {
             $sql .= " AND sub.report_date BETWEEN :start_date AND :end_date";
         } else if ($startDate) {
@@ -735,7 +737,7 @@ class Admin {
     }
 
     function getApprovedVolunteers($startDate = null, $endDate = null) {
-        $sql = "SELECT COUNT(*) AS total FROM volunteers WHERE status = 'approved'";
+        $sql = "SELECT COUNT(*) AS total FROM volunteers WHERE status = 'approved' AND is_deleted = 0";
         if ($startDate && $endDate) {
             $sql .= " AND created_at BETWEEN :start_date AND :end_date";
         } else if ($startDate) {
@@ -1228,7 +1230,16 @@ class Admin {
 
     // Transparency Report Functions
     function getCashInTransactions($schoolYearId = null, $semester = null, $month = null, $startDate = null, $endDate = null) {
-        $sql = "SELECT * FROM transparency_report WHERE transaction_type = 'Cash In' AND deleted_at IS NULL";
+        $sql = "SELECT *, 
+                CASE 
+                    WHEN end_date IS NOT NULL THEN CONCAT(DATE_FORMAT(report_date, '%M %d, %Y'), ' to ', DATE_FORMAT(end_date, '%M %d, %Y'))
+                    ELSE DATE_FORMAT(report_date, '%M %d, %Y')
+                END AS formatted_date,
+                CASE 
+                    WHEN end_date IS NOT NULL THEN CONCAT(DAYNAME(report_date), ' - ', DAYNAME(end_date))
+                    ELSE DAYNAME(report_date)
+                END AS day_range
+                FROM transparency_report WHERE transaction_type = 'Cash In' AND is_deleted = 0 AND deleted_at IS NULL";
         
         if ($schoolYearId) {
             $sql .= " AND school_year_id = :school_year_id";
@@ -1276,7 +1287,16 @@ class Admin {
     }
 
     function getCashOutTransactions($schoolYearId = null, $semester = null, $month = null, $startDate = null, $endDate = null) {
-        $sql = "SELECT * FROM transparency_report WHERE transaction_type = 'Cash Out' AND deleted_at IS NULL";
+        $sql = "SELECT *, 
+                CASE 
+                    WHEN end_date IS NOT NULL THEN CONCAT(DATE_FORMAT(report_date, '%M %d, %Y'), ' to ', DATE_FORMAT(end_date, '%M %d, %Y'))
+                    ELSE DATE_FORMAT(report_date, '%M %d, %Y')
+                END AS formatted_date,
+                CASE 
+                    WHEN end_date IS NOT NULL THEN CONCAT(DAYNAME(report_date), ' - ', DAYNAME(end_date))
+                    ELSE DAYNAME(report_date)
+                END AS day_range
+                FROM transparency_report WHERE transaction_type = 'Cash Out' AND is_deleted = 0 AND deleted_at IS NULL";
         
         if ($schoolYearId) {
             $sql .= " AND school_year_id = :school_year_id";
@@ -1331,24 +1351,65 @@ class Admin {
         return $query->fetch();
     }
 
-    function addTransparencyTransaction($reportDate, $expenseDetail, $expenseCategory, $amount, $transactionType, $semester, $schoolYearId) {
+    function getSchoolYearIdFromDate($date) {
+        $transactionYear = date('Y', strtotime($date));
+        $nextYear = $transactionYear + 1;
+        $prevYear = $transactionYear - 1;
+        
+        $sql = "SELECT school_year_id FROM school_years 
+                WHERE school_year LIKE :current_year OR 
+                      school_year LIKE :prev_year
+                ORDER BY school_year DESC
+                LIMIT 1";
+                
+        $query = $this->db->connect()->prepare($sql);
+        $currentPattern = $transactionYear . '-' . $nextYear;
+        $prevPattern = $prevYear . '-' . $transactionYear;
+        $query->bindParam(':current_year', $currentPattern);
+        $query->bindParam(':prev_year', $prevPattern);
+        $query->execute();
+        
+        $result = $query->fetch();
+        return $result ? $result['school_year_id'] : null;
+    }
+
+    function addTransparencyTransaction($reportDate, $endDate, $expenseDetail, $expenseCategory, $amount, $transactionType, $semester, $schoolYearId = null) {
+        if (empty($endDate)) {
+            $endDate = null;
+        }
+        
+        if (empty($schoolYearId)) {
+            $schoolYearId = $this->getSchoolYearIdFromDate($reportDate);
+            if (!$schoolYearId) {
+                throw new Exception("No valid school year found for the selected date");
+            }
+        }
+        
         $sql = "INSERT INTO transparency_report 
-                (report_date, expense_detail, expense_category, amount, transaction_type, semester, school_year_id) 
-                VALUES (:report_date, :expense_detail, :expense_category, :amount, :transaction_type, :semester, :school_year_id)";
+                (report_date, end_date, expense_detail, expense_category, amount, transaction_type, semester, school_year_id) 
+                VALUES (:report_date, :end_date, :expense_detail, :expense_category, :amount, :transaction_type, :semester, :school_year_id)";
+        
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':report_date', $reportDate);
+        $query->bindParam(':end_date', $endDate);
         $query->bindParam(':expense_detail', $expenseDetail);
         $query->bindParam(':expense_category', $expenseCategory);
         $query->bindParam(':amount', $amount);
         $query->bindParam(':transaction_type', $transactionType);
         $query->bindParam(':semester', $semester);
         $query->bindParam(':school_year_id', $schoolYearId);
+        
         return $query->execute();
     }
 
-    function updateTransparencyTransaction($reportId, $reportDate, $expenseDetail, $expenseCategory, $amount, $transactionType, $semester, $schoolYearId) {
+    function updateTransparencyTransaction($reportId, $reportDate, $endDate, $expenseDetail, $expenseCategory, $amount, $transactionType, $semester, $schoolYearId) {
+        if (empty($endDate)) {
+            $endDate = null;
+        }
+
         $sql = "UPDATE transparency_report 
                 SET report_date = :report_date, 
+                    end_date = :end_date,
                     expense_detail = :expense_detail, 
                     expense_category = :expense_category,
                     amount = :amount, 
@@ -1358,6 +1419,7 @@ class Admin {
                 WHERE report_id = :report_id";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':report_date', $reportDate);
+        $query->bindParam(':end_date', $endDate);
         $query->bindParam(':expense_detail', $expenseDetail);
         $query->bindParam(':expense_category', $expenseCategory);
         $query->bindParam(':amount', $amount);

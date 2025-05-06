@@ -3,7 +3,6 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 id="cashOutModalTitle" class="modal-title">Add Cash-Out</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form id="cashOutForm">
@@ -11,10 +10,15 @@
                     <input type="hidden" id="transactionTypeOut" name="transaction_type" value="Cash Out">
 
                     <div class="mb-3 position-relative">
-                        <label for="cashOutDate" class="form-label">Date</label>
+                        <label for="cashOutDate" class="form-label">Start Date</label>
                         <input type="date" class="form-control" name="report_date" id="cashOutDate">
-                        <span class="invalid-icon" id="cashOutDateIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
                         <div id="cashOutDateError" class="text-danger"></div>
+                    </div>
+
+                    <div class="mb-3 position-relative">
+                        <label for="cashOutEndDate" class="form-label">End Date (Optional)</label>
+                        <input type="date" class="form-control" name="end_date" id="cashOutEndDate">
+                        <div id="cashOutEndDateError" class="text-danger"></div>
                     </div>
 
                     <div class="mb-3 position-relative">
@@ -26,8 +30,17 @@
 
                     <div class="mb-3 position-relative">
                         <label for="cashOutCategory" class="form-label">Category</label>
-                        <input type="text" class="form-control" name="expense_category" id="cashOutCategory">
-                        <span class="invalid-icon" id="cashOutCategoryIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
+                        <select class="form-select" name="expense_category" id="cashOutCategory">
+                            <option value="">Select a category</option>
+                            <option value="Membership">Membership</option>
+                            <option value="Events">Events</option>
+                            <option value="Donations">Donations</option>
+                            <option value="Islamic Materials">Islamic Materials</option>
+                            <option value="Fundraising">Fundraising</option>
+                            <option value="Charity">Charity</option>
+                            <option value="Organization Funds">Organization Funds</option>
+                            <option value="Others">Others</option>
+                        </select>
                         <div id="cashOutCategoryError" class="text-danger"></div>
                     </div>
 
@@ -44,6 +57,7 @@
                     <div class="mb-3">
                         <label for="cashOutSemester" class="form-label">Semester</label>
                         <select class="form-select" name="semester" id="cashOutSemester">
+                            <option value="">Select a semester</option>
                             <option value="1st">1st Semester</option>
                             <option value="2nd">2nd Semester</option>
                         </select>

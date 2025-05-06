@@ -35,7 +35,7 @@ $totalFunds = $totalCashIn - $totalCashOut;
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <title>Transparency Report</title> 
     <!-- <link rel="stylesheet" href="../../css/admintransparency.css?v=<?php echo time(); ?>">  -->
-    <?php include '../../includes/head.php'; ?> 
+    <!-- <?php include '../../includes/head.php'; ?>  -->
     <script src="../../js/admin.js"></script>
     <script src="../../js/modals.js"></script>
 </head> 
@@ -106,6 +106,7 @@ $totalFunds = $totalCashIn - $totalCashOut;
                 <thead> 
                     <tr> 
                         <th>Date</th> 
+                        <th>Day</th>
                         <th>Detail</th>
                         <th>Category</th> 
                         <th>Amount</th> 
@@ -113,10 +114,37 @@ $totalFunds = $totalCashIn - $totalCashOut;
                     </tr> 
                 </thead> 
                 <tbody> 
-                    <?php if ($cashIn): ?> 
-                        <?php foreach ($cashIn as $transaction): ?> 
+                <?php if ($cashIn): ?>
+                    <?php 
+                    $today = date('Y-m-d');
+                    foreach ($cashIn as $transaction): 
+                        $transactionEndDateToCheck = !empty($transaction['end_date']) ? $transaction['end_date'] : $transaction['report_date'];
+                        $isPastTransaction = ($transactionEndDateToCheck < $today);
+                        $isTodayTransaction = ($transaction['report_date'] <= $today && $transactionEndDateToCheck >= $today);
+                        
+                        $dateDisplay = formatDate2($transaction['report_date']);
+                        if (!empty($transaction['end_date'])) {
+                            $dateDisplay .= ' to ' . formatDate2($transaction['end_date']);
+                        }
+                    ?>
                             <tr> 
-                                <td><?= clean_input($transaction['report_date']) ?></td> 
+                                <td data-order="<?= $calEv['report_date'] ?>">
+                                    <?= $dateDisplay ?>
+                                </td>                                <td>
+                                <?php 
+                                    $startDay = date('l', strtotime($transaction['report_date']));
+                                    if (!empty($transaction['end_date'])) {
+                                        $endDay = date('l', strtotime($transaction['end_date']));
+                                        if ($startDay != $endDay) {
+                                            echo $startDay . ' - ' . $endDay;
+                                        } else {
+                                            echo $startDay;
+                                        }
+                                    } else {
+                                        echo $startDay;
+                                    }
+                                    ?>
+                                </td>
                                 <td><?= clean_input($transaction['expense_detail']) ?></td> 
                                 <td><?= clean_input($transaction['expense_category']) ?></td>
                                 <td>₱<?= number_format($transaction['amount'], 2) ?></td> 
@@ -128,7 +156,7 @@ $totalFunds = $totalCashIn - $totalCashOut;
                         <?php endforeach; ?> 
                     <?php else: ?> 
                         <tr> 
-                            <td colspan="5" class="text-center">No cash-in transactions found.</td> 
+                            <td colspan="6" class="text-center">No cash-in transactions found.</td> 
                         </tr> 
                     <?php endif; ?> 
                 </tbody>
@@ -152,6 +180,7 @@ $totalFunds = $totalCashIn - $totalCashOut;
                 <thead> 
                     <tr> 
                         <th>Date</th> 
+                        <th>Day</th>
                         <th>Detail</th> 
                         <th>Category</th>
                         <th>Amount</th> 
@@ -159,10 +188,37 @@ $totalFunds = $totalCashIn - $totalCashOut;
                     </tr> 
                 </thead> 
                 <tbody> 
-                    <?php if ($cashOut): ?> 
-                        <?php foreach ($cashOut as $transaction): ?> 
+                <?php if ($cashOut): ?>
+                    <?php 
+                    $today = date('Y-m-d');
+                    foreach ($cashOut as $transaction): 
+                        $transactionEndDateToCheck = !empty($transaction['end_date']) ? $transaction['end_date'] : $transaction['report_date'];
+                        $isPastTransaction = ($transactionEndDateToCheck < $today);
+                        $isTodayTransaction = ($transaction['report_date'] <= $today && $transactionEndDateToCheck >= $today);
+                        
+                        $dateDisplay = formatDate2($transaction['report_date']);
+                        if (!empty($transaction['end_date'])) {
+                            $dateDisplay .= ' to ' . formatDate2($transaction['end_date']);
+                        }
+                    ?>
                             <tr> 
-                                <td><?= clean_input($transaction['report_date']) ?></td> 
+                                <td data-order="<?= $calEv['report_date'] ?>">
+                                    <?= $dateDisplay ?>
+                                </td>                                   <td>
+                                <?php 
+                                    $startDay = date('l', strtotime($transaction['report_date']));
+                                    if (!empty($transaction['end_date'])) {
+                                        $endDay = date('l', strtotime($transaction['end_date']));
+                                        if ($startDay != $endDay) {
+                                            echo $startDay . ' - ' . $endDay;
+                                        } else {
+                                            echo $startDay;
+                                        }
+                                    } else {
+                                        echo $startDay;
+                                    }
+                                    ?>
+                                </td>
                                 <td><?= clean_input($transaction['expense_detail']) ?></td> 
                                 <td><?= clean_input($transaction['expense_category']) ?></td>
                                 <td>₱<?= number_format($transaction['amount'], 2) ?></td> 
@@ -174,7 +230,7 @@ $totalFunds = $totalCashIn - $totalCashOut;
                         <?php endforeach; ?> 
                     <?php else: ?> 
                         <tr> 
-                            <td colspan="5" class="text-center">No cash-out transactions found.</td> 
+                            <td colspan="6" class="text-center">No cash-out transactions found.</td> 
                         </tr> 
                     <?php endif; ?> 
                 </tbody>

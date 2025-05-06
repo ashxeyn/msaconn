@@ -59,12 +59,10 @@ $calEvents = $adminObj->fetchCalendarEvents();
                         <?php 
                         $today = date('Y-m-d');
                         foreach ($calEvents as $calEv): 
-                            // Handle event status (past, current, upcoming)
                             $endDateToCheck = !empty($calEv['end_date']) ? $calEv['end_date'] : $calEv['activity_date'];
                             $isPast = ($endDateToCheck < $today);
                             $isToday = ($calEv['activity_date'] <= $today && $endDateToCheck >= $today);
                             
-                            // Format date display
                             $dateDisplay = formatDate2($calEv['activity_date']);
                             if (!empty($calEv['end_date'])) {
                                 $dateDisplay .= ' to ' . formatDate2($calEv['end_date']);

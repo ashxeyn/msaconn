@@ -11,6 +11,7 @@ $type = $_POST['type'] ?? '';
 
 if ($action === 'add' || $action === 'edit') {
     $reportDate = clean_input($_POST['report_date']);
+    $endDate = clean_input($_POST['end_date'] ?? '');
     $expenseDetail = clean_input($_POST['expense_detail']);
     $amount = clean_input($_POST['amount']);
     $transactionType = clean_input($_POST['transaction_type']);
@@ -20,7 +21,8 @@ if ($action === 'add' || $action === 'edit') {
 
     if ($action === 'add') {
         $result = $adminObj->addTransparencyTransaction(
-            $reportDate, 
+            $reportDate,
+            $endDate,
             $expenseDetail, 
             $expenseCategory,
             $amount, 
@@ -31,7 +33,8 @@ if ($action === 'add' || $action === 'edit') {
     } else {
         $result = $adminObj->updateTransparencyTransaction(
             $reportId, 
-            $reportDate, 
+            $reportDate,
+            $endDate,
             $expenseDetail, 
             $expenseCategory,
             $amount, 

@@ -986,6 +986,7 @@ function setTransactionId(reportId, action, transactionType) {
                 if (transactionType === 'Cash In') {
                     $('#reportId').val(transaction.report_id);
                     $('#cashInDate').val(transaction.report_date);
+                    $('#cashInEndDate').val(transaction.end_date || '');
                     $('#cashInDetail').val(transaction.expense_detail);
                     $('#cashInCategory').val(transaction.expense_category);
                     $('#cashInAmount').val(transaction.amount);
@@ -1003,6 +1004,7 @@ function setTransactionId(reportId, action, transactionType) {
                 } else {
                     $('#reportIdOut').val(transaction.report_id);
                     $('#cashOutDate').val(transaction.report_date);
+                    $('#cashOutEndDate').val(transaction.end_date || '');
                     $('#cashOutDetail').val(transaction.expense_detail);
                     $('#cashOutCategory').val(transaction.expense_category);
                     $('#cashOutAmount').val(transaction.amount);
@@ -1032,7 +1034,6 @@ function setTransactionId(reportId, action, transactionType) {
                 const reason = $('#archiveCashInReason').val().trim();
                 if (reason === '') {
                     $('#archiveReason').addClass('is-invalid');
-                    $('#archiveReasonIcon').show();
                     $('#archiveCashInReasonError').text('Please provide a reason for archiving');
                     return;
                 }
@@ -1047,7 +1048,6 @@ function setTransactionId(reportId, action, transactionType) {
                 const reason = $('#archiveCashOutReason').val().trim();
                 if (reason === '') {
                     $('#archiveReason').addClass('is-invalid');
-                    $('#archiveReasonIcon').show();
                     $('#archiveCashOutReasonError').text('Please provide a reason for archiving');
                     return;
                 }
@@ -1104,13 +1104,27 @@ function validateCashForm(type) {
     const date = $(`#cash${type}Date`).val().trim();
     if (date === '') {
         $(`#cash${type}Date`).addClass('is-invalid');
-        $(`#cash${type}DateIcon`).show();
-        $(`#cash${type}DateError`).text('Date is required');
+        $(`#cash${type}DateError`).text('Start date is required');
         isValid = false;
     } else {
         $(`#cash${type}Date`).removeClass('is-invalid');
-        $(`#cash${type}DateIcon`).hide();
         $(`#cash${type}DateError`).text('');
+    }
+    
+    // Validate end date if provided (should be >= start date)
+    const endDate = $(`#cash${type}EndDate`).val().trim();
+    if (endDate !== '' && date !== '') {
+        if (new Date(endDate) < new Date(date)) {
+            $(`#cash${type}EndDate`).addClass('is-invalid');
+            $(`#cash${type}EndDateError`).text('End date must be after or equal to start date');
+            isValid = false;
+        } else {
+            $(`#cash${type}EndDate`).removeClass('is-invalid');
+            $(`#cash${type}EndDateError`).text('');
+        }
+    } else {
+        $(`#cash${type}EndDate`).removeClass('is-invalid');
+        $(`#cash${type}EndDateError`).text('');
     }
 
     const detail = $(`#cash${type}Detail`).val().trim();
@@ -1169,14 +1183,15 @@ function validateCashForm(type) {
 
 function clearCashValidationErrors(type) {
     $(`#cash${type}DateError`).text('');
+    $(`#cash${type}EndDateError`).text('');
     $(`#cash${type}DetailError`).text('');
     $(`#cash${type}CategoryError`).text('');
     $(`#cash${type}AmountError`).text('');
     $(`#cash${type}Date`).removeClass('is-invalid');
+    $(`#cash${type}EndDate`).removeClass('is-invalid');
     $(`#cash${type}Detail`).removeClass('is-invalid');
     $(`#cash${type}Category`).removeClass('is-invalid');
     $(`#cash${type}Amount`).removeClass('is-invalid');
-    $(`#cash${type}DateIcon`).hide();
     $(`#cash${type}DetailIcon`).hide();
     $(`#cash${type}CategoryIcon`).hide();
     $(`#cash${type}AmountIcon`).hide();
@@ -1186,11 +1201,13 @@ function clearCashValidationErrors(type) {
 
 function clearTransactionValidationErrors() {
     $('#cashInDateError').text('');
+    $('#cashInEndDateError').text('');
     $('#cashInDetailError').text('');
     $('#cashInCategoryError').text('');
     $('#cashInAmountError').text('');
     
     $('#cashOutDateError').text('');
+    $('#cashOutEndDateError').text('');
     $('#cashOutDetailError').text('');
     $('#cashOutCategoryError').text('');
     $('#cashOutAmountError').text('');
