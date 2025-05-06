@@ -79,6 +79,16 @@ function showToast(title, message, type) {
     }, 3500);
 }
 
+document.getElementById('searchOrgUpdates').addEventListener('input', function() {
+    const searchTerm = this.value.toLowerCase();
+    const cards = document.querySelectorAll('#orgUpdatesContainer .col-md-4');
+    
+    cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.style.display = text.includes(searchTerm) ? 'block' : 'none';
+    });
+});
+
 // SCHOOL CONFIG FUNCTIONS
 function validateProgramForm() {
     let isValid = true;
