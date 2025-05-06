@@ -10,16 +10,25 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id'];
 $action = $_POST['action'] ?? '';
 $activityId = $_POST['activity_id'] ?? null;
+
 if ($action === 'edit') {
     $activityDate = clean_input($_POST['activity_date']);
+    $endDate = clean_input($_POST['end_date']);
     $title = clean_input($_POST['title']);
     $description = clean_input($_POST['description']);
+    
+    if (!empty($endDate) && $endDate < $activityDate) {
+        echo "error: end_date_before_start";
+        exit;
+    }
+    
     $existingActivity = $adminObj->getCalendarEventById($activityId);
     if (!$existingActivity) {
         echo "error: activity_not_found";
         exit;
     }
-    $result = $adminObj->updateCalendarEvent($activityId, $activityDate, $title, $description);
+    
+    $result = $adminObj->updateCalendarEvent($activityId, $activityDate, $endDate, $title, $description);
     echo $result ? "success" : "error";
 } elseif ($action === 'delete') {
     $reason = clean_input($_POST['reason']);
@@ -34,9 +43,16 @@ if ($action === 'edit') {
     echo $result ? "success" : "error";
 } elseif ($action === 'add') {
     $activityDate = clean_input($_POST['activity_date']);
+    $endDate = clean_input($_POST['end_date']);
     $title = clean_input($_POST['title']);
     $description = clean_input($_POST['description']);
-    $result = $adminObj->addCalendarEvent($activityDate, $title, $description, $userId);
+    
+    if (!empty($endDate) && $endDate < $activityDate) {
+        echo "error: end_date_before_start";
+        exit;
+    }
+    
+    $result = $adminObj->addCalendarEvent($activityDate, $endDate, $title, $description, $userId);
     echo $result ? "success" : "error";
 } else {
     echo "invalid_action";

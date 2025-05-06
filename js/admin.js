@@ -558,6 +558,7 @@ function setCalendarId(activityId, action) {
                     const activity = JSON.parse(response);
                     $('#editActivityId').val(activity.activity_id);
                     $('#editActivityDate').val(activity.activity_date);
+                    $('#editEndDate').val(activity.end_date || '');
                     $('#editTitle').val(activity.title);
                     $('#editDescription').val(activity.description);
                     $('#editCalendarModal .modal-title').text('Edit Activity');
@@ -626,13 +627,21 @@ function validateCalendarForm() {
     const activityDate = $('#editActivityDate').val().trim();
     if (activityDate === '') {
         $('#editActivityDate').addClass('is-invalid');
-        $('#editActivityDateIcon').show();
-        $('#editActivityDateError').text('Activity date is required');
+        $('#editActivityDateError').text('Start date is required');
         isValid = false;
     } else {
         $('#editActivityDate').removeClass('is-invalid');
-        $('#editActivityDateIcon').hide();
         $('#editActivityDateError').text('');
+    }
+
+    const endDate = $('#editEndDate').val().trim();
+    if (endDate !== '' && endDate < activityDate) {
+        $('#editEndDate').addClass('is-invalid');
+        $('#editEndDateError').text('End date must be after or equal to start date');
+        isValid = false;
+    } else {
+        $('#editEndDate').removeClass('is-invalid');
+        $('#editEndDateError').text('');
     }
 
     const title = $('#editTitle').val().trim();
@@ -664,12 +673,13 @@ function validateCalendarForm() {
 
 function clearCalendarValidationErrors() {
     $('#editActivityDateError').text('');
+    $('#editEndDateError').text('');
     $('#editTitleError').text('');
     $('#editDescriptionError').text('');
     $('#editActivityDate').removeClass('is-invalid');
+    $('#editEndDate').removeClass('is-invalid');
     $('#editTitle').removeClass('is-invalid');
     $('#editDescription').removeClass('is-invalid');
-    $('#editActivityDateIcon').hide();
     $('#editTitleIcon').hide();
     $('#editDescriptionIcon').hide();
 }
@@ -679,6 +689,16 @@ function processCalendar(activityId, action) {
 
     if (action === 'add' || action === 'edit') {
         formData = new FormData(document.getElementById('editCalendarForm'));
+        
+        const startDate = formData.get('activity_date');
+        const endDate = formData.get('end_date');
+        
+        if (endDate && endDate < startDate) {
+            $('#editEndDate').addClass('is-invalid');
+            $('#editEndDateError').text('End date must be after or equal to start date');
+            return false;
+        }
+        
     } else if (action === 'delete') {
         formData.append('reason', $('#archiveReason').val());
     } else if (action === 'restore') {
@@ -713,6 +733,9 @@ function processCalendar(activityId, action) {
                     action === 'restore' ? 'Activity has been restored.' :
                     'Activity has been ' + (action === 'edit' ? 'updated' : 'added') + '.', 
                     'success');
+            } else if (response.trim() === "error: end_date_before_start") {
+                $('#editEndDate').addClass('is-invalid');
+                $('#editEndDateError').text('End date must be after or equal to start date');
             } else {
                 alert("Failed to process request: " + response);
             }

@@ -957,20 +957,20 @@ class Admin {
 
     // Calendar Functions
     function fetchCalendarEvents() {
-        $sql = "SELECT ca.activity_id, ca.activity_date, ca.title, ca.description, ca.created_at, ca.deleted_at,
+        $sql = "SELECT ca.activity_id, ca.activity_date, ca.end_date, ca.title, ca.description, ca.created_at, ca.deleted_at,
                     u.username 
                 FROM calendar_activities ca
                 LEFT JOIN users u ON ca.created_by = u.user_id
                 WHERE ca.deleted_at IS NULL
                 ORDER BY ca.activity_date ASC";
-        
+
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         return $query->fetchAll();
     }
-    
+
     function getCalendarEventById($activityId) {
-        $sql = "SELECT ca.activity_id, ca.activity_date, ca.title, ca.description, ca.created_at, ca.deleted_at,
+        $sql = "SELECT ca.activity_id, ca.activity_date, ca.end_date, ca.title, ca.description, ca.created_at, ca.deleted_at,
                     u.username
                 FROM calendar_activities ca
                 LEFT JOIN users u ON ca.created_by = u.user_id
@@ -980,44 +980,54 @@ class Admin {
         $query->execute();
         return $query->fetch();
     }
-    
-    function addCalendarEvent($activityDate, $title, $description, $userId) {
-        $sql = "INSERT INTO calendar_activities (activity_date, title, description, created_by) 
-                VALUES (:activity_date, :title, :description, :created_by)";
+
+    function addCalendarEvent($activityDate, $endDate, $title, $description, $userId) {
+        if (empty($endDate)) {
+            $endDate = null;
+        }
+        
+        $sql = "INSERT INTO calendar_activities (activity_date, end_date, title, description, created_by) 
+                VALUES (:activity_date, :end_date, :title, :description, :created_by)";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':activity_date', $activityDate);
+        $query->bindParam(':end_date', $endDate);
         $query->bindParam(':title', $title);
         $query->bindParam(':description', $description);
         $query->bindParam(':created_by', $userId);
         return $query->execute();
     }
-    
-    function updateCalendarEvent($activityId, $activityDate, $title, $description) {
+
+    function updateCalendarEvent($activityId, $activityDate, $endDate, $title, $description) {
+        if (empty($endDate)) {
+            $endDate = null;
+        }
+        
         $sql = "UPDATE calendar_activities 
-                SET activity_date = :activity_date, title = :title, description = :description 
+                SET activity_date = :activity_date, end_date = :end_date, title = :title, description = :description 
                 WHERE activity_id = :activity_id";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':activity_date', $activityDate);
+        $query->bindParam(':end_date', $endDate);
         $query->bindParam(':title', $title);
         $query->bindParam(':description', $description);
         $query->bindParam(':activity_id', $activityId);
         return $query->execute();
     }
-    
+
     function softDeleteCalendarEvent($activityId, $reason) {
         $sql = "UPDATE calendar_activities 
                 SET is_deleted = 1, 
                     reason = :reason,
                     deleted_at = NOW() 
                 WHERE activity_id = :activity_id";
-        
+
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':activity_id', $activityId);
         $query->bindParam(':reason', $reason);
-        
+
         return $query->execute();
     }
-    
+
     function restoreCalendarEvent($activityId) {
         $sql = "UPDATE calendar_activities 
                 SET is_deleted = 0, deleted_at = NULL, reason = NULL 
@@ -1026,9 +1036,9 @@ class Admin {
         $query->bindParam(':activity_id', $activityId);
         return $query->execute();
     }
-    
+
     function fetchArchivedCalendar() {
-        $sql = "SELECT ca.activity_id, ca.activity_date, ca.title, ca.description, ca.reason, ca.deleted_at,
+        $sql = "SELECT ca.activity_id, ca.activity_date, ca.end_date, ca.title, ca.description, ca.reason, ca.deleted_at,
                     u.username
                 FROM calendar_activities ca
                 LEFT JOIN users u ON ca.created_by = u.user_id

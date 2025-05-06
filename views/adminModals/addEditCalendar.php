@@ -8,9 +8,14 @@
                 <div class="modal-body">
                     <input type="hidden" name="activity_id" id="editActivityId">
                     <div class="mb-3 position-relative">
-                        <label for="editActivityDate" class="form-label">Date</label>
+                        <label for="editActivityDate" class="form-label">Start Date</label>
                         <input type="date" class="form-control" id="editActivityDate" name="activity_date">
                         <div id="editActivityDateError" class="text-danger"></div>
+                    </div>
+                    <div class="mb-3 position-relative">
+                        <label for="editEndDate" class="form-label">End Date (Optional)</label>
+                        <input type="date" class="form-control" id="editEndDate" name="end_date">
+                        <div id="editEndDateError" class="text-danger"></div>
                     </div>
                     <div class="mb-3 position-relative">
                         <label for="editTitle" class="form-label">Title</label>

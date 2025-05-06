@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 05, 2025 at 06:53 AM
+-- Generation Time: May 05, 2025 at 05:40 PM
 -- Server version: 11.4.5-MariaDB
 -- PHP Version: 8.2.12
 
@@ -43,7 +43,10 @@ CREATE TABLE `about_msa` (
 
 INSERT INTO `about_msa` (`id`, `mission`, `vision`, `created_at`, `is_deleted`, `reason`, `deleted_at`) VALUES
 (1, 'To seek the pleasure of Allah (SWT) by empowering Muslim students with resources aimed at fostering character and leadership development (tarbiyyah), campus activism and da’wah, and connecting for a unified vision.', 'A unifying movement, rooted in deen, of all Muslim Student Associations, cultivating safe and transformative spaces for all Muslims on campus and continuing to serve the Ummah beyond graduation.', '2025-05-01 09:51:01', 0, NULL, NULL),
-(2, 'try', 'try', '2025-05-01 15:15:51', 1, 'try', '2025-05-01 20:32:31');
+(2, 'try', 'try', '2025-05-01 15:15:51', 1, 'try', '2025-05-01 20:32:31'),
+(3, 'asd', 'asd', '2025-05-05 07:34:47', 1, 'asdasdasd', '2025-05-05 07:40:25'),
+(4, 'asd', 'asdada', '2025-05-05 07:41:03', 0, NULL, NULL),
+(5, 'asd', 'asdasda', '2025-05-05 07:41:47', 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -73,7 +76,9 @@ INSERT INTO `calendar_activities` (`activity_id`, `title`, `description`, `activ
 (3, 'Cultural Fair', 'Celebrate Eid with traditional foods, henna art, and cultural performances from Muslim student groups.', '2025-05-01', 3, '2025-05-01 08:50:22', 0, NULL, NULL),
 (4, 'Ramadan Iftar Program', 'Community iftars with short tafsir sessions after Maghrib prayers.', '2025-03-15', 3, '2025-05-01 08:53:06', 1, 'try', '2025-05-01 15:12:06'),
 (5, 'Muslim Activity for Madrasa', 'Madrasa activity workshop.', '2025-04-02', 3, '2025-05-01 09:26:23', 0, NULL, NULL),
-(6, 'fv', 'v cv c', '2025-05-03', 3, '2025-05-02 04:56:34', 0, NULL, NULL);
+(6, 'fv', 'v cv c', '2025-05-03', 3, '2025-05-02 04:56:34', 0, NULL, NULL),
+(7, 'asd', 'asdasd', '2025-05-01', 6, '2025-05-05 07:19:15', 0, NULL, NULL),
+(8, 'asdasda', 'dasd', '2025-04-29', 6, '2025-05-05 14:46:42', 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -111,7 +116,8 @@ INSERT INTO `colleges` (`college_id`, `college_name`, `is_deleted`, `reason`, `d
 (15, 'College of Sports Science and Physical Education', 0, NULL, NULL),
 (16, 'College of Technical Education', 0, NULL, NULL),
 (17, 'College of Hospitality Management', 0, NULL, NULL),
-(18, 'sS', 1, 'S', '2025-05-05 04:41:24');
+(18, 'sS', 1, 'S', '2025-05-05 04:41:24'),
+(19, 'SAMPLEs', 1, 'SAMPLE', '2025-05-05 06:59:36');
 
 -- --------------------------------------------------------
 
@@ -141,7 +147,9 @@ INSERT INTO `downloadable_files` (`file_id`, `user_id`, `file_name`, `file_path`
 (1, 3, 'Total Students Paid (SY. 2023-2024)', '1746093280_Introduction to Machine Learning.pdf', 'application/pdf', 270063, '2025-05-01 17:54:40', '2025-05-01 17:54:40', 0, NULL, NULL),
 (2, 3, 'Rules and Bylaws', '1746093300_Study Mats.pdf.docx', 'application/vnd.openxmlformats-officedocument.word', 22363, '2025-05-01 17:55:00', '2025-05-01 23:12:43', 1, 'try', '2025-05-01 15:12:43'),
 (3, 3, 'Bylaws', '1746131595_Study Mats.pdf.docx', 'application/vnd.openxmlformats-officedocument.word', 22363, '2025-05-02 04:33:15', '2025-05-02 04:33:15', 0, NULL, NULL),
-(4, 3, 'Sir Rham', '1746162335_NumPy-Cheat-Sheet.pdf', 'application/pdf', 137888, '2025-05-02 13:05:35', '2025-05-02 13:05:35', 0, NULL, NULL);
+(4, 3, 'Sir Rham', '1746162335_NumPy-Cheat-Sheet.pdf', 'application/pdf', 137888, '2025-05-02 13:05:35', '2025-05-02 13:05:35', 0, NULL, NULL),
+(5, 6, 'asd', '1746430434_1746162335_NumPy-Cheat-Sheet.pdf', 'application/pdf', 137888, '2025-05-05 15:33:54', '2025-05-05 15:33:54', 0, NULL, NULL),
+(6, 6, 'asda', '1746440802___🐍 Django Project Setup Guide__.pdf', 'application/pdf', 312893, '2025-05-05 18:26:42', '2025-05-05 18:26:42', 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -172,7 +180,8 @@ INSERT INTO `executive_officers` (`officer_id`, `last_name`, `first_name`, `midd
 (1, 'Kulong', 'Rone', '', 1, 7, 'Screenshot 2025-02-18 222613.png', 2, '2025-05-01 13:28:30', 1, 'try', '2025-05-01 15:16:08'),
 (2, 'Jimenez', 'Shane', 'Duran', 2, 7, 'webcam-toy-photo14.jpg', 2, '2025-05-01 13:30:56', 0, NULL, NULL),
 (3, 'Jaafar', 'Rhamirl', '', 20, 8, 'Screenshot 2025-01-03 151758.png', 2, '2025-05-01 13:32:01', 0, NULL, NULL),
-(4, 'sdfsd', 'fsdfssd', 'fdfsdfsd', 17, 27, 'Screenshot (5).png', 1, '2025-05-05 04:43:29', 0, NULL, NULL);
+(4, 'sdfsd', 'fsdfssd', 'fdfsdfsd', 17, 27, 'Screenshot (5).png', 1, '2025-05-05 04:43:29', 0, NULL, NULL),
+(5, 'asda', 'sdasda', '', 3, 13, 'Screenshot (1).png', 1, '2025-05-05 09:16:35', 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -216,34 +225,6 @@ INSERT INTO `faqs` (`faq_id`, `question`, `answer`, `category`, `created_at`, `i
 (18, 'Do you have regional offices?', 'Our main office is in New York, but we have representatives in 5 other states. See our Contact page for details.', 'Contact and Support', '2023-03-18 02:45:00', 0, NULL, NULL),
 (19, 'Can I schedule a meeting with a staff member?', 'Yes, please contact our office to schedule an appointment with the appropriate staff member.', 'Contact and Support', '2023-04-22 04:00:00', 0, NULL, NULL),
 (20, 'Where can I find your annual reports?', 'Our annual reports are available in the About Us section of our website under \"Financials\".', 'Contact and Support', '2023-05-30 05:15:00', 0, NULL, NULL);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `friday_prayers`
---
-
-CREATE TABLE `friday_prayers` (
-  `prayer_id` int(11) NOT NULL,
-  `khutbah_date` date NOT NULL,
-  `speaker` varchar(255) NOT NULL,
-  `topic` varchar(255) NOT NULL,
-  `location` varchar(255) NOT NULL,
-  `created_by` int(11) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT current_timestamp(),
-  `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
-  `reason` varchar(255) DEFAULT NULL,
-  `deleted_at` timestamp NULL DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `friday_prayers`
---
-
-INSERT INTO `friday_prayers` (`prayer_id`, `khutbah_date`, `speaker`, `topic`, `location`, `created_by`, `created_at`, `is_deleted`, `reason`, `deleted_at`) VALUES
-(1, '2025-03-28', 'Ahmad Eldani', 'Virtue of Reading Quran', 'MSA Center', 3, '2025-05-01 08:57:38', 1, 'try', '2025-05-01 15:15:31'),
-(2, '2025-04-04', 'Khalid Mohammad Ali', 'Special Prayers', 'COE, 2nd Floor', 3, '2025-05-01 08:59:03', 0, NULL, NULL),
-(3, '2025-05-01', 'Rhamirl Jaafar', 'Balancing Deen and Studies: Islamic Time Management', 'CCS, Lab 2', 3, '2025-05-01 09:21:25', 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -297,7 +278,8 @@ INSERT INTO `madrasa_enrollment` (`enrollment_id`, `first_name`, `middle_name`, 
 (10, 'Khadija', 'Amina', 'Tan', 'ktan@wmsu.edu.ph', '09101234567', 'On-site', 'Zamboanga Peninsula', 'Zamboanga del Norte', 'Dipolog City', 'Estaka', '222 Sunnah Avenue', '7100', 3, NULL, 2, NULL, '2nd Year', 'Western Mindanao State University - Dipolog', NULL, 'Rejected', '2023-03-20 15:30:00', '2023-03-22 17:15:00', 0, 'Ineligible for program', NULL),
 (11, 'Shane', 'Duran', 'Jimenez', 'shanehart1001@wmsu.edu.ph', '09066998688', 'On-site', 'Zamboanga Peninsula', 'Zamboanga City', 'Zamboanga City', 'Putik', 'Sapphire', '7000', 3, NULL, 7, NULL, '2nd year', NULL, '1746094541_Screenshot (6).png', 'Enrolled', '2025-05-01 18:15:41', '2025-05-01 20:36:25', 1, 'a', '2025-05-01 12:36:25'),
 (12, 'Shane', '', 'Jimenez', 'shane@wmsu.edu.ph', '09876545323', 'On-site', 'Zamboanga Peninsula', 'Zamboanga del Norte', 'Dipolog City', 'Biasong', 'Sapphire', '7900', 3, NULL, 7, NULL, '3rd year', NULL, '1746123154_Screenshot 2025-02-21 203438.png', 'Enrolled', '2025-05-02 02:12:34', '2025-05-02 02:12:34', 0, NULL, NULL),
-(13, 'sdfsdfsdf', 'sdfsdfsd', 'fsdfsdfsdfs', 'HZ202300259@wmsu.edu.ph', '09171234567', 'On-site', 'Zamboanga Peninsula', 'Zamboanga City', 'Zamboanga City', 'Arena Blanco', '123 Mosque Street', '7100', 3, NULL, 7, NULL, '2nd year', NULL, '1746420168_output.png', 'Enrolled', '2025-05-05 12:42:48', '2025-05-05 12:42:48', 0, NULL, NULL);
+(13, 'sdfsdfsdf', 'sdfsdfsd', 'fsdfsdfsdfs', 'HZ202300259@wmsu.edu.ph', '09171234567', 'On-site', 'Zamboanga Peninsula', 'Zamboanga City', 'Zamboanga City', 'Arena Blanco', '123 Mosque Street', '7100', 3, NULL, 7, NULL, '2nd year', NULL, '1746420168_output.png', 'Enrolled', '2025-05-05 12:42:48', '2025-05-05 12:42:48', 0, NULL, NULL),
+(14, 'ASD', '', 'ADASD', 'sdfsfd@wmsu.edu.ph', '09066998483', 'On-site', 'Zamboanga Peninsula', 'Zamboanga City', 'Zamboanga City', 'San Jose Gusu', '123 Mosque Street', '7100', 16, NULL, 43, NULL, '2nd year', NULL, '1746431113_login.jpg', 'Enrolled', '2025-05-05 15:45:13', '2025-05-05 15:45:13', 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -339,7 +321,8 @@ INSERT INTO `officer_positions` (`position_id`, `position_name`, `is_deleted`, `
 (19, 'Publication', 0, NULL, NULL),
 (20, 'Documentation', 0, NULL, NULL),
 (21, 'Registration', 0, NULL, NULL),
-(23, 'Sheesh', 1, 'Trip lang', '2025-05-01 14:23:12');
+(23, 'Sheesh', 1, 'Trip lang', '2025-05-01 14:23:12'),
+(24, 'SAMPLEs', 1, 'SAMPLE', '2025-05-05 06:59:59');
 
 -- --------------------------------------------------------
 
@@ -364,7 +347,43 @@ CREATE TABLE `org_updates` (
 
 INSERT INTO `org_updates` (`update_id`, `title`, `content`, `created_by`, `created_at`, `is_deleted`, `reason`, `deleted_at`) VALUES
 (1, 'Eid Fiest Celebration', 'The Muslim Student Association (MSA Connect) is pleased to announce its annual Eid al-Fitr Celebration, marking the conclusion of Ramadan 1446H. This community event aims to foster unity, gratitude, and Islamic brotherhood among students, faculty, and staff.\r\n\r\nTheme: &quot;Blessings of Unity: Sharing Joy, Strengthening Faith&quot;\r\n\r\nDate:March 2025\r\n\r\nTime: 7:00 AM - 3:00 PM\r\n\r\nVenue: WMSU, Campus A', 3, '2025-05-01 08:42:00', 1, 'try', '2025-05-01 15:10:50'),
-(2, 'Muslim Activity', 'WMSU activity conducted by MSA.', 3, '2025-05-01 15:10:36', 0, NULL, NULL);
+(2, 'Muslim Activity', 'WMSU activity conducted by MSA.', 3, '2025-05-01 15:10:36', 0, NULL, NULL),
+(3, 'ad', 'asdasdas', 6, '2025-05-05 05:02:39', 0, NULL, NULL),
+(4, 'SAMPLE', 'SAMPLE', 6, '2025-05-05 07:00:13', 1, 'SAMPLE', '2025-05-05 07:00:17'),
+(5, 'f', 'sd', 6, '2025-05-05 07:35:08', 1, 'as', '2025-05-05 07:37:53'),
+(6, 'asda', 'asdasd', 6, '2025-05-05 12:05:26', 0, NULL, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `prayer_schedule`
+--
+
+CREATE TABLE `prayer_schedule` (
+  `prayer_id` int(11) NOT NULL,
+  `prayer_type` enum('khutba','fajr','asr','maghrib','isha','jumu''ah') NOT NULL,
+  `date` date NOT NULL,
+  `speaker` varchar(255) NOT NULL,
+  `topic` varchar(255) DEFAULT NULL,
+  `location` varchar(255) NOT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT current_timestamp(),
+  `is_deleted` tinyint(1) NOT NULL DEFAULT 0,
+  `reason` varchar(255) DEFAULT NULL,
+  `deleted_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `prayer_schedule`
+--
+
+INSERT INTO `prayer_schedule` (`prayer_id`, `prayer_type`, `date`, `speaker`, `topic`, `location`, `created_by`, `created_at`, `is_deleted`, `reason`, `deleted_at`) VALUES
+(1, 'khutba', '2025-03-28', 'Ahmad Eldani', 'Virtue of Reading Quran', 'MSA Center', 3, '2025-05-01 08:57:38', 1, 'try', '2025-05-01 15:15:31'),
+(2, 'khutba', '2025-04-04', 'Khalid Mohammad Ali', 'Special Prayers', 'COE, 2nd Floor', 3, '2025-05-01 08:59:03', 0, NULL, NULL),
+(3, 'khutba', '2025-05-01', 'Rhamirl Jaafar', 'Balancing Deen and Studies: Islamic Time Management', 'CCS, Lab 2', 3, '2025-05-01 09:21:25', 0, NULL, NULL),
+(4, 'asr', '2025-05-05', 'TBA', 'Special Prayerss', 'ASDASDASDASDASD', 6, '2025-05-05 15:08:24', 0, NULL, NULL),
+(5, 'khutba', '2025-05-09', 'asdasdasssssssssssss', 'Special Prayers', 'asdasdda', 6, '2025-05-05 15:29:35', 1, 'a', '2025-05-05 15:29:54'),
+(6, 'khutba', '2025-05-01', 'asdad', 'asas', 'asdasd', 6, '2025-05-05 15:32:15', 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -455,7 +474,7 @@ INSERT INTO `school_years` (`school_year_id`, `school_year`, `is_deleted`, `reas
 (3, '2026-2027', 0, NULL, NULL),
 (4, '2028-2029', 1, 'trip', '2025-05-01 15:09:06'),
 (5, '2029-2030', 1, 'trip', '2025-05-01 15:07:31'),
-(6, '2031-2032', 0, NULL, NULL);
+(6, '2031-2032', 1, 'asdad', '2025-05-05 12:05:16');
 
 -- --------------------------------------------------------
 
@@ -550,7 +569,11 @@ INSERT INTO `update_images` (`image_id`, `update_id`, `file_path`, `upload_order
 (1, 1, '681333d810dee_eid.jpg', 0),
 (2, 2, '68138eec3c5b4_487126878_1066796692135436_2620514646350456280_n.jpg', 0),
 (3, 2, '68138eec3c851_489978008_1075409894607449_3806741056660008067_n.jpg', 1),
-(4, 2, '68138eec3ca0d_eid.jpg', 2);
+(4, 2, '68138eec3ca0d_eid.jpg', 2),
+(5, 3, '6818466f6f35d_Screenshot (2).png', 0),
+(6, 4, '681861fdf162a_Screenshot (1).png', 0),
+(7, 5, '68186a2c71c77_a6a0a64d-de4e-4f3f-bea0-fb500c5701a9.jpg', 0),
+(8, 6, '6818a9860ed44_output.png', 0);
 
 -- --------------------------------------------------------
 
@@ -583,7 +606,8 @@ INSERT INTO `users` (`user_id`, `first_name`, `middle_name`, `last_name`, `usern
 (4, 'sub', 'sub', 'sub', 'sub', 'sub@wmsu.edu.ph', '$2y$10$TkNyqLP29O8syY9h/0Yl1ukM5jQ9WNPVrbWjmAhNsY0q1J7n1A/kq', 'sub-admin', '2025-05-01 12:51:55', 3, 0, NULL, NULL),
 (5, 'Shane', '', 'Jimenez', 'ashxeynx', 'ashxeynx@wmsu.edu.ph', '$2y$10$UIDkASXpuBfVsXVUJ2B58.yIATNoUkScXWpEL5DY0n2kAdZsuQn.e', 'sub-admin', '2025-05-01 15:13:29', 19, 1, 'try', '2025-05-01 15:13:34'),
 (6, 'adminn', 'adminn', 'adminn', 'adminn', 'adminn@gmail.com', '$2y$10$YHqUoGsuBsKMcDYyYwt87O/zbyqKsjQhMYjF4JlsdqHNFidU0rKQC', 'admin', '2025-05-02 05:50:10', NULL, 0, NULL, NULL),
-(7, 'sfs', 'dfsdfs', 'sdfs', 'sdfs', 'asdas@wmsu.edu.ph', '$2y$10$TcQRKug94GAOg1ZSnKd2x.AYcyKJgKfx68wpD/wgkn9A8ffMDGhu6', 'sub-admin', '2025-05-05 04:43:52', 21, 0, NULL, NULL);
+(7, 'sfs', 'dfsdfs', 'sdfs', 'sdfs', 'asdas@wmsu.edu.ph', '$2y$10$TcQRKug94GAOg1ZSnKd2x.AYcyKJgKfx68wpD/wgkn9A8ffMDGhu6', 'sub-admin', '2025-05-05 04:43:52', 21, 0, NULL, NULL),
+(8, 'asd', 'asda', 'asdasd', 'asdad', 'asdasda@gmail.com', '$2y$10$UHcuruockF5Xjhw2vJI8WOH4mz.L39nzVMVBtyWdCjYCibu0qhJAy', 'sub-admin', '2025-05-05 09:16:13', 12, 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -669,13 +693,6 @@ ALTER TABLE `faqs`
   ADD PRIMARY KEY (`faq_id`);
 
 --
--- Indexes for table `friday_prayers`
---
-ALTER TABLE `friday_prayers`
-  ADD PRIMARY KEY (`prayer_id`),
-  ADD KEY `created_by` (`created_by`);
-
---
 -- Indexes for table `madrasa_enrollment`
 --
 ALTER TABLE `madrasa_enrollment`
@@ -695,6 +712,13 @@ ALTER TABLE `officer_positions`
 --
 ALTER TABLE `org_updates`
   ADD PRIMARY KEY (`update_id`),
+  ADD KEY `created_by` (`created_by`);
+
+--
+-- Indexes for table `prayer_schedule`
+--
+ALTER TABLE `prayer_schedule`
+  ADD PRIMARY KEY (`prayer_id`),
   ADD KEY `created_by` (`created_by`);
 
 --
@@ -757,31 +781,31 @@ ALTER TABLE `volunteers`
 -- AUTO_INCREMENT for table `about_msa`
 --
 ALTER TABLE `about_msa`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `calendar_activities`
 --
 ALTER TABLE `calendar_activities`
-  MODIFY `activity_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `activity_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `colleges`
 --
 ALTER TABLE `colleges`
-  MODIFY `college_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `college_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `downloadable_files`
 --
 ALTER TABLE `downloadable_files`
-  MODIFY `file_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `file_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `executive_officers`
 --
 ALTER TABLE `executive_officers`
-  MODIFY `officer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `officer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `faqs`
@@ -790,28 +814,28 @@ ALTER TABLE `faqs`
   MODIFY `faq_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
--- AUTO_INCREMENT for table `friday_prayers`
---
-ALTER TABLE `friday_prayers`
-  MODIFY `prayer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
 -- AUTO_INCREMENT for table `madrasa_enrollment`
 --
 ALTER TABLE `madrasa_enrollment`
-  MODIFY `enrollment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `enrollment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `officer_positions`
 --
 ALTER TABLE `officer_positions`
-  MODIFY `position_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `position_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `org_updates`
 --
 ALTER TABLE `org_updates`
-  MODIFY `update_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `update_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `prayer_schedule`
+--
+ALTER TABLE `prayer_schedule`
+  MODIFY `prayer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `programs`
@@ -841,13 +865,13 @@ ALTER TABLE `transparency_report`
 -- AUTO_INCREMENT for table `update_images`
 --
 ALTER TABLE `update_images`
-  MODIFY `image_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `image_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `volunteers`
@@ -880,12 +904,6 @@ ALTER TABLE `executive_officers`
   ADD CONSTRAINT `fk_program_id` FOREIGN KEY (`program_id`) REFERENCES `programs` (`program_id`) ON DELETE SET NULL;
 
 --
--- Constraints for table `friday_prayers`
---
-ALTER TABLE `friday_prayers`
-  ADD CONSTRAINT `friday_prayers_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`) ON DELETE SET NULL;
-
---
 -- Constraints for table `madrasa_enrollment`
 --
 ALTER TABLE `madrasa_enrollment`
@@ -897,6 +915,12 @@ ALTER TABLE `madrasa_enrollment`
 --
 ALTER TABLE `org_updates`
   ADD CONSTRAINT `org_updates_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`);
+
+--
+-- Constraints for table `prayer_schedule`
+--
+ALTER TABLE `prayer_schedule`
+  ADD CONSTRAINT `prayer_schedule_ibfk_1` FOREIGN KEY (`created_by`) REFERENCES `users` (`user_id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `programs`

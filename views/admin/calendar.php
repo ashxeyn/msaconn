@@ -26,13 +26,13 @@ $calEvents = $adminObj->fetchCalendarEvents();
         <div class="tabs-container mb-4">
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a class="nav-link active" id="calendar-tab" data-toggle="tab" href="#" role="tab">Events</a>
+                    <a class="nav-link active" id="calendar-tab" data-toggle="tab" href="#calendar-content" role="tab">Events</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="prayers-tab" data-toggle="tab" href="#" role="tab" onclick="loadPrayerSchedSection()">Khutba Prayer</a>
+                    <a class="nav-link" id="prayers-tab" data-toggle="tab" href="#prayers-content" role="tab" onclick="loadPrayerSchedSection()">Khutba Prayer</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="prayers-tab" data-toggle="tab" href="#" role="tab" onclick="loadDailyPrayerSection()">Daily Prayer</a>
+                    <a class="nav-link" id="prayers-tab" data-toggle="tab" href="#prayers-content" role="tab" onclick="loadDailyPrayerSection()">Daily Prayer</a>
                 </li>
             </ul>
         </div>
@@ -59,21 +59,43 @@ $calEvents = $adminObj->fetchCalendarEvents();
                         <?php 
                         $today = date('Y-m-d');
                         foreach ($calEvents as $calEv): 
-                            $isPast = ($calEv['activity_date'] < $today);
-                            $isToday = ($calEv['activity_date'] == $today);
+                            // Handle event status (past, current, upcoming)
+                            $endDateToCheck = !empty($calEv['end_date']) ? $calEv['end_date'] : $calEv['activity_date'];
+                            $isPast = ($endDateToCheck < $today);
+                            $isToday = ($calEv['activity_date'] <= $today && $endDateToCheck >= $today);
+                            
+                            // Format date display
+                            $dateDisplay = formatDate2($calEv['activity_date']);
+                            if (!empty($calEv['end_date'])) {
+                                $dateDisplay .= ' to ' . formatDate2($calEv['end_date']);
+                            }
                         ?>
                             <tr>
                                 <td data-order="<?= $calEv['activity_date'] ?>">
-                                    <?= formatDate2($calEv['activity_date']) ?>
+                                    <?= $dateDisplay ?>
                                     <?php if ($isPast): ?>
                                         <br><span class="badge bg-secondary">Done</span>
                                     <?php elseif ($isToday): ?>
-                                        <br><span class="badge bg-danger">Today</span>
+                                        <br><span class="badge bg-danger">Current</span>
                                     <?php else: ?>
                                         <br><span class="badge bg-primary">Upcoming</span>
                                     <?php endif; ?>
                                 </td>
-                                <td><?= date('l', strtotime($calEv['activity_date'])) ?></td>
+                                <td>
+                                    <?php 
+                                    $startDay = date('l', strtotime($calEv['activity_date']));
+                                    if (!empty($calEv['end_date'])) {
+                                        $endDay = date('l', strtotime($calEv['end_date']));
+                                        if ($startDay != $endDay) {
+                                            echo $startDay . ' - ' . $endDay;
+                                        } else {
+                                            echo $startDay;
+                                        }
+                                    } else {
+                                        echo $startDay;
+                                    }
+                                    ?>
+                                </td>
                                 <td><?= clean_input($calEv['title']) ?></td>
                                 <td><?= clean_input($calEv['description']) ?></td>
                                 <td><?= clean_input($calEv['username'] ?? 'N/A') ?></td>
