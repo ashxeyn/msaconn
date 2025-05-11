@@ -2515,19 +2515,19 @@ function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $class
 
     // Site Management Functions
     function fetchSitePages() {
-        $sql = "SELECT page_id, page_type, title, description, is_active, 
-                       created_at, updated_at
+        $sql = "SELECT page_id, page_type, title, description, image_path, 
+                    contact_no, email, is_active, created_at, updated_at
                 FROM site_pages
-                ORDER BY page_type ASC";
-        
+                ORDER BY page_type ASC, is_active DESC, updated_at DESC";
+
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         return $query->fetchAll();
     }
 
     function getSitePageById($pageId) {
-        $sql = "SELECT page_id, page_type, title, description, is_active,
-                       created_at, updated_at
+        $sql = "SELECT page_id, page_type, title, description, image_path,
+                    contact_no, email, is_active, created_at, updated_at
                 FROM site_pages
                 WHERE page_id = :page_id";
 
@@ -2537,31 +2537,65 @@ function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $class
         return $query->fetch();
     }
 
-    function getSitePageByType($pageType) {
-        $sql = "SELECT page_id, page_type, title, description, is_active,
-                       created_at, updated_at
-                FROM site_pages
-                WHERE page_type = :page_type";
+    function addSitePage($pageType, $title, $description, $imagePath, $contactNo, $email) {
+        if ($pageType === 'carousel') {
+            $sqlCount = "SELECT page_id FROM site_pages WHERE page_type = 'carousel' AND is_active = 1 ORDER BY updated_at ASC, page_id ASC";
+            $stmt = $this->db->connect()->prepare($sqlCount);
+            $stmt->execute();
+            $activeCarousels = $stmt->fetchAll();
+            if (count($activeCarousels) >= 4) {
+                $oldest = $activeCarousels[0]['page_id'];
+                $this->db->connect()->prepare("UPDATE site_pages SET is_active = 0 WHERE page_id = :page_id")
+                    ->execute([':page_id' => $oldest]);
+            }
+        } else {
+            $this->db->connect()->prepare("UPDATE site_pages SET is_active = 0 WHERE page_type = :page_type")
+                ->execute([':page_type' => $pageType]);
+        }
+
+        $sql = "INSERT INTO site_pages (page_type, title, description, image_path, contact_no, email, is_active)
+                VALUES (:page_type, :title, :description, :image_path, :contact_no, :email, 1)";
 
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':page_type', $pageType);
-        $query->execute();
-        return $query->fetch();
+        $query->bindParam(':title', $title);
+        $query->bindParam(':description', $description);
+        $query->bindParam(':image_path', $imagePath);
+        $query->bindParam(':contact_no', $contactNo);
+        $query->bindParam(':email', $email);
+        return $query->execute();
     }
 
-    function updateSitePage($pageId, $title, $description) {
+    function updateSitePage($pageId, $pageType, $title, $description, $imagePath, $contactNo, $email) {
         $sql = "UPDATE site_pages 
-                SET title = :title, description = :description
+                SET page_type = :page_type,
+                    title = :title, 
+                    description = :description,
+                    image_path = :image_path,
+                    contact_no = :contact_no,
+                    email = :email
                 WHERE page_id = :page_id";
 
         $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':page_type', $pageType);
         $query->bindParam(':title', $title);
         $query->bindParam(':description', $description);
+        $query->bindParam(':image_path', $imagePath);
+        $query->bindParam(':contact_no', $contactNo);
+        $query->bindParam(':email', $email);
         $query->bindParam(':page_id', $pageId);
         return $query->execute();
     }
 
     function toggleSitePageStatus($pageId) {
+        $page = $this->getSitePageById($pageId);
+        if (!$page) return false;
+
+        if (!$page['is_active']) {
+            $this->db->connect()->prepare("UPDATE site_pages SET is_active = 0 WHERE page_type = :page_type")
+                ->execute([':page_type' => $page['page_type']]);
+        }
+
         $sql = "UPDATE site_pages 
                 SET is_active = NOT is_active 
                 WHERE page_id = :page_id";
@@ -2579,10 +2613,19 @@ function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $class
             'calendar' => 'Calendar Page',
             'faqs' => 'FAQs Page',
             'transparency' => 'Transparency Page',
-            'home' => 'Home Page'
+            'home' => 'Home Page',
+            'logo' => 'Logo',
+            'carousel' => 'Carousel Image',
+            'footer' => 'Footer Content'
         ];
-        
+
         return $labels[$pageType] ?? ucfirst($pageType);
+    }
+
+    function toggleAllCarousel($status) {
+        $sql = "UPDATE site_pages SET is_active = :status WHERE page_type = 'carousel'";
+        $stmt = $this->db->connect()->prepare($sql);
+        return $stmt->execute([':status' => $status]);
     }
 
     // Others
@@ -2612,6 +2655,4 @@ function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $class
     //     $query->execute();
     //     return $query->fetchAll();
     // }
-
-    
 }

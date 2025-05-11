@@ -1295,6 +1295,9 @@ function processTransaction(reportId, action, type) {
     });
 }
 
+
+// Transparency Filter Functions
+
 function initDatepickers() {
     $('.input-group.date').datepicker({
         format: 'yyyy-mm-dd',
@@ -1304,7 +1307,6 @@ function initDatepickers() {
     });
 }
 
-// Transparency Filter Functions
 $(document).ready(function() {
     initDatepickers();
     
@@ -4045,7 +4047,21 @@ function openSiteModal(modalId, pageId, action, isActive) {
 }
 
 function setSitePageId(pageId, action, isActive) {
-    if (action === 'edit') {
+    if (action === 'add') {
+        $('#addEditSiteForm')[0].reset();
+        $('#addEditSiteId').val('');
+        $('#addEditPageType').val('');
+        clearSiteValidationErrors();
+        $('#siteStep1').show();
+        $('#siteStep2').hide();
+        $('#siteBackBtn').hide();
+        $('#siteNextBtn').show();
+        $('#siteSaveBtn').hide();
+        $('#addEditModalTitle').text('Add New Page');
+        $("#addEditSiteForm button[type='submit']").text('Save');
+        $('#logo-image-preview').hide();
+        $('#logo-preview-img').attr('src', '');
+    } else if (action === 'edit') {
         $.ajax({
             url: "../../handler/admin/getSite.php",
             type: "GET",
@@ -4053,88 +4069,254 @@ function setSitePageId(pageId, action, isActive) {
             success: function(response) {
                 try {
                     const page = JSON.parse(response);
-                    $('#editSiteId').val(page.page_id);
-                    $('#editTitle').val(page.title);
-                    $('#editDescription').val(page.description);
-                    $('#editContent').val(page.content);
+                    $('#addEditSiteId').val(page.page_id);
+                    $('#addEditPageType').val(page.page_type);
+                    $('#addEditTitle').val(page.title);
+                    $('#addEditDescription').val(page.description);
+                    $('#addEditContactNo').val(page.contact_no);
+                    $('#addEditEmail').val(page.email);
+                    $('#siteStep1').hide();
+                    $('#siteStep2').show();
+                    $('#siteBackBtn').hide();
+                    $('#siteNextBtn').hide();
+                    $('#siteSaveBtn').show();
+                    $('#addEditModalTitle').text('Edit Page');
+                    $("#addEditSiteForm button[type='submit']").text('Update');
+                    toggleFieldsBasedOnType(page.page_type);
                     clearSiteValidationErrors();
-                    $('#editSiteModal').modal('show');
+                    if (page.page_type === 'logo' && page.image_path) {
+                        $('#logo-image-preview').show();
+                        $('#logo-preview-img').attr('src', '../../' + page.image_path);
+                    } else {
+                        $('#logo-image-preview').hide();
+                        $('#logo-preview-img').attr('src', '');
+                    }
                 } catch (e) {
-                    console.error("Invalid JSON:", response);
-                    alert("Failed to load page details.");
+                    showToast('Error', 'Failed to load page details.', 'danger');
                 }
             },
             error: function() {
-                alert("Failed to load page details.");
-            }
-        });
-
-        $('#editSiteForm').off('submit').on('submit', function(e) {
-            e.preventDefault();
-            if (validateSiteForm()) {
-                processSite(pageId, 'edit');
+                showToast('Error', 'Failed to load page details.', 'danger');
             }
         });
     } else if (action === 'toggle') {
-        $('#toggleSiteId').val(pageId);
-        
-        if (isActive) {
-            $('#toggleSiteTitle').text('Deactivate Page');
-            $('#toggleSiteMessage').text('Are you sure you want to deactivate this page? It will be hidden from the website.');
-            $('#confirmToggleSite').removeClass('btn-success').addClass('btn-warning').text('Deactivate');
+        if (pageId === 'carousel_group') {
+            $('#toggleSiteId').val('carousel_group');
+            $('#toggleSiteTitle').text(isActive ? 'Deactivate Carousel' : 'Activate Carousel');
+            $('#toggleSiteMessage').text(isActive ? 'Are you sure you want to deactivate all carousel images? They will be hidden from the website.' : 'Are you sure you want to activate all carousel images? They will be visible on the website.');
+            $('#confirmToggleSite').removeClass('btn-success btn-warning').addClass(isActive ? 'btn-warning' : 'btn-success').text(isActive ? 'Deactivate All' : 'Activate All');
+            $('#toggleSiteModal').modal('show');
+            $('#toggleSiteForm').off('submit').on('submit', function(e) {
+                e.preventDefault();
+                toggleCarouselGroup();
+            });
         } else {
-            $('#toggleSiteTitle').text('Activate Page');
-            $('#toggleSiteMessage').text('Are you sure you want to activate this page? It will be visible on the website.');
-            $('#confirmToggleSite').removeClass('btn-warning').addClass('btn-success').text('Activate');
+            $('#toggleSiteId').val(pageId);
+            if (isActive) {
+                $('#toggleSiteTitle').text('Deactivate Page');
+                $('#toggleSiteMessage').text('Are you sure you want to deactivate this page? It will be hidden from the website.');
+                $('#confirmToggleSite').removeClass('btn-success').addClass('btn-warning').text('Deactivate');
+            } else {
+                $('#toggleSiteTitle').text('Activate Page');
+                $('#toggleSiteMessage').text('Are you sure you want to activate this page? It will be visible on the website.');
+                $('#confirmToggleSite').removeClass('btn-warning').addClass('btn-success').text('Activate');
+            }
+            $('#toggleSiteModal').modal('show');
+            $('#toggleSiteForm').off('submit').on('submit', function(e) {
+                e.preventDefault();
+                processSite(pageId, 'toggle');
+            });
         }
-        
-        $('#toggleSiteModal').modal('show');
+    }
 
-        $('#toggleSiteForm').off('submit').on('submit', function(e) {
-            e.preventDefault();
-            processSite(pageId, 'toggle');
-        });
+    $('#siteNextBtn').off('click').on('click', function() {
+        const pageType = $('#addEditPageType').val();
+        if (!pageType) {
+            $('#addEditPageType').addClass('is-invalid');
+            $('#addEditPageTypeIcon').show();
+            $('#addEditPageTypeError').text('Please select a page type');
+            return;
+        } else {
+            $('#addEditPageType').removeClass('is-invalid');
+            $('#addEditPageTypeIcon').hide();
+            $('#addEditPageTypeError').text('');
+        }
+        $('#siteStep1').hide();
+        $('#siteStep2').show();
+        $('#siteBackLink').show();
+        $('#siteNextBtn').hide();
+        $('#siteSaveBtn').show();
+        toggleFieldsBasedOnType(pageType);
+        clearSiteValidationErrors();
+    });
+    $('#siteBackLink').off('click').on('click', function(e) {
+        e.preventDefault();
+        $('#siteStep1').show();
+        $('#siteStep2').hide();
+        $('#siteBackLink').hide();
+        $('#siteNextBtn').show();
+        $('#siteSaveBtn').hide();
+        $('#addEditModalTitle').text('Add New Page');
+    });
+
+    $('#addEditPageType').off('change').on('change', function() {
+        if ($('#siteStep2').is(':visible')) {
+            toggleFieldsBasedOnType($(this).val());
+        }
+    });
+
+    $('#addEditSiteForm').off('submit').on('submit', function(e) {
+        e.preventDefault();
+        if ($('#siteStep2').is(':visible')) {
+            if (validateSiteForm(action)) {
+                processSite(pageId, action);
+            }
+        }
+    });
+    $('#addEditImage').off('change').on('change', function(e) {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                $('#logo-image-preview').show();
+                $('#logo-preview-img').attr('src', ev.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+}
+
+function toggleFieldsBasedOnType(pageType) {
+    const $descriptionGroup = $('#descriptionGroup');
+    const $contactGroup = $('#contactGroup');
+    const $emailGroup = $('#emailGroup');
+    const $imageGroup = $('#imageGroup');
+    $descriptionGroup.hide();
+    $contactGroup.hide();
+    $emailGroup.hide();
+    $imageGroup.hide();
+    if ([
+        'registration','about','volunteer','calendar','faqs','transparency','home'
+    ].includes(pageType)) {
+        $descriptionGroup.show();
+    } else if (pageType === 'footer') {
+        $contactGroup.show();
+        $emailGroup.show();
+    } else if ([ 'logo','carousel' ].includes(pageType)) {
+        $imageGroup.show();
     }
 }
 
-function validateSiteForm() {
+function validateSiteForm(action) {
     let isValid = true;
     clearSiteValidationErrors();
-
-    const title = $('#editTitle').val().trim();
-    const description = $('#editDescription').val().trim();
-
+    const pageType = $('#addEditPageType').val();
+    const title = $('#addEditTitle').val().trim();
     if (title === '') {
-        $('#editTitleError').text('Page title is required');
+        $('#addEditTitle').addClass('is-invalid');
+        $('#addEditTitleIcon').show();
+        $('#addEditTitleError').text('Title is required');
         isValid = false;
+    } else {
+        $('#addEditTitle').removeClass('is-invalid');
+        $('#addEditTitleIcon').hide();
+        $('#addEditTitleError').text('');
     }
-
-    if (description === '') {
-        $('#editDescriptionError').text('Page description is required');
-        isValid = false;
+    if ([
+        'registration','about','volunteer','calendar','faqs','transparency','home'
+    ].includes(pageType)) {
+        const description = $('#addEditDescription').val().trim();
+        if (description === '') {
+            $('#addEditDescription').addClass('is-invalid');
+            $('#addEditDescriptionIcon').show();
+            $('#addEditDescriptionError').text('Description is required');
+            isValid = false;
+        } else {
+            $('#addEditDescription').removeClass('is-invalid');
+            $('#addEditDescriptionIcon').hide();
+            $('#addEditDescriptionError').text('');
+        }
+    } else if (pageType === 'footer') {
+        const contactNo = $('#addEditContactNo').val().trim();
+        if (!contactNo) {
+            $('#addEditContactNo').addClass('is-invalid');
+            $('#addEditContactNoIcon').show();
+            $('#addEditContactNoError').text('Contact number is required');
+            isValid = false;
+        } else {
+            $('#addEditContactNo').removeClass('is-invalid');
+            $('#addEditContactNoIcon').hide();
+            $('#addEditContactNoError').text('');
+        }
+        const email = $('#addEditEmail').val().trim();
+        if (!email) {
+            $('#addEditEmail').addClass('is-invalid');
+            $('#addEditEmailIcon').show();
+            $('#addEditEmailError').text('Email is required');
+            isValid = false;
+        } else {
+            $('#addEditEmail').removeClass('is-invalid');
+            $('#addEditEmailIcon').hide();
+            $('#addEditEmailError').text('');
+        }
+    } else if ([ 'logo','carousel' ].includes(pageType)) {
+        // Optionally validate image
+        // const image = $('#addEditImage')[0].files[0];
+        // if (!image) {
+        //     $('#addEditImage').addClass('is-invalid');
+        //     $('#addEditImageIcon').show();
+        //     $('#addEditImageError').text('Image is required');
+        //     isValid = false;
+        // } else {
+        //     $('#addEditImage').removeClass('is-invalid');
+        //     $('#addEditImageIcon').hide();
+        //     $('#addEditImageError').text('');
+        // }
     }
-
     return isValid;
 }
 
 function clearSiteValidationErrors() {
-    $('#editTitleError').text('');
-    $('#editDescriptionError').text('');
-    $('#editContentError').text('');
+    $('#addEditTitleError').text('');
+    $('#addEditDescriptionError').text('');
+    $('#addEditContactNoError').text('');
+    $('#addEditEmailError').text('');
+    $('#addEditPageTypeError').text('');
+    $('#addEditImageError').text('');
+    $('#addEditTitle').removeClass('is-invalid');
+    $('#addEditDescription').removeClass('is-invalid');
+    $('#addEditContactNo').removeClass('is-invalid');
+    $('#addEditEmail').removeClass('is-invalid');
+    $('#addEditImage').removeClass('is-invalid');
+    $('#addEditTitleIcon').hide();
+    $('#addEditDescriptionIcon').hide();
+    $('#addEditContactNoIcon').hide();
+    $('#addEditEmailIcon').hide();
+    $('#addEditImageIcon').hide();
 }
 
 function processSite(pageId, action) {
     let formData = new FormData();
-
-    if (action === 'edit') {
-        formData = new FormData(document.getElementById('editSiteForm'));
+    if (action === 'edit' || action === 'add') {
+        formData = new FormData(document.getElementById('addEditSiteForm'));
+        const imageFile = $('#addEditImage')[0].files[0];
+        if (imageFile) {
+            formData.append('image', imageFile);
+        }
     } else if (action === 'toggle') {
-        formData.append('page_id', $('#toggleSiteId').val());
+        if (pageId === 'carousel_group' || $('#toggleSiteId').val() === 'carousel_group') {
+            formData.append('action', 'toggle_carousel_group');
+        } else {
+            formData.append('page_id', $('#toggleSiteId').val());
+            formData.append('action', 'toggle');
+        }
     }
-
-    formData.append('page_id', pageId);
-    formData.append('action', action);
-
+    if (pageId && pageId !== 'carousel_group') {
+        formData.append('page_id', pageId);
+    }
+    if (action !== 'toggle') {
+        formData.append('action', action);
+    }
     $.ajax({
         url: "../../handler/admin/siteAction.php",
         type: "POST",
@@ -4146,19 +4328,32 @@ function processSite(pageId, action) {
                 $(".modal").modal("hide");
                 $("body").removeClass("modal-open");
                 $(".modal-backdrop").remove();
-
-                loadPersonalization();
-
+                if (typeof loadPersonalization === 'function') {
+                    loadPersonalization();
+                } else {
+                    location.reload();
+                }
                 showToast('Success', 
                     action === 'toggle' ? 'Page status has been updated.' :
-                    'Page content has been updated.', 
+                    action === 'add' ? 'New page has been added.' :
+                    'Page has been updated.', 
                     'success');
+            } else if (response.trim().startsWith('error:')) {
+                const errorMsg = response.trim().replace('error:', '').trim();
+                if (errorMsg === 'file_upload_failed') {
+                    // $('#addEditImageError').text('File upload failed.');
+                    showToast('Error', 'File upload failed.', 'danger');
+                } else if (errorMsg === 'page_not_found') {
+                    showToast('Error', 'Page not found.', 'danger');
+                } else {
+                    showToast('Error', errorMsg, 'danger');
+                }
             } else {
-                alert("Failed to process request: " + response);
+                showToast('Error', 'Failed to process request: ' + response, 'danger');
             }
         },
         error: function() {
-            alert("An error occurred while processing the request.");
+            showToast('Error', 'An error occurred while processing the request.', 'danger');
         }
     });
 }
@@ -4422,4 +4617,174 @@ $(document).ready(function() {
         $('#image-preview').hide();
     });
 });
+
+// Carousel View and Edit Functions
+function viewCarouselImage(pageId, imagePath, title, date) {
+    // Set view mode content
+    document.getElementById('carouselViewImage').src = '../../' + imagePath;
+    document.getElementById('carouselViewTitle').textContent = title;
+    document.getElementById('carouselViewDate').textContent = 'Last updated: ' + date;
+    
+    // Store page ID for edit mode
+    document.getElementById('carouselEditId').value = pageId;
+    
+    // Show view mode, hide edit mode
+    document.getElementById('carouselViewMode').style.display = 'block';
+    document.getElementById('carouselEditMode').style.display = 'none';
+}
+
+function switchToCarouselEditMode() {
+    // Get current values
+    const pageId = document.getElementById('carouselEditId').value;
+    
+    // Fetch current data
+    fetch(`../../handler/admin/getSite.php?page_id=${pageId}`)
+        .then(response => response.json())
+        .then(data => {
+            // Set form values
+            document.getElementById('carouselEditTitle').value = data.title;
+            document.querySelector('#carouselCurrentImage img').src = '../../' + data.image_path;
+            
+            // Switch modes
+            document.getElementById('carouselViewMode').style.display = 'none';
+            document.getElementById('carouselEditMode').style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Failed to load carousel data');
+        });
+}
+
+function switchToCarouselViewMode() {
+    document.getElementById('carouselViewMode').style.display = 'block';
+    document.getElementById('carouselEditMode').style.display = 'none';
+}
+
+// Handle carousel edit form submission
+document.getElementById('carouselEditForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    formData.append('action', 'edit');
+    
+    fetch('../../handler/admin/siteAction.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.text())
+    .then(result => {
+        if (result === 'success') {
+            alert('Carousel image updated successfully');
+            location.reload();
+        } else {
+            alert('Failed to update carousel image');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while updating the carousel image');
+    });
+});
+
+// ... existing code ...
+function toggleCarouselGroup() {
+    $.ajax({
+        url: '../../handler/admin/siteAction.php',
+        type: 'POST',
+        data: { action: 'toggle_carousel_group' },
+        success: function(response) {
+            if (response.trim() === 'success') {
+                showToast('Success', 'Carousel group status updated.', 'success');
+                $(".modal").modal("hide");
+                setTimeout(function() {
+                    $("body").removeClass("modal-open");
+                    $(".modal-backdrop").remove();
+                }, 300);
+                // Reload only the site management section
+                if (typeof loadPersonalization === 'function') {
+                    loadPersonalization();
+                } else {
+                    location.reload();
+                }
+            } else {
+                showToast('Error', 'Failed to update carousel group status.', 'danger');
+            }
+        },
+        error: function() {
+            showToast('Error', 'An error occurred while toggling the carousel group.', 'danger');
+        }
+    });
+    return false; // Prevent default button action
+}
+// ... existing code ...
+
+// ... existing code ...
+function openEditCarouselGroupModal() {
+    // Fetch the latest 4 carousel images
+    $.ajax({
+        url: '../../handler/admin/getSite.php',
+        type: 'GET',
+        data: { page_type: 'carousel', limit: 4 },
+        success: function(response) {
+            let images = [];
+            try {
+                images = JSON.parse(response);
+            } catch (e) {
+                showToast('Error', 'Failed to load carousel images.', 'danger');
+                return;
+            }
+            // Build the modal content in book style (2 left, 2 right)
+            let leftCol = '', rightCol = '';
+            const note = `<div class=\"mb-3 text-muted\" style=\"font-size:0.95em;\">Upload new images to replace the existing ones.</div>`;
+            images.forEach((img, idx) => {
+                const block = `
+                    <div class=\"mb-4 pb-2 border-bottom\">
+                        <label class=\"form-label\" style=\"color:var(--palestine-green);\">Carousel ${idx + 1}</label>
+                        <input type=\"hidden\" name=\"carousel_ids[]\" value=\"${img.page_id}\">
+                        <input type=\"text\" class=\"form-control mb-2\" name=\"titles[]\" value=\"${img.title || ''}\" placeholder=\"Leave blank to keep current\">
+                        <div class=\"mb-2\">
+                            <img src=\"../../${img.image_path}\" alt=\"Current Image\" class=\"cor-photo mb-2\">
+                        </div>
+                        <input type=\"file\" class=\"form-control carousel-image-input\" name=\"images[]\" accept=\"image/*\" data-preview-id=\"carousel-preview-${idx}\">
+                        <div class=\"mt-2\">
+                            <img id=\"carousel-preview-${idx}\" src=\"\" alt=\"New Preview\" class=\"cor-photo\" style=\"display:none;\">
+                        </div>
+                    </div>
+                `;
+                if (idx < 2) leftCol += block;
+                else rightCol += block;
+            });
+            let html = `
+                ${note}
+                <div class=\"row\">
+                    <div class=\"col-md-6 border-end pe-4\">${leftCol}</div>
+                    <div class=\"col-md-6 ps-4\">${rightCol}</div>
+                </div>
+            `;
+            $('#carouselGroupEditContainer').html(html);
+            $('#editCarouselGroupModal').modal('show');
+
+            // Attach preview handler for each file input
+            $('.carousel-image-input').each(function() {
+                $(this).on('change', function(e) {
+                    const idx = $(this).data('preview-id');
+                    const file = this.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(ev) {
+                            $('#' + idx).attr('src', ev.target.result).show();
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        $('#' + idx).hide();
+                    }
+                });
+            });
+        },
+        error: function() {
+            showToast('Error', 'Failed to load carousel images.', 'danger');
+        }
+    });
+}
+// ... existing code ...
 
