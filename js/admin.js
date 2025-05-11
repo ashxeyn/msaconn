@@ -569,6 +569,8 @@ function setCalendarId(activityId, action) {
                     $('#editActivityId').val(activity.activity_id);
                     $('#editActivityDate').val(activity.activity_date);
                     $('#editEndDate').val(activity.end_date || '');
+                    $('#editTime').val(activity.time || '');
+                    $('#editVenue').val(activity.venue || '');
                     $('#editTitle').val(activity.title);
                     $('#editDescription').val(activity.description);
                     $('#editCalendarModal .modal-title').text('Edit Activity');
@@ -654,6 +656,28 @@ function validateCalendarForm() {
         $('#editEndDateError').text('');
     }
 
+    const time = $('#editTime').val().trim();
+    if (time === '') {
+        $('#editTime').addClass('is-invalid');
+        $('#editTimeIcon').show();
+        $('#editTimeError').text('Time is required');
+    } else {
+        $('#editTime').removeClass('is-invalid');
+        $('#editTimeIcon').hide();
+        $('#editTimeError').text('');
+    }
+
+    const venue = $('#editVenue').val().trim();
+    if (venue === '') {
+        $('#editVenue').addClass('is-invalid');
+        $('#editVenueIcon').show();
+        $('#editVenueError').text('Venue is required');
+    } else {
+        $('#editVenue').removeClass('is-invalid');
+        $('#editVenueIcon').hide();
+        $('#editVenueError').text('');
+    }
+
     const title = $('#editTitle').val().trim();
     if (title === '') {
         $('#editTitle').addClass('is-invalid');
@@ -684,74 +708,68 @@ function validateCalendarForm() {
 function clearCalendarValidationErrors() {
     $('#editActivityDateError').text('');
     $('#editEndDateError').text('');
+    $('#editTimeError').text('');
+    $('#editVenueError').text('');
     $('#editTitleError').text('');
     $('#editDescriptionError').text('');
     $('#editActivityDate').removeClass('is-invalid');
     $('#editEndDate').removeClass('is-invalid');
+    $('#editTime').removeClass('is-invalid');
+    $('#editVenue').removeClass('is-invalid');
     $('#editTitle').removeClass('is-invalid');
     $('#editDescription').removeClass('is-invalid');
     $('#editTitleIcon').hide();
     $('#editDescriptionIcon').hide();
+    $('#editTimeIcon').hide();
+    $('#editVenueIcon').hide();
 }
 
 function processCalendar(activityId, action) {
-    let formData = new FormData();
-
-    if (action === 'add' || action === 'edit') {
-        formData = new FormData(document.getElementById('editCalendarForm'));
-        
-        const startDate = formData.get('activity_date');
-        const endDate = formData.get('end_date');
-        
-        if (endDate && endDate < startDate) {
-            $('#editEndDate').addClass('is-invalid');
-            $('#editEndDateError').text('End date must be after or equal to start date');
-            return false;
-        }
-        
-    } else if (action === 'delete') {
-        formData.append('reason', $('#archiveReason').val());
-    } else if (action === 'restore') {
-        formData.append('activity_id', $('#restoreActivityId').val());
-    }
-
-    if (activityId) {
-        formData.append('activity_id', activityId);
-    }
-    formData.append('action', action);
-
+    const data = {
+        action: action,
+        activity_id: activityId,
+        activity_date: $('#editActivityDate').val(),
+        end_date: $('#editEndDate').val(),
+        time: $('#editTime').val(),
+        venue: $('#editVenue').val(),
+        title: $('#editTitle').val(),
+        description: $('#editDescription').val()
+    };
     $.ajax({
-        url: "../../handler/admin/calendarAction.php",
-        type: "POST",
-        data: formData,
-        processData: false,
-        contentType: false,
+        url: '../../handler/admin/calendarAction.php',
+        type: 'POST',
+        data: data,
         success: function(response) {
-            if (response.trim() === "success") {
-                $(".modal").modal("hide");
-                $("body").removeClass("modal-open");
-                $(".modal-backdrop").remove();
-
-                if (action === 'restore') {
-                    loadArchives(); 
-                } else {
-                    loadCalendarSection(); 
+            if (response.trim() === 'success') {
+                showToast('Success', 'Calendar event updated.', 'success');
+                setTimeout(() => {
+                    if (typeof loadCalendarSection === 'function') {
+                        loadCalendarSection();
+                    } else {
+                        location.reload();
+                    }
+                }, 1000);
+            } else if (response.trim() === 'error: time_venue_required') {
+                // Show error for time and venue
+                if ($('#editTime').val().trim() === '') {
+                    $('#editTime').addClass('is-invalid');
+                    $('#editTimeIcon').show();
+                    $('#editTimeError').text('Time is required');
                 }
-
-                showToast('Success', 
-                    action === 'delete' ? 'Activity has been archived.' :
-                    action === 'restore' ? 'Activity has been restored.' :
-                    'Activity has been ' + (action === 'edit' ? 'updated' : 'added') + '.', 
-                    'success');
-            } else if (response.trim() === "error: end_date_before_start") {
+                if ($('#editVenue').val().trim() === '') {
+                    $('#editVenue').addClass('is-invalid');
+                    $('#editVenueIcon').show();
+                    $('#editVenueError').text('Venue is required');
+                }
+            } else if (response.trim() === 'error: end_date_before_start') {
                 $('#editEndDate').addClass('is-invalid');
                 $('#editEndDateError').text('End date must be after or equal to start date');
             } else {
-                alert("Failed to process request: " + response);
+                showToast('Error', 'Failed to update calendar event.', 'danger');
             }
         },
         error: function() {
-            alert("An error occurred while processing the request.");
+            showToast('Error', 'Failed to update calendar event.', 'danger');
         }
     });
 }
@@ -1309,11 +1327,11 @@ function initDatepickers() {
 
 $(document).ready(function() {
     initDatepickers();
-    
+
     $(document).on('change', '.filter-control, .filter-date', function() {
         applyFilters();
     });
-    
+
     $(document).on('click', '#clearDates', function() {
         $('#startDate').val('');
         $('#endDate').val('');
@@ -1326,13 +1344,13 @@ function applyFilters() {
     const semester = $('#semesterSelect').val();
     const startDate = $('#startDate').val();
     const endDate = $('#endDate').val();
-    
+
     const params = {};
     if (schoolYearId) params.school_year_id = schoolYearId;
     if (semester) params.semester = semester;
     if (startDate) params.start_date = startDate;
     if (endDate) params.end_date = endDate;
-    
+
     loadFilteredTransparencySection(params);
 }
 
@@ -1708,7 +1726,7 @@ function processAbout(aboutId, action) {
                     'About information has been ' + (action === 'edit' ? 'updated' : 'added') + '.', 
                     'success');
             } else {
-                console.log("Failed to process request: " + response);
+                alert("Failed to process request: " + response);
             }
         },
         error: function() {
@@ -4617,174 +4635,4 @@ $(document).ready(function() {
         $('#image-preview').hide();
     });
 });
-
-// Carousel View and Edit Functions
-function viewCarouselImage(pageId, imagePath, title, date) {
-    // Set view mode content
-    document.getElementById('carouselViewImage').src = '../../' + imagePath;
-    document.getElementById('carouselViewTitle').textContent = title;
-    document.getElementById('carouselViewDate').textContent = 'Last updated: ' + date;
-    
-    // Store page ID for edit mode
-    document.getElementById('carouselEditId').value = pageId;
-    
-    // Show view mode, hide edit mode
-    document.getElementById('carouselViewMode').style.display = 'block';
-    document.getElementById('carouselEditMode').style.display = 'none';
-}
-
-function switchToCarouselEditMode() {
-    // Get current values
-    const pageId = document.getElementById('carouselEditId').value;
-    
-    // Fetch current data
-    fetch(`../../handler/admin/getSite.php?page_id=${pageId}`)
-        .then(response => response.json())
-        .then(data => {
-            // Set form values
-            document.getElementById('carouselEditTitle').value = data.title;
-            document.querySelector('#carouselCurrentImage img').src = '../../' + data.image_path;
-            
-            // Switch modes
-            document.getElementById('carouselViewMode').style.display = 'none';
-            document.getElementById('carouselEditMode').style.display = 'block';
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Failed to load carousel data');
-        });
-}
-
-function switchToCarouselViewMode() {
-    document.getElementById('carouselViewMode').style.display = 'block';
-    document.getElementById('carouselEditMode').style.display = 'none';
-}
-
-// Handle carousel edit form submission
-document.getElementById('carouselEditForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(this);
-    formData.append('action', 'edit');
-    
-    fetch('../../handler/admin/siteAction.php', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.text())
-    .then(result => {
-        if (result === 'success') {
-            alert('Carousel image updated successfully');
-            location.reload();
-        } else {
-            alert('Failed to update carousel image');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while updating the carousel image');
-    });
-});
-
-// ... existing code ...
-function toggleCarouselGroup() {
-    $.ajax({
-        url: '../../handler/admin/siteAction.php',
-        type: 'POST',
-        data: { action: 'toggle_carousel_group' },
-        success: function(response) {
-            if (response.trim() === 'success') {
-                showToast('Success', 'Carousel group status updated.', 'success');
-                $(".modal").modal("hide");
-                setTimeout(function() {
-                    $("body").removeClass("modal-open");
-                    $(".modal-backdrop").remove();
-                }, 300);
-                // Reload only the site management section
-                if (typeof loadPersonalization === 'function') {
-                    loadPersonalization();
-                } else {
-                    location.reload();
-                }
-            } else {
-                showToast('Error', 'Failed to update carousel group status.', 'danger');
-            }
-        },
-        error: function() {
-            showToast('Error', 'An error occurred while toggling the carousel group.', 'danger');
-        }
-    });
-    return false; // Prevent default button action
-}
-// ... existing code ...
-
-// ... existing code ...
-function openEditCarouselGroupModal() {
-    // Fetch the latest 4 carousel images
-    $.ajax({
-        url: '../../handler/admin/getSite.php',
-        type: 'GET',
-        data: { page_type: 'carousel', limit: 4 },
-        success: function(response) {
-            let images = [];
-            try {
-                images = JSON.parse(response);
-            } catch (e) {
-                showToast('Error', 'Failed to load carousel images.', 'danger');
-                return;
-            }
-            // Build the modal content in book style (2 left, 2 right)
-            let leftCol = '', rightCol = '';
-            const note = `<div class=\"mb-3 text-muted\" style=\"font-size:0.95em;\">Upload new images to replace the existing ones.</div>`;
-            images.forEach((img, idx) => {
-                const block = `
-                    <div class=\"mb-4 pb-2 border-bottom\">
-                        <label class=\"form-label\" style=\"color:var(--palestine-green);\">Carousel ${idx + 1}</label>
-                        <input type=\"hidden\" name=\"carousel_ids[]\" value=\"${img.page_id}\">
-                        <input type=\"text\" class=\"form-control mb-2\" name=\"titles[]\" value=\"${img.title || ''}\" placeholder=\"Leave blank to keep current\">
-                        <div class=\"mb-2\">
-                            <img src=\"../../${img.image_path}\" alt=\"Current Image\" class=\"cor-photo mb-2\">
-                        </div>
-                        <input type=\"file\" class=\"form-control carousel-image-input\" name=\"images[]\" accept=\"image/*\" data-preview-id=\"carousel-preview-${idx}\">
-                        <div class=\"mt-2\">
-                            <img id=\"carousel-preview-${idx}\" src=\"\" alt=\"New Preview\" class=\"cor-photo\" style=\"display:none;\">
-                        </div>
-                    </div>
-                `;
-                if (idx < 2) leftCol += block;
-                else rightCol += block;
-            });
-            let html = `
-                ${note}
-                <div class=\"row\">
-                    <div class=\"col-md-6 border-end pe-4\">${leftCol}</div>
-                    <div class=\"col-md-6 ps-4\">${rightCol}</div>
-                </div>
-            `;
-            $('#carouselGroupEditContainer').html(html);
-            $('#editCarouselGroupModal').modal('show');
-
-            // Attach preview handler for each file input
-            $('.carousel-image-input').each(function() {
-                $(this).on('change', function(e) {
-                    const idx = $(this).data('preview-id');
-                    const file = this.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = function(ev) {
-                            $('#' + idx).attr('src', ev.target.result).show();
-                        };
-                        reader.readAsDataURL(file);
-                    } else {
-                        $('#' + idx).hide();
-                    }
-                });
-            });
-        },
-        error: function() {
-            showToast('Error', 'Failed to load carousel images.', 'danger');
-        }
-    });
-}
-// ... existing code ...
 

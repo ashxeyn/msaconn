@@ -394,9 +394,11 @@ $calEvents = $adminObj->fetchCalendarEvents();
             <thead>
                 <tr>
                     <th>Date</th>
+                    <th>Time</th>
                     <th>Day</th>
                     <th>Activity</th>
                     <th>Description</th>
+                    <th>Venue</th>
                     <th>Created By</th>
                     <th>Action</th>
                 </tr>
@@ -426,6 +428,7 @@ $calEvents = $adminObj->fetchCalendarEvents();
                                     <br><span class="badge bg-primary">Upcoming</span>
                                 <?php endif; ?>
                             </td>
+                            <td><?= isset($calEv['time']) ? htmlspecialchars($calEv['time']) : '' ?></td>
                             <td>
                                 <?php 
                                 $startDay = date('l', strtotime($calEv['activity_date']));
@@ -443,6 +446,7 @@ $calEvents = $adminObj->fetchCalendarEvents();
                             </td>
                             <td><?= clean_input($calEv['title']) ?></td>
                             <td><?= clean_input($calEv['description']) ?></td>
+                            <td><?= isset($calEv['venue']) ? clean_input($calEv['venue']) : '' ?></td>
                             <td><?= clean_input($calEv['username'] ?? 'N/A') ?></td>
                             <td>
                                 <button class="admin-btn admin-btn-edit btn-sm" onclick="openCalendarModal('addEditCalendarModal', <?= $calEv['activity_id'] ?>, 'edit')">
@@ -456,7 +460,7 @@ $calEvents = $adminObj->fetchCalendarEvents();
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="6" class="text-center">No events found.</td>
+                        <td colspan="8" class="text-center">No events found.</td>
                     </tr>
                 <?php endif; ?>
             </tbody>

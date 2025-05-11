@@ -18,6 +18,19 @@
                         <div id="editEndDateError" class="text-danger"></div>
                     </div>
                     <div class="mb-3 position-relative">
+                        <label for="editTime" class="form-label">Time</label>
+                        <input type="time" class="form-control" id="editTime" name="time">
+                        <span class="invalid-icon" id="editTimeIcon" style="display:none;"><i class="fas fa-exclamation-circle" style="color:#dc3545;"></i></span>
+                        <div id="editTimeError" class="invalid-feedback"></div>
+                    </div>
+                    <div class="mb-3 position-relative">
+                        <label for="editVenue" class="form-label">Venue</label>
+                        <small class="form-text text-muted">If not yet decided, put <b>TBA</b> (To Be Announced).</small>
+                        <input type="text" class="form-control" id="editVenue" name="venue">
+                        <span class="invalid-icon" id="editVenueIcon" style="display:none;"><i class="fas fa-exclamation-circle" style="color:#dc3545;"></i></span>
+                        <div id="editVenueError" class="invalid-feedback"></div>
+                    </div>
+                    <div class="mb-3 position-relative">
                         <label for="editTitle" class="form-label">Title</label>
                         <input type="text" class="form-control" id="editTitle" name="title">
                         <span class="invalid-icon" id="editTitleIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>

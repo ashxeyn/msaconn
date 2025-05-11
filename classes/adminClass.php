@@ -959,7 +959,7 @@ class Admin {
 
     // Calendar Functions
     function fetchCalendarEvents() {
-        $sql = "SELECT ca.activity_id, ca.activity_date, ca.end_date, ca.title, ca.description, ca.created_at, ca.deleted_at,
+        $sql = "SELECT ca.activity_id, ca.activity_date, ca.end_date, ca.time, ca.venue, ca.title, ca.description, ca.created_at, ca.deleted_at,
                     u.username 
                 FROM calendar_activities ca
                 LEFT JOIN users u ON ca.created_by = u.user_id
@@ -972,7 +972,7 @@ class Admin {
     }
 
     function getCalendarEventById($activityId) {
-        $sql = "SELECT ca.activity_id, ca.activity_date, ca.end_date, ca.title, ca.description, ca.created_at, ca.deleted_at,
+        $sql = "SELECT ca.activity_id, ca.activity_date, ca.end_date, ca.time, ca.venue, ca.title, ca.description, ca.created_at, ca.deleted_at,
                     u.username
                 FROM calendar_activities ca
                 LEFT JOIN users u ON ca.created_by = u.user_id
@@ -983,33 +983,35 @@ class Admin {
         return $query->fetch();
     }
 
-    function addCalendarEvent($activityDate, $endDate, $title, $description, $userId) {
+    function addCalendarEvent($activityDate, $endDate, $time, $venue, $title, $description, $userId) {
         if (empty($endDate)) {
             $endDate = null;
         }
-        
-        $sql = "INSERT INTO calendar_activities (activity_date, end_date, title, description, created_by) 
-                VALUES (:activity_date, :end_date, :title, :description, :created_by)";
+        $sql = "INSERT INTO calendar_activities (activity_date, end_date, time, venue, title, description, created_by) 
+                VALUES (:activity_date, :end_date, :time, :venue, :title, :description, :created_by)";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':activity_date', $activityDate);
         $query->bindParam(':end_date', $endDate);
+        $query->bindParam(':time', $time);
+        $query->bindParam(':venue', $venue);
         $query->bindParam(':title', $title);
         $query->bindParam(':description', $description);
         $query->bindParam(':created_by', $userId);
         return $query->execute();
     }
 
-    function updateCalendarEvent($activityId, $activityDate, $endDate, $title, $description) {
+    function updateCalendarEvent($activityId, $activityDate, $endDate, $time, $venue, $title, $description) {
         if (empty($endDate)) {
             $endDate = null;
         }
-        
         $sql = "UPDATE calendar_activities 
-                SET activity_date = :activity_date, end_date = :end_date, title = :title, description = :description 
+                SET activity_date = :activity_date, end_date = :end_date, time = :time, venue = :venue, title = :title, description = :description 
                 WHERE activity_id = :activity_id";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':activity_date', $activityDate);
         $query->bindParam(':end_date', $endDate);
+        $query->bindParam(':time', $time);
+        $query->bindParam(':venue', $venue);
         $query->bindParam(':title', $title);
         $query->bindParam(':description', $description);
         $query->bindParam(':activity_id', $activityId);
