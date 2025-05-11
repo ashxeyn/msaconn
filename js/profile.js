@@ -1,5 +1,36 @@
 $(document).ready(function() {
     loadProfileData();
+
+    function showToastProfile(title, message, type) {
+        const toastHTML = `
+            <div class="toast align-items-center text-white bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <strong>${title}</strong>: ${message}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+            </div>
+        `;
+        
+        const toastContainer = document.getElementById('toastContainer');
+        if (!toastContainer) {
+            const container = document.createElement('div');
+            container.id = 'toastContainer';
+            container.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+            document.body.appendChild(container);
+        }
+        
+        $('#toastContainer').append(toastHTML);
+        const toastElement = $('.toast').last();
+        const toast = new bootstrap.Toast(toastElement, { autohide: true, delay: 3000 });
+        toast.show();
+        
+        setTimeout(() => {
+            toastElement.remove();
+        }, 3500);
+    }
+
     
     $("#profileForm").submit(function(e) {
         e.preventDefault();
@@ -9,19 +40,19 @@ $(document).ready(function() {
             data: $(this).serialize(),
             success: function(response) {
                 if (response === "success") {
-                    showAlert("#profileAlert", "Profile updated successfully!", "success");
+                    showToastProfile('Success', 'Profile updated successfully!', 'success');
                 } else if (response === "error_email_exists") {
-                    showAlert("#profileAlert", "Email address is already in use by another account.", "danger");
+                    showToastProfile('Error', 'Email address is already in use by another account.', 'danger');
                 } else if (response === "error_missing_data") {
-                    showAlert("#profileAlert", "Please fill in all required fields.", "danger");
+                    showToastProfile('Error', 'Please fill in all required fields.', 'danger');
                 } else if (response === "error_invalid_email") {
-                    showAlert("#profileAlert", "Please enter a valid email address.", "danger");
+                    showToastProfile('Error', 'Please enter a valid email address.', 'danger');
                 } else {
-                    showAlert("#profileAlert", "An error occurred while updating your profile.", "danger");
+                    showToastProfile('Error', 'An error occurred while updating your profile.', 'danger');
                 }
             },
             error: function() {
-                showAlert("#profileAlert", "Server error. Please try again later.", "danger");
+                showToastProfile('Error', 'Server error. Please try again later.', 'danger');
             }
         });
     });
@@ -34,17 +65,17 @@ $(document).ready(function() {
             data: $(this).serialize(),
             success: function(response) {
                 if (response === "success") {
-                    showAlert("#usernameAlert", "Username updated successfully!", "success");
+                    showToastProfile('Success', 'Username updated successfully!', 'success');
                 } else if (response === "error_username_exists") {
-                    showAlert("#usernameAlert", "Username is already taken by another account.", "danger");
+                    showToastProfile('Error', 'Username is already taken by another account.', 'danger');
                 } else if (response === "error_invalid_username") {
-                    showAlert("#usernameAlert", "Username must be at least 3 characters long.", "danger");
+                    showToastProfile('Error', 'Username must be at least 3 characters long.', 'danger');
                 } else {
-                    showAlert("#usernameAlert", "An error occurred while updating your username.", "danger");
+                    showToastProfile('Error', 'An error occurred while updating your username.', 'danger');
                 }
             },
             error: function() {
-                showAlert("#usernameAlert", "Server error. Please try again later.", "danger");
+                showToastProfile('Error', 'Server error. Please try again later.', 'danger');
             }
         });
     });
@@ -57,20 +88,20 @@ $(document).ready(function() {
             data: $(this).serialize(),
             success: function(response) {
                 if (response === "success") {
-                    showAlert("#passwordAlert", "Password changed successfully!", "success");
+                    showToastProfile('Success', 'Password changed successfully!', 'success');
                     $("#passwordForm")[0].reset();
                 } else if (response === "error_password_mismatch") {
-                    showAlert("#passwordAlert", "New passwords do not match.", "danger");
+                    showToastProfile('Error', 'New passwords do not match.', 'danger');
                 } else if (response === "error_weak_password") {
-                    showAlert("#passwordAlert", "Password must be at least 8 characters and include letters and numbers.", "danger");
+                    showToastProfile('Error', 'Password must be at least 8 characters and include letters and numbers.', 'danger');
                 } else if (response === "error_incorrect_password") {
-                    showAlert("#passwordAlert", "Current password is incorrect.", "danger");
+                    showToastProfile('Error', 'Current password is incorrect.', 'danger');
                 } else {
-                    showAlert("#passwordAlert", "An error occurred while changing your password.", "danger");
+                    showToastProfile('Error', 'An error occurred while changing your password.', 'danger');
                 }
             },
             error: function() {
-                showAlert("#passwordAlert", "Server error. Please try again later.", "danger");
+                showToastProfile('Error', 'Server error. Please try again later.', 'danger');
             }
         });
     });
@@ -83,20 +114,20 @@ $(document).ready(function() {
             success: function(response) {
                 if (response === "success") {
                     $("#deleteAccountModal").modal('hide');
-                    showAlert("#deleteAlert", "Your account has been deleted successfully. Redirecting...", "success");
+                    showToastProfile('Success', 'Your account has been deleted successfully. Redirecting...', 'success');
                     setTimeout(function() {
                         window.location.href = "../login.php";
                     }, 3000);
                 } else if (response === "error_incorrect_password") {
-                    showAlert("#deleteAlert", "Incorrect password. Account deletion failed.", "danger");
+                    showToastProfile('Error', 'Incorrect password. Account deletion failed.', 'danger');
                     $("#deleteAccountModal").modal('hide');
                 } else {
-                    showAlert("#deleteAlert", "An error occurred while deleting your account.", "danger");
+                    showToastProfile('Error', 'An error occurred while deleting your account.', 'danger');
                     $("#deleteAccountModal").modal('hide');
                 }
             },
             error: function() {
-                showAlert("#deleteAlert", "Server error. Please try again later.", "danger");
+                showToastProfile('Error', 'Server error. Please try again later.', 'danger');
                 $("#deleteAccountModal").modal('hide');
             }
         });
@@ -116,17 +147,8 @@ $(document).ready(function() {
                 $("#username").val(data.username);
             },
             error: function() {
-                showAlert("#profileAlert", "Error loading profile data.", "danger");
+                showToastProfile('Error', 'Error loading profile data.', 'danger');
             }
         });
-    }
-    
-    function showAlert(selector, message, type) {
-        $(selector).removeClass("alert-success alert-danger")
-            .addClass("alert-" + type)
-            .html(message)
-            .fadeIn()
-            .delay(5000)
-            .fadeOut();
     }
 });

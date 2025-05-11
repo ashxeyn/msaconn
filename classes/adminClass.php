@@ -1516,7 +1516,7 @@ class Admin {
     function updateAbout($aboutId, $mission, $vision) {
         $sql = "UPDATE about_msa 
                 SET mission = :mission, 
-                    vision = :vision, 
+                    vision = :vision 
                 WHERE id = :about_id";
 
         $query = $this->db->connect()->prepare($sql);

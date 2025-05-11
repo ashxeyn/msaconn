@@ -1708,7 +1708,7 @@ function processAbout(aboutId, action) {
                     'About information has been ' + (action === 'edit' ? 'updated' : 'added') + '.', 
                     'success');
             } else {
-                alert("Failed to process request: " + response);
+                console.log("Failed to process request: " + response);
             }
         },
         error: function() {
