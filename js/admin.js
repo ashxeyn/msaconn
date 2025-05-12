@@ -2823,7 +2823,6 @@ function setVolunteerId(volunteerId, action) {
                     $('#middleName').val(volunteer.middle_name);
                     $('#surname').val(volunteer.last_name);
                     $('#year').val(volunteer.year_level);
-                    $('#section').val(volunteer.section);
                     $('#program').val(volunteer.program_id);
                     $('#contact').val(volunteer.contact);
                     $('#email').val(volunteer.email);
@@ -2898,13 +2897,12 @@ function setVolunteerId(volunteerId, action) {
 
 function validateVolunteerForm() {
     let isValid = true;
-    clearValidationErrors();
+    clearVolunteerValidationErrors();
 
     const firstName = $('#firstName').val().trim();
     const lastName = $('#surname').val().trim();
-    const year = $('#year').val().trim();
-    const section = $('#section').val().trim();
-    const program = $('#program').val().trim();
+    const year = $('#year').val();
+    const program = $('#program').val();
     const contact = $('#contact').val().trim();
     const email = $('#email').val().trim();
     const imageInput = $('#image')[0];
@@ -2912,59 +2910,85 @@ function validateVolunteerForm() {
 
     if (firstName === '') {
         $('#firstNameError').text('First name is required');
+        $('#firstName').addClass('is-invalid');
         isValid = false;
     }
-
     if (lastName === '') {
         $('#surnameError').text('Last name is required');
+        $('#surname').addClass('is-invalid');
         isValid = false;
     }
-
-    if (year === '') {
+    if (!year) {
         $('#yearError').text('Year level is required');
-        isValid = false;
-    } else if (isNaN(year) || parseInt(year) < 1 || parseInt(year) > 6) {
-        $('#yearError').text('Year level must be between 1 and 6');
+        $('#year').addClass('is-invalid');
         isValid = false;
     }
-
-    if (section === '') {
-        $('#sectionError').text('Section is required');
-        isValid = false;
-    }
-
-    if (program === '') {
+    if (!program) {
         $('#programError').text('Program is required');
+        $('#program').addClass('is-invalid');
         isValid = false;
     }
-
     if (contact === '') {
         $('#contactError').text('Contact number is required');
+        $('#contact').addClass('is-invalid');
         isValid = false;
     } else if (!/^\d{11}$/.test(contact)) {
         $('#contactError').text('Contact must be an 11-digit number');
+        $('#contact').addClass('is-invalid');
         isValid = false;
     }
-
     if (email === '') {
         $('#emailError').text('Email is required');
+        $('#email').addClass('is-invalid');
         isValid = false;
     } else if (!/^\S+@\S+\.\S+$/.test(email)) {
         $('#emailError').text('Please enter a valid email address');
+        $('#email').addClass('is-invalid');
         isValid = false;
     }
-
     if (!isEdit && imageInput.files.length === 0) {
         $('#imageError').text('Certificate of Registration is required');
+        $('#image').addClass('is-invalid');
         isValid = false;
     }
-
     return isValid;
 }
 
-function clearValidationErrors() {
-    $('.text-danger').text('');
+function clearVolunteerValidationErrors() {
+    $('#firstNameError').text('');
+    $('#surnameError').text('');
+    $('#yearError').text('');
+    $('#programError').text('');
+    $('#contactError').text('');
+    $('#emailError').text('');
+    $('#imageError').text('');
+    $('#firstName').removeClass('is-invalid');
+    $('#surname').removeClass('is-invalid');
+    $('#year').removeClass('is-invalid');
+    $('#program').removeClass('is-invalid');
+    $('#contact').removeClass('is-invalid');
+    $('#email').removeClass('is-invalid');
+    $('#image').removeClass('is-invalid');
 }
+
+$(document).on('submit', '#volunteerForm', function(e) {
+    e.preventDefault();
+    if (validateVolunteerForm()) {
+        const volunteerId = $('#volunteerId').val();
+        const action = volunteerId ? 'edit' : 'add';
+        processVolunteer(volunteerId, action);
+    }
+});
+
+$('#addVolunteerModal').on('hidden.bs.modal', function () {
+    clearVolunteerValidationErrors();
+    $('#volunteerForm')[0].reset();
+});
+
+$('[data-bs-dismiss="modal"]').on('click', function() {
+    clearVolunteerValidationErrors();
+    $('#volunteerForm')[0].reset();
+});
 
 function processVolunteer(volunteerId, action) {
     let formData = new FormData();
@@ -3051,6 +3075,11 @@ function processRegistration(volunteerId, action) {
                 $("body").removeClass("modal-open");
                 $(".modal-backdrop").remove();
                 loadRegistrationsSection(); 
+                if (action === 'approve') {
+                    showToast('Success', 'Volunteer registration approved.', 'success');
+                } else if (action === 'reject') {
+                    showToast('Success', 'Volunteer registration rejected.', 'success');
+                }
             } else {
                 console.log("Failed to process request:", response); 
                 alert("Failed to process request.");
@@ -3098,11 +3127,11 @@ function processEnrollment(enrollmentId, action) {
                 $(".modal").modal("hide");
                 $("body").removeClass("modal-open");
                 $(".modal-backdrop").remove();
-                loadEnrollmentSection();
+                loadEnrollmentSection   ();
                 if (action === 'enroll') {
-                    showToast('Success', 'Student enrollment accepted.', 'success');
+                    showToast('Success', 'Enrollment approved.', 'success');
                 } else if (action === 'reject') {
-                    showToast('Declined', 'Student enrollment declined.', 'danger');
+                    showToast('Success', 'Enrollment rejected.', 'success');
                 }
             } else {
                 console.log("Failed to process request:", response);

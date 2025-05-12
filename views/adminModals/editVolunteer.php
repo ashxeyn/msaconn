@@ -28,7 +28,7 @@ if ($volunteerId) {
                     <div class="modal-section">
                         <h6 class="section-title">Personal Information</h6>
                         <div class="mb-3 position-relative">
-                            <label for="firstName" class="form-label">First Name <span class="text-danger">*</span></label>
+                            <label for="firstName" class="form-label">First Name </label>
                             <input type="text" class="form-control" id="firstName" name="firstName">
                             <span class="invalid-icon" id="firstNameIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
                             <div id="firstNameError" class="text-danger"></div>
@@ -42,15 +42,22 @@ if ($volunteerId) {
                         </div>
 
                         <div class="mb-3 position-relative">
-                            <label for="surname" class="form-label">Surname <span class="text-danger">*</span></label>
+                            <label for="surname" class="form-label">Surname </label>
                             <input type="text" class="form-control" id="surname" name="surname">
                             <span class="invalid-icon" id="surnameIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
                             <div id="surnameError" class="text-danger"></div>
                         </div>
 
                         <div class="mb-3 position-relative">
-                            <label for="year" class="form-label">Year Level <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control" id="year" name="year" min="1" max="6">
+                            <label for="year" class="form-label">Year Level </label>
+                            <select class="form-select" id="year" name="year">
+                                <option value="">Select Year Level</option>
+                                <option value="1">1st Year</option>
+                                <option value="2">2nd Year</option>
+                                <option value="3">3rd Year</option>
+                                <option value="4">4th Year</option>
+                                <option value="others">Others</option>
+                            </select>
                             <span class="invalid-icon" id="yearIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
                             <div id="yearError" class="text-danger"></div>
                         </div>
@@ -60,7 +67,7 @@ if ($volunteerId) {
                     <div class="modal-section">
                         <h6 class="section-title">Contact & Program Information</h6>
                         <div class="mb-3 position-relative">
-                            <label for="program" class="form-label">Program <span class="text-danger">*</span></label>
+                            <label for="program" class="form-label">Program </label>
                             <select class="form-select" id="program" name="program">
                                 <option value="">Select Program</option>
                                 <?php foreach ($programs as $program): ?>
@@ -74,7 +81,7 @@ if ($volunteerId) {
                         </div>
 
                         <div class="mb-3 position-relative">
-                            <label for="contact" class="form-label">Contact Number <span class="text-danger">*</span></label>
+                            <label for="contact" class="form-label">Contact Number </label>
                             <input type="text" class="form-control" id="contact" name="contact" pattern="\d{11}" maxlength="11">
                             <span class="invalid-icon" id="contactIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
                             <div id="contactError" class="text-danger"></div>
@@ -82,14 +89,14 @@ if ($volunteerId) {
                         </div>
 
                         <div class="mb-3 position-relative">
-                            <label for="email" class="form-label">Email Address <span class="text-danger">*</span></label>
+                            <label for="email" class="form-label">Email Address </label>
                             <input type="email" class="form-control" id="email" name="email">
                             <span class="invalid-icon" id="emailIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
                             <div id="emailError" class="text-danger"></div>
                         </div>
 
                         <div class="mb-3 position-relative">
-                            <label for="image" class="form-label">Certificate of Registration (COR) <span class="text-danger">*</span></label>
+                            <label for="image" class="form-label">Certificate of Registration (COR) </label>
                             <input type="file" class="form-control" id="image" name="image" accept="image/*">
                             <span class="invalid-icon" id="imageIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
                             <div id="imageError" class="text-danger"></div>

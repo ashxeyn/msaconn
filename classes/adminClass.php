@@ -181,12 +181,12 @@ class Admin {
 
     function getVolunteerById($volunteerId) {
         $sql = "SELECT v.volunteer_id, v.first_name, v.middle_name, v.last_name, 
-                    v.year AS year_level, v.contact, 
-                    v.email, v.cor_file, v.status, v.created_at, v.deleted_at,
-                    p.program_name
-                FROM volunteers v
-                JOIN programs p ON v.program_id = p.program_id
-                WHERE v.volunteer_id = :volunteer_id";
+                v.year AS year_level, v.contact, 
+                v.email, v.cor_file, v.status, v.created_at, v.deleted_at,
+                v.program_id, p.program_name
+            FROM volunteers v
+            JOIN programs p ON v.program_id = p.program_id
+            WHERE v.volunteer_id = :volunteer_id";
 
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':volunteer_id', $volunteerId);
