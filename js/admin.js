@@ -4181,7 +4181,7 @@ function setSitePageId(pageId, action, isActive) {
                     $('#addEditEmail').val(page.email);
                     $('#siteStep1').hide();
                     $('#siteStep2').show();
-                    $('#siteBackBtn').hide();
+                    $('#siteBackLink').hide();
                     $('#siteNextBtn').hide();
                     $('#siteSaveBtn').show();
                     $('#addEditModalTitle').text('Edit Page');
@@ -4270,21 +4270,21 @@ function setSitePageId(pageId, action, isActive) {
         $('#addEditPageType').removeClass('is-invalid');
         $('#addEditPageTypeIcon').hide();
         $('#addEditPageTypeError').text('');
-        
         $('#siteStep1').hide();
         $('#siteStep2').show();
-        $('#siteBackBtn').show();
+        $('#siteBackLink').show();
         $('#siteNextBtn').hide();
         $('#siteSaveBtn').show();
         toggleFieldsBasedOnType(pageType);
         clearSiteValidationErrors();
     });
 
-    $('#siteBackBtn').off('click').on('click', function(e) {
+    // Back button handler
+    $('#siteBackLink').off('click').on('click', function(e) {
         e.preventDefault();
         $('#siteStep1').show();
         $('#siteStep2').hide();
-        $('#siteBackBtn').hide();
+        $('#siteBackLink').hide();
         $('#siteNextBtn').show();
         $('#siteSaveBtn').hide();
         $('#addEditModalTitle').text('Add New Page');
@@ -4318,23 +4318,23 @@ function setSitePageId(pageId, action, isActive) {
 }
 
 function toggleFieldsBasedOnType(pageType) {
-    const $descriptionGroup = $('#descriptionGroup');
-    const $contactGroup = $('#contactGroup');
-    const $emailGroup = $('#emailGroup');
-    const $imageGroup = $('#imageGroup');
-    $descriptionGroup.hide();
-    $contactGroup.hide();
-    $emailGroup.hide();
-    $imageGroup.hide();
-    if ([
-        'registration','about','volunteer','calendar','faqs','transparency','home'
-    ].includes(pageType)) {
-        $descriptionGroup.show();
+    // Hide all groups first
+    $('#descriptionGroup').hide();
+    $('#contactGroup').hide();
+    $('#emailGroup').hide();
+    $('#imageGroup').hide();
+    $('#logo-image-preview').hide();
+    $('#background-image-preview').hide();
+
+    // Show relevant groups based on page type
+    if (["logo", "background", "carousel"].includes(pageType)) {
+        $('#imageGroup').show();
     } else if (pageType === 'footer') {
-        $contactGroup.show();
-        $emailGroup.show();
-    } else if ([ 'logo','carousel' ].includes(pageType)) {
-        $imageGroup.show();
+        $('#contactGroup').show();
+        $('#emailGroup').show();
+    } else {
+        // registration, about, volunteer, calendar, faqs, transparency, home
+        $('#descriptionGroup').show();
     }
 }
 
@@ -4353,21 +4353,22 @@ function validateSiteForm(action) {
         $('#addEditTitleIcon').hide();
         $('#addEditTitleError').text('');
     }
-    if ([
-        'registration','about','volunteer','calendar','faqs','transparency','home'
-    ].includes(pageType)) {
-        const description = $('#addEditDescription').val().trim();
-        if (description === '') {
-            $('#addEditDescription').addClass('is-invalid');
-            $('#addEditDescriptionIcon').show();
-            $('#addEditDescriptionError').text('Description is required');
+
+    if (["logo", "background", "carousel"].includes(pageType)) {
+        // Validate image
+        const image = $('#addEditImage')[0].files[0];
+        if (!image && $('#logo-preview-img').attr('src') === '' && $('#background-preview-img').attr('src') === '') {
+            $('#addEditImage').addClass('is-invalid');
+            $('#addEditImageIcon').show();
+            $('#addEditImageError').text('Image is required');
             isValid = false;
         } else {
-            $('#addEditDescription').removeClass('is-invalid');
-            $('#addEditDescriptionIcon').hide();
-            $('#addEditDescriptionError').text('');
+            $('#addEditImage').removeClass('is-invalid');
+            $('#addEditImageIcon').hide();
+            $('#addEditImageError').text('');
         }
     } else if (pageType === 'footer') {
+        // Validate contact and email
         const contactNo = $('#addEditContactNo').val().trim();
         if (!contactNo) {
             $('#addEditContactNo').addClass('is-invalid');
@@ -4390,19 +4391,19 @@ function validateSiteForm(action) {
             $('#addEditEmailIcon').hide();
             $('#addEditEmailError').text('');
         }
-    } else if ([ 'logo','carousel' ].includes(pageType)) {
-        // Optionally validate image
-        // const image = $('#addEditImage')[0].files[0];
-        // if (!image) {
-        //     $('#addEditImage').addClass('is-invalid');
-        //     $('#addEditImageIcon').show();
-        //     $('#addEditImageError').text('Image is required');
-        //     isValid = false;
-        // } else {
-        //     $('#addEditImage').removeClass('is-invalid');
-        //     $('#addEditImageIcon').hide();
-        //     $('#addEditImageError').text('');
-        // }
+    } else {
+        // registration, about, volunteer, calendar, faqs, transparency, home
+        const description = $('#addEditDescription').val().trim();
+        if (description === '') {
+            $('#addEditDescription').addClass('is-invalid');
+            $('#addEditDescriptionIcon').show();
+            $('#addEditDescriptionError').text('Description is required');
+            isValid = false;
+        } else {
+            $('#addEditDescription').removeClass('is-invalid');
+            $('#addEditDescriptionIcon').hide();
+            $('#addEditDescriptionError').text('');
+        }
     }
     return isValid;
 }
@@ -4748,5 +4749,26 @@ $(document).ready(function() {
         $('#onlineFields').addClass('d-none');
         $('#image-preview').hide();
     });
+});
+
+// Add image preview functionality
+document.getElementById('addEditImage').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const pageType = document.getElementById('addEditPageType').value;
+            if (pageType === 'logo') {
+                document.getElementById('logo-preview-img').src = e.target.result;
+                document.getElementById('logo-image-preview').style.display = 'block';
+                document.getElementById('background-image-preview').style.display = 'none';
+            } else if (pageType === 'background') {
+                document.getElementById('background-preview-img').src = e.target.result;
+                document.getElementById('background-image-preview').style.display = 'block';
+                document.getElementById('logo-image-preview').style.display = 'none';
+            }
+        };
+        reader.readAsDataURL(file);
+    }
 });
 

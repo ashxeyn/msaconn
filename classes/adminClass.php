@@ -2619,6 +2619,7 @@ function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $class
             'transparency' => 'Transparency Page',
             'home' => 'Home Page',
             'logo' => 'Logo',
+            'background' => 'Background',
             'carousel' => 'Carousel Image',
             'footer' => 'Footer Content'
         ];

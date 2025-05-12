@@ -170,10 +170,32 @@ foreach ($sitePages as $page) {
     .cor-photo:hover {
         transform: scale(1.05);
     }
+    .logo-photo {
+        width: 80px;
+        height: 120px;
+        border-radius: 6px;
+        object-fit: cover;
+        background-color: #f0f0f0;
+        transition: transform 0.2s ease;
+    }
+    .logo-photo:hover {
+        transform: scale(1.05);
+    }
     .carousel-divider {
         border: 0;
         border-top: 2px solid #0a6b3f;
         margin: 1rem 0;
+    }
+    .site-logo-preview img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+    }
+    .site-background-preview img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+        object-fit: cover;
     }
 </style>
 <div class="admin-container">
@@ -184,7 +206,7 @@ foreach ($sitePages as $page) {
         </button>
     </div>
     <?php
-    $order = ['home','registration','about','volunteer','calendar','faqs','transparency','logo','carousel','footer'];
+    $order = ['home','registration','about','volunteer','calendar','faqs','transparency','logo','background','carousel','footer'];
     foreach ($order as $type) {
         if ($type === 'carousel') {
             if (count($carouselImages) > 0) {
@@ -244,7 +266,14 @@ foreach ($sitePages as $page) {
                     <?php if($page['page_type'] === 'logo' && $page['image_path']): ?>
                     <div class="site-logo-preview mb-2">
                         <a href="#" data-bs-toggle="modal" data-bs-target="#photoModal" onclick="viewPhoto('<?= basename($page['image_path']) ?>', 'site')">
-                            <img src="../../<?= $page['image_path'] ?>" alt="Logo Preview" width="80" height="80" class="img-thumbnail">
+                            <img src="../../<?= $page['image_path'] ?>" alt="Logo Preview" class="logo-photo">
+                        </a>
+                    </div>
+                    <?php endif; ?>
+                    <?php if($page['page_type'] === 'background' && $page['image_path']): ?>
+                    <div class="site-background-preview mb-2">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#photoModal" onclick="viewPhoto('<?= basename($page['image_path']) ?>', 'site')">
+                            <img src="../../<?= $page['image_path'] ?>" alt="Background Preview" class="cor-photo">
                         </a>
                     </div>
                     <?php endif; ?>
