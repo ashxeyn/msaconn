@@ -285,7 +285,7 @@ $result = $adminObj->fetchPendingVolunteer();
                     <th>ID</th>
                     <th>Full Name</th>
                     <th>Program</th>
-                    <th>Yr/Section</th>
+                    <th>Year</th>
                     <th>Contact</th>
                     <th>Email</th>
                     <th>COR</th>
@@ -300,7 +300,7 @@ $result = $adminObj->fetchPendingVolunteer();
                             <td><?= $counter++ ?></td>
                             <td><?= clean_input(strtoupper($row['full_name'])) ?></td>
                             <td><?= clean_input($row['program_name']) ?></td>
-                            <td><?= clean_input($row['yr_section']) ?></td>
+                            <td><?= clean_input($row['year']) ?></td>
                             <td><?= clean_input($row['contact']) ?></td>
                             <td><?= clean_input($row['email']) ?></td>
                             <td>
@@ -324,7 +324,7 @@ $result = $adminObj->fetchPendingVolunteer();
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="9" class="text-center">No pending volunteer registrations</td>
+                        <td colspan="8" class="text-center">No pending volunteer registrations</td>
                     </tr>
                 <?php endif; ?>
             </tbody>

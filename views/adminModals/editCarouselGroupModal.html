@@ -1,6 +1,6 @@
 <!-- Edit Carousel Group Modal -->
 <div class="modal fade" id="editCarouselGroupModal" tabindex="-1" aria-labelledby="editCarouselGroupModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog" style="max-width: 700px;">
         <form id="editCarouselGroupForm" enctype="multipart/form-data">
             <div class="modal-content">
                 <div class="modal-header">
@@ -9,79 +9,85 @@
                 <div class="modal-body">
                     <div id="carouselGroupEditContainer" class="container-fluid">
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="carousel-image-block mb-4">
+                            <div class="col-12">
+                                <div class="carousel-image-block mb-3">
                                     <div class="card">
                                         <div class="card-body">
                                             <input type="hidden" id="carouselId1" name="carousel_ids[]">
                                             <h6 class="card-title">Image 1</h6>
-                                            <div class="image-preview-container mb-3">
+                                            <div class="image-preview-container mb-2">
                                                 <img src="" alt="Carousel Image 1" class="img-preview" id="carouselPreview1">
                                             </div>
-                                            <div class="mb-3">
+                                            <div class="mb-2">
                                                 <label for="carouselImage1" class="form-label">Upload Image</label>
                                                 <input type="file" class="form-control" id="carouselImage1" name="carousel_images[]" accept="image/*">
+                                                <small class="form-text text-muted">Leave blank to retain current image.</small>
+                                                <div id="carouselNewPreview1" class="mt-2"></div>
                                             </div>
-                                            <div class="mb-3">
+                                            <div class="mb-2">
                                                 <label for="carouselTitle1" class="form-label">Title</label>
                                                 <input type="text" class="form-control" id="carouselTitle1" name="carousel_titles[]">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="carousel-image-block">
+                                <div class="carousel-image-block mb-3">
                                     <div class="card">
                                         <div class="card-body">
                                             <input type="hidden" id="carouselId2" name="carousel_ids[]">
                                             <h6 class="card-title">Image 2</h6>
-                                            <div class="image-preview-container mb-3">
+                                            <div class="image-preview-container mb-2">
                                                 <img src="" alt="Carousel Image 2" class="img-preview" id="carouselPreview2">
                                             </div>
-                                            <div class="mb-3">
+                                            <div class="mb-2">
                                                 <label for="carouselImage2" class="form-label">Upload Image</label>
                                                 <input type="file" class="form-control" id="carouselImage2" name="carousel_images[]" accept="image/*">
+                                                <small class="form-text text-muted">Leave blank to retain current image.</small>
+                                                <div id="carouselNewPreview2" class="mt-2"></div>
                                             </div>
-                                            <div class="mb-3">
+                                            <div class="mb-2">
                                                 <label for="carouselTitle2" class="form-label">Title</label>
                                                 <input type="text" class="form-control" id="carouselTitle2" name="carousel_titles[]">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="carousel-image-block mb-4">
+                                <div class="carousel-image-block mb-3">
                                     <div class="card">
                                         <div class="card-body">
                                             <input type="hidden" id="carouselId3" name="carousel_ids[]">
                                             <h6 class="card-title">Image 3</h6>
-                                            <div class="image-preview-container mb-3">
+                                            <div class="image-preview-container mb-2">
                                                 <img src="" alt="Carousel Image 3" class="img-preview" id="carouselPreview3">
                                             </div>
-                                            <div class="mb-3">
+                                            <div class="mb-2">
                                                 <label for="carouselImage3" class="form-label">Upload Image</label>
                                                 <input type="file" class="form-control" id="carouselImage3" name="carousel_images[]" accept="image/*">
+                                                <small class="form-text text-muted">Leave blank to retain current image.</small>
+                                                <div id="carouselNewPreview3" class="mt-2"></div>
                                             </div>
-                                            <div class="mb-3">
+                                            <div class="mb-2">
                                                 <label for="carouselTitle3" class="form-label">Title</label>
                                                 <input type="text" class="form-control" id="carouselTitle3" name="carousel_titles[]">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="carousel-image-block">
+                                <div class="carousel-image-block mb-3">
                                     <div class="card">
                                         <div class="card-body">
                                             <input type="hidden" id="carouselId4" name="carousel_ids[]">
                                             <h6 class="card-title">Image 4</h6>
-                                            <div class="image-preview-container mb-3">
+                                            <div class="image-preview-container mb-2">
                                                 <img src="" alt="Carousel Image 4" class="img-preview" id="carouselPreview4">
                                             </div>
-                                            <div class="mb-3">
+                                            <div class="mb-2">
                                                 <label for="carouselImage4" class="form-label">Upload Image</label>
                                                 <input type="file" class="form-control" id="carouselImage4" name="carousel_images[]" accept="image/*">
+                                                <small class="form-text text-muted">Leave blank to retain current image.</small>
+                                                <div id="carouselNewPreview4" class="mt-2"></div>
                                             </div>
-                                            <div class="mb-3">
+                                            <div class="mb-2">
                                                 <label for="carouselTitle4" class="form-label">Title</label>
                                                 <input type="text" class="form-control" id="carouselTitle4" name="carousel_titles[]">
                                             </div>
@@ -107,11 +113,11 @@
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 .carousel-image-block .card-body {
-    padding: 1.5rem;
+    padding: 0.75rem;
 }
 .image-preview-container {
     width: 100%;
-    height: 200px;
+    height: 110px;
     border: 2px dashed #ddd;
     border-radius: 8px;
     display: flex;
@@ -127,5 +133,15 @@
 }
 .form-check {
     margin-top: 1rem;
+}
+#editCarouselGroupModal .modal-dialog {
+    max-width: 500px;
+}
+#editCarouselGroupModal .modal-content {
+    max-height: 95vh;
+}
+#editCarouselGroupModal .modal-body {
+    overflow-y: auto;
+    padding: 1rem 1.5rem;
 }
 </style> 

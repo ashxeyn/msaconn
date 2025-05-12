@@ -13,7 +13,6 @@ class Admin {
     public $contact;
     public $email;
     public $program;
-    public $section;
     public $cor_file;
     public $officer_id;
     public $status;
@@ -167,7 +166,7 @@ class Admin {
     // Volunteer Functions
     function fetchVolunteers() {
         $sql = "SELECT v.volunteer_id, v.first_name, v.middle_name, v.last_name, 
-                    v.year AS year_level, v.section, v.program_id, v.contact, 
+                    v.year AS year_level, v.contact, 
                     v.email, v.cor_file, v.created_at, v.deleted_at, v.reason,
                     p.program_name
                 FROM volunteers v
@@ -182,7 +181,7 @@ class Admin {
 
     function getVolunteerById($volunteerId) {
         $sql = "SELECT v.volunteer_id, v.first_name, v.middle_name, v.last_name, 
-                    v.year AS year_level, v.section, v.program_id, v.contact, 
+                    v.year AS year_level, v.contact, 
                     v.email, v.cor_file, v.status, v.created_at, v.deleted_at,
                     p.program_name
                 FROM volunteers v
@@ -196,16 +195,15 @@ class Admin {
         return $query->fetch();
     }
 
-    function addVolunteer($firstName, $middleName, $lastName, $year, $section, $programId, $contact, $email, $corFile) {
-        $sql = "INSERT INTO volunteers (first_name, middle_name, last_name, year, section, program_id, contact, email, cor_file) 
-                VALUES (:first_name, :middle_name, :last_name, :year, :section, :program_id, :contact, :email, :cor_file)";
+    function addVolunteer($firstName, $middleName, $lastName, $year, $programId, $contact, $email, $corFile) {
+        $sql = "INSERT INTO volunteers (first_name, middle_name, last_name, year, program_id, contact, email, cor_file) 
+                VALUES (:first_name, :middle_name, :last_name, :year, :program_id, :contact, :email, :cor_file)";
         
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':first_name', $firstName);
         $query->bindParam(':middle_name', $middleName);
         $query->bindParam(':last_name', $lastName);
         $query->bindParam(':year', $year);
-        $query->bindParam(':section', $section);
         $query->bindParam(':program_id', $programId);
         $query->bindParam(':contact', $contact);
         $query->bindParam(':email', $email);
@@ -213,13 +211,12 @@ class Admin {
         return $query->execute();
     }
 
-    function updateVolunteer($volunteerId, $firstName, $middleName, $lastName, $year, $section, $programId, $contact, $email, $corFile = null) {
+    function updateVolunteer($volunteerId, $firstName, $middleName, $lastName, $year, $programId, $contact, $email, $corFile = null) {
         $sql = "UPDATE volunteers 
                 SET first_name = :first_name, 
                     middle_name = :middle_name,
                     last_name = :last_name, 
                     year = :year, 
-                    section = :section, 
                     program_id = :program_id, 
                     contact = :contact, 
                     email = :email";
@@ -236,7 +233,6 @@ class Admin {
         $query->bindParam(':middle_name', $middleName);
         $query->bindParam(':last_name', $lastName);
         $query->bindParam(':year', $year);
-        $query->bindParam(':section', $section);
         $query->bindParam(':program_id', $programId);
         $query->bindParam(':contact', $contact);
         $query->bindParam(':email', $email);
@@ -272,7 +268,7 @@ class Admin {
 
     function fetchArchivedVolunteers() {
         $sql = "SELECT v.volunteer_id,  CONCAT(v.last_name, ', ', v.first_name, ' ', v.middle_name) AS full_name, 
-                CONCAT(v.year, '-', v.section) AS yr_section,
+                CONCAT(v.year, '-', v.contact) AS yr_contact,
                     v.contact, v.email,
                     v.reason, v.deleted_at, p.program_name
                 FROM volunteers v
@@ -287,7 +283,7 @@ class Admin {
     }
     
     function fetchPendingVolunteer() { 
-        $sql = "SELECT v.volunteer_id, CONCAT(v.last_name, ', ', v.first_name, ' ', v.middle_name) AS full_name, p.program_name, CONCAT(v.year, '-', v.section) AS yr_section, 
+        $sql = "SELECT v.volunteer_id, CONCAT(v.last_name, ', ', v.first_name, ' ', v.middle_name) AS full_name, p.program_name, v.year, 
                 v.contact, v.email, v.cor_file AS cor, v.status FROM volunteers v
                 LEFT JOIN programs p ON v.program_id = p.program_id WHERE v.status = 'pending'";
         
@@ -297,7 +293,7 @@ class Admin {
     }
 
     function fetchApprovedVolunteer() { 
-        $sql = "SELECT v.volunteer_id, CONCAT(v.last_name, ', ', v.first_name, ' ', v.middle_name) AS full_name, p.program_name, CONCAT(v.year, '-', v.section) AS yr_section, 
+        $sql = "SELECT v.volunteer_id, CONCAT(v.last_name, ', ', v.first_name, ' ', v.middle_name) AS full_name, p.program_name, v.year, 
                 v.contact, v.email, v.cor_file AS cor, v.status, u.username AS registered_by FROM volunteers v 
                 LEFT JOIN users u ON v.user_id = u.user_id LEFT JOIN programs p ON v.program_id = p.program_id WHERE v.status = 'approved' AND v.is_deleted = 0";
         
@@ -307,7 +303,7 @@ class Admin {
     }
 
     function fetchRejectedVolunteer() { 
-        $sql = "SELECT v.volunteer_id, CONCAT(v.last_name, ', ', v.first_name, ' ', v.middle_name) AS full_name, p.program_name, CONCAT(v.year, '-', v.section) AS yr_section, 
+        $sql = "SELECT v.volunteer_id, CONCAT(v.last_name, ', ', v.first_name, ' ', v.middle_name) AS full_name, p.program_name, CONCAT(v.year, '-', v.contact) AS yr_contact, 
                 v.contact, v.email, v.cor_file AS cor, v.status, u.username AS registered_by FROM volunteers v LEFT JOIN users u ON v.registered_by = u.user_id 
                 LEFT JOIN programs p ON v.program_id = p.program_id WHERE v.status = 'rejected'";
         

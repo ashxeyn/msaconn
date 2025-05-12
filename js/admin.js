@@ -3098,7 +3098,12 @@ function processEnrollment(enrollmentId, action) {
                 $(".modal").modal("hide");
                 $("body").removeClass("modal-open");
                 $(".modal-backdrop").remove();
-                loadEnrollmentSection   ();
+                loadEnrollmentSection();
+                if (action === 'enroll') {
+                    showToast('Success', 'Student enrollment accepted.', 'success');
+                } else if (action === 'reject') {
+                    showToast('Declined', 'Student enrollment declined.', 'danger');
+                }
             } else {
                 console.log("Failed to process request:", response);
                 alert("Failed to process request.");

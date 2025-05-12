@@ -54,13 +54,6 @@ if ($volunteerId) {
                             <span class="invalid-icon" id="yearIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
                             <div id="yearError" class="text-danger"></div>
                         </div>
-
-                        <div class="mb-3 position-relative">
-                            <label for="section" class="form-label">Section <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="section" name="section">
-                            <span class="invalid-icon" id="sectionIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
-                            <div id="sectionError" class="text-danger"></div>
-                        </div>
                     </div>
 
                     <!-- Right Column -->

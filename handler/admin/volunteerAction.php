@@ -19,7 +19,6 @@ if ($action === 'edit') {
     $middleName = clean_input($_POST['middleName']);
     $lastName = clean_input($_POST['surname']);
     $year = clean_input($_POST['year']);
-    $section = clean_input($_POST['section']);
     $programId = clean_input($_POST['program']);
     $contact = clean_input($_POST['contact']);
     $email = clean_input($_POST['email']);
@@ -47,7 +46,6 @@ if ($action === 'edit') {
         $middleName,
         $lastName,
         $year,
-        $section,
         $programId,
         $contact,
         $email,
@@ -74,7 +72,6 @@ if ($action === 'edit') {
     $middleName = clean_input($_POST['middleName']);
     $lastName = clean_input($_POST['surname']);
     $year = clean_input($_POST['year']);
-    $section = clean_input($_POST['section']);
     $programId = clean_input($_POST['program']);
     $contact = clean_input($_POST['contact']);
     $email = clean_input($_POST['email']);
@@ -93,7 +90,6 @@ if ($action === 'edit') {
         $middleName,
         $lastName,
         $year,
-        $section,
         $programId,
         $contact,
         $email,

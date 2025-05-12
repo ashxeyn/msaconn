@@ -96,11 +96,13 @@ $userRole = $_SESSION['role'] ?? '';
                 <i class="bi bi-people me-2"></i> <span class="sidebar-text">Volunteers</span>
             </a>
         </li>
+        <?php if ($userRole === 'admin'): ?>
         <li class="nav-item">
             <a href="#" onclick="loadRegistrationsSection()" class="nav-link text-white">
                 <i class="bi bi-person-plus me-2"></i> <span class="sidebar-text">Registrations</span>
             </a>
         </li>
+        <?php endif; ?> 
         <!-- <li class="nav-item">
             <a href="#" onclick="loadDonationSection()" class="nav-link text-white">
                 <i class="bi bi-collection me-2"></i> <span class="sidebar-text">Donations</span>
