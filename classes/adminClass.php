@@ -2568,15 +2568,18 @@ function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $class
         return $query->execute();
     }
 
-    function updateSitePage($pageId, $pageType, $title, $description, $imagePath, $contactNo, $email) {
+    function updateSitePage($pageId, $pageType, $title, $description, $imagePath, $contactNo, $email, $isActive = null) {
         $sql = "UPDATE site_pages 
                 SET page_type = :page_type,
                     title = :title, 
                     description = :description,
                     image_path = :image_path,
                     contact_no = :contact_no,
-                    email = :email
-                WHERE page_id = :page_id";
+                    email = :email";
+        if ($isActive !== null) {
+            $sql .= ", is_active = :is_active";
+        }
+        $sql .= " WHERE page_id = :page_id";
 
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':page_type', $pageType);
@@ -2585,6 +2588,9 @@ function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $class
         $query->bindParam(':image_path', $imagePath);
         $query->bindParam(':contact_no', $contactNo);
         $query->bindParam(':email', $email);
+        if ($isActive !== null) {
+            $query->bindParam(':is_active', $isActive, PDO::PARAM_INT);
+        }
         $query->bindParam(':page_id', $pageId);
         return $query->execute();
     }

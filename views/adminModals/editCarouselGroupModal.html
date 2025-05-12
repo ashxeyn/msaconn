@@ -5,10 +5,112 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="editCarouselGroupModalLabel">Edit Carousel Images</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div id="carouselGroupEditContainer" class="container-fluid">
-                        <!-- JS will populate up to 4 image edit blocks here -->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="carousel-image-block mb-4">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <input type="hidden" id="carouselId1" name="carousel_ids[]">
+                                            <h6 class="card-title">Image 1</h6>
+                                            <div class="image-preview-container mb-3">
+                                                <img src="" alt="Carousel Image 1" class="img-preview" id="carouselPreview1">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="carouselImage1" class="form-label">Upload Image</label>
+                                                <input type="file" class="form-control" id="carouselImage1" name="carousel_images[]" accept="image/*">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="carouselTitle1" class="form-label">Title</label>
+                                                <input type="text" class="form-control" id="carouselTitle1" name="carousel_titles[]">
+                                            </div>
+                                            <input type="hidden" name="carousel_active[]" value="0">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="carouselActive1" name="carousel_active[]" value="1">
+                                                <label class="form-check-label" for="carouselActive1">Active</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="carousel-image-block">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <input type="hidden" id="carouselId2" name="carousel_ids[]">
+                                            <h6 class="card-title">Image 2</h6>
+                                            <div class="image-preview-container mb-3">
+                                                <img src="" alt="Carousel Image 2" class="img-preview" id="carouselPreview2">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="carouselImage2" class="form-label">Upload Image</label>
+                                                <input type="file" class="form-control" id="carouselImage2" name="carousel_images[]" accept="image/*">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="carouselTitle2" class="form-label">Title</label>
+                                                <input type="text" class="form-control" id="carouselTitle2" name="carousel_titles[]">
+                                            </div>
+                                            <input type="hidden" name="carousel_active[]" value="0">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="carouselActive2" name="carousel_active[]" value="1">
+                                                <label class="form-check-label" for="carouselActive2">Active</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="carousel-image-block mb-4">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <input type="hidden" id="carouselId3" name="carousel_ids[]">
+                                            <h6 class="card-title">Image 3</h6>
+                                            <div class="image-preview-container mb-3">
+                                                <img src="" alt="Carousel Image 3" class="img-preview" id="carouselPreview3">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="carouselImage3" class="form-label">Upload Image</label>
+                                                <input type="file" class="form-control" id="carouselImage3" name="carousel_images[]" accept="image/*">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="carouselTitle3" class="form-label">Title</label>
+                                                <input type="text" class="form-control" id="carouselTitle3" name="carousel_titles[]">
+                                            </div>
+                                            <input type="hidden" name="carousel_active[]" value="0">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="carouselActive3" name="carousel_active[]" value="1">
+                                                <label class="form-check-label" for="carouselActive3">Active</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="carousel-image-block">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <input type="hidden" id="carouselId4" name="carousel_ids[]">
+                                            <h6 class="card-title">Image 4</h6>
+                                            <div class="image-preview-container mb-3">
+                                                <img src="" alt="Carousel Image 4" class="img-preview" id="carouselPreview4">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="carouselImage4" class="form-label">Upload Image</label>
+                                                <input type="file" class="form-control" id="carouselImage4" name="carousel_images[]" accept="image/*">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="carouselTitle4" class="form-label">Title</label>
+                                                <input type="text" class="form-control" id="carouselTitle4" name="carousel_titles[]">
+                                            </div>
+                                            <input type="hidden" name="carousel_active[]" value="0">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="carouselActive4" name="carousel_active[]" value="1">
+                                                <label class="form-check-label" for="carouselActive4">Active</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer d-flex justify-content-end gap-2">
@@ -19,3 +121,32 @@
         </form>
     </div>
 </div> 
+
+<style>
+.carousel-image-block .card {
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.carousel-image-block .card-body {
+    padding: 1.5rem;
+}
+.image-preview-container {
+    width: 100%;
+    height: 200px;
+    border: 2px dashed #ddd;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background-color: #f8f9fa;
+}
+.img-preview {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+.form-check {
+    margin-top: 1rem;
+}
+</style> 

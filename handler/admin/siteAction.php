@@ -76,26 +76,29 @@ if ($action === 'edit' || $action === 'add') {
     echo $result ? "success" : "error";
 
 } elseif ($action === 'toggle_carousel_group') {
-    $carouselPages = $adminObj->fetchSitePages();
-    $anyActive = false;
-    foreach ($carouselPages as $page) {
-        if ($page['page_type'] === 'carousel' && $page['is_active']) {
-            $anyActive = true;
-            break;
-        }
+    $status = isset($_POST['status']) ? (int)$_POST['status'] : null;
+    if ($status === null) {
+        echo json_encode(['success' => false, 'message' => 'Missing status parameter.']);
+        exit;
     }
-    $newStatus = $anyActive ? 0 : 1;
-    $result = $adminObj->toggleAllCarousel($newStatus);
-    echo $result ? 'success' : 'error';
+    $result = $adminObj->toggleAllCarousel($status);
+    if ($result) {
+        echo json_encode(['success' => true, 'message' => 'Carousel group status updated.']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Failed to update carousel group.']);
+    }
+    exit;
 
 } elseif ($action === 'edit_carousel_group') {
     $ids = $_POST['carousel_ids'] ?? [];
-    $titles = $_POST['titles'] ?? [];
-    $files = $_FILES['images'] ?? null;
+    $titles = $_POST['carousel_titles'] ?? [];
+    $files = $_FILES['carousel_images'] ?? null;
+    $activeArr = $_POST['carousel_active'] ?? [];
     $allSuccess = true;
     for ($i = 0; $i < count($ids); $i++) {
         $pageId = $ids[$i];
-        $title = isset($titles[$i]) ? clean_input($titles[$i]) : '';
+        if (!$pageId) continue; // Skip empty slots
+        $title = isset($titles[$i]) ? trim(clean_input($titles[$i])) : '';
         $imagePath = null;
         $existingPage = $adminObj->getSitePageById($pageId);
         if (!$existingPage) {
@@ -118,8 +121,14 @@ if ($action === 'edit' || $action === 'add') {
         } else {
             $imagePath = $existingPage['image_path'];
         }
+        // If title is blank, keep the old title
         if ($title === '') {
             $title = $existingPage['title'];
+        }
+        // Determine is_active for this image
+        $isActive = 0;
+        if (isset($activeArr[$i]) && $activeArr[$i] == '1') {
+            $isActive = 1;
         }
         $result = $adminObj->updateSitePage(
             $pageId,
@@ -128,13 +137,19 @@ if ($action === 'edit' || $action === 'add') {
             $existingPage['description'],
             $imagePath,
             $existingPage['contact_no'],
-            $existingPage['email']
+            $existingPage['email'],
+            $isActive
         );
         if (!$result) {
             $allSuccess = false;
         }
     }
-    echo $allSuccess ? 'success' : 'error';
+    if ($allSuccess) {
+        echo json_encode(['success' => true, 'message' => 'Carousel images updated.']);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Failed to update some carousel images.']);
+    }
+    exit;
 
 } else {
     echo "invalid_action";

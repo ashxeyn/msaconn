@@ -742,13 +742,15 @@ function processCalendar(activityId, action) {
         success: function(response) {
             if (response.trim() === 'success') {
                 showToast('Success', 'Calendar event updated.', 'success');
-                setTimeout(() => {
                     if (typeof loadCalendarSection === 'function') {
+                        $(".modal").modal("hide");
+                        $("body").removeClass("modal-open");
+                        $(".modal-backdrop").remove();
                         loadCalendarSection();
                     } else {
                         location.reload();
                     }
-                }, 1000);
+                
             } else if (response.trim() === 'error: time_venue_required') {
                 // Show error for time and venue
                 if ($('#editTime').val().trim() === '') {
@@ -4126,7 +4128,32 @@ function setSitePageId(pageId, action, isActive) {
             $('#toggleSiteModal').modal('show');
             $('#toggleSiteForm').off('submit').on('submit', function(e) {
                 e.preventDefault();
-                toggleCarouselGroup();
+                $.ajax({
+                    url: '../../handler/admin/siteAction.php',
+                    type: 'POST',
+                    data: { action: 'toggle_carousel_group', status: isActive ? 0 : 1 },
+                    success: function(response) {
+                        let result;
+                        try {
+                            result = typeof response === 'object' ? response : JSON.parse(response);
+                        } catch (e) {
+                            showToast('Error', 'An error occurred while toggling carousel.', 'danger');
+                            return;
+                        }
+                        if (result.success) {
+                            showToast('Success', result.message || 'Carousel status updated.', 'success');
+                            $(".modal").modal("hide");
+                            $("body").removeClass("modal-open");
+                            $(".modal-backdrop").remove();
+                            loadPersonalization();
+                        } else {
+                            showToast('Error', result.message || 'Failed to update carousel status.', 'danger');
+                        }
+                    },
+                    error: function() {
+                        showToast('Error', 'An error occurred while toggling carousel.', 'danger');
+                    }
+                });
             });
         } else {
             $('#toggleSiteId').val(pageId);
@@ -4147,31 +4174,33 @@ function setSitePageId(pageId, action, isActive) {
         }
     }
 
-    $('#siteNextBtn').off('click').on('click', function() {
+    $('#siteNextBtn').off('click').on('click', function(e) {
+        e.preventDefault();
         const pageType = $('#addEditPageType').val();
         if (!pageType) {
             $('#addEditPageType').addClass('is-invalid');
             $('#addEditPageTypeIcon').show();
             $('#addEditPageTypeError').text('Please select a page type');
-            return;
-        } else {
-            $('#addEditPageType').removeClass('is-invalid');
-            $('#addEditPageTypeIcon').hide();
-            $('#addEditPageTypeError').text('');
+            return false;
         }
+        $('#addEditPageType').removeClass('is-invalid');
+        $('#addEditPageTypeIcon').hide();
+        $('#addEditPageTypeError').text('');
+        
         $('#siteStep1').hide();
         $('#siteStep2').show();
-        $('#siteBackLink').show();
+        $('#siteBackBtn').show();
         $('#siteNextBtn').hide();
         $('#siteSaveBtn').show();
         toggleFieldsBasedOnType(pageType);
         clearSiteValidationErrors();
     });
-    $('#siteBackLink').off('click').on('click', function(e) {
+
+    $('#siteBackBtn').off('click').on('click', function(e) {
         e.preventDefault();
         $('#siteStep1').show();
         $('#siteStep2').hide();
-        $('#siteBackLink').hide();
+        $('#siteBackBtn').hide();
         $('#siteNextBtn').show();
         $('#siteSaveBtn').hide();
         $('#addEditModalTitle').text('Add New Page');
@@ -4312,6 +4341,123 @@ function clearSiteValidationErrors() {
     $('#addEditEmailIcon').hide();
     $('#addEditImageIcon').hide();
 }
+
+
+function openEditCarouselGroupModal() {
+    $.ajax({
+        url: "../../handler/admin/getSite.php",
+        type: "GET",
+        data: { page_type: 'carousel', limit: 4 },
+        success: function(response) {
+            try {
+                const carousels = JSON.parse(response);
+                // Reset form
+                $('#editCarouselGroupForm')[0].reset();
+                $('.img-preview').attr('src', '');
+                
+                // Populate form with existing carousel data
+                for (let i = 1; i <= 4; i++) {
+                    const carousel = carousels[i-1] || {};
+                    $(`#carouselId${i}`).val(carousel.page_id || '');
+                    $(`#carouselTitle${i}`).val(carousel.title || '');
+                    $(`#carouselActive${i}`).prop('checked', carousel.is_active == 1 || carousel.is_active === '1');
+                    if (carousel.image_path) {
+                        $(`#carouselPreview${i}`).attr('src', '../../' + carousel.image_path);
+                    } else {
+                        $(`#carouselPreview${i}`).attr('src', '');
+                    }
+                }
+                // Show modal
+                $('#editCarouselGroupModal').modal('show');
+            } catch (e) {
+                showToast('Error', 'Failed to load carousel data.', 'danger');
+            }
+        },
+        error: function() {
+            showToast('Error', 'Failed to load carousel data.', 'danger');
+        }
+    });
+}
+
+// Add event listeners for image previews
+$(document).ready(function() {
+    for (let i = 1; i <= 4; i++) {
+        $(`#carouselImage${i}`).on('change', function(e) {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    $(`#carouselPreview${i}`).attr('src', ev.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    
+    $('#editCarouselGroupForm').on('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        formData.append('action', 'edit_carousel_group');
+        $.ajax({
+            url: "../../handler/admin/siteAction.php",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                let result;
+                try {
+                    result = typeof response === 'object' ? response : JSON.parse(response);
+                } catch (e) {
+                    showToast('Error', 'An error occurred while processing your request.', 'danger');
+                    return;
+                }
+                if (result.success) {
+                    showToast('Success', result.message || 'Carousel updated.', 'success');
+                    $('#editCarouselGroupModal').modal('hide');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    showToast('Error', result.message || 'Failed to update carousel.', 'danger');
+                }
+            },
+            error: function() {
+                showToast('Error', 'An error occurred while processing your request.', 'danger');
+            }
+        });
+    });
+
+    $(document).on('click', '.admin-btn-toggle', function() {
+        const isGroup = $(this).closest('.site-card').find('.site-type').text().toLowerCase().includes('carousel');
+        if (isGroup) {
+            const isActive = $(this).hasClass('active');
+            $.ajax({
+                url: '../../handler/admin/siteAction.php',
+                type: 'POST',
+                data: { action: 'toggle_carousel_group', status: isActive ? 0 : 1 },
+                success: function(response) {
+                    let result;
+                    try {
+                        result = typeof response === 'object' ? response : JSON.parse(response);
+                    } catch (e) {
+                        showToast('Error', 'An error occurred while toggling carousel.', 'danger');
+                        return;
+                    }
+                    if (result.success) {
+                        showToast('Success', result.message || 'Carousel status updated.', 'success');
+                        setTimeout(() => { window.location.reload(); }, 1000);
+                    } else {
+                        showToast('Error', result.message || 'Failed to update carousel status.', 'danger');
+                    }
+                },
+                error: function() {
+                    showToast('Error', 'An error occurred while toggling carousel.', 'danger');
+                }
+            });
+        }
+    });
+});
 
 function processSite(pageId, action) {
     let formData = new FormData();
