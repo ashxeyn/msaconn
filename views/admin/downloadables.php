@@ -349,9 +349,9 @@ $downloadableFiles = $adminObj->fetchDownloadableFiles();
                                 <button class="admin-btn admin-btn-delete btn-sm" onclick="openFileModal('deleteFileModal', <?= $file['file_id'] ?>, 'delete')">
                                     <i class="bi bi-trash"></i>
                                 </button>
-                                <button class="admin-btn admin-btn-download btn-sm"><i class="bi bi-download"></i>
-                                    <a href="../../assets/downloadables/<?= clean_input($file['file_path']) ?>" download></a>
-                                </button>
+                                <a href="../../assets/downloadables/<?= clean_input($file['file_path']) ?>" download class="admin-btn admin-btn-download btn-sm" style="display:inline-block;">
+                                    <i class="bi bi-download"></i>
+                                </a>
                             </td>
                         </tr>
                     <?php endforeach; ?>
