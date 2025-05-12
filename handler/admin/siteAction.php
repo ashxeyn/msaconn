@@ -93,11 +93,12 @@ if ($action === 'edit' || $action === 'add') {
     $ids = $_POST['carousel_ids'] ?? [];
     $titles = $_POST['carousel_titles'] ?? [];
     $files = $_FILES['carousel_images'] ?? null;
-    $activeArr = $_POST['carousel_active'] ?? [];
     $allSuccess = true;
+    $newUploads = [];
+    $updatedIds = [];
     for ($i = 0; $i < count($ids); $i++) {
         $pageId = $ids[$i];
-        if (!$pageId) continue; // Skip empty slots
+        if (!$pageId) continue; 
         $title = isset($titles[$i]) ? trim(clean_input($titles[$i])) : '';
         $imagePath = null;
         $existingPage = $adminObj->getSitePageById($pageId);
@@ -105,50 +106,51 @@ if ($action === 'edit' || $action === 'add') {
             $allSuccess = false;
             continue;
         }
-        // Handle file upload for this image
+        $isNewUpload = false;
         if ($files && isset($files['error'][$i]) && $files['error'][$i] === UPLOAD_ERR_OK) {
             $uploadDir = '../../assets/site/';
             if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0755, true);
+                mkdir($uploadDir, 0777, true);
             }
-            $fileExt = pathinfo($files['name'][$i], PATHINFO_EXTENSION);
-            $fileName = uniqid() . '.' . $fileExt;
-            $imagePath = 'assets/site/' . $fileName;
-            if (!move_uploaded_file($files['tmp_name'][$i], $uploadDir . $fileName)) {
+            $ext = pathinfo($files['name'][$i], PATHINFO_EXTENSION);
+            $newFileName = uniqid('carousel_', true) . '.' . $ext;
+            $targetPath = $uploadDir . $newFileName;
+            if (move_uploaded_file($files['tmp_name'][$i], $targetPath)) {
+                $imagePath = 'assets/site/' . $newFileName;
+                $isNewUpload = true;
+            } else {
                 $allSuccess = false;
-                $imagePath = $existingPage['image_path'];
+                continue;
             }
         } else {
             $imagePath = $existingPage['image_path'];
         }
-        // If title is blank, keep the old title
-        if ($title === '') {
-            $title = $existingPage['title'];
+        if ($title === '') $title = $existingPage['title'];
+        $updatedIds[] = $pageId;
+        if ($isNewUpload) {
+            $newUploads[] = $pageId;
         }
-        // Determine is_active for this image
-        $isActive = 0;
-        if (isset($activeArr[$i]) && $activeArr[$i] == '1') {
-            $isActive = 1;
-        }
-        $result = $adminObj->updateSitePage(
-            $pageId,
-            'carousel',
-            $title,
-            $existingPage['description'],
-            $imagePath,
-            $existingPage['contact_no'],
-            $existingPage['email'],
-            $isActive
-        );
-        if (!$result) {
-            $allSuccess = false;
+        $adminObj->updateSitePage($pageId, 'carousel', $title, $existingPage['description'], $imagePath, $existingPage['contact_no'], $existingPage['email'], $existingPage['is_active']);
+    }
+    $allCarousels = $adminObj->fetchSitePages();
+    $carouselPages = array_filter($allCarousels, function($p) { return $p['page_type'] === 'carousel'; });
+    $activeCarousels = array_filter($carouselPages, function($p) { return $p['is_active']; });
+    foreach ($carouselPages as $carousel) {
+        if (in_array($carousel['page_id'], $newUploads)) {
+            $adminObj->updateSitePage($carousel['page_id'], 'carousel', $carousel['title'], $carousel['description'], $carousel['image_path'], $carousel['contact_no'], $carousel['email'], 1);
         }
     }
-    if ($allSuccess) {
-        echo json_encode(['success' => true, 'message' => 'Carousel images updated.']);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Failed to update some carousel images.']);
+    $allCarousels = $adminObj->fetchSitePages();
+    $carouselPages = array_filter($allCarousels, function($p) { return $p['page_type'] === 'carousel'; });
+    $activeCarousels = array_filter($carouselPages, function($p) { return $p['is_active']; });
+    if (count($activeCarousels) > 4) {
+        usort($activeCarousels, function($a, $b) { return strtotime($a['updated_at']) - strtotime($b['updated_at']); });
+        $toDeactivate = array_slice($activeCarousels, 0, count($activeCarousels) - 4);
+        foreach ($toDeactivate as $carousel) {
+            $adminObj->updateSitePage($carousel['page_id'], 'carousel', $carousel['title'], $carousel['description'], $carousel['image_path'], $carousel['contact_no'], $carousel['email'], 0);
+        }
     }
+    echo json_encode(['success' => $allSuccess, 'message' => $allSuccess ? 'Carousel images updated.' : 'Some images failed to update.']);
     exit;
 
 } else {

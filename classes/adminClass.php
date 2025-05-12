@@ -2631,9 +2631,29 @@ function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $class
     }
 
     function toggleAllCarousel($status) {
-        $sql = "UPDATE site_pages SET is_active = :status WHERE page_type = 'carousel'";
-        $stmt = $this->db->connect()->prepare($sql);
-        return $stmt->execute([':status' => $status]);
+        $getSql = "SELECT page_id FROM site_pages 
+                   WHERE page_type = 'carousel' 
+                   ORDER BY created_at DESC 
+                   LIMIT 4";
+        $getStmt = $this->db->connect()->prepare($getSql);
+        $getStmt->execute();
+        $carouselIds = $getStmt->fetchAll(PDO::FETCH_COLUMN);
+        
+        if (empty($carouselIds)) {
+            return false; 
+        }
+        
+        $placeholders = implode(',', array_fill(0, count($carouselIds), '?'));
+        $updateSql = "UPDATE site_pages 
+                      SET is_active = ?, 
+                          updated_at = NOW() 
+                      WHERE page_id IN ($placeholders)";
+        
+        $updateStmt = $this->db->connect()->prepare($updateSql);
+        
+        $params = array_merge([$status], $carouselIds);
+        
+        return $updateStmt->execute($params);
     }
 
     // Others

@@ -4067,6 +4067,56 @@ function openSiteModal(modalId, pageId, action, isActive) {
 }
 
 function setSitePageId(pageId, action, isActive) {
+    if (pageId === 'carousel_group' && action === 'edit_carousel_group') {
+        // Fetch carousel data and populate modal fields
+        $.ajax({
+            url: "../../handler/admin/getSite.php",
+            type: "GET",
+            data: { page_type: 'carousel', limit: 4 },
+            success: function(response) {
+                try {
+                    const carousels = JSON.parse(response);
+                    $('#editCarouselGroupForm')[0].reset();
+                    $('.img-preview').attr('src', '');
+                    for (let i = 1; i <= 4; i++) {
+                        const carousel = carousels[i-1] || {};
+                        $(`#carouselId${i}`).val(carousel.page_id || '');
+                        $(`#carouselTitle${i}`).val(carousel.title || '');
+                        $(`#carouselActive${i}`).prop('checked', carousel.is_active == 1 || carousel.is_active === '1');
+                        if (carousel.image_path) {
+                            $(`#carouselPreview${i}`).attr('src', '../../' + carousel.image_path);
+                        } else {
+                            $(`#carouselPreview${i}`).attr('src', '');
+                        }
+                    }
+                } catch (e) {
+                    showToast('Error', 'Failed to load carousel data.', 'danger');
+                }
+            },
+            error: function() {
+                showToast('Error', 'Failed to load carousel data.', 'danger');
+            }
+        });
+
+        // Attach submit handler
+        $('#editCarouselGroupForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            // Validate at least one image or title is filled
+            let valid = false;
+            for (let i = 1; i <= 4; i++) {
+                if ($(`#carouselId${i}`).val() || $(`#carouselImage${i}`)[0].files.length > 0 || $(`#carouselTitle${i}`).val().trim() !== '') {
+                    valid = true;
+                    break;
+                }
+            }
+            if (!valid) {
+                showToast('Error', 'Please fill at least one carousel image or title.', 'danger');
+                return;
+            }
+            processSite('carousel_group', 'edit_carousel_group');
+        });
+        return;
+    }
     if (action === 'add') {
         $('#addEditSiteForm')[0].reset();
         $('#addEditSiteId').val('');
@@ -4342,126 +4392,12 @@ function clearSiteValidationErrors() {
     $('#addEditImageIcon').hide();
 }
 
-
-function openEditCarouselGroupModal() {
-    $.ajax({
-        url: "../../handler/admin/getSite.php",
-        type: "GET",
-        data: { page_type: 'carousel', limit: 4 },
-        success: function(response) {
-            try {
-                const carousels = JSON.parse(response);
-                // Reset form
-                $('#editCarouselGroupForm')[0].reset();
-                $('.img-preview').attr('src', '');
-                
-                // Populate form with existing carousel data
-                for (let i = 1; i <= 4; i++) {
-                    const carousel = carousels[i-1] || {};
-                    $(`#carouselId${i}`).val(carousel.page_id || '');
-                    $(`#carouselTitle${i}`).val(carousel.title || '');
-                    $(`#carouselActive${i}`).prop('checked', carousel.is_active == 1 || carousel.is_active === '1');
-                    if (carousel.image_path) {
-                        $(`#carouselPreview${i}`).attr('src', '../../' + carousel.image_path);
-                    } else {
-                        $(`#carouselPreview${i}`).attr('src', '');
-                    }
-                }
-                // Show modal
-                $('#editCarouselGroupModal').modal('show');
-            } catch (e) {
-                showToast('Error', 'Failed to load carousel data.', 'danger');
-            }
-        },
-        error: function() {
-            showToast('Error', 'Failed to load carousel data.', 'danger');
-        }
-    });
-}
-
-// Add event listeners for image previews
-$(document).ready(function() {
-    for (let i = 1; i <= 4; i++) {
-        $(`#carouselImage${i}`).on('change', function(e) {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(ev) {
-                    $(`#carouselPreview${i}`).attr('src', ev.target.result);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    }
-    
-    $('#editCarouselGroupForm').on('submit', function(e) {
-        e.preventDefault();
-        const formData = new FormData(this);
-        formData.append('action', 'edit_carousel_group');
-        $.ajax({
-            url: "../../handler/admin/siteAction.php",
-            type: "POST",
-            data: formData,
-            processData: false,
-            contentType: false,
-            success: function(response) {
-                let result;
-                try {
-                    result = typeof response === 'object' ? response : JSON.parse(response);
-                } catch (e) {
-                    showToast('Error', 'An error occurred while processing your request.', 'danger');
-                    return;
-                }
-                if (result.success) {
-                    showToast('Success', result.message || 'Carousel updated.', 'success');
-                    $('#editCarouselGroupModal').modal('hide');
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
-                } else {
-                    showToast('Error', result.message || 'Failed to update carousel.', 'danger');
-                }
-            },
-            error: function() {
-                showToast('Error', 'An error occurred while processing your request.', 'danger');
-            }
-        });
-    });
-
-    $(document).on('click', '.admin-btn-toggle', function() {
-        const isGroup = $(this).closest('.site-card').find('.site-type').text().toLowerCase().includes('carousel');
-        if (isGroup) {
-            const isActive = $(this).hasClass('active');
-            $.ajax({
-                url: '../../handler/admin/siteAction.php',
-                type: 'POST',
-                data: { action: 'toggle_carousel_group', status: isActive ? 0 : 1 },
-                success: function(response) {
-                    let result;
-                    try {
-                        result = typeof response === 'object' ? response : JSON.parse(response);
-                    } catch (e) {
-                        showToast('Error', 'An error occurred while toggling carousel.', 'danger');
-                        return;
-                    }
-                    if (result.success) {
-                        showToast('Success', result.message || 'Carousel status updated.', 'success');
-                        setTimeout(() => { window.location.reload(); }, 1000);
-                    } else {
-                        showToast('Error', result.message || 'Failed to update carousel status.', 'danger');
-                    }
-                },
-                error: function() {
-                    showToast('Error', 'An error occurred while toggling carousel.', 'danger');
-                }
-            });
-        }
-    });
-});
-
 function processSite(pageId, action) {
     let formData = new FormData();
-    if (action === 'edit' || action === 'add') {
+    if (action === 'edit_carousel_group') {
+        formData = new FormData(document.getElementById('editCarouselGroupForm'));
+        formData.append('action', 'edit_carousel_group');
+    } else if (action === 'edit' || action === 'add') {
         formData = new FormData(document.getElementById('addEditSiteForm'));
         const imageFile = $('#addEditImage')[0].files[0];
         if (imageFile) {
@@ -4478,7 +4414,7 @@ function processSite(pageId, action) {
     if (pageId && pageId !== 'carousel_group') {
         formData.append('page_id', pageId);
     }
-    if (action !== 'toggle') {
+    if (action !== 'toggle' && action !== 'edit_carousel_group') {
         formData.append('action', action);
     }
     $.ajax({
@@ -4488,7 +4424,11 @@ function processSite(pageId, action) {
         processData: false,
         contentType: false,
         success: function(response) {
-            if (response.trim() === "success") {
+            let result = response;
+            try {
+                result = typeof response === 'object' ? response : JSON.parse(response);
+            } catch (e) {}
+            if (result.success || response.trim() === "success") {
                 $(".modal").modal("hide");
                 $("body").removeClass("modal-open");
                 $(".modal-backdrop").remove();
@@ -4497,21 +4437,15 @@ function processSite(pageId, action) {
                 } else {
                     location.reload();
                 }
-                showToast('Success', 
+                showToast('Success',
                     action === 'toggle' ? 'Page status has been updated.' :
                     action === 'add' ? 'New page has been added.' :
-                    'Page has been updated.', 
+                    action === 'edit_carousel_group' ? 'Carousel images updated.' :
+                    'Page has been updated.',
                     'success');
             } else if (response.trim().startsWith('error:')) {
                 const errorMsg = response.trim().replace('error:', '').trim();
-                if (errorMsg === 'file_upload_failed') {
-                    // $('#addEditImageError').text('File upload failed.');
-                    showToast('Error', 'File upload failed.', 'danger');
-                } else if (errorMsg === 'page_not_found') {
-                    showToast('Error', 'Page not found.', 'danger');
-                } else {
-                    showToast('Error', errorMsg, 'danger');
-                }
+                showToast('Error', errorMsg, 'danger');
             } else {
                 showToast('Error', 'Failed to process request: ' + response, 'danger');
             }

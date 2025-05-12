@@ -221,8 +221,9 @@ foreach ($sitePages as $page) {
                         </div>
                     </div>
                     <div class="site-card-actions">
-                        <button type="button" class="admin-btn admin-btn-edit" onclick="openEditCarouselGroupModal()"><i class="bi bi-pencil"></i></button>
-                        <button type="button" class="admin-btn admin-btn-toggle <?= $anyActive ? 'active' : 'inactive' ?>" onclick="openSiteModal('toggleSiteModal', 'carousel_group', 'toggle', <?= $anyActive ? 'true' : 'false' ?>)">
+                    <button type="button" class="admin-btn admin-btn-edit" onclick="openSiteModal('editCarouselGroupModal', 'carousel_group', 'edit_carousel_group')">
+    <i class="bi bi-pencil"></i>
+</button>                        <button type="button" class="admin-btn admin-btn-toggle <?= $anyActive ? 'active' : 'inactive' ?>" onclick="openSiteModal('toggleSiteModal', 'carousel_group', 'toggle', <?= $anyActive ? 'true' : 'false' ?>)">
                             <i class="bi <?= $anyActive ? 'bi-toggle-off' : 'bi-toggle-on' ?>"></i>
                         </button>
                     </div>
