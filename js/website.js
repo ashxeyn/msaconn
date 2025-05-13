@@ -9,11 +9,13 @@ function updateFooter() {
                 const footer = response.data.footer[0];
                 const logo = response.data.logo[0];
 
+                $('.header-top .logo img').attr('src', base_url + logo.image_path);
+                $('.header-top .logo-text').text(footer.web_name);
+                $('.header-top .logo-subtext').text(footer.org_name + ' | ' + footer.school_name);
+                
                 $('.footer-upper-left .logo').attr('src', base_url + logo.image_path);
-
-                $('.logo-text p:first-child strong').text(footer.web_name);
-                $('.logo-text p:last-child').text(footer.school_name);
-
+                $('.footer-upper-left .logo-text p:first-child strong').text(footer.web_name);
+                $('.footer-upper-left .logo-text p:last-child').text(footer.school_name);
                 $('.socials a').attr('href', footer.fb_link);
                 $('.contact-info p:first-child').text('Contact Us: ' + footer.contact_no);
                 $('.contact-info p:last-child').text('Email: ' + footer.email);
@@ -148,12 +150,18 @@ function updatePrayerSchedule(scheduleData) {
     const tableBody = $('#prayer-schedule-content table tbody');
     const currentContent = tableBody.html();
     let newContent = '';
+    const today = new Date();
+    today.setHours(0,0,0,0); // Normalize to midnight
     
     scheduleData.forEach(item => {
+        const dateObj = new Date(item.date);
+        dateObj.setHours(0,0,0,0); // Normalize to midnight
+        if (dateObj < today) return; // Skip past dates
+        const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
         const row = `
             <tr>
-                <td>${item.date}</td>
-                <td>${getDayName(new Date(item.date))}</td>
+                <td>${formattedDate}</td>
+                <td>${getDayName(dateObj)}</td>
                 <td>${item.speaker}</td>
                 <td>${item.topic}</td>
                 <td>${item.location}</td>

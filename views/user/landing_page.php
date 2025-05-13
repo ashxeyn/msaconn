@@ -87,7 +87,7 @@ $prayerSchedule = $adminObj->fetchPrayerSchedule();
                         $dayName = date('l', strtotime($prayer['date']));
                     ?>
                     <tr>
-                        <td><?php echo $prayer['date']; ?></td>
+                        <td><?php echo date('F j, Y', strtotime($prayer['date'])); ?></td>
                         <td><?php echo $dayName; ?></td>
                         <td><?php echo $prayer['speaker']; ?></td>
                         <td><?php echo $prayer['topic']; ?></td>

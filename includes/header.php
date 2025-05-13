@@ -1,3 +1,11 @@
+<?php
+require_once '../../classes/userClass.php';
+require_once '../../tools/function.php';
+$userObj = new User();
+$footer = $userObj->fetchFooterInfo();
+$logo = $userObj->fetchLogo();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,10 +25,14 @@
     <div class="header-top">
         <div class="logo">
             <a href="<?php echo $base_url; ?>views/user/landing_page">
-                <img src="<?php echo $base_url; ?>assets/images/msa_logo.png" class="logo-image">
+                <?php foreach ($logo as $logoItem): ?>
+                    <img src="<?php echo $base_url . clean_input($logoItem['image_path']); ?>" alt="MSA Connect Logo" class="logo">
+                <?php endforeach; ?>
                 <div class="logo-text-container">
-                    <span class="logo-text">MSA CONNECT</span>
-                    <span class="logo-subtext">Muslim Student Association | Western Mindanao State University</span>
+                    <?php foreach ($footer as $foot): ?>
+                        <span class="logo-text"><?= clean_input($foot['web_name']) ?></span>
+                        <span class="logo-subtext"><?= clean_input($foot['org_name']) . ' | ' . clean_input($foot['school_name']) ?></span>
+                    <?php endforeach; ?>
                 </div>
             </a>
         </div>
