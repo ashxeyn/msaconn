@@ -269,7 +269,7 @@ class User {
         $query->execute();
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
-    
+
     public function fetchTransparencyReports() {
         $sql = "SELECT 
                     tr.report_id, 
@@ -458,6 +458,38 @@ class User {
     // BACKGROUND IMAGE
     function fetchBackgroundImage() {
         $sql = "SELECT * FROM site_pages WHERE page_type = 'background' AND is_active = 1";
+        $query = $this->getConnection()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    // CALENDAR
+    function fetchCalendar() {
+        $sql = "SELECT * FROM site_pages WHERE page_type = 'calendar' AND is_active = 1";
+        $query = $this->getConnection()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    // REGISTRATION MADRASA
+    function fetchRegistrationInfo() {
+        $sql = "SELECT * FROM site_pages WHERE page_type = 'registration' AND is_active = 1";
+        $query = $this->getConnection()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    // FAQ
+    function fetchFaqsInfo() {
+        $sql = "SELECT * FROM site_pages WHERE page_type = 'faqs' AND is_active = 1";
+        $query = $this->getConnection()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    // TRANSPARENCY REPORT
+    function fetchTransparencyInfo() {
+        $sql = "SELECT * FROM site_pages WHERE page_type = 'transparency' AND is_active = 1";
         $query = $this->getConnection()->prepare($sql);
         $query->execute();
         return $query->fetchAll();
