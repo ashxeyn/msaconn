@@ -40,6 +40,9 @@ let calendarHeroInterval = null;
 let calendarRefreshInterval = null;
 let registrationHeroInterval = null;
 let registrationRefreshInterval = null;
+let faqsHeroInterval = null;
+let faqsRefreshInterval = null;
+
 
 // LANDING PAGE FUNCTIONS
 function updateLandingPage() {
@@ -650,6 +653,104 @@ function initRegistrationPage() {
     );
 }
 
+// FAQS PAGE FUNCTIONS
+function updateFaqsPage() {
+    $.ajax({
+        url: base_url + 'handler/website/fetchFaqs.php',
+        method: 'GET',
+        dataType: 'json',
+        cache: false,
+        success: function(response) {
+            if (response.status === 'success') {
+                const data = response.data;
+                
+                if (data.backgroundImage && data.backgroundImage.length > 0) {
+                    updateFaqsBackground(data.backgroundImage);
+                }
+                
+                if (data.faqsInfo && data.faqsInfo.length > 0) {
+                    updateFaqsContent(data.faqsInfo);
+                }
+                
+                console.log('FAQs page content updated successfully at', new Date().toLocaleTimeString());
+            } else {
+                console.error('Error in response:', response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching FAQs data:', error);
+        }
+    });
+}
+
+function updateFaqsBackground(backgroundImages) {
+    if (!backgroundImages || backgroundImages.length === 0) return;
+    
+    const heroBackground = $('.hero-background');
+    if (!heroBackground.length) return;
+
+    const image = backgroundImages[0];
+    const newImagePath = base_url + image.image_path;
+    const currentBgStyle = heroBackground.attr('style');
+    const newBgStyle = `background-image: url('${newImagePath}');`;
+    
+    if (!currentBgStyle || !currentBgStyle.includes(image.image_path)) {
+        heroBackground.attr('style', newBgStyle);
+        console.log('FAQs background updated');
+    }
+}
+
+function updateFaqsContent(faqsInfo) {
+    if (!faqsInfo || faqsInfo.length === 0) return;
+    
+    const heroContent = $('.hero-content');
+    if (!heroContent.length) return;
+
+    const info = faqsInfo[0];
+    const currentTitle = heroContent.find('h2').text().trim();
+    const currentDesc = heroContent.find('p').text().trim();
+
+    if (currentTitle !== info.title.trim() || currentDesc !== info.description.trim()) {
+        heroContent.find('h2').text(info.title);
+        heroContent.find('p').text(info.description);
+        console.log('FAQs content updated');
+    }
+}
+
+function initFaqsPage() {
+    if (faqsHeroInterval) {
+        clearInterval(faqsHeroInterval);
+    }
+    
+    if (faqsRefreshInterval) {
+        clearInterval(faqsRefreshInterval);
+    }
+
+    updateFaqsPage();
+
+    faqsRefreshInterval = setInterval(function() {
+        updateFaqsPage();
+    }, 10000); 
+
+    $('.hero').hover(
+        function() {
+            if (faqsHeroInterval) {
+                clearInterval(faqsHeroInterval);
+            }
+            if (faqsRefreshInterval) {
+                clearInterval(faqsRefreshInterval);
+            }
+            console.log('FAQs updates paused on hover');
+        },
+        function() {
+            faqsRefreshInterval = setInterval(function() {
+                updateFaqsPage();
+            }, 10000);
+            console.log('FAQs updates resumed after hover');
+        }
+    );
+}
+
 function isPageActive(pagePattern) {
     const isActive = window.location.pathname.includes(pagePattern);
     console.log('Checking if page is active:', pagePattern, 'Result:', isActive, 'Current path:', window.location.pathname);
@@ -686,5 +787,10 @@ $(document).ready(function() {
     if (isPageActive('Registrationmadrasa')) {
         console.log('Registration Madrasa page detected, initializing content updates');
         initRegistrationPage();
+    }
+
+    if (isPageActive('faqs')) {
+        console.log('FAQs page detected, initializing content updates');
+        initFaqsPage();
     }
 });
