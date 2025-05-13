@@ -396,3 +396,238 @@ body {
     font-family: 'Noto Naskh Arabic', serif;
   }
 }
+
+/* Calendar Styles */
+.calendar-page .hero {
+    position: relative;
+    color: white;
+    text-align: center;
+    padding: 5rem 0;
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.calendar-page .hero-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('../assets/hero-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    z-index: -1;
+}
+
+.calendar-page .hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.calendar-page .hero h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.calendar-page .hero p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+.calendar-container {
+    max-width: 1000px;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+}
+
+.calendar-cell {
+    min-height: 100px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    padding: 0.5rem;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.calendar-cell:hover {
+    background-color: #e9ecef;
+}
+
+.calendar-cell.has-events {
+    background-color: #e8f4f8;
+    border: 1px solid #c0e3eb;
+}
+
+.calendar-cell.has-events:hover {
+    background-color: #d1e9f0;
+}
+
+.date-text {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.event-badge {
+    background-color: #1a541c;
+    color: white;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    margin-bottom: 0.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Prayer Table Styles */
+.prayer-table th {
+    background-color: #1a541c !important;
+    color: white;
+}
+
+/* Modal Styles */
+#activity-date {
+    font-size: 1.2rem;
+    color: #1a541c;
+    margin-bottom: 1rem;
+    padding-top: 0.5rem;
+}
+
+/* Custom Scrollbar Styles for Modal */
+.modal-body::-webkit-scrollbar {
+    width: 10px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: #1a541c;
+    border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: #133a15;
+}
+
+/* Firefox scrollbar styles */
+.modal-body {
+    scrollbar-width: thin;
+    scrollbar-color: #1a541c #f1f1f1;
+}
+
+.activity-item {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s;
+    margin-bottom: 1rem;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    overflow: hidden;
+}
+
+.activity-item:hover {
+    background-color: #e9ecef;
+}
+
+.activity-title {
+    color: #1a541c;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    padding-top: 0.25rem;
+}
+
+/* Better spacing for modal content */
+.modal-body {
+    padding: 1.5rem;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+#activity-details-container {
+    margin-top: 0.5rem;
+}
+
+.activity-details-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.modal-header {
+    border-bottom: 2px solid #1a541c;
+    padding: 1rem 1.5rem;
+    background-color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 1050;
+}
+
+.modal-title {
+    font-weight: 600;
+    color: #1a541c;
+}
+
+.modal-footer {
+    border-top: 1px solid #dee2e6;
+    padding: 1rem 1.5rem;
+    background-color: #fff;
+    position: sticky;
+    bottom: 0;
+    z-index: 1050;
+}
+
+/* Fix for overflow issues */
+.modal-dialog-scrollable .modal-content {
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-dialog-scrollable .modal-body {
+    overflow-y: auto;
+    flex: 1 1 auto;
+}
+
+/* Modal centering styles */
+.modal-dialog {
+    display: flex;
+    align-items: center;
+    min-height: calc(100% - 1rem);
+}
+
+.modal {
+    padding-right: 0 !important;
+}
+
+.modal-content {
+    margin: 0 auto;
+}
+
+@media (min-width: 576px) {
+    .modal-dialog {
+        max-width: 500px;
+        margin: 1.75rem auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .calendar-cell {
+        min-height: 80px;
+        padding: 0.25rem;
+    }
+    
+    .event-badge {
+        font-size: 0.7rem;
+        padding: 0.15rem 0.3rem;
+    }
+}
