@@ -36,6 +36,9 @@ let carouselInterval = null;
 let carouselRefreshInterval = null;
 let volunteerHeroInterval = null;
 let volunteerRefreshInterval = null;
+let calendarHeroInterval = null;
+let calendarRefreshInterval = null;
+
 
 // LANDING PAGE FUNCTIONS
 function updateLandingPage() {
@@ -399,6 +402,154 @@ function initVolunteerHero() {
     );
 }
 
+// CALENDAR PAGE FUNCTIONS
+function updateCalendarPage() {
+    $.ajax({
+        url: base_url + 'handler/website/fetchCalendar.php',
+        method: 'GET',
+        dataType: 'json',
+        cache: false,
+        success: function(response) {
+            if (response.status === 'success') {
+                const data = response.data;
+                
+                if (data.backgroundImage && data.backgroundImage.length > 0) {
+                    updateCalendarBackground(data.backgroundImage);
+                }
+                
+                if (data.calendarInfo && data.calendarInfo.length > 0) {
+                    updateCalendarContent(data.calendarInfo);
+                }
+                
+                if (data.dailyPrayers) {
+                    updateDailyPrayers(data.dailyPrayers);
+                }
+                
+                console.log('Calendar page content updated successfully at', new Date().toLocaleTimeString());
+            } else {
+                console.error('Error in response:', response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching calendar data:', error);
+        }
+    });
+}
+
+function updateCalendarBackground(backgroundImages) {
+    if (!backgroundImages || backgroundImages.length === 0) return;
+    
+    const heroBackground = $('.hero-background');
+    if (!heroBackground.length) return;
+
+    const image = backgroundImages[0];
+    const newImagePath = base_url + image.image_path;
+    const currentBgStyle = heroBackground.attr('style');
+    const newBgStyle = `background-image: url('${newImagePath}');`;
+    
+    if (!currentBgStyle || !currentBgStyle.includes(image.image_path)) {
+        heroBackground.attr('style', newBgStyle);
+        console.log('Calendar background updated');
+    }
+}
+
+function updateCalendarContent(calendarInfo) {
+    if (!calendarInfo || calendarInfo.length === 0) return;
+    
+    const heroContent = $('.hero-content');
+    if (!heroContent.length) return;
+
+    const info = calendarInfo[0];
+    const currentTitle = heroContent.find('h2').text().trim();
+    const currentDesc = heroContent.find('p').text().trim();
+
+    if (currentTitle !== info.title.trim() || currentDesc !== info.description.trim()) {
+        heroContent.find('h2').text(info.title);
+        heroContent.find('p').text(info.description);
+        console.log('Calendar content updated');
+    }
+}
+
+function updateDailyPrayers(dailyPrayers) {
+    if (!dailyPrayers) return;
+    
+    const tableBody = $('.prayer-table tbody');
+    if (!tableBody.length) return;
+    
+    const todayDate = new Date().toISOString().split('T')[0]; 
+    const hasTodayPrayer = dailyPrayers.some(prayer => prayer.date === todayDate);
+    let newContent = '';
+    
+    if (hasTodayPrayer) {
+        dailyPrayers.forEach(prayer => {
+            if (prayer.date !== todayDate) return;
+            
+            const prayerTypeDisplay = prayer.prayer_type.charAt(0).toUpperCase() + prayer.prayer_type.slice(1);
+            const isFriday = new Date(prayer.date).getDay() === 5; // 5 is Friday
+            const timeDisplay = prayer.time ? new Date('1970-01-01T' + prayer.time).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', hour12: true}) : '<span class="text-danger">No time set</span>';
+            
+            newContent += `
+                <tr>
+                    <td>${timeDisplay}</td>
+                    <td>
+                        ${prayerTypeDisplay}
+                        ${(isFriday && prayer.prayer_type === "jumu'ah") ? '<br><small class="text-muted">(Friday Prayer)</small>' : ''}
+                    </td>
+                    <td>${prayer.speaker}</td>
+                    <td>${prayer.topic}</td>
+                    <td>${prayer.location}</td>
+                </tr>
+            `;
+        });
+    } else {
+        newContent = `
+            <tr>
+                <td colspan="5" class="text-center">No prayer schedules for today</td>
+            </tr>
+        `;
+    }
+    
+    const currentContent = tableBody.html().trim();
+    if (currentContent !== newContent.trim()) {
+        tableBody.html(newContent);
+        console.log('Daily prayers schedule updated');
+    }
+}
+
+function initCalendarPage() {
+    if (calendarHeroInterval) {
+        clearInterval(calendarHeroInterval);
+    }
+    
+    if (calendarRefreshInterval) {
+        clearInterval(calendarRefreshInterval);
+    }
+
+    updateCalendarPage();
+
+    calendarRefreshInterval = setInterval(function() {
+        updateCalendarPage();
+    }, 10000); 
+
+    $('.hero').hover(
+        function() {
+            if (calendarHeroInterval) {
+                clearInterval(calendarHeroInterval);
+            }
+            if (calendarRefreshInterval) {
+                clearInterval(calendarRefreshInterval);
+            }
+            console.log('Calendar updates paused on hover');
+        },
+        function() {
+            calendarRefreshInterval = setInterval(function() {
+                updateCalendarPage();
+            }, 15000);
+            console.log('Calendar updates resumed after hover');
+        }
+    );
+}
+
 function isPageActive(pagePattern) {
     return window.location.pathname.includes(pagePattern);
 }
@@ -422,5 +573,10 @@ $(document).ready(function() {
         initVolunteerHero();
         
         loadVolunteers();
+    }
+
+    if (isPageActive('calendar')) {
+        console.log('Calendar page detected, initializing content updates');
+        initCalendarPage();
     }
 });

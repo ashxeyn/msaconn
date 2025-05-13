@@ -1,3 +1,16 @@
+<?php
+require_once '../../classes/userClass.php';
+require_once '../../classes/adminClass.php';
+require_once '../../tools/function.php';
+
+$userObj = new User();
+$backgroundImage = $userObj->fetchBackgroundImage();
+$calendarInfo = $userObj->fetchCalendar();
+
+$adminObj = new Admin();
+$calendar = $adminObj->fetchDailyPrayers();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,15 +30,16 @@
 </head>
 <body class="calendar-page">
 <?php include '../../includes/header.php'; ?>
-    <!-- Hero Section -->
     <div class="hero">
-        <div class="hero-background"></div> <!-- Background image container -->
+        <?php foreach ($backgroundImage as $image) : ?>
+        <div class="hero-background" style="background-image: url('<?php echo $base_url . $image['image_path']; ?>');">
+        <?php endforeach; ?>
+    </div>
         <div class="hero-content">
-            <h2>MSA Calendar</h2>
-            <p>
-                Stay up-to-date with MSA events and activities by checking our calendar regularly. 
-                From community service projects to social gatherings, there's something for everyone to enjoy and participate in.
-            </p>
+            <?php foreach ($calendarInfo as $cal) : ?>
+            <h2><?php echo $cal['title']; ?></h2>
+            <p><?php echo $cal['description']; ?></p>
+            <?php endforeach; ?>
         </div>
     </div>
 
@@ -46,61 +60,67 @@
     <!-- 5 Prayers of Islam Table Section -->
     <div class="container my-5">
         <div class="bg-white p-4 rounded shadow">
-            <h3 class="mb-4" style="color:#1a541c;"> Daily Prayers Schedule</h3>
-            <div style="color:#333; font-size:32px; margin-bottom:12px;">May 5, 2025</div>
+            <h3 class="mb-4" style="color:#1a541c;">Daily Prayers Schedule</h3>
+            <div style="color:#333; font-size:32px; margin-bottom:12px;">
+                <?php 
+                    $today = date('F d, Y');
+                    $dayName = date('l');
+                    echo "$today ($dayName)";
+                ?>
+            </div>
             <div class="table-responsive">
                 <table class="table table-bordered align-middle prayer-table">
                     <thead class="table-success">
                         <tr>
                             <th>Time</th>
-                            <th>Prayer</th>
+                            <th>Prayer Type</th>
                             <th>Imam</th>
                             <th>Topic</th>
                             <th>Location</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Example static rows, replace with dynamic PHP if needed -->
-                        <tr>
-                            <td>04:30 AM</td>
-                            <td>Fajr</td>
-                            <td>Imam Ahmad</td>
-                            <td>The Importance of Fajr</td>
-                            <td>MSA Prayer Hall</td>
-                        </tr>
-                        <tr>
-                            <td>12:15 PM</td>
-                            <td>Dhuhr</td>
-                            <td>Imam Bilal</td>
-                            <td>Unity in Dhuhr</td>
-                            <td>MSA Prayer Hall</td>
-                        </tr>
-                        <tr>
-                            <td>03:45 PM</td>
-                            <td>Asr</td>
-                            <td>Imam Kareem</td>
-                            <td>Virtues of Asr</td>
-                            <td>MSA Prayer Hall</td>
-                        </tr>
-                        <tr>
-                            <td>06:20 PM</td>
-                            <td>Maghrib</td>
-                            <td>Imam Yusuf</td>
-                            <td>Maghrib Reflections</td>
-                            <td>MSA Prayer Hall</td>
-                        </tr>
-                        <tr>
-                            <td>07:45 PM</td>
-                            <td>Isha</td>
-                            <td>Imam Zayd</td>
-                            <td>Isha: Night Prayers</td>
-                            <td>MSA Prayer Hall</td>
-                        </tr>
+                        <?php 
+                        $todayDate = date('Y-m-d');
+                        $hasTodayPrayer = false;
+                        if ($calendar):
+                            foreach ($calendar as $prayer): 
+                                if ($prayer['date'] !== $todayDate) continue;
+                                $hasTodayPrayer = true;
+                                $prayerTypeDisplay = ucfirst($prayer['prayer_type']);
+                                $isFriday = (date('l', strtotime($prayer['date'])) === 'Friday');
+                        ?>
+                            <tr>
+                                <td>
+                                    <?php echo !empty($prayer['time']) ? date('h:i A', strtotime($prayer['time'])) : '<span class="text-danger">No time set</span>'; ?>
+                                </td>
+                                <td>
+                                    <?= $prayerTypeDisplay ?>
+                                    <?php if ($isFriday && $prayer['prayer_type'] === 'jumu\'ah'): ?>
+                                        <br><small class="text-muted">(Friday Prayer)</small>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?= clean_input($prayer['speaker']) ?></td>
+                                <td><?= clean_input($prayer['topic']) ?></td>
+                                <td><?= clean_input($prayer['location']) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        <?php if (!$hasTodayPrayer): ?>
+                            <tr>
+                                <td colspan="5" class="text-center">No prayer schedules for today</td>
+                            </tr>
+                        <?php endif; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="5" class="text-center">No prayer schedules available</td>
+                            </tr>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
+
 
     <!-- Include Footer -->
     <?php include '../../includes/footer.php'; ?>
