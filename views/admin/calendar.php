@@ -428,7 +428,7 @@ $calEvents = $adminObj->fetchCalendarEvents();
                                     <br><span class="badge bg-primary">Upcoming</span>
                                 <?php endif; ?>
                             </td>
-                            <td><?= isset($calEv['time']) ? htmlspecialchars($calEv['time']) : '' ?></td>
+                            <td><?= $calEv['time'] ? date('h:i A', strtotime($calEv['time'])) : '' ?></td>
                             <td>
                                 <?php 
                                 $startDay = date('l', strtotime($calEv['activity_date']));

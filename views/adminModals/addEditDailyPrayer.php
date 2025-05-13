@@ -28,6 +28,12 @@
                         <div id="editPrayerDateError" class="text-danger"></div>
                     </div>
                     <div class="mb-3 position-relative">
+                        <label for="editPrayerTime" class="form-label">Time</label>
+                        <input type="time" class="form-control" id="editPrayerTime" name="time">
+                        <span class="invalid-icon" id="editPrayerTimeIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
+                        <div id="editPrayerTimeError" class="text-danger"></div>
+                    </div>
+                    <div class="mb-3 position-relative">
                         <label for="editSpeaker" class="form-label">Speaker (leave empty for TBA)</label>
                         <input type="text" class="form-control" id="editSpeaker" name="speaker">
                         <span class="invalid-icon" id="editSpeakerIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>

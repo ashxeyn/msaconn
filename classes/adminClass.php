@@ -1139,25 +1139,24 @@ class Admin {
 
     // Daily Prayer Functions
     function fetchDailyPrayers() {
-        $sql = "SELECT ps.prayer_id, ps.prayer_type, ps.date, ps.speaker, ps.topic, ps.location, ps.created_at, ps.deleted_at,
-                    u.username 
-                FROM prayer_schedule ps
-                LEFT JOIN users u ON ps.created_by = u.user_id
-                WHERE ps.deleted_at IS NULL
-                AND ps.prayer_type != 'khutba'
-                ORDER BY ps.date ASC, FIELD(ps.prayer_type, 'fajr', 'dhuhr', 'jumu''ah', 'asr', 'maghrib', 'isha')";
-        
+        $sql = "SELECT ps.prayer_id, ps.prayer_type, ps.date, ps.time, ps.speaker, ps.topic, ps.location, ps.created_at, ps.deleted_at,
+                u.username 
+            FROM prayer_schedule ps
+            LEFT JOIN users u ON ps.created_by = u.user_id
+            WHERE ps.deleted_at IS NULL
+            AND ps.prayer_type != 'khutba'
+            ORDER BY ps.date DESC, ps.time ASC, FIELD(ps.prayer_type, 'fajr', 'dhuhr', 'jumu''ah', 'asr', 'maghrib', 'isha')";
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         return $query->fetchAll();
     }
 
     function getDailyPrayerById($prayerId) {
-        $sql = "SELECT ps.prayer_id, ps.prayer_type, ps.date, ps.speaker, ps.topic, ps.location, ps.created_at, ps.deleted_at,
-                    u.username
-                FROM prayer_schedule ps
-                LEFT JOIN users u ON ps.created_by = u.user_id
-                WHERE ps.prayer_id = :prayer_id";
+        $sql = "SELECT ps.prayer_id, ps.prayer_type, ps.date, ps.time, ps.speaker, ps.topic, ps.location, ps.created_at, ps.deleted_at,
+                u.username
+            FROM prayer_schedule ps
+            LEFT JOIN users u ON ps.created_by = u.user_id
+            WHERE ps.prayer_id = :prayer_id";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':prayer_id', $prayerId);
         $query->execute();
@@ -1215,12 +1214,12 @@ class Admin {
     }
 
     function fetchArchivedDailyPrayers() {
-        $sql = "SELECT ps.prayer_id, ps.prayer_type, ps.date, ps.speaker, ps.topic, ps.location, ps.reason, ps.deleted_at,
-                    u.username
-                FROM prayer_schedule ps
-                LEFT JOIN users u ON ps.created_by = u.user_id
-                WHERE ps.deleted_at IS NOT NULL
-                ORDER BY ps.deleted_at ASC";
+        $sql = "SELECT ps.prayer_id, ps.prayer_type, ps.date, ps.time, ps.speaker, ps.topic, ps.location, ps.reason, ps.deleted_at,
+                u.username
+            FROM prayer_schedule ps
+            LEFT JOIN users u ON ps.created_by = u.user_id
+            WHERE ps.deleted_at IS NOT NULL
+            ORDER BY ps.deleted_at ASC";
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         return $query->fetchAll();

@@ -4586,6 +4586,7 @@ function setDailyPrayerId(prayerId, action) {
                     $('#editPrayerId').val(prayer.prayer_id);
                     $('#editPrayerType').val(prayer.prayer_type);
                     $('#editPrayerDate').val(prayer.date);
+                    $('#editPrayerTime').val(prayer.time || '');
                     $('#editSpeaker').val(prayer.speaker);
                     $('#editTopic').val(prayer.topic);
                     $('#editLocation').val(prayer.location);
@@ -4674,6 +4675,19 @@ function validateDailyPrayerForm() {
         $('#editPrayerDate').removeClass('is-invalid');
         $('#editPrayerDateIcon').hide();
         $('#editPrayerDateError').text('');
+    }
+
+    // Time validation
+    const prayerTime = $('#editPrayerTime').val().trim();
+    if (prayerTime === '') {
+        $('#editPrayerTime').addClass('is-invalid');
+        $('#editPrayerTimeIcon').show();
+        $('#editPrayerTimeError').text('Time is required');
+        isValid = false;
+    } else {
+        $('#editPrayerTime').removeClass('is-invalid');
+        $('#editPrayerTimeIcon').hide();
+        $('#editPrayerTimeError').text('');
     }
 
     const speaker = $('#editSpeaker').val().trim();
