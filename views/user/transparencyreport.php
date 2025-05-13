@@ -129,25 +129,33 @@ $totalFunds = $totalCashIn - $totalCashOut;
       </table>
     </div>
     
-    <!-- Summary Table (hidden by default, shown only on last page via JS) -->
-    <div id="summaryTableContainer" style="display:none; margin-top:30px;">
-      <h3>Summary</h3>
-      <table class="summary-table">
-        <tbody>
-          <tr>
-            <td>Total Cash-In</td>
-            <td>₱<?php echo number_format($totalCashIn, 2); ?></td>
-          </tr>
-          <tr>
-            <td>Total Cash-Out</td>
-            <td>₱<?php echo number_format($totalCashOut, 2); ?></td>
-          </tr>
-          <tr>
-            <td><strong>TOTAL FUNDS:</strong></td>
-            <td><strong>₱<?php echo number_format($totalFunds, 2); ?></strong></td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- Summary Table -->
+    <div id="summaryTableContainer">
+      <h3>Financial Summary</h3>
+      <div class="table-container">
+        <table class="summary-table display" style="width:100%">
+          <thead>
+            <tr>
+              <th>Transaction Type</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Total Cash-In</td>
+              <td>₱<?php echo number_format($totalCashIn, 2); ?></td>
+            </tr>
+            <tr>
+              <td>Total Cash-Out</td>
+              <td>₱<?php echo number_format($totalCashOut, 2); ?></td>
+            </tr>
+            <tr>
+              <td><strong>TOTAL FUNDS:</strong></td>
+              <td><strong>₱<?php echo number_format($totalFunds, 2); ?></strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </section>

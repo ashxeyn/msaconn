@@ -24,6 +24,7 @@ $calendar = $adminObj->fetchDailyPrayers();
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?php echo $base_url; ?>css/calendar.css">
@@ -34,11 +35,11 @@ $calendar = $adminObj->fetchDailyPrayers();
         <?php foreach ($backgroundImage as $image) : ?>
         <div class="hero-background" style="background-image: url('<?php echo $base_url . $image['image_path']; ?>');">
         <?php endforeach; ?>
-    </div>
+        </div>
         <div class="hero-content">
             <?php foreach ($calendarInfo as $cal) : ?>
-            <h2><?php echo $cal['title']; ?></h2>
-            <p><?php echo $cal['description']; ?></p>
+                <h2><?php echo $cal['title']; ?></h2>
+                <p><?php echo $cal['description']; ?></p> 
             <?php endforeach; ?>
         </div>
     </div>
