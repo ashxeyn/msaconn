@@ -42,6 +42,8 @@ let registrationHeroInterval = null;
 let registrationRefreshInterval = null;
 let faqsHeroInterval = null;
 let faqsRefreshInterval = null;
+let transparencyHeroInterval = null;
+let transparencyRefreshInterval = null;
 
 
 // LANDING PAGE FUNCTIONS
@@ -219,12 +221,12 @@ function initCarousel() {
     let currentSlide = 0;
 
     if (slides.length === 0) return;
-
-    slides[0].classList.add('active');
+    
+        slides[0].classList.add('active');
     if (indicators.length > 0) {
         indicators[0].classList.add('active');
     }
-
+    
     function showSlide(n) {
         slides.forEach(slide => slide.classList.remove('active'));
         indicators.forEach(indicator => indicator.classList.remove('active'));
@@ -232,17 +234,17 @@ function initCarousel() {
         indicators[n].classList.add('active');
         currentSlide = n;
     }
-
+    
     function nextSlide() {
         currentSlide = (currentSlide + 1) % totalSlides;
         showSlide(currentSlide);
     }
-
+    
     function prevSlide() {
         currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
         showSlide(currentSlide);
     }
-
+    
     $('.carousel-button.next').off('click');
     $('.carousel-button.prev').off('click');
     $('.carousel-indicators .indicator').off('click');
@@ -751,6 +753,175 @@ function initFaqsPage() {
     );
 }
 
+// TRANSPARENCY REPORT PAGE FUNCTIONS
+function updateTransparencyPage() {
+    $.ajax({
+        url: base_url + 'handler/website/fetchTransparency.php',
+        method: 'GET',
+        dataType: 'json',
+        cache: false,
+        success: function(response) {
+            if (response.status === 'success') {
+                const data = response.data;
+                
+                if (data.backgroundImage && data.backgroundImage.length > 0) {
+                    updateTransparencyBackground(data.backgroundImage);
+                }
+                
+                if (data.transparencyInfo && data.transparencyInfo.length > 0) {
+                    updateTransparencyContent(data.transparencyInfo);
+                }
+                
+                if (data.cashIn && data.cashOut) {
+                    updateTransparencyTables(data.cashIn, data.cashOut, 
+                        data.totalCashIn, data.totalCashOut, data.totalFunds);
+                }
+                
+                console.log('Transparency report content updated successfully at', new Date().toLocaleTimeString());
+            } else {
+                console.error('Error in response:', response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching transparency data:', error);
+        }
+    });
+}
+
+function updateTransparencyBackground(backgroundImages) {
+    if (!backgroundImages || backgroundImages.length === 0) return;
+    
+    const heroBackground = $('.hero-background');
+    if (!heroBackground.length) return;
+
+    const image = backgroundImages[0];
+    const newImagePath = base_url + image.image_path;
+    const currentBgStyle = heroBackground.attr('style');
+    const newBgStyle = `background-image: url('${newImagePath}');`;
+    
+    if (!currentBgStyle || !currentBgStyle.includes(image.image_path)) {
+        heroBackground.attr('style', newBgStyle);
+        console.log('Transparency background updated');
+    }
+}
+
+function updateTransparencyContent(transparencyInfo) {
+    if (!transparencyInfo || transparencyInfo.length === 0) return;
+    
+    const heroContent = $('.hero-content');
+    if (!heroContent.length) return;
+
+    const info = transparencyInfo[0];
+    const currentTitle = heroContent.find('h2').text().trim();
+    const currentDesc = heroContent.find('p').text().trim();
+
+    if (currentTitle !== info.title.trim() || currentDesc !== info.description.trim()) {
+        heroContent.find('h2').text(info.title);
+        heroContent.find('p').text(info.description);
+        console.log('Transparency content updated');
+    }
+}
+
+function updateTransparencyTables(cashIn, cashOut, totalCashIn, totalCashOut, totalFunds) {
+    let cashinBody = $('#cashinTable tbody');
+    let cashinContent = '';
+    if (cashIn && cashIn.length > 0) {
+        cashIn.forEach(transaction => {
+            const startDate = new Date(transaction.report_date);
+            let dateDisplay = startDate.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
+            let startDay = startDate.toLocaleDateString('en-US', {weekday: 'long'});
+            let dayDisplay = startDay;
+            if (transaction.end_date) {
+                const endDate = new Date(transaction.end_date);
+                dateDisplay += ' to ' + endDate.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
+                const endDay = endDate.toLocaleDateString('en-US', {weekday: 'long'});
+                dayDisplay = (startDay !== endDay) ? `${startDay} - ${endDay}` : startDay;
+            }
+            cashinContent += `
+                <tr>
+                    <td>${dateDisplay}</td>
+                    <td>${dayDisplay}</td>
+                    <td>${transaction.expense_detail}</td>
+                    <td>${transaction.expense_category}</td>
+                    <td>₱${parseFloat(transaction.amount).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                </tr>
+            `;
+        });
+    } else {
+        cashinContent = '<tr><td colspan="5" class="text-center">No cash-in transactions found.</td></tr>';
+    }
+    cashinBody.html(cashinContent);
+
+    let cashoutBody = $('#cashoutTable tbody');
+    let cashoutContent = '';
+    if (cashOut && cashOut.length > 0) {
+        cashOut.forEach(transaction => {
+            const startDate = new Date(transaction.report_date);
+            let dateDisplay = startDate.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
+            let startDay = startDate.toLocaleDateString('en-US', {weekday: 'long'});
+            let dayDisplay = startDay;
+            if (transaction.end_date) {
+                const endDate = new Date(transaction.end_date);
+                dateDisplay += ' to ' + endDate.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
+                const endDay = endDate.toLocaleDateString('en-US', {weekday: 'long'});
+                dayDisplay = (startDay !== endDay) ? `${startDay} - ${endDay}` : startDay;
+            }
+            cashoutContent += `
+                <tr>
+                    <td>${dateDisplay}</td>
+                    <td>${dayDisplay}</td>
+                    <td>${transaction.expense_detail}</td>
+                    <td>${transaction.expense_category}</td>
+                    <td>₱${parseFloat(transaction.amount).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                </tr>
+            `;
+        });
+    } else {
+        cashoutContent = '<tr><td colspan="5" class="text-center">No cash-out transactions found.</td></tr>';
+    }
+    cashoutBody.html(cashoutContent);
+
+    $('.summary-table tbody tr:eq(0) td:eq(1)').text(`₱${parseFloat(totalCashIn).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`);
+    $('.summary-table tbody tr:eq(1) td:eq(1)').text(`₱${parseFloat(totalCashOut).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`);
+    $('.summary-table tbody tr:eq(2) td:eq(1)').text(`₱${parseFloat(totalFunds).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`);
+
+    console.log('Transaction tables and summary updated');
+}
+
+function initTransparencyPage() {
+    if (transparencyHeroInterval) {
+        clearInterval(transparencyHeroInterval);
+    }
+    
+    if (transparencyRefreshInterval) {
+        clearInterval(transparencyRefreshInterval);
+    }
+
+    updateTransparencyPage();
+
+    transparencyRefreshInterval = setInterval(function() {
+        updateTransparencyPage();
+    }, 10000); 
+
+    $('.hero').hover(
+        function() {
+            if (transparencyHeroInterval) {
+                clearInterval(transparencyHeroInterval);
+            }
+            if (transparencyRefreshInterval) {
+                clearInterval(transparencyRefreshInterval);
+            }
+            console.log('Transparency updates paused on hover');
+        },
+        function() {
+            transparencyRefreshInterval = setInterval(function() {
+                updateTransparencyPage();
+            }, 10000);
+            console.log('Transparency updates resumed after hover');
+        }
+    );
+}
+
 function isPageActive(pagePattern) {
     const isActive = window.location.pathname.includes(pagePattern);
     console.log('Checking if page is active:', pagePattern, 'Result:', isActive, 'Current path:', window.location.pathname);
@@ -768,7 +939,7 @@ $(document).ready(function() {
     
     if (isPageActive('landing_page')) {
         console.log('Landing page detected, initializing carousel and content updates');
-        updateLandingPage();
+    updateLandingPage();
         initCarousel();
     } 
     
@@ -793,4 +964,56 @@ $(document).ready(function() {
         console.log('FAQs page detected, initializing content updates');
         initFaqsPage();
     }
+
+    if (isPageActive('transparencyreport')) {
+        console.log('Transparency Report page detected, initializing content updates');
+        initTransparencyPage();
+    }
 });
+
+
+// DATA TABLES FOR TRANSPARENCY REPORT
+$(document).ready(function() {
+    var cashInTable = $('#cashinTable').DataTable({
+        pageLength: 10,
+        lengthChange: false,
+        searching: false,
+        ordering: true,
+        info: false,
+        paging: true
+    });
+    var cashOutTable = $('#cashoutTable').DataTable({
+        pageLength: 10,
+        lengthChange: false,
+        searching: false,
+        ordering: true,
+        info: false,
+        paging: true,
+        drawCallback: function(settings) {
+            var api = this.api();
+            var pageInfo = api.page.info();
+            if (pageInfo.page === pageInfo.pages - 1) {
+                $('#summaryTableContainer').show();
+            } else {
+                $('#summaryTableContainer').hide();
+            }
+        }
+    });
+    var pageInfo = cashOutTable.page.info();
+    if (pageInfo.page !== pageInfo.pages - 1) {
+        $('#summaryTableContainer').hide();
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+

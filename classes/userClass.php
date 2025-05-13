@@ -476,4 +476,12 @@ class User {
         $query->execute();
         return $query->fetchAll();
     }
+
+    // TRANSPARENCY REPORT
+    function fetchTransparencyInfo() {
+        $sql = "SELECT * FROM site_pages WHERE page_type = 'transparency' AND is_active = 1";
+        $query = $this->getConnection()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
 }
