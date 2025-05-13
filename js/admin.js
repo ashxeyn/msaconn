@@ -4165,6 +4165,10 @@ function setSitePageId(pageId, action, isActive) {
         $("#addEditSiteForm button[type='submit']").text('Save');
         $('#logo-image-preview').hide();
         $('#logo-preview-img').attr('src', '');
+        $('#orgNameGroup').hide();
+        $('#schoolNameGroup').hide();
+        $('#webNameGroup').hide();
+        $('#fbLinkGroup').hide();
     } else if (action === 'edit') {
         $.ajax({
             url: "../../handler/admin/getSite.php",
@@ -4179,6 +4183,10 @@ function setSitePageId(pageId, action, isActive) {
                     $('#addEditDescription').val(page.description);
                     $('#addEditContactNo').val(page.contact_no);
                     $('#addEditEmail').val(page.email);
+                    $('#addEditOrgName').val(page.org_name || '');
+                    $('#addEditSchoolName').val(page.school_name || '');
+                    $('#addEditWebName').val(page.web_name || '');
+                    $('#addEditFbLink').val(page.fb_link || '');
                     $('#siteStep1').hide();
                     $('#siteStep2').show();
                     $('#siteBackLink').hide();
@@ -4325,6 +4333,10 @@ function toggleFieldsBasedOnType(pageType) {
     $('#imageGroup').hide();
     $('#logo-image-preview').hide();
     $('#background-image-preview').hide();
+    $('#orgNameGroup').hide();
+    $('#schoolNameGroup').hide();
+    $('#webNameGroup').hide();
+    $('#fbLinkGroup').hide();
 
     // Show relevant groups based on page type
     if (["logo", "background", "carousel"].includes(pageType)) {
@@ -4332,6 +4344,10 @@ function toggleFieldsBasedOnType(pageType) {
     } else if (pageType === 'footer') {
         $('#contactGroup').show();
         $('#emailGroup').show();
+        $('#orgNameGroup').show();
+        $('#schoolNameGroup').show();
+        $('#webNameGroup').show();
+        $('#fbLinkGroup').show();
     } else {
         // registration, about, volunteer, calendar, faqs, transparency, home
         $('#descriptionGroup').show();
@@ -4368,7 +4384,7 @@ function validateSiteForm(action) {
             $('#addEditImageError').text('');
         }
     } else if (pageType === 'footer') {
-        // Validate contact and email
+        // Validate contact, email, org_name, school_name, web_name, fb_link
         const contactNo = $('#addEditContactNo').val().trim();
         if (!contactNo) {
             $('#addEditContactNo').addClass('is-invalid');
@@ -4390,6 +4406,50 @@ function validateSiteForm(action) {
             $('#addEditEmail').removeClass('is-invalid');
             $('#addEditEmailIcon').hide();
             $('#addEditEmailError').text('');
+        }
+        const orgName = $('#addEditOrgName').val().trim();
+        if (!orgName) {
+            $('#addEditOrgName').addClass('is-invalid');
+            $('#addEditOrgNameIcon').show();
+            $('#addEditOrgNameError').text('Organization name is required');
+            isValid = false;
+        } else {
+            $('#addEditOrgName').removeClass('is-invalid');
+            $('#addEditOrgNameIcon').hide();
+            $('#addEditOrgNameError').text('');
+        }
+        const schoolName = $('#addEditSchoolName').val().trim();
+        if (!schoolName) {
+            $('#addEditSchoolName').addClass('is-invalid');
+            $('#addEditSchoolNameIcon').show();
+            $('#addEditSchoolNameError').text('School name is required');
+            isValid = false;
+        } else {
+            $('#addEditSchoolName').removeClass('is-invalid');
+            $('#addEditSchoolNameIcon').hide();
+            $('#addEditSchoolNameError').text('');
+        }
+        const webName = $('#addEditWebName').val().trim();
+        if (!webName) {
+            $('#addEditWebName').addClass('is-invalid');
+            $('#addEditWebNameIcon').show();
+            $('#addEditWebNameError').text('Website name is required');
+            isValid = false;
+        } else {
+            $('#addEditWebName').removeClass('is-invalid');
+            $('#addEditWebNameIcon').hide();
+            $('#addEditWebNameError').text('');
+        }
+        const fbLink = $('#addEditFbLink').val().trim();
+        if (!fbLink) {
+            $('#addEditFbLink').addClass('is-invalid');
+            $('#addEditFbLinkIcon').show();
+            $('#addEditFbLinkError').text('Facebook link is required');
+            isValid = false;
+        } else {
+            $('#addEditFbLink').removeClass('is-invalid');
+            $('#addEditFbLinkIcon').hide();
+            $('#addEditFbLinkError').text('');
         }
     } else {
         // registration, about, volunteer, calendar, faqs, transparency, home
@@ -4415,16 +4475,28 @@ function clearSiteValidationErrors() {
     $('#addEditEmailError').text('');
     $('#addEditPageTypeError').text('');
     $('#addEditImageError').text('');
+    $('#addEditOrgNameError').text('');
+    $('#addEditSchoolNameError').text('');
+    $('#addEditWebNameError').text('');
+    $('#addEditFbLinkError').text('');
     $('#addEditTitle').removeClass('is-invalid');
     $('#addEditDescription').removeClass('is-invalid');
     $('#addEditContactNo').removeClass('is-invalid');
     $('#addEditEmail').removeClass('is-invalid');
     $('#addEditImage').removeClass('is-invalid');
+    $('#addEditOrgName').removeClass('is-invalid');
+    $('#addEditSchoolName').removeClass('is-invalid');
+    $('#addEditWebName').removeClass('is-invalid');
+    $('#addEditFbLink').removeClass('is-invalid');
     $('#addEditTitleIcon').hide();
     $('#addEditDescriptionIcon').hide();
     $('#addEditContactNoIcon').hide();
     $('#addEditEmailIcon').hide();
     $('#addEditImageIcon').hide();
+    $('#addEditOrgNameIcon').hide();
+    $('#addEditSchoolNameIcon').hide();
+    $('#addEditWebNameIcon').hide();
+    $('#addEditFbLinkIcon').hide();
 }
 
 function processSite(pageId, action) {

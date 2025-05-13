@@ -2514,7 +2514,8 @@ function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $class
     // Site Management Functions
     function fetchSitePages() {
         $sql = "SELECT page_id, page_type, title, description, image_path, 
-                    contact_no, email, is_active, created_at, updated_at
+                    contact_no, email, is_active, created_at, updated_at,
+                    org_name, school_name, web_name, fb_link
                 FROM site_pages
                 ORDER BY page_type ASC, is_active DESC, updated_at DESC";
 
@@ -2525,7 +2526,8 @@ function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $class
 
     function getSitePageById($pageId) {
         $sql = "SELECT page_id, page_type, title, description, image_path,
-                    contact_no, email, is_active, created_at, updated_at
+                    contact_no, email, is_active, created_at, updated_at,
+                    org_name, school_name, web_name, fb_link
                 FROM site_pages
                 WHERE page_id = :page_id";
 
@@ -2535,7 +2537,7 @@ function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $class
         return $query->fetch();
     }
 
-    function addSitePage($pageType, $title, $description, $imagePath, $contactNo, $email) {
+    function addSitePage($pageType, $title, $description, $imagePath, $contactNo, $email, $orgName = null, $schoolName = null, $webName = null, $fbLink = null) {
         if ($pageType === 'carousel') {
             $sqlCount = "SELECT page_id FROM site_pages WHERE page_type = 'carousel' AND is_active = 1 ORDER BY updated_at ASC, page_id ASC";
             $stmt = $this->db->connect()->prepare($sqlCount);
@@ -2551,8 +2553,13 @@ function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $class
                 ->execute([':page_type' => $pageType]);
         }
 
-        $sql = "INSERT INTO site_pages (page_type, title, description, image_path, contact_no, email, is_active)
-                VALUES (:page_type, :title, :description, :image_path, :contact_no, :email, 1)";
+        if ($pageType === 'footer') {
+            $sql = "INSERT INTO site_pages (page_type, title, description, image_path, contact_no, email, is_active, org_name, school_name, web_name, fb_link)
+                    VALUES (:page_type, :title, :description, :image_path, :contact_no, :email, 1, :org_name, :school_name, :web_name, :fb_link)";
+        } else {
+            $sql = "INSERT INTO site_pages (page_type, title, description, image_path, contact_no, email, is_active)
+                    VALUES (:page_type, :title, :description, :image_path, :contact_no, :email, 1)";
+        }
 
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':page_type', $pageType);
@@ -2561,21 +2568,45 @@ function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $class
         $query->bindParam(':image_path', $imagePath);
         $query->bindParam(':contact_no', $contactNo);
         $query->bindParam(':email', $email);
+        if ($pageType === 'footer') {
+            $query->bindParam(':org_name', $orgName);
+            $query->bindParam(':school_name', $schoolName);
+            $query->bindParam(':web_name', $webName);
+            $query->bindParam(':fb_link', $fbLink);
+        }
         return $query->execute();
     }
 
-    function updateSitePage($pageId, $pageType, $title, $description, $imagePath, $contactNo, $email, $isActive = null) {
-        $sql = "UPDATE site_pages 
-                SET page_type = :page_type,
-                    title = :title, 
-                    description = :description,
-                    image_path = :image_path,
-                    contact_no = :contact_no,
-                    email = :email";
-        if ($isActive !== null) {
-            $sql .= ", is_active = :is_active";
+    function updateSitePage($pageId, $pageType, $title, $description, $imagePath, $contactNo, $email, $isActive = null, $orgName = null, $schoolName = null, $webName = null, $fbLink = null) {
+        if ($pageType === 'footer') {
+            $sql = "UPDATE site_pages 
+                    SET page_type = :page_type,
+                        title = :title, 
+                        description = :description,
+                        image_path = :image_path,
+                        contact_no = :contact_no,
+                        email = :email,
+                        org_name = :org_name,
+                        school_name = :school_name,
+                        web_name = :web_name,
+                        fb_link = :fb_link";
+            if ($isActive !== null) {
+                $sql .= ", is_active = :is_active";
+            }
+            $sql .= " WHERE page_id = :page_id";
+        } else {
+            $sql = "UPDATE site_pages 
+                    SET page_type = :page_type,
+                        title = :title, 
+                        description = :description,
+                        image_path = :image_path,
+                        contact_no = :contact_no,
+                        email = :email";
+            if ($isActive !== null) {
+                $sql .= ", is_active = :is_active";
+            }
+            $sql .= " WHERE page_id = :page_id";
         }
-        $sql .= " WHERE page_id = :page_id";
 
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':page_type', $pageType);
@@ -2584,6 +2615,12 @@ function updateStudent($enrollmentId, $firstName, $middleName, $lastName, $class
         $query->bindParam(':image_path', $imagePath);
         $query->bindParam(':contact_no', $contactNo);
         $query->bindParam(':email', $email);
+        if ($pageType === 'footer') {
+            $query->bindParam(':org_name', $orgName);
+            $query->bindParam(':school_name', $schoolName);
+            $query->bindParam(':web_name', $webName);
+            $query->bindParam(':fb_link', $fbLink);
+        }
         if ($isActive !== null) {
             $query->bindParam(':is_active', $isActive, PDO::PARAM_INT);
         }

@@ -289,6 +289,18 @@ foreach ($sitePages as $page) {
                     <div class="site-footer">
                         <i class="bi bi-envelope"></i> <?= $page['email'] ?? 'Not set' ?>
                     </div>
+                    <div class="site-footer">
+                        <i class="bi bi-building"></i> <?= $page['org_name'] ?? 'Not set' ?>
+                    </div>
+                    <div class="site-footer">
+                        <i class="bi bi-mortarboard"></i> <?= $page['school_name'] ?? 'Not set' ?>
+                    </div>
+                    <div class="site-footer">
+                        <i class="bi bi-globe"></i> <?= $page['web_name'] ?? 'Not set' ?>
+                    </div>
+                    <div class="site-footer">
+                        <i class="bi bi-facebook"></i> <?php if (!empty($page['fb_link'])): ?><a href="<?= htmlspecialchars($page['fb_link']) ?>" target="_blank">Facebook Page</a><?php else: ?>Not set<?php endif; ?>
+                    </div>
                     <?php endif; ?>
                     <div class="site-meta">
                         <span class="badge <?= $page['is_active'] ? 'bg-success' : 'bg-secondary' ?>">

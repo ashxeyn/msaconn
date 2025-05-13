@@ -20,6 +20,10 @@ if ($action === 'edit' || $action === 'add') {
     $description = clean_input($_POST['description'] ?? null);
     $contactNo = clean_input($_POST['contact_no'] ?? null);
     $email = clean_input($_POST['email'] ?? null);
+    $orgName = isset($_POST['org_name']) ? clean_input($_POST['org_name']) : null;
+    $schoolName = isset($_POST['school_name']) ? clean_input($_POST['school_name']) : null;
+    $webName = isset($_POST['web_name']) ? clean_input($_POST['web_name']) : null;
+    $fbLink = isset($_POST['fb_link']) ? clean_input($_POST['fb_link']) : null;
     
     $imagePath = null;
     if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
@@ -49,24 +53,56 @@ if ($action === 'edit' || $action === 'add') {
             $imagePath = $existingPage['image_path'];
         }
 
-        $result = $adminObj->updateSitePage(
-            $pageId, 
-            $pageType, 
-            $title, 
-            $description, 
-            $imagePath, 
-            $contactNo, 
-            $email
-        );
+        if ($pageType === 'footer') {
+            $result = $adminObj->updateSitePage(
+                $pageId, 
+                $pageType, 
+                $title, 
+                $description, 
+                $imagePath, 
+                $contactNo, 
+                $email,
+                null,
+                $orgName,
+                $schoolName,
+                $webName,
+                $fbLink
+            );
+        } else {
+            $result = $adminObj->updateSitePage(
+                $pageId, 
+                $pageType, 
+                $title, 
+                $description, 
+                $imagePath, 
+                $contactNo, 
+                $email
+            );
+        }
     } else { 
-        $result = $adminObj->addSitePage(
-            $pageType, 
-            $title, 
-            $description, 
-            $imagePath, 
-            $contactNo, 
-            $email
-        );
+        if ($pageType === 'footer') {
+            $result = $adminObj->addSitePage(
+                $pageType, 
+                $title, 
+                $description, 
+                $imagePath, 
+                $contactNo, 
+                $email,
+                $orgName,
+                $schoolName,
+                $webName,
+                $fbLink
+            );
+        } else {
+            $result = $adminObj->addSitePage(
+                $pageType, 
+                $title, 
+                $description, 
+                $imagePath, 
+                $contactNo, 
+                $email
+            );
+        }
     }
     
     echo $result ? "success" : "error";
