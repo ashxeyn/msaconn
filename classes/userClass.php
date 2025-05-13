@@ -3,35 +3,64 @@ require_once 'databaseClass.php';
 
 class User {
     protected $db;
+    protected $conn;
 
     public function __construct() {
         $this->db = new Database();
-        $this->db->connect();
+    }
+
+    protected function getConnection() {
+        if (!$this->conn) {
+            try {
+                $this->conn = $this->db->connect();
+            } catch (PDOException $e) {
+                error_log("Database connection error: " . $e->getMessage());
+                throw new Exception("Database connection failed");
+            }
+        }
+        return $this->conn;
     }
 
     function fetchSy(){
-        $sql = "SELECT * FROM school_years ORDER BY school_year_id ASC;";
-        $query = $this->db->connect()->prepare($sql);
-        $query->execute();
-        return $query->fetchAll();
+        try {
+            $sql = "SELECT * FROM school_years ORDER BY school_year_id ASC;";
+            $query = $this->getConnection()->prepare($sql);
+            $query->execute();
+            return $query->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error in fetchSy: " . $e->getMessage());
+            return [];
+        }
     }
 
     function fetchProgram() {
-        $sql = "SELECT programs.program_id, programs.program_name, programs.college_id, colleges.college_name 
-                FROM programs 
-                INNER JOIN colleges ON programs.college_id = colleges.college_id 
-                ORDER BY programs.program_name ASC;";
-        
-        $query = $this->db->connect()->prepare($sql);
-        $query->execute();
-        return $query->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            $sql = "SELECT programs.program_id, programs.program_name, programs.college_id, colleges.college_name 
+                    FROM programs 
+                    INNER JOIN colleges ON programs.college_id = colleges.college_id 
+                    ORDER BY programs.program_name ASC;";
+            
+            $query = $this->getConnection()->prepare($sql);
+            $query->execute();
+            return $query->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error in fetchProgram: " . $e->getMessage());
+            return [];
+        }
     }
+
     public function fetchColleges() {
-        $sql = "SELECT college_id, college_name FROM colleges ORDER BY college_name ASC";
-        $query = $this->db->connect()->prepare($sql);
-        $query->execute();
-        return $query->fetchAll(PDO::FETCH_ASSOC);
-}
+        try {
+            $sql = "SELECT college_id, college_name FROM colleges ORDER BY college_name ASC";
+            $query = $this->getConnection()->prepare($sql);
+            $query->execute();
+            return $query->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error in fetchColleges: " . $e->getMessage());
+            return [];
+        }
+    }
+
     public function addMadrasaEnrollment($data) {
         try {
             // Log the data being sent to the database
@@ -62,7 +91,7 @@ class User {
             
             error_log("SQL Query: " . $sql);
                 
-            $query = $this->db->connect()->prepare($sql);
+            $query = $this->getConnection()->prepare($sql);
             
             // Log parameter binding to check for any issues
             error_log("Binding parameters for database insertion...");
@@ -104,7 +133,7 @@ class User {
         
             if ($query->execute()) {
                 // Store the database connection for reuse
-                $conn = $this->db->connect();
+                $conn = $this->getConnection();
                 
                 // Get the last inserted ID
                 $lastId = $conn->lastInsertId();
@@ -134,7 +163,7 @@ class User {
                 WHERE is_deleted = 0 
                 ORDER BY created_at DESC 
                 LIMIT 1";
-        $query = $this->db->connect()->prepare($sql);
+        $query = $this->getConnection()->prepare($sql);
         $query->execute();
         return $query->fetch(PDO::FETCH_ASSOC);
     }
@@ -142,7 +171,7 @@ class User {
     // Fetch all FAQs
     function fetchUserFaqs() {
         $sql = "SELECT * FROM faqs WHERE is_deleted = 0 ORDER BY category ASC, created_at DESC";
-        $query = $this->db->connect()->prepare($sql);
+        $query = $this->getConnection()->prepare($sql);
         $query->execute();
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -150,7 +179,7 @@ class User {
     // Fetch a single FAQ by ID for the user side
     function getUserFaqById($faqId) {
         $sql = "SELECT * FROM faqs WHERE faq_id = :faq_id";
-        $query = $this->db->connect()->prepare($sql);
+        $query = $this->getConnection()->prepare($sql);
         $query->bindParam(':faq_id', $faqId, PDO::PARAM_INT);
         $query->execute();
         return $query->fetch(PDO::FETCH_ASSOC);
@@ -161,7 +190,7 @@ class User {
         $sql = "INSERT INTO volunteers (first_name, middle_name, last_name, year, section, program_id, contact, email, cor_file)
                 VALUES (:first_name, :middle_name, :last_name, :year, :section, :program_id, :contact, :email, :cor_file)";
         
-        $query = $this->db->connect()->prepare($sql);
+        $query = $this->getConnection()->prepare($sql);
 
         $query->bindParam(':first_name', $first_name);
         $query->bindParam(':middle_name', $middle_name);
@@ -177,7 +206,7 @@ class User {
     }
     public function fetchDownloadableFiles() {
         $sql = "SELECT file_id, file_name, file_type, created_at FROM downloadable_files WHERE is_deleted = 0";
-        $query = $this->db->connect()->prepare($sql);
+        $query = $this->getConnection()->prepare($sql);
         $query->execute();
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -187,21 +216,21 @@ class User {
                 FROM friday_prayers 
                 WHERE khutbah_date >= CURDATE() AND is_deleted = 0 
                 ORDER BY khutbah_date ASC";
-        $query = $this->db->connect()->prepare($sql);
+        $query = $this->getConnection()->prepare($sql);
         $query->execute();
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function fetchPrayerSchedule() {
         $sql = "SELECT * FROM friday_prayers WHERE is_deleted=0 ORDER BY khutbah_date";
-        $query = $this->db->connect()->prepare($sql);
+        $query = $this->getConnection()->prepare($sql);
         $query->execute();
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
 
     public function fetchCalendarActivities() {
         $sql = "SELECT activity_id, title, description, activity_date FROM calendar_activities WHERE is_deleted = 0 ORDER BY activity_date ASC";
-        $query = $this->db->connect()->prepare($sql);
+        $query = $this->getConnection()->prepare($sql);
         $query->execute();
         $result = $query->fetchAll(PDO::FETCH_ASSOC);
 
@@ -217,7 +246,7 @@ class User {
                 FROM volunteers 
                 WHERE is_deleted = 0 AND status = 'approved' 
                 ORDER BY created_at DESC";
-        $query = $this->db->connect()->prepare($sql);
+        $query = $this->getConnection()->prepare($sql);
         $query->execute();
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -235,7 +264,7 @@ class User {
                 INNER JOIN school_years sy ON tr.school_year_id = sy.school_year_id
                 WHERE tr.is_deleted = 0
                 ORDER BY tr.report_date DESC";
-        $query = $this->db->connect()->prepare($sql);
+        $query = $this->getConnection()->prepare($sql);
         $query->execute();
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -257,7 +286,7 @@ class User {
                 ORDER BY 
                     op.position_id ASC
             ";
-            $query = $this->db->connect()->prepare($sql);
+            $query = $this->getConnection()->prepare($sql);
             $query->execute();
             return $query->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
@@ -274,7 +303,7 @@ class User {
                 WHERE ou.deleted_at IS NULL
                 ORDER BY ou.update_id ASC";
         
-        $query = $this->db->connect()->prepare($sql);
+        $query = $this->getConnection()->prepare($sql);
         $query->execute();
         $updates = $query->fetchAll();
         
@@ -285,7 +314,7 @@ class User {
                          WHERE update_id = :update_id
                          ORDER BY upload_order ASC";
             
-            $imagesQuery = $this->db->connect()->prepare($imagesSql);
+            $imagesQuery = $this->getConnection()->prepare($imagesSql);
             $imagesQuery->bindParam(':update_id', $update['update_id']);
             $imagesQuery->execute();
             $update['images'] = $imagesQuery->fetchAll();
@@ -300,7 +329,7 @@ class User {
                     WHERE update_id = :update_id
                     ORDER BY upload_order ASC";
     
-            $query = $this->db->connect()->prepare($sql);
+            $query = $this->getConnection()->prepare($sql);
             $query->bindParam(':update_id', $update_id, PDO::PARAM_INT);
             $query->execute();
             return $query->fetchAll();
@@ -314,7 +343,7 @@ class User {
         
         error_log("Fetching programs for college ID: $college_id");
         
-        $query = $this->db->connect()->prepare($sql);
+        $query = $this->getConnection()->prepare($sql);
         $query->bindParam(':college_id', $college_id, PDO::PARAM_INT);
         $query->execute();
         
@@ -324,10 +353,84 @@ class User {
         return $result;
     }
 
-    // FOOTER FUNCTIONS
+    // SITE MANAGEMENT FUNCTIONS
     function fetchFooterInfo() {
         $sql = "SELECT * FROM site_pages WHERE page_type = 'footer' AND is_active = 1";
-        $query = $this->db->connect()->prepare($sql);
+        $query = $this->getConnection()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    // LOGO
+    function fetchLogo() {
+        $sql = "SELECT * FROM site_pages WHERE page_type = 'logo' AND is_active = 1";
+        $query = $this->getConnection()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    // CAROUSEL
+    function fetchCarousel() {
+        try {
+            $sql = "SELECT * FROM site_pages WHERE page_type = 'carousel' AND is_active = 1";
+            $query = $this->getConnection()->prepare($sql);
+            $query->execute();
+            return $query->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error in fetchCarousel: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    function fetchHome() {
+        try {
+            $sql = "SELECT * FROM site_pages WHERE page_type = 'home' AND is_active = 1";
+            $query = $this->getConnection()->prepare($sql);
+            $query->execute();
+            return $query->fetchAll();
+        } catch (PDOException $e) {
+            error_log("Error in fetchHome: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    // ORG UPDATES
+    function fetchOrgUpdatesWithImages() {
+        try {
+            $sql = "
+                SELECT u.*, 
+                      (SELECT i.file_path 
+                       FROM update_images i 
+                       WHERE i.update_id = u.update_id 
+                       ORDER BY i.upload_order ASC 
+                       LIMIT 1) as image_path
+                FROM org_updates u 
+                WHERE u.is_deleted = 0 
+                ORDER BY u.created_at DESC
+            ";
+            
+            $query = $this->getConnection()->prepare($sql);
+            $query->execute();
+            
+            $result = $query->fetchAll();
+            
+            foreach ($result as &$update) {
+                if (!empty($update['image_path'])) {
+                    $update['image_path'] = '/updates/' . $update['image_path'];
+                }
+            }
+            
+            return $result;
+        } catch (PDOException $e) {
+            error_log("Error fetching org updates with images: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    // VOLUNTEERS
+    function fetchVolunteerInfo() {
+        $sql = "SELECT * FROM site_pages WHERE page_type = 'volunteer' AND is_active = 1";
+        $query = $this->getConnection()->prepare($sql);
         $query->execute();
         return $query->fetchAll();
     }

@@ -3,127 +3,76 @@
 ob_start();
 include '../../includes/header.php';
 require_once '../../classes/userClass.php';
+require_once '../../classes/adminClass.php';
 
 $userObj = new User();
+$carousel = $userObj->fetchCarousel();
+$home = $userObj->fetchHome();
+$orgUpdates = $userObj->fetchOrgUpdatesWithImages();
+
+$adminObj = new Admin();
+$prayerSchedule = $adminObj->fetchPrayerSchedule();
 ?>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="../../js/website.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="<?php echo $base_url; ?>css/user.landingpage.css">
+<link rel="stylesheet" href="../../css/user.landingpage.css">
 
 <section id="home" class="carousel">
-    <!-- Slide 1 -->
-    <div class="carousel-slide active">
-        <div class="carousel-background" style="background-image: url('<?php echo $base_url; ?>assets/images/msa-hero-collage.jpg');"></div>
+    <?php 
+    $activeCarousel = array_slice($carousel, 0, 4);
+    foreach ($activeCarousel as $key => $carouselItem) : 
+        $isActive = ($key === 0) ? 'active' : '';
+    ?>
+    <div class="carousel-slide <?php echo $isActive; ?>">
+        <div class="carousel-background" style="background-image: url('<?php echo $base_url . $carouselItem['image_path']; ?>');"></div>
         <div class="carousel-overlay"></div>
+        <?php if ($key === 0) : ?>
         <div class="hero-content">
-            <h2>Welcome to MSA CONNECT</h2>
-            <p>Your gateway to the Muslim Student Association community and activities.</p>
+            <?php foreach ($home as $homeItem) : ?>
+                <h2><?php echo $homeItem['title']; ?></h2>
+                <p><?php echo $homeItem['description']; ?></p>
+            <?php endforeach; ?>
         </div>
+        <?php endif; ?>
     </div>
-    <!-- Slide 2 -->
-    <div class="carousel-slide">
-        <div class="carousel-background" style="background-image: url('<?php echo $base_url; ?>assets/images/msa-hero-collage.jpg');"></div>
-        <div class="carousel-overlay"></div>
-        <div class="hero-content">
-            <h2>Prayer Times</h2>
-            <p>Stay updated with daily prayer schedules and Friday prayer information.</p>
-        </div>
-    </div>
-    <!-- Slide 3 -->
-    <div class="carousel-slide">
-        <div class="carousel-background" style="background-image: url('<?php echo $base_url; ?>assets/images/msa-hero-collage.jpg');"></div>
-        <div class="carousel-overlay"></div>
-        <div class="hero-content">
-            <h2>Events & Activities</h2>
-            <p>Discover upcoming events, workshops, and community gatherings.</p>
-        </div>
-    </div>
-    <!-- Slide 4 -->
-    <div class="carousel-slide">
-        <div class="carousel-background" style="background-image: url('<?php echo $base_url; ?>assets/images/msa-hero-collage.jpg');"></div>
-        <div class="carousel-overlay"></div>
-        <div class="hero-content">
-            <h2>Educational Resources</h2>
-            <p>Access learning materials, Islamic studies, and educational programs.</p>
-        </div>
-    </div>
-    <!-- Slide 5 -->
-    <div class="carousel-slide">
-        <div class="carousel-background" style="background-image: url('<?php echo $base_url; ?>assets/images/msa-hero-collage.jpg');"></div>
-        <div class="carousel-overlay"></div>
-        <div class="hero-content">
-            <h2>Volunteer Opportunities</h2>
-            <p>Get involved in community service and make a positive impact.</p>
-        </div>
-    </div>
-    <!-- Slide 6 -->
-    <div class="carousel-slide">
-        <div class="carousel-background" style="background-image: url('<?php echo $base_url; ?>assets/images/msa-hero-collage.jpg');"></div>
-        <div class="carousel-overlay"></div>
-        <div class="hero-content">
-            <h2>Community Support</h2>
-            <p>Find resources, guidance, and support for your academic journey.</p>
-        </div>
-    </div>
-    <!-- Navigation Controls -->
+    <?php endforeach; ?>
+    
     <button class="carousel-button prev" aria-label="Previous slide">❮</button>
     <button class="carousel-button next" aria-label="Next slide">❯</button>
 
-    <!-- Adding Slide Indicators -->
     <div class="carousel-indicators">
-        <span class="indicator active" data-slide="0"></span>
-        <span class="indicator" data-slide="1"></span>
-        <span class="indicator" data-slide="2"></span>
-        <span class="indicator" data-slide="3"></span>
-        <span class="indicator" data-slide="4"></span>
-        <span class="indicator" data-slide="5"></span>
+        <?php for ($i = 0; $i < count($activeCarousel); $i++) : ?>
+            <span class="indicator <?php echo ($i === 0) ? 'active' : ''; ?>" data-slide="<?php echo $i; ?>"></span>
+        <?php endfor; ?>
     </div>
 </section>
-<!-- filepath: c:\xampp\htdocs\msaconnect\views\user\landing_page.php -->
 <section id="latest-updates" class="latest-updates">
     <h2>LATEST UPDATES</h2>
     <div id="updates-container" class="updates-container">
-        <!-- Static placeholder updates -->
+        <?php 
+        $limitedUpdates = array_slice($orgUpdates, 0, 4);
+        foreach ($limitedUpdates as $update) : 
+            $formattedDate = date('F j, Y', strtotime($update['created_at']));
+            $imagePath = !empty($update['image_path']) ? $base_url . 'assets' . $update['image_path'] : $base_url . 'assets/images/login.jpg';
+        ?>
         <div class="update-item">
             <div class="update-details">
-                <img src="<?php echo $base_url; ?>assets/images/login.jpg" alt="Community Event" class="update-image">
-                <p class="update-date">August 15, 2023</p>
-                <h3 class="update-title">Community Iftar Gathering</h3>
-                <p class="update-content">Join us for a community iftar gathering at the campus mosque. Everyone is welcome!</p>
+                <img src="<?php echo $imagePath; ?>" alt="Update Image" class="update-image">
+                <p class="update-date"><?php echo $formattedDate; ?></p>
+                <h3 class="update-title"><?php echo $update['title']; ?></h3>
+                <p class="update-content"><?php echo $update['content']; ?></p>
             </div>
         </div>
-        <div class="update-item">
-            <div class="update-details">
-            <img src="<?php echo $base_url; ?>assets/images/login.jpg" alt="Community Event" class="update-image">
-            <p class="update-date">August 10, 2023</p>
-                <h3 class="update-title">Islamic Finance Workshop</h3>
-                <p class="update-content">Learn about Islamic finance principles and how to apply them in modern life.</p>
-            </div>
-        </div>
-        <div class="update-item">
-            <div class="update-details">
-            <img src="<?php echo $base_url; ?>assets/images/login.jpg" alt="Community Event" class="update-image">
-            <p class="update-date">August 5, 2023</p>
-                <h3 class="update-title">Weekly Quran Study Circle</h3>
-                <p class="update-content">Our weekly Quran study circle will be held every Wednesday at 7 PM.</p>
-            </div>
-        </div>
-        <div class="update-item">
-            <div class="update-details">
-            <img src="<?php echo $base_url; ?>assets/images/login.jpg" alt="Community Event" class="update-image">
-            <p class="update-date">July 28, 2023</p>
-                <h3 class="update-title">Community Service Day</h3>
-                <p class="update-content">Join us for a day of community service and giving back to our local community.</p>
-            </div>
-        </div>
+        <?php endforeach; ?>
     </div>
 </section>
 
 <section id="prayer-schedule" class="prayer-schedule">
-    <h2>FRIDAY PRAYER SCHEDULE</h2>
+    <h2>KHUTBAH SCHEDULE</h2>
     <div class="table-container">
         <div class="prayer-schedule-content" id="prayer-schedule-content">
-            <!-- Static placeholder prayer schedule -->
             <table>
                 <thead>
                     <tr>
@@ -135,49 +84,28 @@ $userObj = new User();
                     </tr>
                 </thead>
                 <tbody>
+                    <?php foreach ($prayerSchedule as $prayer) : 
+                        $dayName = date('l', strtotime($prayer['date']));
+                    ?>
                     <tr>
-                        <td>2023-08-18</td>
-                        <td>Friday</td>
-                        <td>Imam Abdullah</td>
-                        <td>Importance of Community</td>
-                        <td>Campus Mosque</td>
+                        <td><?php echo $prayer['date']; ?></td>
+                        <td><?php echo $dayName; ?></td>
+                        <td><?php echo $prayer['speaker']; ?></td>
+                        <td><?php echo $prayer['topic']; ?></td>
+                        <td><?php echo $prayer['location']; ?></td>
                     </tr>
-                    <tr>
-                        <td>2023-08-25</td>
-                        <td>Friday</td>
-                        <td>Dr. Ahmed Hassan</td>
-                        <td>Seeking Knowledge</td>
-                        <td>Campus Mosque</td>
-                    </tr>
-                    <tr>
-                        <td>2023-09-01</td>
-                        <td>Friday</td>
-                        <td>Imam Mustafa</td>
-                        <td>Preparing for Ramadan</td>
-                        <td>Campus Mosque</td>
-                    </tr>
-                    <tr>
-                        <td>2023-09-08</td>
-                        <td>Friday</td>
-                        <td>Dr. Saeed Ali</td>
-                        <td>Islamic Ethics</td>
-                        <td>Campus Mosque</td>
-                    </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
     </div>
 </section>
 
-
 <?php include '../../includes/footer.php'; ?>
-<script src="<?php echo $base_url; ?>js/landingpage.js"></script>
 <script>
-  // Force header to be fixed with JavaScript
   document.addEventListener('DOMContentLoaded', function() {
     const header = document.querySelector('header');
     if (header) {
-      // Apply styles directly with !important
       header.style.cssText = `
         position: fixed !important;
         top: 0 !important;
@@ -187,7 +115,6 @@ $userObj = new User();
         z-index: 9999999 !important;
       `;
       
-      // Set body padding based on header height
       const headerHeight = header.offsetHeight;
       document.body.style.paddingTop = headerHeight + 'px';
       

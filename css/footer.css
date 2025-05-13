@@ -81,8 +81,20 @@ footer .socials {
 footer .socials a {
   font-family: 'Noto Naskh Arabic', serif;
   color: #fff;
-  font-size: 1.2rem;
   text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+}
+
+footer .socials a i {
+  font-size: 1.2rem;
+}
+
+footer .socials a p {
+  margin: 0;
+  font-size: 0.9rem;
 }
 
 footer .socials a:hover {
