@@ -6,7 +6,6 @@
 
 <div id="successModal" class="modal" style="display: block !important;">
     <div class="modal-content">
-        <span class="close-button" onclick="closeVolunteerModal()">&times;</span>
         <div class="success-icon">
             <i class="fa fa-check-circle"></i>
         </div>

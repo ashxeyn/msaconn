@@ -83,6 +83,13 @@ function initializeVolunteers() {
         return;
     }
 
+    // Helper function to capitalize each word in a name
+    function capitalizeName(name) {
+        return name.split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+    }
+
     async function loadVolunteers() {
         try {
             const response = await fetch('../../handler/user/fetchVolunteers.php');
@@ -91,10 +98,18 @@ function initializeVolunteers() {
             volunteerGrid.innerHTML = '';
             if (data.length > 0) {
                 data.forEach(volunteer => {
+                    const firstName = capitalizeName(volunteer.first_name);
+                    const middleName = volunteer.middle_name ? capitalizeName(volunteer.middle_name) : '';
+                    const lastName = capitalizeName(volunteer.last_name);
+                    
+                    const fullName = middleName ? 
+                        `${firstName} ${middleName} ${lastName}` : 
+                        `${firstName} ${lastName}`;
+
                     const volunteerDiv = document.createElement('div');
                     volunteerDiv.classList.add('volunteer');
                     volunteerDiv.innerHTML = `
-                        <p class="name">${volunteer.first_name} ${volunteer.last_name}</p>
+                        <p class="name">${fullName}</p>
                     `;
                     volunteerGrid.appendChild(volunteerDiv);
                 });
@@ -111,7 +126,7 @@ function initializeVolunteers() {
     loadVolunteers();
 
     // Poll for updates every 5 seconds
-    setInterval(loadVolunteers, 3000);
+    setInterval(loadVolunteers, 5000);
 }
 
 // Prayer Schedule Section

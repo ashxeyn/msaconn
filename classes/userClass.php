@@ -187,8 +187,8 @@ class User {
    
      // Volunteer functions
      function addVolunteer($first_name, $last_name, $middle_name, $year, $section, $program, $contact, $email, $cor_file) {
-        $sql = "INSERT INTO volunteers (first_name, middle_name, last_name, year, section, program_id, contact, email, cor_file)
-                VALUES (:first_name, :middle_name, :last_name, :year, :section, :program_id, :contact, :email, :cor_file)";
+        $sql = "INSERT INTO volunteers (first_name, middle_name, last_name, year, program_id, contact, email, cor_file)
+                VALUES (:first_name, :middle_name, :last_name, :year, :program_id, :contact, :email, :cor_file)";
         
         $query = $this->getConnection()->prepare($sql);
 
@@ -196,7 +196,6 @@ class User {
         $query->bindParam(':middle_name', $middle_name);
         $query->bindParam(':last_name', $last_name);
         $query->bindParam(':year', $year);
-        $query->bindParam(':section', $section);
         $query->bindParam(':program_id', $program);
         $query->bindParam(':contact', $contact);
         $query->bindParam(':email', $email);
@@ -260,6 +259,7 @@ class User {
         $query->execute();
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
+    
     public function fetchTransparencyReports() {
         $sql = "SELECT 
                     tr.report_id, 
@@ -440,6 +440,14 @@ class User {
     // VOLUNTEERS
     function fetchVolunteerInfo() {
         $sql = "SELECT * FROM site_pages WHERE page_type = 'volunteer' AND is_active = 1";
+        $query = $this->getConnection()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    // BACKGROUND IMAGE
+    function fetchBackgroundImage() {
+        $sql = "SELECT * FROM site_pages WHERE page_type = 'background' AND is_active = 1";
         $query = $this->getConnection()->prepare($sql);
         $query->execute();
         return $query->fetchAll();

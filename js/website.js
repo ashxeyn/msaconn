@@ -31,10 +31,13 @@ $(document).ready(function() {
     updateFooter();
 });
 
-// LANDING PAGE FUNCTIONS
+// GENERAL PAGE FUNCTIONS
 let carouselInterval = null;
 let carouselRefreshInterval = null;
+let volunteerHeroInterval = null;
+let volunteerRefreshInterval = null;
 
+// LANDING PAGE FUNCTIONS
 function updateLandingPage() {
     $.ajax({
         url: base_url + 'handler/website/fetchLandingPage.php',
@@ -78,7 +81,7 @@ function updateCarousel(carouselData) {
     if (!carouselData || carouselData.length === 0) return;
     
     const carouselContainer = $('.carousel');
-    if (!carouselContainer.length) return; // Only proceed if we're on the landing page
+    if (!carouselContainer.length) return; 
     
     const heroContent = $('.hero-content').clone();
     
@@ -114,7 +117,6 @@ function updateCarouselIndicators(slideCount) {
 function updateHomeContent(homeData) {
     if (!homeData || homeData.length === 0) return;
     
-    // Only update hero content if we're on the landing page
     if (window.location.pathname.includes('landing_page')) {
         const homeItem = homeData[0];
         const heroContent = $('.carousel .hero-content');
@@ -288,16 +290,137 @@ function initCarousel() {
     );
 }
 
+// $(document).ready(function() {
+//     if (typeof base_url === 'undefined') {
+//         const pathArray = window.location.pathname.split('/');
+//         base_url = window.location.origin + '/' + pathArray[1] + '/';
+//     }
+    
+//     if (window.location.pathname.includes('landing_page')) {
+//         updateLandingPage();
+//         initCarousel();
+//     }
+// });
+
+// VOLUNTEER HERO FUNCTIONS
+
+function updateVolunteerHero() {
+    $.ajax({
+        url: base_url + 'handler/website/fetchVolunteerHero.php',
+        method: 'GET',
+        dataType: 'json',
+        cache: false,
+        success: function(response) {
+            if (response.status === 'success') {
+                const data = response.data;
+                
+                // Update volunteer info content
+                if (data.volunteerInfo && data.volunteerInfo.length > 0) {
+                    updateVolunteerContent(data.volunteerInfo);
+                }
+                
+                // Update background image
+                if (data.backgroundImage && data.backgroundImage.length > 0) {
+                    updateVolunteerBackground(data.backgroundImage);
+                }
+                
+                console.log('Volunteer hero content updated successfully at', new Date().toLocaleTimeString());
+            } else {
+                console.error('Error in response:', response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching volunteer hero data:', error);
+        }
+    });
+}
+
+function updateVolunteerContent(volunteerInfo) {
+    const heroContent = $('.hero-content');
+    if (!heroContent.length) return;
+
+    const info = volunteerInfo[0];
+    const currentTitle = heroContent.find('h2').text().trim();
+    const currentDesc = heroContent.find('p').text().trim();
+
+    if (currentTitle !== info.title.trim() || currentDesc !== info.description.trim()) {
+        heroContent.find('h2').text(info.title);
+        heroContent.find('p').text(info.description);
+        console.log('Volunteer content updated');
+    }
+}
+
+function updateVolunteerBackground(backgroundImages) {
+    const heroBackground = $('.hero-background');
+    if (!heroBackground.length) return;
+
+    const image = backgroundImages[0];
+    const newImagePath = base_url + image.image_path;
+    const currentBgStyle = heroBackground.attr('style');
+    const newBgStyle = `background-image: url('${newImagePath}');`;
+    
+    if (!currentBgStyle || !currentBgStyle.includes(image.image_path)) {
+        heroBackground.attr('style', newBgStyle);
+        console.log('Volunteer background updated');
+    }
+}
+
+function initVolunteerHero() {
+    if (volunteerHeroInterval) {
+        clearInterval(volunteerHeroInterval);
+    }
+    
+    if (volunteerRefreshInterval) {
+        clearInterval(volunteerRefreshInterval);
+    }
+
+    updateVolunteerHero();
+
+    volunteerHeroInterval = setInterval(function() {
+        updateVolunteerHero();
+    }, 10000); 
+
+    $('.hero').hover(
+        function() {
+            if (volunteerHeroInterval) {
+                clearInterval(volunteerHeroInterval);
+            }
+            if (volunteerRefreshInterval) {
+                clearInterval(volunteerRefreshInterval);
+            }
+            console.log('Volunteer hero updates paused on hover');
+        },
+        function() {
+            volunteerHeroInterval = setInterval(function() {
+                updateVolunteerHero();
+            }, 10000);
+            console.log('Volunteer hero updates resumed after hover');
+        }
+    );
+}
+
+function isPageActive(pagePattern) {
+    return window.location.pathname.includes(pagePattern);
+}
+
 $(document).ready(function() {
     if (typeof base_url === 'undefined') {
         const pathArray = window.location.pathname.split('/');
         base_url = window.location.origin + '/' + pathArray[1] + '/';
     }
     
-    if (window.location.pathname.includes('landing_page')) {
+    console.log('Website.js initialized on path:', window.location.pathname);
+    
+    if (isPageActive('landing_page')) {
+        console.log('Landing page detected, initializing carousel and content updates');
         updateLandingPage();
         initCarousel();
+    } 
+    
+    if (isPageActive('volunteer')) {
+        console.log('Volunteer page detected, initializing hero content updates');
+        initVolunteerHero();
+        
+        loadVolunteers();
     }
 });
-
-// VOLUNTEER FUNCTIONS

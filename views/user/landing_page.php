@@ -1,5 +1,4 @@
 <?php
-// Remove all whitespace before DOCTYPE to prevent rendering issues
 ob_start();
 include '../../includes/header.php';
 require_once '../../classes/userClass.php';
