@@ -1,158 +1,118 @@
-document.addEventListener('DOMContentLoaded', function () {
-  const menuToggle = document.querySelector('.menu-toggle');
-  const navbar = document.querySelector('.navbar');
-
-  // Toggle the mobile menu
-  menuToggle.addEventListener('click', function () {
-    navbar.classList.toggle('active');
-  });
-
-  // AJAX functions for each header navigation link
-  window.loadHomePage = function () {
-    $.ajax({
-      url: "../user/landing_page", // Removed .php
-      method: 'GET',
-      success: function (response) {
-        document.open();
-        document.write(response);
-        document.close();
-      },
-      error: function (xhr, status, error) {
-        console.error('Error loading Home page:', error);
-        alert('Failed to load Home page. Please try again.');
-      }
+document.addEventListener('DOMContentLoaded', function() {
+    // Select elements
+    const menuToggle = document.querySelector('.menu-toggle');
+    const navbar = document.querySelector('.navbar');
+    const dropdowns = document.querySelectorAll('.dropdown');
+    
+    console.log('Header JS loaded', { 
+        menuToggle: menuToggle ? 'Found' : 'Not found', 
+        navbar: navbar ? 'Found' : 'Not found',
+        dropdownsCount: dropdowns.length
     });
-  };
-
-  window.loadVolunteerPage = function () {
-    $.ajax({
-      url: "../user/volunteer", // Removed .php
-      method: 'GET',
-      success: function (response) {
-        document.open();
-        document.write(response);
-        document.close();
-      },
-      error: function (xhr, status, error) {
-        console.error('Error loading Volunteer page:', error);
-        alert('Failed to load Volunteer page. Please try again.');
-      }
+    
+    // Toggle menu on hamburger click
+    if (menuToggle && navbar) {
+        menuToggle.addEventListener('click', function() {
+            console.log('Menu toggle clicked');
+            menuToggle.classList.toggle('active');
+            navbar.classList.toggle('active');
+        });
+    }
+    
+    // Handle dropdown menus
+    dropdowns.forEach((dropdown, index) => {
+        const link = dropdown.querySelector('a');
+        const dropdownContent = dropdown.querySelector('.dropdown-content');
+        
+        console.log(`Dropdown ${index}:`, { 
+            link: link ? 'Found' : 'Not found',
+            dropdownContent: dropdownContent ? 'Found' : 'Not found'
+        });
+        
+        // Add click event for mobile
+        if (link) {
+            link.addEventListener('click', function(e) {
+                console.log(`Dropdown ${index} clicked, mobile: ${window.innerWidth <= 768}`);
+                
+                if (window.innerWidth <= 768) {
+                    e.preventDefault();
+                    e.stopPropagation(); // Prevent event bubbling
+                    
+                    dropdown.classList.toggle('active');
+                    
+                    // Toggle this dropdown content
+                    if (dropdownContent) {
+                        const isActive = dropdownContent.classList.toggle('active');
+                        console.log(`Dropdown ${index} content toggled to: ${isActive ? 'active' : 'inactive'}`);
+                        
+                        // Set display style directly in addition to class
+                        dropdownContent.style.display = isActive ? 'block' : 'none';
+                        
+                        // Close other dropdown contents
+                        dropdowns.forEach((otherDropdown, otherIndex) => {
+                            if (otherDropdown !== dropdown) {
+                                const otherContent = otherDropdown.querySelector('.dropdown-content');
+                                if (otherContent && otherContent.classList.contains('active')) {
+                                    otherDropdown.classList.remove('active');
+                                    otherContent.classList.remove('active');
+                                    otherContent.style.display = 'none';
+                                    console.log(`Closed other dropdown ${otherIndex}`);
+                                }
+                            }
+                        });
+                    }
+                }
+            });
+        }
     });
-  };
-
-  window.loadAboutUsPage = function () {
-    $.ajax({
-      url: "../user/aboutus", // Removed .php
-      method: 'GET',
-      success: function (response) {
-        document.open();
-        document.write(response);
-        document.close();
-      },
-      error: function (xhr, status, error) {
-        console.error('Error loading About Us page:', error);
-        alert('Failed to load About Us page. Please try again.');
-      }
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e) {
+        if (window.innerWidth <= 768) {
+            const isClickInsideMenu = navbar.contains(e.target);
+            const isClickOnToggle = menuToggle.contains(e.target);
+            
+            if (!isClickInsideMenu && !isClickOnToggle && navbar.classList.contains('active')) {
+                console.log('Clicked outside menu, closing');
+                navbar.classList.remove('active');
+                menuToggle.classList.remove('active');
+                
+                // Close all dropdown contents
+                dropdowns.forEach((dropdown, index) => {
+                    dropdown.classList.remove('active');
+                    const dropdownContent = dropdown.querySelector('.dropdown-content');
+                    if (dropdownContent) {
+                        dropdownContent.classList.remove('active');
+                        dropdownContent.style.display = 'none';
+                        console.log(`Closed dropdown ${index}`);
+                    }
+                });
+            }
+        }
     });
-  };
-
-  window.loadRegistrationPage = function () {
-    $.ajax({
-      url: "../user/Registrationmadrasa", // Removed .php
-      method: 'GET',
-      success: function (response) {
-        document.open();
-        document.write(response);
-        document.close();
-      },
-      error: function (xhr, status, error) {
-        console.error('Error loading Registration page:', error);
-        alert('Failed to load Registration page. Please try again.');
-      }
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        console.log('Window resized, width:', window.innerWidth);
+        
+        if (window.innerWidth > 768) {
+            // Reset mobile menu when resizing to desktop
+            if (navbar.classList.contains('active')) {
+                navbar.classList.remove('active');
+                menuToggle.classList.remove('active');
+                console.log('Reset mobile menu on resize');
+            }
+            
+            // Reset all dropdowns
+            dropdowns.forEach((dropdown, index) => {
+                dropdown.classList.remove('active');
+                const dropdownContent = dropdown.querySelector('.dropdown-content');
+                if (dropdownContent) {
+                    dropdownContent.classList.remove('active');
+                    dropdownContent.style.display = '';  // Reset to default
+                    console.log(`Reset dropdown ${index} on resize`);
+                }
+            });
+        }
     });
-  };
-
-  window.loadTransparencyPage = function () {
-    $.ajax({
-      url: "../user/transparencyreport", // Removed .php
-      method: 'GET',
-      success: function (response) {
-        document.open();
-        document.write(response);
-        document.close();
-      },
-      error: function (xhr, status, error) {
-        console.error('Error loading Transparency page:', error);
-        alert('Failed to load Transparency page. Please try again.');
-      }
-    });
-  };
-
-  window.loadCalendarPage = function () {
-    $.ajax({
-      url: "../user/calendar", // Removed .php
-      method: 'GET',
-      success: function (response) {
-        document.open();
-        document.write(response);
-        document.close();
-      },
-      error: function (xhr, status, error) {
-        console.error('Error loading Calendar page:', error);
-        alert('Failed to load Calendar page. Please try again.');
-      }
-    });
-  };
-
-  window.loadFAQsPage = function () {
-    $.ajax({
-      url: "../user/faqs", // Removed .php
-      method: 'GET',
-      success: function (response) {
-        document.open();
-        document.write(response);
-        document.close();
-      },
-      error: function (xhr, status, error) {
-        console.error('Error loading FAQs page:', error);
-        alert('Failed to load FAQs page. Please try again.');
-      }
-    });
-  };
-
-  // Attach event listeners to header navigation links
-  document.querySelector('.nav-links a[href$="landing_page"]').addEventListener('click', function (event) {
-    event.preventDefault();
-    loadHomePage();
-  });
-
-  document.querySelector('.nav-links a[href$="volunteer"]').addEventListener('click', function (event) {
-    event.preventDefault();
-    loadVolunteerPage();
-  });
-
-  document.querySelector('.nav-links a[href$="aboutus"]').addEventListener('click', function (event) {
-    event.preventDefault();
-    loadAboutUsPage();
-  });
-
-  document.querySelector('.nav-links a[href$="Bylaws"]').addEventListener('click', function (event) {
-    event.preventDefault();
-    loadRegistrationPage();
-  });
-
-  document.querySelector('.nav-links a[href$="transparencyreport"]').addEventListener('click', function (event) {
-    event.preventDefault();
-    loadTransparencyPage();
-  });
-
-  document.querySelector('.nav-links a[href$="calendar"]').addEventListener('click', function (event) {
-    event.preventDefault();
-    loadCalendarPage();
-  });
-
-  document.querySelector('.nav-links a[href$="faqs"]').addEventListener('click', function (event) {
-    event.preventDefault();
-    loadFAQsPage();
-  });
 });

@@ -2,13 +2,18 @@
 /* Based on your provided styles with additions for the combined form */
 
 /* General Styles */
-body {
-    font-family: 'Noto Naskh Arabic', serif;
+html, body {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
     margin: 0;
     padding: 0;
+}
+
+body {
+    font-family: 'Noto Naskh Arabic', serif;
     box-sizing: border-box;
-    overflow-x: hidden;
-    background-image: url('../assets/images/login.jpg');
+    background-image: url('../assets/images/background.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -28,6 +33,7 @@ body {
     display: flex;
     justify-content: center;
     font-family: 'Noto Naskh Arabic', serif;
+    box-sizing: border-box;
 }
 
 /* Type Selection Screen */
@@ -41,6 +47,7 @@ body {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     text-align: center;
     font-family: 'Noto Naskh Arabic', serif;
+    box-sizing: border-box;
 }
 
 .registration-type-container h2 {
@@ -103,18 +110,24 @@ body {
 
 /* Form Styles (shared by both types) */
 form {
-    max-width: 700px;
-    width: 90%;
+    max-width: 600px;
+    width: 95%;
     margin: 20px auto;
     padding: 30px;
     background-color: rgba(255, 255, 255, 0.95);
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     font-family: 'Noto Naskh Arabic', serif;
+    box-sizing: border-box;
+    overflow: hidden;
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
 .form-section {
     margin-bottom: 25px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 /* Form Labels */
@@ -163,6 +176,31 @@ input[type="file"]:focus {
     font-family: 'Noto Naskh Arabic', serif;
 }
 
+/* COR Upload Section */
+.form-section label[for="cor_file"] {
+    font-weight: 600;
+    color: #1a541c;
+    margin-bottom: 8px;
+    display: block;
+    font-size: 15px;
+}
+
+#cor_file {
+    border: 2px solid #1a9626;
+    border-radius: 10px;
+    padding: 12px 15px;
+    background-color: #f9f9f9;
+    font-size: 16px;
+    margin-bottom: 10px;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+#cor_file:focus {
+    border-color: #1a541c;
+    background-color: #fff;
+    outline: none;
+}
+
 /* Optional Section Styling */
 .optional-section {
     background-color: #f5f9f5;
@@ -171,6 +209,7 @@ input[type="file"]:focus {
     margin-top: 30px;
     border-left: 4px solid #1a9626;
     font-family: 'Noto Naskh Arabic', serif;
+    box-sizing: border-box;
 }
 
 .optional-section h3 {
@@ -184,6 +223,8 @@ input[type="file"]:focus {
 /* Upload Container Styles */
 .upload-container {
     margin-bottom: 20px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .upload-area {
@@ -195,6 +236,8 @@ input[type="file"]:focus {
     background-color: #f9f9f9;
     transition: all 0.3s ease;
     font-family: 'Noto Naskh Arabic', serif;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .upload-area:hover {
@@ -206,6 +249,8 @@ input[type="file"]:focus {
     flex-direction: column;
     align-items: center;
     gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .upload-icon {
@@ -219,6 +264,10 @@ input[type="file"]:focus {
     font-size: 14px;
     color: #555;
     font-family: 'Noto Naskh Arabic', serif;
+    width: 100%;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
 }
 
 .upload-hint {
@@ -232,6 +281,9 @@ input[type="file"]:focus {
     position: relative;
     margin-top: 10px;
     display: none;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: center;
 }
 
 #preview-img {
@@ -239,6 +291,7 @@ input[type="file"]:focus {
     max-height: 200px;
     border-radius: 10px;
     border: 1px solid #ddd;
+    object-fit: contain;
 }
 
 .remove-image {
@@ -268,6 +321,8 @@ input[type="file"]:focus {
     justify-content: space-between;
     margin-top: 40px;
     gap: 20px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .back-button,
@@ -304,6 +359,180 @@ input[type="file"]:focus {
     background-color: #b82626;
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Form Columns - Changed to single column */
+.form-columns {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-col {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+/* COR row specific styling */
+.cor-row {
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 0;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    html, body {
+        max-width: 100%;
+        overflow-x: hidden;
+    }
+
+    form {
+        width: 95%;
+        max-width: 100%;
+        padding: 15px 10px;
+        margin: 10px auto;
+        box-sizing: border-box;
+    }
+    
+    .form-columns {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .form-col {
+        max-width: 100%;
+        min-width: 100%;
+        padding: 0;
+    }
+    
+    .upload-area {
+        padding: 10px;
+    }
+    
+    .upload-placeholder p {
+        font-size: 12px;
+    }
+    
+    .upload-hint {
+        font-size: 10px;
+    }
+    
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select {
+        font-size: 14px;
+        padding: 10px;
+    }
+    
+    .type-options {
+        flex-direction: column;
+    }
+    
+    .type-option {
+        min-width: 100%;
+    }
+    
+    .button-container {
+        flex-direction: column;
+    }
+
+    .back-button,
+    .submit-button {
+        width: 100%;
+        margin: 5px 0;
+    }
+    
+    label {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 900px) {
+    form {
+        padding: 20px 15px;
+        width: 95%;
+        max-width: 100%;
+    }
+}
+
+/* Fix for any potentially too wide elements */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Prevent any element from being wider than its container */
+{
+
+    max-width: 100%;
+}
+
+/* Button Layout in Form Section */
+.form-section:last-child {
+    display: flex;
+    gap: 15px;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.form-section .back-button,
+.form-section button[type="submit"] {
+    flex: 1;
+    min-width: 0; /* Allows buttons to shrink below their content width */
+    width: 50%; /* Make both buttons exactly half of the container */
+    margin: 0; /* Remove any default margin */
+    background-color: #1a541c;
+    color: #fff;
+    font-weight: 700;
+    padding: 14px 20px; /* Add horizontal padding */
+    border: none;
+    border-radius: 10px;
+    font-size: 17px;
+    line-height: 1.4;
+    height: 50px; /* Set a fixed height */
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    box-shadow: 0 2px 8px rgba(26, 84, 28, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.form-section .back-button:hover,
+.form-section button[type="submit"]:hover {
+    background-color: #17611a;
+    transform: translateY(-2px) scale(1.02);
+}
+
+/* Override submit button color */
+.form-section button[type="submit"][style*="background-color: #d72f2f"] {
+    background-color: #d72f2f !important;
+}
+
+.form-section button[type="submit"][style*="background-color: #d72f2f"]:hover {
+    background-color: #b82626 !important;
+}
+
+/* Responsive adjustments for buttons */
+@media (max-width: 768px) {
+    .form-section:last-child {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .form-section .back-button,
+    .form-section button[type="submit"] {
+        width: 100%;
+        height: 50px; /* Keep consistent height */
+        margin-bottom: 5px; /* Add some spacing between stacked buttons */
+    }
 }
 
 .modal {
@@ -345,24 +574,21 @@ input[type="file"]:focus {
     to { opacity: 1; transform: scale(1); }
 }
 
+/* Custom scrollbar for the form */
+form::-webkit-scrollbar {
+    width: 10px;
+}
 
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    .type-options {
-        flex-direction: column;
-    }
-    
-    .type-option {
-        min-width: 100%;
-    }
-    
-    .button-container {
-        flex-direction: column;
-    }
-    
-    .back-button,
-    .submit-button {
-        width: 100%;
-        margin: 5px 0;
-    }
+form::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 8px;
+}
+
+form::-webkit-scrollbar-thumb {
+    background: #1a541c;
+    border-radius: 8px;
+}
+
+form::-webkit-scrollbar-thumb:hover {
+    background: #134015;
 }

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendar</title>
-    <?php $base_url = 'http://' . $_SERVER['HTTP_HOST'] . '/msaconnect/'; ?>
+    <?php $base_url = 'http://' . $_SERVER['HTTP_HOST'] . '/msaconn/'; ?>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -40,6 +40,65 @@
             </div>
             <!-- Calendar Grid -->
             <div id="calendar-grid" class="calendar-grid row row-cols-7 g-2"></div>
+        </div>
+    </div>
+
+    <!-- 5 Prayers of Islam Table Section -->
+    <div class="container my-5">
+        <div class="bg-white p-4 rounded shadow">
+            <h3 class="mb-4" style="color:#1a541c;"> Daily Prayers Schedule</h3>
+            <div style="color:#333; font-size:32px; margin-bottom:12px;">May 5, 2025</div>
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle prayer-table">
+                    <thead class="table-success">
+                        <tr>
+                            <th>Time</th>
+                            <th>Prayer</th>
+                            <th>Imam</th>
+                            <th>Topic</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Example static rows, replace with dynamic PHP if needed -->
+                        <tr>
+                            <td>04:30 AM</td>
+                            <td>Fajr</td>
+                            <td>Imam Ahmad</td>
+                            <td>The Importance of Fajr</td>
+                            <td>MSA Prayer Hall</td>
+                        </tr>
+                        <tr>
+                            <td>12:15 PM</td>
+                            <td>Dhuhr</td>
+                            <td>Imam Bilal</td>
+                            <td>Unity in Dhuhr</td>
+                            <td>MSA Prayer Hall</td>
+                        </tr>
+                        <tr>
+                            <td>03:45 PM</td>
+                            <td>Asr</td>
+                            <td>Imam Kareem</td>
+                            <td>Virtues of Asr</td>
+                            <td>MSA Prayer Hall</td>
+                        </tr>
+                        <tr>
+                            <td>06:20 PM</td>
+                            <td>Maghrib</td>
+                            <td>Imam Yusuf</td>
+                            <td>Maghrib Reflections</td>
+                            <td>MSA Prayer Hall</td>
+                        </tr>
+                        <tr>
+                            <td>07:45 PM</td>
+                            <td>Isha</td>
+                            <td>Imam Zayd</td>
+                            <td>Isha: Night Prayers</td>
+                            <td>MSA Prayer Hall</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 

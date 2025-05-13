@@ -1,17 +1,87 @@
 document.addEventListener('DOMContentLoaded', function () {
-    console.log(document.getElementById('prayer-schedule-content')); // Should not be null
-    console.log(document.getElementById('faqs-content')); // Should not be null
-    console.log(document.getElementById('volunteer-grid')); // Should not be null
-
     initializeVolunteers();
-    initializePrayerSchedules();
+    initializeAboutContent();
     initializeFAQs();
-    initializeAboutContent(); // Initialize the about content dynamically
+    initializePrayerSchedules();
+    initializeFridayPrayers();
+    
+    // Initialize toggle for registration type if on the registration form page
+    if (document.getElementById('registration_type')) {
+        toggleRegistrationTypeFields();
+    }
 });
+
+// Function to toggle fields based on registration type
+function toggleRegistrationTypeFields() {
+    const regType = document.getElementById('registration_type').value;
+    const onsiteOnlyElements = document.querySelectorAll('.onsite-only');
+    const onlineOnlyElements = document.querySelectorAll('.online-only');
+    const addressFields = document.querySelector('.form-section.online-only'); // Get the address section
+    const optionalIndicator = document.getElementById('optional-indicator');
+    
+    // Adjust required attributes for college and program fields
+    const collegeSelect = document.getElementById('college_id');
+    const programSelect = document.getElementById('program_id');
+    const yearLevelSelect = document.getElementById('year_level');
+    const corFileInput = document.getElementById('cor_file');
+    
+    if (regType === 'On-site') {
+        // Show on-site only elements, hide online only EXCEPT address fields
+        onsiteOnlyElements.forEach(el => el.style.display = 'block');
+        onlineOnlyElements.forEach(el => {
+            if (!el.classList.contains('onsite-only') && el !== addressFields) {
+                el.style.display = 'none';
+            }
+        });
+        
+        // Always show address fields
+        if (addressFields) {
+            addressFields.style.display = 'block';
+        }
+        
+        // Make fields required for on-site
+        if (collegeSelect) collegeSelect.required = true;
+        if (programSelect) programSelect.required = true;
+        if (yearLevelSelect) yearLevelSelect.required = true;
+        if (corFileInput) corFileInput.required = true;
+        
+        // Hide optional indicator
+        if (optionalIndicator) optionalIndicator.style.display = 'none';
+        
+    } else if (regType === 'Online') {
+        // Show online only elements
+        onlineOnlyElements.forEach(el => el.style.display = 'block');
+        
+        // Make fields optional for online
+        if (collegeSelect) collegeSelect.required = false;
+        if (programSelect) programSelect.required = false;
+        if (yearLevelSelect) yearLevelSelect.required = false;
+        if (corFileInput) corFileInput.required = false;
+        
+        // Show optional indicator
+        if (optionalIndicator) optionalIndicator.style.display = 'block';
+    }
+}
+
+// Function to automatically fill address fields when in on-site mode
+function fillAddressFieldsForOnsite() {
+    if (document.getElementById('registration_type').value === 'On-site') {
+        document.getElementById('region').value = 'Zamboanga Peninsula';
+        document.getElementById('province').value = 'Zamboanga City';
+        document.getElementById('city').value = 'Zamboanga City';
+        document.getElementById('barangay').value = 'Tetuan';
+        document.getElementById('street').value = 'MSU Campus';
+        document.getElementById('zip_code').value = '7000';
+    }
+}
 
 // Volunteers Section
 function initializeVolunteers() {
     const volunteerGrid = document.getElementById('volunteer-grid');
+    if (!volunteerGrid) {
+        console.warn('Not on the Volunteer page. Skipping initializeVolunteers.');
+        return;
+    }
 
     async function loadVolunteers() {
         try {
@@ -19,7 +89,6 @@ function initializeVolunteers() {
             const data = await response.json();
 
             volunteerGrid.innerHTML = '';
-
             if (data.length > 0) {
                 data.forEach(volunteer => {
                     const volunteerDiv = document.createElement('div');
@@ -48,6 +117,10 @@ function initializeVolunteers() {
 // Prayer Schedule Section
 function initializePrayerSchedules() {
     const prayerScheduleContent = document.getElementById('prayer-schedule-content');
+    if (!prayerScheduleContent) {
+        console.warn('Not on the Prayer Schedule page. Skipping initializePrayerSchedules.');
+        return;
+    }
 
     async function fetchPrayerSchedules() {
         try {
@@ -110,8 +183,80 @@ function initializePrayerSchedules() {
     setInterval(fetchPrayerSchedules, 3000);
 }
 
+function initializeFridayPrayers() {
+    const prayerScheduleContent = document.getElementById('prayer-schedule-content');
+    if (!prayerScheduleContent) {
+        console.warn('Prayer schedule content container not found. Skipping initializeFridayPrayers.');
+        return;
+    }
+
+    // async function fetchFridayPrayers() {
+    //     try {
+    //         const response = await fetch('../../handler/user/fetchFridayPrayers.php');
+    //         const data = await response.json();
+
+    //         if (data.status === 'success') {
+    //             updatePrayerScheduleContent(data.data);
+    //         } else {
+    //             console.error('Error fetching Friday prayers:', data.message);
+    //             prayerScheduleContent.innerHTML = '<p>Failed to load Friday prayers.</p>';
+    //         }
+    //     } catch (error) {
+    //         console.error('Error fetching Friday prayers:', error);
+    //         prayerScheduleContent.innerHTML = '<p>Failed to load Friday prayers.</p>';
+    //     }
+    // }
+
+    function updatePrayerScheduleContent(prayers) {
+        prayerScheduleContent.innerHTML = ''; // Clear existing content
+
+        if (prayers.length > 0) {
+            let table = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Day</th>
+                            <th>Khateeb</th>
+                            <th>Topic</th>
+                            <th>Location</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            prayers.forEach(prayer => {
+                table += `
+                    <tr>
+                        <td>${prayer.khutbah_date}</td>
+                        <td>${new Date(prayer.khutbah_date).toLocaleDateString('en-US', { weekday: 'long' })}</td>
+                        <td>${prayer.speaker}</td>
+                        <td>${prayer.topic}</td>
+                        <td>${prayer.location}</td>
+                    </tr>
+                `;
+            });
+
+            table += '</tbody></table>';
+            prayerScheduleContent.innerHTML = table;
+        } else {
+            prayerScheduleContent.innerHTML = '<p>No Friday prayers available.</p>';
+        }
+    }
+
+    // Fetch Friday prayers on page load
+    fetchFridayPrayers();
+
+    // Poll for updates every 5 seconds
+    setInterval(fetchFridayPrayers, 5000);
+}
+
 function initializeFAQs() {
     const faqsContent = document.getElementById('faqs-content');
+    if (!faqsContent) {
+        console.warn('Not on the FAQs page. Skipping initializeFAQs.');
+        return;
+    }
 
     async function fetchFaqs() {
         try {
@@ -177,9 +322,11 @@ function initializeFAQs() {
     setInterval(fetchFaqs, 3000);
 }
 function initializeAboutContent() {
-    const heroContent = document.querySelector('.hero-content');
-    const missionElement = document.querySelector('.mission p');
-    const visionElement = document.querySelector('.vision p');
+    const aboutUsHero = document.querySelector('.aboutus-hero');
+    if (!aboutUsHero) {
+        console.warn('Not on the About Us page. Skipping initializeAboutContent.');
+        return;
+    }
 
     async function fetchAboutContent() {
         try {
@@ -197,13 +344,25 @@ function initializeAboutContent() {
     }
 
     function updateAboutContent(aboutData) {
+        const heroContent = aboutUsHero.querySelector('.hero-content');
+        const missionElement = document.querySelector('.mission p');
+        const visionElement = document.querySelector('.vision p');
+
         if (aboutData) {
-            heroContent.innerHTML = `
-                <h2>About Us</h2>
-                <p>${aboutData.description || 'Default description text.'}</p>
-            `;
-            missionElement.textContent = aboutData.mission || 'Default mission text.';
-            visionElement.textContent = aboutData.vision || 'Default vision text.';
+            if (heroContent) {
+                heroContent.innerHTML = `
+                    <h2>About Us</h2>
+                    <p>${aboutData.description || 'Default description text.'}</p>
+                `;
+            }
+
+            if (missionElement) {
+                missionElement.textContent = aboutData.mission || 'Default mission text.';
+            }
+
+            if (visionElement) {
+                visionElement.textContent = aboutData.vision || 'Default vision text.';
+            }
         } else {
             console.error('No about data available.');
         }
@@ -255,8 +414,258 @@ function downloadFile(fileId) {
 // Load files on page load
 document.addEventListener('DOMContentLoaded', fetchDownloadableFiles);
 
+document.addEventListener('DOMContentLoaded', function () {
+    fetchTransparencyData();
+});
 
+function fetchTransparencyData() {
+    fetch('../../handler/user/fetchTransaction.php')
+        .then(response => response.json())
+        .then(data => {
+            const cashInTbody = document.getElementById('cash-in-tbody');
+            const cashOutTbody = document.getElementById('cash-out-tbody');
 
+            cashInTbody.innerHTML = '';
+            cashOutTbody.innerHTML = '';
 
+            data.forEach(transaction => {
+                const row = `
+                    <tr>
+                        <td>${transaction.report_date}</td>
+                        <td>${transaction.expense_detail}</td>
+                        <td>${transaction.expense_category}</td>
+                        <td>${transaction.amount}</td>
+                    </tr>
+                `;
 
+                if (transaction.transaction_type === 'Cash In') {
+                    cashInTbody.innerHTML += row;
+                } else if (transaction.transaction_type === 'Cash Out') {
+                    cashOutTbody.innerHTML += row;
+                }
+            });
+        })
+        .catch(error => console.error('Error fetching transparency data:', error));
+}
 
+// Define region data
+const regionData = {
+    regions: ['Zamboanga Peninsula'],
+    provinces: [
+        'Zamboanga del Norte',
+        'Zamboanga del Sur',
+        'Zamboanga Sibugay',
+        'Zamboanga City',
+        'Isabela City'
+    ],
+    cities: {
+        'Zamboanga del Norte': ['Dapitan City', 'Dipolog City', 'Katipunan', 'La Libertad', 'Labason', 'Liloy', 'Manukan', 'Polanco', 'Rizal', 'Roxas', 'Sergio Osmeña Sr.', 'Siayan', 'Sindangan', 'Siocon', 'Tampilisan'],
+        'Zamboanga del Sur': ['Aurora', 'Bayog', 'Dimataling', 'Dinas', 'Dumalinao', 'Dumingag', 'Guipos', 'Josefina', 'Kumalarang', 'Labangan', 'Lakewood', 'Lapuyan', 'Mahayag', 'Margosatubig', 'Midsalip', 'Molave', 'Pagadian City', 'Pitogo', 'Ramon Magsaysay', 'San Miguel', 'San Pablo', 'Sominot', 'Tabina', 'Tambulig', 'Tigbao', 'Tukuran', 'Vincenzo A. Sagun'],
+        'Zamboanga Sibugay': ['Alicia', 'Buug', 'Diplahan', 'Imelda', 'Ipil', 'Kabasalan', 'Mabuhay', 'Malangas', 'Naga', 'Olutanga', 'Payao', 'Roseller Lim', 'Siay', 'Talusan', 'Titay', 'Tungawan'],
+        'Zamboanga City': ['Zamboanga City'],
+        'Isabela City': ['Isabela City']
+    },
+    barangays: {
+        'Zamboanga City': ['Arena Blanco', 'Ayala', 'Baluno', 'Boalan', 'Bolong', 'Buenavista', 'Bunguiao', 'Busay', 'Cabaluay', 'Cabatangan', 'Calarian', 'Canelar', 'Divisoria', 'Guiwan', 'Lunzuran', 'Putik', 'Recodo', 'San Jose Gusu', 'Sta. Maria', 'Tetuan'],
+        'Dipolog City': ['Barra', 'Biasong', 'Central', 'Cogon', 'Dicayas', 'Diwan', 'Estaka', 'Galas', 'Gulayon', 'Lugdungan', 'Magsaysay', 'Olingan', 'Sicayab', 'Sta. Isabel', 'Turno']
+    }
+};
+
+// Initialize dropdowns
+function initializeAddressDropdowns() {
+    const regionSelect = document.getElementById('region');
+    const provinceSelect = document.getElementById('province');
+    const citySelect = document.getElementById('city');
+    const barangaySelect = document.getElementById('barangay');
+
+    // Populate Regions
+    regionData.regions.forEach(region => {
+        const option = document.createElement('option');
+        option.value = region;
+        option.textContent = region;
+        regionSelect.appendChild(option);
+    });
+
+    // Handle Region Change
+    regionSelect.addEventListener('change', function () {
+        const selectedRegion = regionSelect.value;
+        provinceSelect.innerHTML = '<option value="">Select Province</option>';
+        citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
+        barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+
+        if (selectedRegion === 'Zamboanga Peninsula') {
+            regionData.provinces.forEach(province => {
+                const option = document.createElement('option');
+                option.value = province;
+                option.textContent = province;
+                provinceSelect.appendChild(option);
+            });
+        }
+    });
+
+    // Handle Province Change
+    provinceSelect.addEventListener('change', function () {
+        const selectedProvince = provinceSelect.value;
+        citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
+        barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+
+        if (regionData.cities[selectedProvince]) {
+            regionData.cities[selectedProvince].forEach(city => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
+        }
+    });
+
+    // Handle City Change
+    citySelect.addEventListener('change', function () {
+        const selectedCity = citySelect.value;
+        barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+
+        if (regionData.barangays[selectedCity]) {
+            regionData.barangays[selectedCity].forEach(barangay => {
+                const option = document.createElement('option');
+                option.value = barangay;
+                option.textContent = barangay;
+                barangaySelect.appendChild(option);
+            });
+        }
+    });
+}
+
+// Initialize the dropdowns on page load
+document.addEventListener('DOMContentLoaded', initializeAddressDropdowns);
+
+document.addEventListener('DOMContentLoaded', function () {
+    fetchLatestUpdates();
+});
+
+function fetchLatestUpdates() {
+    const updatesContainer = document.getElementById('updates-container');
+
+    async function loadUpdates() {
+        try {
+            const response = await fetch('../../handler/user/fetchOrgUpdates.php');
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                updatesContainer.innerHTML = ''; // Clear existing content
+                const updates = result.data;
+
+                if (updates.length > 0) {
+                    updates.forEach(update => {
+                        const updateItem = document.createElement('div');
+                        updateItem.classList.add('update-item');
+                        updateItem.innerHTML = `
+                            <div class="update-details">
+                                <img src="${update.image_path || '../../assets/updates/681333d810dee_eid.jpg'}" alt="${update.title}" class="update-image">
+                                <p class="update-date">${new Date(update.created_at).toLocaleDateString()}</p>
+                                <h3 class="update-title">${update.title}</h3>
+                                <p class="update-content">${update.content}</p>
+                            </div>
+                        `;
+                        updatesContainer.appendChild(updateItem);
+                    });
+                } else {
+                    updatesContainer.innerHTML = '<p>No updates available at the moment.</p>';
+                }
+            } else {
+                updatesContainer.innerHTML = '<p>Failed to load updates.</p>';
+            }
+        } catch (error) {
+            console.error('Error fetching updates:', error);
+            updatesContainer.innerHTML = '<p>Error loading updates.</p>';
+        }
+    }
+
+    // Fetch updates on page load
+    loadUpdates();
+
+    // Optionally, poll for updates every 10 seconds
+    setInterval(loadUpdates, 5000);
+}
+
+function scrollOfficers(direction) {
+    const container = document.getElementById('executive-officers-container');
+    const scrollAmount = 300; // Adjust this value to control scroll distance
+    
+    if (direction === 'left') {
+        container.scrollBy({
+            left: -scrollAmount,
+            behavior: 'smooth'
+        });
+    } else {
+        container.scrollBy({
+            left: scrollAmount,
+            behavior: 'smooth'
+        });
+    }
+}
+
+// Function to preview image before upload
+function previewImage(event) {
+    const input = event.target;
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            const previewImg = document.getElementById('preview-img');
+            const previewDiv = document.getElementById('image-preview');
+            const placeholder = document.getElementById('upload-placeholder');
+            
+            previewImg.src = e.target.result;
+            previewDiv.style.display = 'block';
+            placeholder.style.display = 'none';
+        };
+        
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// Function to remove the image preview
+function removeImage() {
+    const fileInput = document.getElementById('cor_file');
+    const previewDiv = document.getElementById('image-preview');
+    const placeholder = document.getElementById('upload-placeholder');
+    
+    fileInput.value = '';
+    previewDiv.style.display = 'none';
+    placeholder.style.display = 'flex';
+}
+
+// Function to load programs based on selected college
+function loadProgramsByCollege(collegeId) {
+    const programSelect = document.getElementById('program_id');
+    
+    // Reset program select
+    programSelect.innerHTML = '<option value="">Loading programs...</option>';
+    
+    if (!collegeId) {
+        programSelect.innerHTML = '<option value="">Select College First</option>';
+        return;
+    }
+    
+    // Fetch programs from server
+    fetch(`../../handler/user/fetchProgramsByCollege.php?college_id=${collegeId}`)
+        .then(response => response.json())
+        .then(data => {
+            programSelect.innerHTML = '<option value="">Select Program</option>';
+            
+            if (data.success && data.data && data.data.length > 0) {
+                data.data.forEach(program => {
+                    const option = document.createElement('option');
+                    option.value = program.program_id;
+                    option.textContent = program.program_name;
+                    programSelect.appendChild(option);
+                });
+            } else {
+                programSelect.innerHTML = '<option value="">No programs available</option>';
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching programs:', error);
+            programSelect.innerHTML = '<option value="">Error loading programs</option>';
+        });
+}

@@ -43,7 +43,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('../assets/images/login.jpg');
+  background-image: url('../assets/images/hero.jpg');
   background-position: center;
   background-repeat: no-repeat;
   z-index: 1;
@@ -173,17 +173,22 @@ body {
 
 /* Media Queries */
 @media (max-width: 768px) {
-  .hero {
-    width: 95%;
-    padding: 15px;
-  }
-
+  .hero,
   .faqs-content {
-    width: 95%;
+    width: 100%;
+    padding: 15px;
+    box-sizing: border-box;
   }
 }
 
 @media (max-width: 480px) {
+  .hero,
+  .faqs-content {
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+
   .hero h2 {
     font-size: 20px;
   }

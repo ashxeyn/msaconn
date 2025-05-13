@@ -1,21 +1,26 @@
 <?php
 require_once '../../tools/function.php';
-require_once '../../classes/accountClass.php';
-require_once '../../classes/userClass.php'; // Corrected the file name
+require_once '../../classes/userClass.php';
 
 session_start();
 
-// Initialize User class
-$userObj = new User(); // Use the User class instead of Admin
-$programs = $userObj->fetchProgram(); // Fetch programs using User class
-$colleges = $userObj->fetchColleges(); // Fetch colleges using User class
+// Enable error reporting for debugging
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+error_reporting(0);
 
-// Initialize all possible variables
+// Initialize User class
+$userObj = new User();
+$programs = $userObj->fetchProgram();
+$colleges = $userObj->fetchColleges();
+
+// Initialize variables
 $registration_type = '';
 $first_name = $middle_name = $last_name = $address = $program = $year_level = $school = $college = $cor_file = '';
-$first_nameErr = $last_nameErr = $addressErr = $programErr = $collegeErr = $imageErr = '';
 $email = $contact_number = '';
-$emailErr = $contactNumberErr = '';
+$first_nameErr = $last_nameErr = $addressErr = $programErr = $collegeErr = $imageErr = '';
+$emailErr = $contactNumberErr = $yearErr = '';
+$college_id = $program_id = ''; // Initialize variables to avoid undefined variable warnings
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Handle the registration type selection
@@ -23,100 +28,127 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $registration_type = clean_input($_POST['registration_type']);
         $_SESSION['registration_type'] = $registration_type;
     }
-    
-    // If form is submitted (not just type selection)
-    if (isset($_POST['submit_form'])) {
-        $registration_type = $_SESSION['registration_type'];
+
+    // If form is submitted
+    if (isset($_POST['submit_registration'])) {
+        // Basic validation
+        if (empty($_POST['first_name'])) {
+            $first_nameErr = "First name is required";
+        } else {
+            $first_name = clean_input($_POST['first_name']);
+        }
         
-        // Name fields validation
-        $first_name = clean_input($_POST['first_name']);
+        if (empty($_POST['last_name'])) {
+            $last_nameErr = "Last name is required";
+        } else {
+            $last_name = clean_input($_POST['last_name']);
+        }
+        
         $middle_name = clean_input($_POST['middle_name']);
-        $last_name = clean_input($_POST['last_name']);
         
-        if (empty($first_name)) {
-            $first_nameErr = "First name is required!";
-        }
-        if (empty($last_name)) {
-            $last_nameErr = "Last name is required!";
-        }
-
-        // Online-specific fields
-        if ($registration_type == 'online') {
-            $address = clean_input($_POST['address']);
-            if (empty($address)) {
-                $addressErr = "Address is required!";
-            }
+        if (empty($_POST['email'])) {
+            $emailErr = "Email is required";
+        } else {
             $email = clean_input($_POST['email']);
-            if (empty($email)) {
-                $emailErr = "Email is required!";
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $emailErr = "Invalid email format";
             }
-            $contact_number = clean_input($_POST['contact_number']);
-            if (empty($contact_number)) {
-                $contactNumberErr = "Contact number is required!";
-            }
-            $program = clean_input($_POST['program']);
-            $year_level = clean_input($_POST['year_level']);
-            $school = clean_input($_POST['school']);
         }
         
-        // Onsite-specific fields
-        if ($registration_type == 'onsite') {
-            $college = clean_input($_POST['college']);
-            $program = clean_input($_POST['program']);
-            if (empty($college)) {
-                $collegeErr = "Please enter your college!";
-            }
-            if (empty($program)) {
-                $programErr = "Please select your program/course!";
-            }
-            $email = clean_input($_POST['email']);
-            if (empty($email)) {
-                $emailErr = "WMSU Email is required!";
-            }
+        if (empty($_POST['contact_number'])) {
+            $contactNumberErr = "Contact number is required";
+        } else {
             $contact_number = clean_input($_POST['contact_number']);
-            if (empty($contact_number)) {
-                $contactNumberErr = "Contact number is required!";
+        }
+        
+        $classification = clean_input($_POST['registration_type']);
+        
+        // Address fields (required for all)
+        $region = isset($_POST['region']) ? clean_input($_POST['region']) : '';
+        $province = isset($_POST['province']) ? clean_input($_POST['province']) : '';
+        $city = isset($_POST['city']) ? clean_input($_POST['city']) : '';
+        $barangay = isset($_POST['barangay']) ? clean_input($_POST['barangay']) : '';
+        $street = isset($_POST['street']) ? clean_input($_POST['street']) : '';
+        $zip_code = isset($_POST['zip_code']) ? clean_input($_POST['zip_code']) : '';
+        
+        // For On-site classification
+        if ($classification == 'On-site') {
+            if (empty($_POST['college_id'])) {
+                $collegeErr = "College is required for On-site registration";
+            } else {
+                $college_id = clean_input($_POST['college_id']);
+            }
+            
+            if (empty($_POST['program_id'])) {
+                $programErr = "Program is required for On-site registration";
+            } else {
+                $program_id = clean_input($_POST['program_id']);
+            }
+            
+            if (empty($_POST['year_level'])) {
+                $yearErr = "Year level is required for On-site registration";
+            } else {
+                $year_level = clean_input($_POST['year_level']);
+            }
+            
+            // Address fields are from online fields but should still be required for on-site
+            if (empty($region) || empty($province) || empty($city) || empty($barangay) || empty($street) || empty($zip_code)) {
+                $addressErr = "Address information is required";
+            }
+        } else {
+            // For Online, these are optional
+            $college_id = !empty($_POST['college_id']) ? clean_input($_POST['college_id']) : null;
+            $program_id = !empty($_POST['program_id']) ? clean_input($_POST['program_id']) : null;
+            $year_level = !empty($_POST['year_level']) ? clean_input($_POST['year_level']) : null;
+            $school = !empty($_POST['school']) ? clean_input($_POST['school']) : null;
+            
+            // Check address for online since they are shown for this mode
+            if (empty($region) || empty($province) || empty($city) || empty($barangay) || empty($street) || empty($zip_code)) {
+                $addressErr = "Address information is required for online registration";
             }
         }
 
-        // Handle file upload (common for both)
-        if (!empty($_FILES['image']['name'])) {
+        // Handle file upload
+        if (!empty($_FILES['cor_file']['name'])) {
             $target_dir = "../../assets/enrollment/";
             
-            if (!is_dir($target_dir) && !mkdir($target_dir, 0777, true)) {
-                $imageErr = "Failed to create upload directory.";
-            } else {
-                $image_name = time() . "_" . basename($_FILES['image']['name']);
+            if (!is_dir($target_dir)) {
+                if (!mkdir($target_dir, 0777, true)) {
+                    $imageErr = "Failed to create upload directory.";
+                }
+            }
+            
+            if (empty($imageErr)) {
+                $image_name = time() . "_" . basename($_FILES['cor_file']['name']);
                 $target_file = $target_dir . $image_name;
                 $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
                 $allowed_types = ['jpg', 'jpeg', 'png'];
-                $maxFileSize = 2 * 1024 * 1024; 
-        
+                $maxFileSize = 2 * 1024 * 1024;
+
                 if (!in_array($imageFileType, $allowed_types)) {
                     $imageErr = "Only JPG, JPEG, & PNG files are allowed.";
-                } elseif ($_FILES['image']['size'] > $maxFileSize) {
+                } elseif ($_FILES['cor_file']['size'] > $maxFileSize) {
                     $imageErr = "File size should not exceed 2MB.";
                 } else {
-                    if (move_uploaded_file($_FILES['image']['tmp_name'], $target_file)) {
-                        $cor_file = $image_name; 
+                    if (move_uploaded_file($_FILES['cor_file']['tmp_name'], $target_file)) {
+                        $cor_file = $image_name;
                     } else {
                         $imageErr = "There was an error uploading your file.";
                     }
                 }
             }
-        } elseif (isset($_POST['existing_image']) && !empty($_POST['existing_image'])) {
-            $cor_file = $_POST['existing_image']; 
-        } else {
+        } else if ($classification == 'On-site') {
+            // COR is required for On-site
             $imageErr = "Please upload your COR screenshot!";
-        }
-        
-        // Final validation and processing
-        if ($registration_type == 'online') {
-            $valid = empty($first_nameErr) && empty($last_nameErr) && empty($addressErr) && empty($emailErr) && empty($contactNumberErr);
         } else {
-            $valid = empty($first_nameErr) && empty($last_nameErr) && empty($programErr) && empty($collegeErr) && empty($imageErr) && empty($emailErr) && empty($contactNumberErr);
+            // For Online, COR is optional
+            $cor_file = "";
         }
-        
+
+        // Final validation and processing
+        $valid = empty($first_nameErr) && empty($last_nameErr) && empty($emailErr) && empty($contactNumberErr) 
+                && empty($collegeErr) && empty($programErr) && empty($yearErr) && empty($imageErr) && empty($addressErr);
+
         if ($valid) {
             try {
                 // Prepare data for database insertion
@@ -124,29 +156,50 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     'first_name' => $first_name,
                     'middle_name' => $middle_name,
                     'last_name' => $last_name,
-                    'classification' => ($registration_type == 'online') ? 'Online' : 'On-site',
-                    'address' => ($registration_type == 'online') ? $address : null,
-                    'college_id' => ($registration_type == 'onsite') ? $college : null,
-                    'program_id' => $program ?: null,
-                    'year_level' => $year_level ?: null,
-                    'school' => $school ?: null,
-                    'cor_path' => $cor_file ?: null,
                     'email' => $email,
-                    'contact_number' => $contact_number
+                    'contact_number' => $contact_number,
+                    'classification' => $classification,
+                    'region' => $region,
+                    'province' => $province,
+                    'city' => $city,
+                    'barangay' => $barangay,
+                    'street' => $street,
+                    'zip_code' => $zip_code,
+                    'college_id' => $college_id,
+                    'ol_college' => ($classification == 'Online' && !empty($school)) ? $school : null,
+                    'program_id' => $program_id,
+                    'ol_program' => null,
+                    'year_level' => $year_level,
+                    'school' => $school,
+                    'cor_path' => $cor_file
                 ];
+
+                // Insert into database and get result
+                $result = $userObj->addMadrasaEnrollment($data);
                 
-                // Insert into database
-                $enrollmentId = $userObj->addMadrasaEnrollment($data);
+                // Log actual result for debugging
+                file_put_contents('registration_debug.log', 'Result value: ' . (is_numeric($result) ? $result : 'false/null') . ' - ' . date('Y-m-d H:i:s') . PHP_EOL, FILE_APPEND);
                 
-                // Set success flag and redirect
-                $_SESSION['registration_success'] = true;
-                header("Location: ".$_SERVER['PHP_SELF']);
-                exit();
-                
+                // Consider ANY non-false result as success (including ID=0)
+                if ($result !== false) {
+                    // Log registration success with the ID
+                    file_put_contents('registration_debug.log', 'Registration successful! ID: ' . $result . ' - ' . date('Y-m-d H:i:s') . PHP_EOL, FILE_APPEND);
+                    
+                    // Important: Set session flag BEFORE any output
+                    $_SESSION['registration_success'] = true;
+                    $_SESSION['registration_message'] = "Registration successful! Your enrollment has been received.";
+                    
+                    // Use JavaScript redirect for more reliable redirect
+                    $redirect_url = 'registrationmadrasa.php';
+                    echo "<script>window.location.href = '$redirect_url';</script>";
+                    exit;
+                } else {
+                    // Log when registration fails
+                    file_put_contents('registration_debug.log', 'Registration failed - ' . date('Y-m-d H:i:s') . PHP_EOL, FILE_APPEND);
+                }
             } catch (Exception $e) {
-                $imageErr = "Registration failed. Please try again.";
-                error_log("Registration error: " . $e->getMessage()); // Log the error message
-                echo "<pre>Error: " . $e->getMessage() . "</pre>"; // Display the error for debugging
+                // Log detailed error message
+                file_put_contents('registration_debug.log', 'Error: ' . $e->getMessage() . ' at ' . date('Y-m-d H:i:s') . PHP_EOL, FILE_APPEND);
             }
         }
     }
@@ -157,7 +210,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Madrasa Registration</title>
     <link rel="stylesheet" href="../../css/registermadrasa.css">
     <?php include '../../includes/header.php'; ?>
@@ -167,155 +220,187 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php 
     // Show success modal if registration was successful
     if (isset($_SESSION['registration_success'])) {
-        $modalPath = dirname(dirname(dirname(__FILE__))) . '/userModals/registrationSuccessModal.php';
+        $modalPath = dirname(dirname(dirname(__FILE__))) . '/usermodals/registrationforenrollmentmodal.php';
         if (file_exists($modalPath)) {
             include $modalPath;
+            echo "<script>console.log('Modal included from session');</script>";
         } else {
+            echo "<script>console.log('Modal file not found');</script>";
             // Fallback modal if file not found
             echo '<div id="successModal" class="modal" style="display: block;">
                     <div class="modal-content">
-                        <span class="close-button" onclick="this.parentElement.parentElement.style.display=\'none\'">&times;</span>
+                        <span class="close-button" onclick="closeSuccessModal()">&times;</span>
                         <h2>Registration Successful!</h2>
                         <p>You have successfully registered for Madrasa.</p>
+                        <div class="modal-actions">
+                            <button type="button" class="close-modal-btn" onclick="closeSuccessModal()">Close</button>
+                        </div>
                     </div>
-                  </div>';
+                  </div>
+                  <script>
+                    function closeSuccessModal() {
+                        document.getElementById("successModal").style.display = "none";
+                        window.location.href = "registrationmadrasa.php";
+                    }
+                    
+                    document.addEventListener("DOMContentLoaded", function() {
+                        var modal = document.getElementById("successModal");
+                        if (modal) {
+                            modal.addEventListener("click", function(e) {
+                                if (e.target === this) {
+                                    closeSuccessModal();
+                                }
+                            });
+                            
+                            // Auto close after 5 seconds
+                            setTimeout(function() {
+                                closeSuccessModal();
+                            }, 5000);
+                        }
+                    });
+                  </script>
+                  <style>
+                    .modal-actions {
+                        margin-top: 20px;
+                        text-align: center;
+                    }
+                    
+                    .close-modal-btn {
+                        background-color: #d72f2f;
+                        color: white;
+                        border: none;
+                        padding: 8px 16px;
+                        border-radius: 4px;
+                        cursor: pointer;
+                        font-weight: bold;
+                    }
+                    
+                    .close-modal-btn:hover {
+                        background-color: #b12828;
+                    }
+                  </style>';
         }
         unset($_SESSION['registration_success']);
     }
     ?>
 
-    <?php if (empty($registration_type)): ?>
-        <!-- Registration Type Selection -->
-        <div class="registration-type-container">
-            <h2>Select Registration Type</h2>
-            <form method="POST">
-                <div class="type-options">
-                    <div class="type-option">
-                        <input type="radio" id="onsite" name="registration_type" value="onsite">
-                        <label for="onsite">
-                            <h3>Onsite Registration</h3>
-                            <p>For students who will attend in-person classes</p>
-                        </label>
-                    </div>
-                    <div class="type-option">
-                        <input type="radio" id="online" name="registration_type" value="online" required>
-                        <label for="online">
-                            <h3>Online Registration</h3>
-                            <p>For students who will attend classes remotely</p>
-                        </label>
-                    </div>
-                </div>
-                <button type="submit" class="submit-button">Continue</button>
-            </form>
-        </div>
-    <?php else: ?>
-        <!-- Actual Registration Form -->
-        <form action="" method="POST" enctype="<?= $registration_type == 'onsite' ? 'multipart/form-data' : 'application/x-www-form-urlencoded' ?>">
-            <input type="hidden" name="registration_type" value="<?= $registration_type ?>">
-            
-            <!-- Common Fields -->
-            <div class="form-section">
-                <div class="name-fields">
-                    <div class="name-field">
-                        <label for="first_name">First Name:</label>
-                        <input type="text" id="first_name" name="first_name" placeholder="First Name" value="<?= $first_name ?>" required>
-                        <span class="error"><?= $first_nameErr ?></span>
-                    </div>
-                    <div class="name-field">
-                        <label for="middle_name">Middle Name:</label>
-                        <input type="text" id="middle_name" name="middle_name" placeholder="Middle Name" value="<?= $middle_name ?>">
-                    </div>
-                    <div class="name-field">
-                        <label for="last_name">Last Name:</label>
-                        <input type="text" id="last_name" name="last_name" placeholder="Last Name" value="<?= $last_name ?>" required>
-                        <span class="error"><?= $last_nameErr ?></span>
-                    </div>
-                </div>
-            </div>
-
-            <?php if ($registration_type == 'online'): ?>
-                <!-- Online Specific Fields -->
+    <form action="" method="POST" enctype="multipart/form-data">
+        <h2>Madrasa Registration Form</h2>
+        <div class="form-columns">
+            <div class="form-col">
+                <!-- Registration Type -->
                 <div class="form-section">
-                    <label for="address">Address:</label>
-                    <input type="text" id="address" name="address" placeholder="Your Complete Address" value="<?= $address ?>" required>
-                    <span class="error"><?= $addressErr ?></span>
+                    <label for="registration_type">Registration Type:</label>
+                    <select id="registration_type" name="registration_type" required onchange="toggleRegistrationTypeFields()">
+                        <option value="On-site" <?= ($registration_type == 'On-site') ? 'selected' : '' ?>>On-site</option>
+                        <option value="Online" <?= ($registration_type == 'Online') ? 'selected' : '' ?>>Online</option>
+                    </select>
                 </div>
 
+                <!-- Name Fields -->
+                <div class="form-section">
+                    <label for="first_name">First Name:</label>
+                    <input type="text" id="first_name" name="first_name" placeholder="Enter your first name" required>
+                    <?php if (!empty($first_nameErr)): ?><span class="error"><?= $first_nameErr ?></span><?php endif; ?>
+                    
+                    <label for="middle_name">Middle Name:</label>
+                    <input type="text" id="middle_name" name="middle_name" placeholder="Enter your middle name">
+                    
+                    <label for="last_name">Last Name:</label>
+                    <input type="text" id="last_name" name="last_name" placeholder="Enter your last name" required>
+                    <?php if (!empty($last_nameErr)): ?><span class="error"><?= $last_nameErr ?></span><?php endif; ?>
+                </div>
+
+                <!-- Contact Information -->
                 <div class="form-section">
                     <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" placeholder="Your Email" value="<?= $email ?>" required>
-                    <span class="error"><?= $emailErr ?></span>
-                </div>
-
-                <div class="form-section">
+                    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                    <?php if (!empty($emailErr)): ?><span class="error"><?= $emailErr ?></span><?php endif; ?>
+                    
                     <label for="contact_number">Contact Number:</label>
-                    <input type="tel" id="contact_number" name="contact_number" placeholder="Your Contact Number" value="<?= $contact_number ?>" required>
-                    <span class="error"><?= $contactNumberErr ?></span>
+                    <input type="tel" id="contact_number" name="contact_number" placeholder="Enter your contact number" required>
+                    <?php if (!empty($contactNumberErr)): ?><span class="error"><?= $contactNumberErr ?></span><?php endif; ?>
+                </div>
+                <!-- Address Fields (Online Only) -->
+                <div class="form-section online-only">
+                    <label for="region">Region:</label>
+                    <select id="region" name="region" required>
+                        <option value="">Select Region</option>
+                    </select>
+
+                    <label for="province">Province:</label>
+                    <select id="province" name="province" required>
+                        <option value="">Select Province</option>
+                    </select>
+
+                    <label for="city">City:</label>
+                    <select id="city" name="city" required>
+                        <option value="">Select City/Municipality</option>
+                    </select>
+
+                    <label for="barangay">Barangay:</label>
+                    <select id="barangay" name="barangay" required>
+                        <option value="">Select Barangay</option>
+                    </select>
+                    
+                    <label for="street">Street/House No.:</label>
+                    <input type="text" id="street" name="street" placeholder="Enter street address" required>
+                    
+                    <label for="zip_code">Zip Code:</label>
+                    <input type="text" id="zip_code" name="zip_code" placeholder="Enter zip code" required>
+                    <?php if (!empty($addressErr)): ?><span class="error"><?= $addressErr ?></span><?php endif; ?>
+                </div>
+            </div>
+            <div class="form-col">
+                <!-- Optional Fields Indicator (Online Only) -->
+                <div class="form-section online-only" id="optional-indicator" style="display:none;">
+                    <p style="color:#1a541c; font-size: 14px; margin-top: 0;">
+                        <em>Note: College, Program, Year Level, and School fields are optional for Online registration. Fill them only if you want to provide this information.</em>
+                    </p>
                 </div>
 
-                <div class="form-section optional-section">
-                    <h3>Optional Information (For Students)</h3>
-
-                    <label for="program">Program:</label>
-                    <select id="program" name="program">
-                        <option value="">Select Program (Optional)</option>
-                        <?php foreach ($programs as $prog): ?>
-                            <option value="<?= $prog['program_id'] ?>" <?= ($program == $prog['program_id']) ? 'selected' : '' ?>>
-                                <?= clean_input($prog['program_name']) ?>
-                            </option>
+                <!-- College and Program (Shown for both On-site and Online, required for On-site, optional for Online) -->
+                <div class="form-section onsite-only online-only" id="college-program-section">
+                    <label for="college_id">College:</label>
+                    <select id="college_id" name="college_id" onchange="loadProgramsByCollege(this.value)">
+                        <option value="">Select College<?= ($registration_type == 'Online') ? '' : '' ?></option>
+                        <?php foreach ($colleges as $college): ?>
+                            <option value="<?= $college['college_id'] ?>" <?= ($college_id == $college['college_id']) ? 'selected' : '' ?>><?= $college['college_name'] ?></option>
                         <?php endforeach; ?>
                     </select>
-
-                    <label for="year_level">Year Level:</label>
-                    <select id="year_level" name="year_level">
-                        <option value="">Select Year Level (Optional)</option>
-                        <option value="1st Year" <?= ($year_level == "1st Year") ? 'selected' : '' ?>>1st Year</option>
-                        <option value="2nd Year" <?= ($year_level == "2nd Year") ? 'selected' : '' ?>>2nd Year</option>
-                        <option value="3rd Year" <?= ($year_level == "3rd Year") ? 'selected' : '' ?>>3rd Year</option>
-                        <option value="4th Year" <?= ($year_level == "4th Year") ? 'selected' : '' ?>>4th Year</option>
-                    </select>
-
-                    <label for="school">School:</label>
-                    <input type="text" id="school" name="school" placeholder="Your School (Optional)" value="<?= $school ?>">
-                </div>
-            <?php else: ?>
-                <!-- Onsite Registration Section -->
-                <div class="form-section">
-                    <label for="college">College:</label>
-                    <select id="college" name="college" required onchange="loadPrograms(this.value)">
-                        <option value="">Select College</option>
-                        <?php foreach ($colleges as $col): ?>
-                            <option value="<?= htmlspecialchars($col['college_id']) ?>">
-                                <?= htmlspecialchars($col['college_name']) ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
-                <div class="form-section">
-                    <label for="program">Program/Course:</label>
-                    <select id="program" name="program" required disabled>
+                    <?php if (!empty($collegeErr)): ?><span class="error"><?= $collegeErr ?></span><?php endif; ?>
+                    
+                    <label for="program_id">Program:</label>
+                    <select id="program_id" name="program_id">
                         <option value="">Select College First</option>
                     </select>
+                    <?php if (!empty($programErr)): ?><span class="error"><?= $programErr ?></span><?php endif; ?>
                 </div>
 
-                <div class="form-section">
-                    <label for="email">WMSU Email:</label>
-                    <input type="email" id="email" name="email" placeholder="Your WMSU Email" value="<?= $email ?>" required>
-                    <span class="error"><?= $emailErr ?></span>
+                <!-- Year Level (Shown for both On-site and Online, required for On-site, optional for Online) -->
+                <div class="form-section onsite-only online-only" id="year-level-section">
+                    <label for="year_level">Year Level:</label>
+                    <select id="year_level" name="year_level">
+                        <option value="">Select Year Level<?= ($registration_type == 'Online') ? '' : '' ?></option>
+                        <option value="1st Year" <?= ($year_level == '1st Year') ? 'selected' : '' ?>>1st Year</option>
+                        <option value="2nd Year" <?= ($year_level == '2nd Year') ? 'selected' : '' ?>>2nd Year</option>
+                        <option value="3rd Year" <?= ($year_level == '3rd Year') ? 'selected' : '' ?>>3rd Year</option>
+                        <option value="4th Year" <?= ($year_level == '4th Year') ? 'selected' : '' ?>>4th Year</option>
+                    </select>
+                    <?php if (!empty($yearErr)): ?><span class="error"><?= $yearErr ?></span><?php endif; ?>
                 </div>
 
-                <div class="form-section">
-                    <label for="contact_number">Contact Number:</label>
-                    <input type="tel" id="contact_number" name="contact_number" placeholder="Your Contact Number" value="<?= $contact_number ?>" required>
-                    <span class="error"><?= $contactNumberErr ?></span>
+                <!-- School (Online Only, optional) -->
+                <div class="form-section online-only" id="school-section">
+                    <label for="school">School:</label>
+                    <input type="text" id="school" name="school" placeholder="Enter your school">
                 </div>
 
-                <!-- COR Upload (ONLY for onsite registration) -->
-                <div class="form-section">
-                    <label for="image">Upload COR (Certificate of Registration):</label>
+                <!-- COR Upload -->
+                <div class="cor-row">
+                    <label for="cor_file">Upload COR (Certificate of Registration):</label>
                     <div class="upload-container">
-                        <div class="upload-area" id="upload-area" onclick="document.getElementById('image').click()">
+                        <div class="upload-area" id="upload-area" onclick="document.getElementById('cor_file').click()">
                             <div class="upload-placeholder" id="upload-placeholder">
                                 <img src="../../assets/icons/upload-icon.png" alt="Upload Icon" class="upload-icon">
                                 <p>Click to upload your COR screenshot</p>
@@ -323,25 +408,53 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </div>
                             <div class="image-preview" id="image-preview" style="display: none;">
                                 <img id="preview-img" src="#" alt="Image Preview">
-                                <button type="button" class="remove-image" onclick="removeImage()">×</button>
+                                <button type="button" class="remove-image" onclick="removeImage()">x</button>
                             </div>
                         </div>
-                        <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(event)" style="display: none;">
-                        <input type="hidden" name="existing_image" value="<?= $cor_file ?>">
-                        <span class="error"><?= $imageErr ?></span>
+                        <input type="file" id="cor_file" name="cor_file" accept="image/*" onchange="previewImage(event)" style="display: none;">
+                        <?php if (!empty($imageErr)): ?><span class="error"><?= $imageErr ?></span><?php endif; ?>
                     </div>
                 </div>
-            <?php endif; ?>
 
-            <div class="button-container">
-                <button type="button" class="back-button" onclick="window.location.href='?reset=1'">Back</button>
-                <button type="submit" name="submit_form" class="submit-button">Submit Registration</button>
+                <!-- Submit Button -->
+                <div class="form-section">
+                    <button type="button" class="back-button" onclick="window.location.href='registrationmadrasa.php'">Back</button>
+                    <button type="submit" name="submit_registration" style="background-color: #d72f2f;">Submit Registration</button>
+                </div>
             </div>
-        </form>
-    <?php endif; ?>
+        </div>
+    </form>
 
     <?php include '../../includes/footer.php'; ?>
     
-    <script src="../../js/registermadrasaform.js"></script>
+   
+    <script src="../../js/user.js"></script>
+    <script src="https://f001.backblazeb2.com/file/buonzz-assets/jquery.ph-locations-v1.0.0.js"></script>
+    <script>
+        // Initialize everything when the document is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            const collegeSelect = document.getElementById('college_id');
+            if (collegeSelect && collegeSelect.value) {
+                loadProgramsByCollege(collegeSelect.value);
+            }
+            
+            // Initialize toggleRegistrationTypeFields on page load
+            toggleRegistrationTypeFields();
+            
+            // Initialize address dropdowns
+            initializeAddressDropdowns();
+            
+            // Set initial value for region dropdown (Zamboanga Peninsula) if on online registration
+            if (document.getElementById('registration_type').value === 'Online') {
+                const regionSelect = document.getElementById('region');
+                if (regionSelect && regionSelect.options.length > 0) {
+                    setTimeout(function() {
+                        regionSelect.selectedIndex = 1; // Select first option after placeholder
+                        regionSelect.dispatchEvent(new Event('change'));
+                    }, 500);
+                }
+            }
+        });
+    </script>
 </body>
 </html>

@@ -44,32 +44,27 @@ function initEventListeners() {
 
 // Image Preview Functionality
 function previewImage(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    // Validate image
-    const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
-    const maxSize = 2 * 1024 * 1024; // 2MB
-
-    if (!validTypes.includes(file.type)) {
-        alert('Please upload a valid image (JPEG, PNG, or GIF)');
-        resetImageInput();
-        return;
+    var input = event.target;
+    var preview = document.getElementById('image-preview');
+    var placeholder = document.getElementById('upload-placeholder');
+    var img = document.getElementById('preview-img');
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            img.src = e.target.result;
+            preview.style.display = 'block';
+            placeholder.style.display = 'none';
+        }
+        reader.readAsDataURL(input.files[0]);
     }
-
-    if (file.size > maxSize) {
-        alert('Image size must be less than 2MB');
-        resetImageInput();
-        return;
-    }
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-        previewImg.src = e.target.result;
-        uploadPlaceholder.style.display = 'none';
-        previewContainer.style.display = 'block';
-    };
-    reader.readAsDataURL(file);
+}
+function removeImage() {
+    var input = document.getElementById('cor_file');
+    var preview = document.getElementById('image-preview');
+    var placeholder = document.getElementById('upload-placeholder');
+    input.value = '';
+    preview.style.display = 'none';
+    placeholder.style.display = 'flex';
 }
 
 function resetImageInput() {
@@ -207,6 +202,70 @@ async function loadPrograms(collegeId) {
         fetchController = null;
     }
 }
+function toggleRegistrationTypeFields() {
+    var regType = document.getElementById('registration_type').value;
+    var onsiteFields = document.querySelectorAll('.onsite-only');
+    var onlineFields = document.querySelectorAll('.online-only');
+    var optionalIndicator = document.getElementById('optional-indicator');
+    // Hide all first
+    onsiteFields.forEach(function(el) { el.style.display = 'none'; });
+    onlineFields.forEach(function(el) { el.style.display = 'none'; });
+    if (optionalIndicator) optionalIndicator.style.display = 'none';
+
+    // Show college/program/year for both, but required only for On-site
+    var college = document.getElementById('college_id');
+    var program = document.getElementById('program_id');
+    var year = document.getElementById('year_level');
+    var collegeSections = document.querySelectorAll('.form-section.onsite-only.online-only');
+
+    if (regType === 'On-site') {
+        onsiteFields.forEach(function(el) { el.style.display = ''; });
+        collegeSections.forEach(function(el) { el.style.display = ''; });
+        if (college) college.required = true;
+        if (program) program.required = true;
+        if (year) year.required = true;
+    } else if (regType === 'Online') {
+        onlineFields.forEach(function(el) { el.style.display = ''; });
+        collegeSections.forEach(function(el) { el.style.display = ''; });
+        if (college) college.required = false;
+        if (program) program.required = false;
+        if (year) year.required = false;
+        if (optionalIndicator) optionalIndicator.style.display = '';
+    }
+}
+
+
+function previewImage(event) {
+    var file = event.target.files[0];
+    if (file) {
+        var reader = new FileReader();
+        reader.onload = function(e) {
+            var preview = document.getElementById('image-preview');
+            var placeholder = document.getElementById('upload-placeholder');
+            var previewImg = document.getElementById('preview-img');
+            
+            if (preview && placeholder && previewImg) {
+                preview.style.display = 'block';
+                previewImg.src = e.target.result;
+                placeholder.style.display = 'none';
+            }
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function removeImage() {
+    var fileInput = document.getElementById('cor_file');
+    var preview = document.getElementById('image-preview');
+    var placeholder = document.getElementById('upload-placeholder');
+    
+    if (fileInput && preview && placeholder) {
+        fileInput.value = '';
+        preview.style.display = 'none';
+        placeholder.style.display = 'block';
+    }
+}
+
 
 // Year Levels Update (placeholder)
 function updateYearLevels() {

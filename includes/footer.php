@@ -1,3 +1,10 @@
+<?php
+require_once '../../classes/userClass.php';
+require_once '../../tools/function.php';
+$userObj = new User();
+$footer = $userObj->fetchFooterInfo();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,7 +13,8 @@
     <title>Footer with Logo</title>
     <link rel="stylesheet" href="<?php echo $base_url; ?>css/footer.css">
     <!-- Add Font Awesome for social media icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet"></head>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
+</head>
 <body>
     <footer>
         <div class="footer-content">
@@ -24,19 +32,16 @@
 
             <!-- Middle: Socials and Contact -->
             <div class="footer-middle">
+            <?php foreach ($footer as $foot): ?>
                 <div class="socials">
                     <a href="https://www.facebook.com/msawmsuofficial" target="_blank"><i class="fab fa-facebook"></i></a>
                 </div>
                 <div class="contact-info">
-                    <p>Contact Us: +123 456 7890</p>
-                    <p>Email: msa.wmsuzc@gmail.com</p>
+                    <p>Contact Us: <?= clean_input($foot['contact_no']) ?></p>
+                    <p>Email:<?= clean_input($foot['email']) ?></p>
                 </div>
             </div>
-
-            <!-- Lower Right: Year Established -->
-            <div class="footer-lower-right">
-                <p>@Established 2025</p>
-            </div>
+            <?php endforeach ?>
         </div>
     </footer>
 </body>

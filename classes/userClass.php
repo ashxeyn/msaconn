@@ -17,14 +17,14 @@ class User {
     }
 
     function fetchProgram() {
-        $sql = "SELECT programs.program_id, programs.program_name, colleges.college_name 
+        $sql = "SELECT programs.program_id, programs.program_name, programs.college_id, colleges.college_name 
                 FROM programs 
                 INNER JOIN colleges ON programs.college_id = colleges.college_id 
                 ORDER BY programs.program_name ASC;";
         
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
-        return $query->fetchAll();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
     }
     public function fetchColleges() {
         $sql = "SELECT college_id, college_name FROM colleges ORDER BY college_name ASC";
@@ -33,30 +33,98 @@ class User {
         return $query->fetchAll(PDO::FETCH_ASSOC);
 }
     public function addMadrasaEnrollment($data) {
-        $sql = "INSERT INTO madrasa_enrollment 
-                (first_name, middle_name, last_name, classification, address, college_id, program_id, year_level, school, cor_path, email, contact_number) 
-                VALUES 
-                (:first_name, :middle_name, :last_name, :classification, :address, :college_id, :program_id, :year_level, :school, :cor_path, :email, :contact_number)";
+        try {
+            // Log the data being sent to the database
+            error_log("=== BEGIN MADRASA ENROLLMENT DATA ===");
+            error_log(print_r($data, true));
+            error_log("=== END MADRASA ENROLLMENT DATA ===");
+            
+            // Ensure empty values are properly handled
+            foreach ($data as $key => $value) {
+                if ($value === null || $value === "") {
+                    // Convert empty strings to NULL for database
+                    if ($key === 'college_id' || $key === 'program_id') {
+                        $data[$key] = null; // Allow NULL for foreign keys
+                    } else {
+                        $data[$key] = ''; // Empty string for non-foreign keys
+                    }
+                }
+            }
+            
+            $sql = "INSERT INTO madrasa_enrollment 
+                    (first_name, middle_name, last_name, email, contact_number, classification, 
+                    region, province, city, barangay, street, zip_code, 
+                    college_id, ol_college, program_id, ol_program, year_level, school, cor_path) 
+                    VALUES 
+                    (:first_name, :middle_name, :last_name, :email, :contact_number, :classification, 
+                    :region, :province, :city, :barangay, :street, :zip_code, 
+                    :college_id, :ol_college, :program_id, :ol_program, :year_level, :school, :cor_path)";
+            
+            error_log("SQL Query: " . $sql);
+                
+            $query = $this->db->connect()->prepare($sql);
+            
+            // Log parameter binding to check for any issues
+            error_log("Binding parameters for database insertion...");
         
-        $query = $this->db->connect()->prepare($sql);
-    
-        $query->bindParam(':first_name', $data['first_name']);
-        $query->bindParam(':middle_name', $data['middle_name']);
-        $query->bindParam(':last_name', $data['last_name']);
-        $query->bindParam(':classification', $data['classification']);
-        $query->bindParam(':address', $data['address']);
-        $query->bindParam(':college_id', $data['college_id']);
-        $query->bindParam(':program_id', $data['program_id']);
-        $query->bindParam(':year_level', $data['year_level']);
-        $query->bindParam(':school', $data['school']);
-        $query->bindParam(':cor_path', $data['cor_path']);
-        $query->bindParam(':email', $data['email']);
-        $query->bindParam(':contact_number', $data['contact_number']);
-    
-        $query->execute();
-    
-        // Return the last inserted ID
-        return $this->db->connect()->lastInsertId();
+            $query->bindParam(':first_name', $data['first_name']);
+            $query->bindParam(':middle_name', $data['middle_name']);
+            $query->bindParam(':last_name', $data['last_name']);
+            $query->bindParam(':email', $data['email']);
+            $query->bindParam(':contact_number', $data['contact_number']);
+            $query->bindParam(':classification', $data['classification']);
+            $query->bindParam(':region', $data['region']);
+            $query->bindParam(':province', $data['province']);
+            $query->bindParam(':city', $data['city']);
+            $query->bindParam(':barangay', $data['barangay']);
+            $query->bindParam(':street', $data['street']);
+            $query->bindParam(':zip_code', $data['zip_code']);
+            
+            // Special handling for foreign keys that may need to be NULL
+            if ($data['college_id'] === null) {
+                $query->bindValue(':college_id', null, PDO::PARAM_NULL);
+            } else {
+                $query->bindValue(':college_id', $data['college_id'], PDO::PARAM_INT);
+            }
+            
+            $query->bindParam(':ol_college', $data['ol_college']);
+            
+            if ($data['program_id'] === null) {
+                $query->bindValue(':program_id', null, PDO::PARAM_NULL);
+            } else {
+                $query->bindValue(':program_id', $data['program_id'], PDO::PARAM_INT);
+            }
+            
+            $query->bindParam(':ol_program', $data['ol_program']);
+            $query->bindParam(':year_level', $data['year_level']);
+            $query->bindParam(':school', $data['school']);
+            $query->bindParam(':cor_path', $data['cor_path']);
+            
+            error_log("Executing query...");
+        
+            if ($query->execute()) {
+                // Store the database connection for reuse
+                $conn = $this->db->connect();
+                
+                // Get the last inserted ID
+                $lastId = $conn->lastInsertId();
+                error_log("Query executed successfully. Last inserted ID: $lastId");
+                
+                // Return the ID even if it's 0 (which is a valid ID in some DBs)
+                return $lastId;
+            } else {
+                $error = $query->errorInfo();
+                error_log("Error executing query: " . implode(", ", $error));
+                return false;
+            }
+        } catch (PDOException $e) {
+            error_log("Database error in addMadrasaEnrollment (PDOException): " . $e->getMessage());
+            error_log("SQL State: " . $e->getCode());
+            return false;
+        } catch (Exception $e) {
+            error_log("General error in addMadrasaEnrollment: " . $e->getMessage());
+            return false;
+        }
     }
 
     // Fetch about data for the "About Us" page
@@ -89,23 +157,23 @@ class User {
     }
    
      // Volunteer functions
-     function addVolunteer() {
-        $sql = "INSERT INTO volunteers (last_name, first_name, middle_name, year, section, program_id, contact, email, cor_file)
-                VALUES (:last_name, :first_name, :middle_name, :year, :section, :program, :contact, :email, :cor_file)";
+     function addVolunteer($first_name, $last_name, $middle_name, $year, $section, $program, $contact, $email, $cor_file) {
+        $sql = "INSERT INTO volunteers (first_name, middle_name, last_name, year, section, program_id, contact, email, cor_file)
+                VALUES (:first_name, :middle_name, :last_name, :year, :section, :program_id, :contact, :email, :cor_file)";
         
         $query = $this->db->connect()->prepare($sql);
 
-        $query->bindParam(':last_name', $this->last_name);
-        $query->bindParam(':first_name', $this->first_name);
-        $query->bindParam(':middle_name', $this->middle_name);
-        $query->bindParam(':year', $this->year);
-        $query->bindParam(':section', $this->section);
-        $query->bindParam(':contact', $this->contact);
-        $query->bindParam(':email', $this->email);
-        $query->bindParam(':cor_file', $this->cor_file);
-        $query->bindParam(':program', $this->program);
+        $query->bindParam(':first_name', $first_name);
+        $query->bindParam(':middle_name', $middle_name);
+        $query->bindParam(':last_name', $last_name);
+        $query->bindParam(':year', $year);
+        $query->bindParam(':section', $section);
+        $query->bindParam(':program_id', $program);
+        $query->bindParam(':contact', $contact);
+        $query->bindParam(':email', $email);
+        $query->bindParam(':cor_file', $cor_file);
 
-        $query->execute();
+        return $query->execute();
     }
     public function fetchDownloadableFiles() {
         $sql = "SELECT file_id, file_name, file_type, created_at FROM downloadable_files WHERE is_deleted = 0";
@@ -114,11 +182,18 @@ class User {
         return $query->fetchAll(PDO::FETCH_ASSOC);
     }
     
-    public function fetchPrayerSchedules() {
+    public function fetchFridayPrayers() {
         $sql = "SELECT khutbah_date, speaker, topic, location 
                 FROM friday_prayers 
                 WHERE khutbah_date >= CURDATE() AND is_deleted = 0 
                 ORDER BY khutbah_date ASC";
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function fetchPrayerSchedule() {
+        $sql = "SELECT * FROM friday_prayers WHERE is_deleted=0 ORDER BY khutbah_date";
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         return $query->fetchAll(PDO::FETCH_ASSOC);
@@ -130,7 +205,7 @@ class User {
         $query->execute();
         $result = $query->fetchAll(PDO::FETCH_ASSOC);
 
-        // Log or print the result to ensure it’s being fetched
+        // Log or print the result to ensure it's being fetched
         error_log(print_r($result, true)); // This logs to the PHP error log
         
         return $result;
@@ -145,5 +220,115 @@ class User {
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
         return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+    public function fetchTransparencyReports() {
+        $sql = "SELECT 
+                    tr.report_id, 
+                    tr.report_date, 
+                    tr.expense_detail, 
+                    tr.expense_category, 
+                    tr.amount, 
+                    tr.transaction_type, 
+                    tr.semester, 
+                    sy.school_year 
+                FROM transparency_report tr
+                INNER JOIN school_years sy ON tr.school_year_id = sy.school_year_id
+                WHERE tr.is_deleted = 0
+                ORDER BY tr.report_date DESC";
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll(PDO::FETCH_ASSOC);
+    }
+    public function fetchExecutiveOfficers() {
+        try {
+            $sql = "
+                SELECT 
+                    eo.first_name, 
+                    eo.middle_name, 
+                    eo.last_name, 
+                    op.position_name AS position, 
+                    eo.image AS picture
+                FROM 
+                    executive_officers eo
+                INNER JOIN 
+                    officer_positions op ON eo.position_id = op.position_id
+                WHERE 
+                    eo.is_deleted = 0
+                ORDER BY 
+                    op.position_id ASC
+            ";
+            $query = $this->db->connect()->prepare($sql);
+            $query->execute();
+            return $query->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log('Database error: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+    function fetchOrgUpdates() {
+        // First get all updates
+        $sql = "SELECT ou.update_id, ou.title, ou.content, ou.created_at, ou.deleted_at,
+                    u.username AS created_by 
+                FROM org_updates ou
+                LEFT JOIN users u ON ou.created_by = u.user_id
+                WHERE ou.deleted_at IS NULL
+                ORDER BY ou.update_id ASC";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        $updates = $query->fetchAll();
+        
+        // Then get images for each update
+        foreach ($updates as &$update) {
+            $imagesSql = "SELECT file_path 
+                         FROM update_images 
+                         WHERE update_id = :update_id
+                         ORDER BY upload_order ASC";
+            
+            $imagesQuery = $this->db->connect()->prepare($imagesSql);
+            $imagesQuery->bindParam(':update_id', $update['update_id']);
+            $imagesQuery->execute();
+            $update['images'] = $imagesQuery->fetchAll();
+        }
+        
+        return $updates;
+    }
+
+        public function fetchUpdateImages($update_id) {
+            $sql = "SELECT image_id, file_path, upload_order
+                    FROM update_images 
+                    WHERE update_id = :update_id
+                    ORDER BY upload_order ASC";
+    
+            $query = $this->db->connect()->prepare($sql);
+            $query->bindParam(':update_id', $update_id, PDO::PARAM_INT);
+            $query->execute();
+            return $query->fetchAll();
+        }
+
+    public function fetchProgramsByCollege($college_id) {
+        $sql = "SELECT program_id, program_name, college_id 
+                FROM programs 
+                WHERE college_id = :college_id AND is_deleted = 0 
+                ORDER BY program_name ASC";
+        
+        error_log("Fetching programs for college ID: $college_id");
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':college_id', $college_id, PDO::PARAM_INT);
+        $query->execute();
+        
+        $result = $query->fetchAll(PDO::FETCH_ASSOC);
+        error_log("Found " . count($result) . " programs for college ID: $college_id");
+        
+        return $result;
+    }
+
+    // FOOTER FUNCTIONS
+    function fetchFooterInfo() {
+        $sql = "SELECT * FROM site_pages WHERE page_type = 'footer' AND is_active = 1";
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
     }
 }

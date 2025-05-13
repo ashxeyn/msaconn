@@ -1,46 +1,41 @@
-<!-- filepath: c:\xampp\htdocs\msaconnect\views\usermodals\registrationforvolunteermodal.php -->
-<!-- Debug info -->
-<div style="background: green; color: white; padding: 5px; margin: 10px 0;">
-    Modal file included successfully
-</div>
-
-<div id="successModal" class="modal" style="display: block !important;">
+<div id="registrationSuccessModal" class="modal" style="display: block;">
     <div class="modal-content">
-        <span class="close-button" onclick="closeVolunteerModal()">&times;</span>
+        <span class="close-button" onclick="closeRegistrationModal()">&times;</span>
         <div class="success-icon">
             <i class="fa fa-check-circle"></i>
         </div>
-        <h2>Registration Received</h2>
-        <p>Thank you for your volunteer registration. Your application has been received and will be reviewed by our team.</p>
+        <h2>Registration Successful!</h2>
+        <p>You have successfully registered for Madrasa Enrollment.</p>
+        <p>Your registration has been received and is being processed.</p>
         <div class="modal-actions">
-            <button type="button" class="close-modal-btn" onclick="closeVolunteerModal()">Close</button>
+            <button type="button" class="close-modal-btn" onclick="closeRegistrationModal()">Close</button>
         </div>
     </div>
 </div>
 
 <script>
-    function closeVolunteerModal() {
-        document.getElementById("successModal").style.display = "none";
-        window.location.href = "volunteer.php";
+    function closeRegistrationModal() {
+        document.getElementById("registrationSuccessModal").style.display = "none";
+        window.location.href = "registrationmadrasa.php";
     }
     
     // Auto close after 5 seconds
     setTimeout(function() {
-        closeVolunteerModal();
+        closeRegistrationModal();
     }, 5000);
     
-    // Ensure modal is visible when page loads
-    window.onload = function() {
-        var modal = document.getElementById("successModal");
+    // Ensure modal is visible
+    document.addEventListener("DOMContentLoaded", function() {
+        var modal = document.getElementById("registrationSuccessModal");
         if (modal) {
             modal.style.display = "block";
             modal.addEventListener("click", function(e) {
                 if (e.target === this) {
-                    closeVolunteerModal();
+                    closeRegistrationModal();
                 }
             });
         }
-    };
+    });
 </script>
 
 <style>

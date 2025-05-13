@@ -21,6 +21,7 @@ body {
 .hero p {
   font-family: 'Noto Naskh Arabic', serif;
 }
+
 /* Calendar Components */
 .calendar-container,
 .calendar-page .calendar-container,
@@ -50,23 +51,8 @@ body {
   align-items: center;
   justify-content: center;
   text-align: center;
-  margin-top: 0; /* Ensure the hero section does not push the header */
-  color: white;
-  
-}
-
-/* Hero Section */
-.calendar-page .hero {
-  position: relative;
-  width: 100%;
-  min-height: 400px;
-  height: auto;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  margin-top: 0;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
   color: white;
 }
 
@@ -76,20 +62,9 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('../assets/images/login.jpg');
+  background-image: url('../assets/images/background.jpg');
   background-position: center;
-  background-repeat: no-repeat;
-  z-index: 1;
-}
-
-.calendar-page .hero-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url('../assets/images/login.jpg');
-  background-position: center;
+  background-size: cover;
   background-repeat: no-repeat;
   z-index: 1;
 }
@@ -101,7 +76,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.6;
+  background-color: rgba(0, 0, 0, 0.6);
   z-index: 2;
 }
 
@@ -110,8 +85,9 @@ body {
   z-index: 3;
   max-width: 800px;
   padding: 20px;
-  background-color: rgba(0, 0, 0, 0.7); /* 30% BLACK (Contrast) */
+  background-color: rgba(0, 0, 0, 0.7);
   border-radius: 10px;
+  margin-top: 0 !important;
 }
 
 .calendar-page .hero-content {
@@ -135,17 +111,14 @@ body {
   font-weight: 400;
 }
 
-
 /* Calendar Container */
 .calendar-container {
   width: 100%;
-  max-width: 1400px; /* Increase max width */
-  margin: 0 auto;
+  max-width: 1400px;
+  margin: 20px auto 0;
   padding: 20px;
   box-sizing: border-box;
   overflow: hidden;
-  margin-top: 20px;  /* Adjust the margin to prevent overlap */
-
 }
 
 /* Calendar Container */
