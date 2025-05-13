@@ -7,6 +7,7 @@
     <?php $base_url = 'http://' . $_SERVER['HTTP_HOST'] . '/msaconn/'; ?>
     <link rel="stylesheet" href="<?php echo $base_url; ?>css/header.css">
     <link rel="stylesheet" href="<?php echo $base_url; ?>css/sticky-header.css">
+    <link rel="stylesheet" href="<?php echo $base_url; ?>css/no-scrollbar.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>

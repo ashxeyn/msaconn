@@ -240,6 +240,16 @@ class User {
         return $result;
     }
     
+    public function getActivityById($activity_id) {
+        $sql = "SELECT activity_id, title, description, venue, activity_date, end_date, time 
+                FROM calendar_activities 
+                WHERE activity_id = :activity_id AND is_deleted = 0";
+        $query = $this->db->connect()->prepare($sql);
+        $query->bindParam(':activity_id', $activity_id, PDO::PARAM_INT);
+        $query->execute();
+        return $query->fetch(PDO::FETCH_ASSOC);
+    }
+    
     
     public function fetchVolunteers() {
         $sql = "SELECT first_name, last_name 

@@ -105,6 +105,29 @@
     <!-- Include Footer -->
     <?php include '../../includes/footer.php'; ?>
 
+    <!-- Activity Details Modal -->
+    <div class="modal fade" id="activityModal" tabindex="-1" aria-labelledby="activityModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <!-- "Activity Details" text removed as requested -->
+                </div>
+                <div class="modal-body">
+                    <div id="activity-date" class="mb-2 fw-bold"></div>
+                    <div id="activity-details-container" class="activity-details-wrapper">
+                        <!-- Activity details will be inserted here dynamically -->
+                    </div>
+                    <div id="no-activities-message" class="text-center d-none">
+                        <p>No activities scheduled for this date.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
