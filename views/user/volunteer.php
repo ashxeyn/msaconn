@@ -57,10 +57,12 @@ $debug_session = isset($_SESSION['registration_success']) ? "Registration succes
     </div>
 
     <div class="volunteer-section">
-        <h3>Our Volunteers</h3>
+        <h3>Our Dedicated Volunteers</h3>
+        
         <div id="volunteer-grid" class="volunteer-grid">
             <!-- Volunteers will be loaded here dynamically -->
         </div>
+        
     </div>
 
     <?php include '../../includes/footer.php'; ?>

@@ -79,6 +79,7 @@ function fillAddressFieldsForOnsite() {
 // Volunteers Section
 function initializeVolunteers() {
     const volunteerGrid = document.getElementById('volunteer-grid');
+    const volunteerCount = document.getElementById('volunteer-count');
     if (!volunteerGrid) {
         console.warn('Not on the Volunteer page. Skipping initializeVolunteers.');
         return;
@@ -98,6 +99,11 @@ function initializeVolunteers() {
 
             volunteerGrid.innerHTML = '';
             if (data.length > 0) {
+                // Update volunteer count
+                if (volunteerCount) {
+                    volunteerCount.textContent = data.length;
+                }
+                
                 data.forEach(volunteer => {
                     const firstName = capitalizeName(volunteer.first_name);
                     const middleName = volunteer.middle_name ? capitalizeName(volunteer.middle_name) : '';
@@ -115,10 +121,16 @@ function initializeVolunteers() {
                     volunteerGrid.appendChild(volunteerDiv);
                 });
             } else {
+                if (volunteerCount) {
+                    volunteerCount.textContent = 0;
+                }
                 volunteerGrid.innerHTML = '<p>No volunteers have registered yet.</p>';
             }
         } catch (error) {
             console.error('Error fetching volunteer data:', error);
+            if (volunteerCount) {
+                volunteerCount.textContent = 0;
+            }
             volunteerGrid.innerHTML = '<p>Failed to load volunteer data.</p>';
         }
     }

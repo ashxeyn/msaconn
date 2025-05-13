@@ -180,8 +180,8 @@ header {
 
 .nav-links li a:hover,
 .nav-links li a.active {
-  color: var(--active-color);
-  background: #f4f8f6;
+  color: var(--active-color) !important;
+  background: #f4f8f6 !important;
 }
 
 .nav-links > li > a::after {
@@ -199,8 +199,9 @@ header {
 
 .nav-links > li > a:hover::after,
 .nav-links > li > a.active::after {
-  transform: scaleX(1);
+  transform: scaleX(1) !important;
   transform-origin: bottom left;
+  background-color: var(--hover-color) !important;
 }
 
 /* Dropdown Menu Styles */
@@ -242,8 +243,10 @@ header {
   transition: background-color var(--transition-speed);
 }
 
-.nav-links .dropdown-content li a:hover {
-  background-color: #f1f1f1;
+.nav-links .dropdown-content li a:hover,
+.nav-links .dropdown-content li a.active {
+  color: var(--active-color) !important;
+  background-color: #f1f1f1 !important;
 }
 
 /* Desktop dropdown behavior */

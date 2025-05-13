@@ -10,6 +10,13 @@ document.addEventListener('DOMContentLoaded', function() {
         dropdownsCount: dropdowns.length
     });
     
+    // Log active menu items
+    const activeLinks = document.querySelectorAll('.nav-links a.active');
+    console.log('Active links found:', activeLinks.length);
+    activeLinks.forEach((link, i) => {
+        console.log(`Active link ${i}:`, link.textContent, link.href);
+    });
+    
     // Toggle menu on hamburger click
     if (menuToggle && navbar) {
         menuToggle.addEventListener('click', function() {
