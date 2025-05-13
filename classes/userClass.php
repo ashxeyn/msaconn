@@ -204,10 +204,20 @@ class User {
         return $query->execute();
     }
     public function fetchDownloadableFiles() {
-        $sql = "SELECT file_id, file_name, file_type, created_at FROM downloadable_files WHERE is_deleted = 0";
-        $query = $this->getConnection()->prepare($sql);
-        $query->execute();
-        return $query->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            // Match the admin query - use both conditions for consistency
+            $sql = "SELECT file_id, file_name, file_path, file_type, file_size, created_at 
+                    FROM downloadable_files 
+                    WHERE is_deleted = 0 AND deleted_at IS NULL 
+                    ORDER BY created_at DESC";
+                    
+            $query = $this->db->connect()->prepare($sql);
+            $query->execute();
+            return $query->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error fetching downloadable files: " . $e->getMessage());
+            return [];
+        }
     }
     
     public function fetchFridayPrayers() {
@@ -228,7 +238,7 @@ class User {
     }
 
     public function fetchCalendarActivities() {
-        $sql = "SELECT activity_id, title, description, activity_date FROM calendar_activities WHERE is_deleted = 0 ORDER BY activity_date ASC";
+        $sql = "SELECT activity_id, title, description, activity_date, end_date FROM calendar_activities WHERE is_deleted = 0 ORDER BY activity_date ASC";
         $query = $this->getConnection()->prepare($sql);
         $query->execute();
         $result = $query->fetchAll(PDO::FETCH_ASSOC);

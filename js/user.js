@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initializeFAQs();
     initializePrayerSchedules();
     initializeFridayPrayers();
+    initializeExecutiveOfficers();
     
     // Initialize toggle for registration type if on the registration form page
     if (document.getElementById('registration_type')) {
@@ -392,6 +393,11 @@ function initializeAboutContent() {
 // Fetch and display downloadable files
 async function fetchDownloadableFiles() {
     const container = document.getElementById('downloads-container');
+    if (!container) {
+        console.log('Downloads container not found, skipping download fetch');
+        return;
+    }
+    
     try {
         const response = await fetch('../../handler/user/fetchDownloadableFiles.php');
         const result = await response.json();
@@ -401,10 +407,14 @@ async function fetchDownloadableFiles() {
             if (files.length > 0) {
                 container.innerHTML = '';
                 files.forEach(file => {
+                    // Format the date correctly
+                    const uploadDate = new Date(file.created_at);
+                    const formattedDate = uploadDate.toLocaleDateString();
+                    
                     const fileDiv = document.createElement('div');
                     fileDiv.classList.add('file-item');
                     fileDiv.innerHTML = `
-                        <p>${file.file_name} (Uploaded: ${new Date(file.uploaded_at).toLocaleDateString()})</p>
+                        <p>${file.file_name} (Uploaded: ${formattedDate})</p>
                         <button onclick="downloadFile(${file.file_id})">Download</button>
                     `;
                     container.appendChild(fileDiv);
@@ -414,6 +424,7 @@ async function fetchDownloadableFiles() {
             }
         } else {
             container.innerHTML = '<p>Error loading files.</p>';
+            console.error('Error from server:', result.message);
         }
     } catch (error) {
         console.error('Error fetching files:', error);
@@ -603,20 +614,10 @@ function fetchLatestUpdates() {
 }
 
 function scrollOfficers(direction) {
-    const container = document.getElementById('executive-officers-container');
-    const scrollAmount = 300; // Adjust this value to control scroll distance
-    
-    if (direction === 'left') {
-        container.scrollBy({
-            left: -scrollAmount,
-            behavior: 'smooth'
-        });
-    } else {
-        container.scrollBy({
-            left: scrollAmount,
-            behavior: 'smooth'
-        });
-    }
+    // This function is now superseded by the event handlers in designuser.js
+    // Prevent default behavior to avoid double-handling
+    event.preventDefault();
+    return false;
 }
 
 // Function to preview image before upload
@@ -683,4 +684,125 @@ function loadProgramsByCollege(collegeId) {
             console.error('Error fetching programs:', error);
             programSelect.innerHTML = '<option value="">Error loading programs</option>';
         });
+}
+
+// Executive Officers Section
+function initializeExecutiveOfficers() {
+    const officersContainer = document.getElementById('executive-officers-container');
+    if (!officersContainer) {
+        console.warn('Executive officers container not found. Skipping initializeExecutiveOfficers.');
+        return;
+    }
+
+    // Show loading state immediately
+    officersContainer.setAttribute('data-loading', 'true');
+
+    async function fetchOfficers() {
+        try {
+            // Use fetch with priority hint and cache control
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5-second timeout
+            
+            const response = await fetch('../../handler/user/fetchExecutiveOfficers.php', {
+                method: 'GET',
+                priority: 'high',
+                signal: controller.signal,
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                }
+            });
+            
+            clearTimeout(timeoutId);
+            
+            if (!response.ok) {
+                throw new Error(`Server responded with ${response.status}`);
+            }
+            
+            const result = await response.json();
+
+            if (result.status === 'success') {
+                updateOfficersContent(result.data);
+                officersContainer.setAttribute('data-loading', 'false');
+            } else {
+                console.error('Error fetching officers:', result.message);
+                officersContainer.innerHTML = '<div class="officer-card"><h3>Unable to load officers</h3><p>Please try again later.</p></div>';
+                officersContainer.setAttribute('data-loading', 'false');
+            }
+        } catch (error) {
+            console.error('Error fetching officers:', error);
+            officersContainer.innerHTML = '<div class="officer-card"><h3>Unable to load officers</h3><p>Please try again later.</p></div>';
+            officersContainer.setAttribute('data-loading', 'false');
+        }
+    }
+
+    function updateOfficersContent(officers) {
+        // Performance optimization: prepare content off DOM
+        const fragment = document.createDocumentFragment();
+        
+        if (officers && officers.length > 0) {
+            // Get base URL from a meta tag or elsewhere in the page
+            const baseUrl = document.querySelector('base')?.href || window.location.origin + '/msaconnect/';
+            
+            officers.forEach(officer => {
+                const officerCard = document.createElement('div');
+                officerCard.classList.add('officer-card');
+                
+                // Create officer name (with middle initial if available)
+                let fullName = `${officer.first_name} `;
+                if (officer.middle_name) {
+                    fullName += `${officer.middle_name.charAt(0)}. `;
+                }
+                fullName += officer.last_name;
+                
+                // Create glassmorphism card structure
+                officerCard.innerHTML = `
+                    <div class="blur-bg"></div>
+                    <img src="${officer.picture}" alt="${fullName}" class="officer-image">
+                    <h3 class="officer-name">${fullName}</h3>
+                    <p class="officer-position">${officer.position}</p>
+                    <p class="officer-bio">Dedicated member of the MSA leadership team serving as ${officer.position}.</p>
+                    <ul class="social-links">
+                        <li><a href="#"><i class="fas fa-envelope"></i></a></li>
+                        <li><a href="#"><i class="fas fa-linkedin"></i></a></li>
+                    </ul>
+                `;
+                
+                fragment.appendChild(officerCard);
+            });
+        } else {
+            const placeholderCard = document.createElement('div');
+            placeholderCard.classList.add('officer-card');
+            placeholderCard.innerHTML = `
+                <div class="blur-bg"></div>
+                <img src="assets/images/officer.jpg" alt="Officer" class="officer-image">
+                <h3 class="officer-name">No Officers Found</h3>
+                <p class="officer-position">Please check back later</p>
+                <p class="officer-bio">Executive officer information will be updated soon.</p>
+                <ul class="social-links">
+                    <li><a href="#"><i class="fas fa-envelope"></i></a></li>
+                    <li><a href="#"><i class="fas fa-linkedin"></i></a></li>
+                </ul>
+            `;
+            fragment.appendChild(placeholderCard);
+        }
+        
+        // Clear existing content
+        while (officersContainer.firstChild) {
+            officersContainer.removeChild(officersContainer.firstChild);
+        }
+        
+        // Add new content in one DOM operation
+        officersContainer.appendChild(fragment);
+        
+        // Trigger a custom event to notify that officers content has been updated
+        const event = new CustomEvent('officersUpdated');
+        document.dispatchEvent(event);
+    }
+
+    // Start fetch as soon as possible - don't wait for DOMContentLoaded
+    fetchOfficers();
+        
+    // Poll for updates - less frequently to avoid animation disruption
+    setInterval(fetchOfficers, 60000); // Reduced to once per minute
 }

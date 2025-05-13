@@ -216,6 +216,24 @@ body {
   overflow: hidden;
 }
 
+/* Continued event styling */
+.event-badge.continued-event {
+  background-color: #2c7a30; /* Slightly lighter shade of green */
+  border-left: 3px solid #ffd700; /* Gold border to indicate continuation */
+  padding-left: 5px;
+}
+
+/* Activity start date styling */
+p.activity-start-date {
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* Text color for "Started on" text */
+.text-event-start {
+  color: #9f2626 !important;
+}
+
 /* Calendar Header */
 .calendar-header {
   display: flex;

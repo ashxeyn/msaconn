@@ -166,21 +166,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     ?>
     
-    <div class="main-content">
-        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" enctype="multipart/form-data" autocomplete="on">
-            <div class="form-columns">
-                <!-- Left Column -->
-                <div class="form-col">
+    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" enctype="multipart/form-data" autocomplete="on">
+        <h2>Volunteer Registration Form</h2>
+        <div class="form-columns">
+            <!-- Left Column -->
+            <div class="form-col">
+                <div class="form-section">
                     <label for="firstname">First Name:</label>
                     <input type="text" id="firstname" name="firstname" placeholder="First Name" value="<?= $first_name ?>" autocomplete="given-name">
-                    <span><p><?= $first_nameErr ?></p></span>
+                    <?php if (!empty($first_nameErr)): ?><span class="error"><?= $first_nameErr ?></span><?php endif; ?>
 
                     <label for="middlename">Middle Name:</label>
                     <input type="text" id="middlename" name="middlename" placeholder="Middle Name" value="<?= $middle_name ?>" autocomplete="additional-name">
 
                     <label for="lastname">Last Name:</label>
                     <input type="text" id="lastname" name="lastname" placeholder="Last Name" value="<?= $last_name ?>" autocomplete="family-name">
-                    <span><p><?= $last_nameErr ?></p></span>
+                    <?php if (!empty($last_nameErr)): ?><span class="error"><?= $last_nameErr ?></span><?php endif; ?>
 
                     <label for="college">College:</label>
                     <select id="college" name="college" autocomplete="organization" onchange="loadProgramsByCollege(this.value)">
@@ -196,10 +197,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <select id="program" name="program" autocomplete="off">
                         <option value="">Select College First</option>
                     </select>
-                    <span><p><?= $programErr ?></p></span>
+                    <?php if (!empty($programErr)): ?><span class="error"><?= $programErr ?></span><?php endif; ?>
                 </div>
-                <!-- Right Column -->
-                <div class="form-col">
+            </div>
+            <!-- Right Column -->
+            <div class="form-col">
+                <div class="form-section">
                     <label for="year">Year Level:</label>
                     <select id="year" name="year" autocomplete="off">
                         <option value="">Select Year Level</option>
@@ -208,43 +211,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <option value="3rd Year" <?= ($year == "3rd Year") ? 'selected' : '' ?>>3rd Year</option>
                         <option value="4th Year" <?= ($year == "4th Year") ? 'selected' : '' ?>>4th Year</option>
                     </select>
-                    <span><p><?= $yearErr ?></p></span>
+                    <?php if (!empty($yearErr)): ?><span class="error"><?= $yearErr ?></span><?php endif; ?>
 
                     <label for="contact">Contact Number:</label>
                     <input type="text" id="contact" name="contact" placeholder="Contact Number" value="<?= $contact ?>" autocomplete="tel">
-                    <span><p><?= $contactErr ?></p></span>
+                    <?php if (!empty($contactErr)): ?><span class="error"><?= $contactErr ?></span><?php endif; ?>
 
                     <label for="email">Email:</label>
                     <input type="email" id="email" name="email" placeholder="Email" value="<?= $email ?>" autocomplete="email">
-                    <span><p><?= $emailErr ?></p></span>
+                    <?php if (!empty($emailErr)): ?><span class="error"><?= $emailErr ?></span><?php endif; ?>
                 </div>
-            </div>
-            <!-- COR upload always full width -->
-            <div class="cor-row">
-                <label for="image">Upload COR Picture:</label>
-                <div class="upload-container">
-                    <div class="upload-area" id="upload-area" onclick="document.getElementById('image').click()">
-                        <div class="upload-placeholder" id="upload-placeholder">
-                            <img src="../../assets/icons/upload-icon.png" alt="Upload Icon" class="upload-icon">
-                            <p>Click to upload your COR screenshot</p>
-                            <p class="upload-hint">(Only JPG, JPEG, or PNG, max 2MB)</p>
+                
+                <!-- COR upload -->
+                <div class="cor-row">
+                    <label for="image">Upload COR Picture:</label>
+                    <div class="upload-container">
+                        <div class="upload-area" id="upload-area" onclick="document.getElementById('image').click()">
+                            <div class="upload-placeholder" id="upload-placeholder">
+                                <img src="../../assets/icons/upload-icon.png" alt="Upload Icon" class="upload-icon">
+                                <p>Click to upload your COR screenshot</p>
+                                <p class="upload-hint">(Only JPG, JPEG, or PNG, max 2MB)</p>
+                            </div>
+                            <div class="image-preview" id="image-preview" style="display: none;">
+                                <img id="preview-img" src="#" alt="Image Preview">
+                                <button type="button" class="remove-image" onclick="removeImage()">x</button>
+                            </div>
                         </div>
-                        <div class="image-preview" id="image-preview" style="display: none;">
-                            <img id="preview-img" src="#" alt="Image Preview">
-                            <button type="button" class="remove-image" onclick="removeImage()">x</button>
-                        </div>
+                        <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(event)" style="display: none;" autocomplete="off">
+                        <input type="hidden" name="existing_image" value="<?= $cor_file ?>" autocomplete="off">
+                        <?php if (!empty($imageErr)): ?><span class="error"><?= $imageErr ?></span><?php endif; ?>
                     </div>
-                    <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(event)" style="display: none;" autocomplete="off">
-                    <input type="hidden" name="existing_image" value="<?= $cor_file ?>" autocomplete="off">
-                    <span><p><?= $imageErr ?></p></span>
                 </div>
             </div>
-            <div class="button-container">
-                <button type="button" class="back-button" onclick="window.location.href='volunteer.php'">Back</button>
-                <button type="submit" class="sign-up-button">Sign Up</button>
-            </div>
-        </form>
-    </div>
+        </div>
+        
+        <!-- Button Container - Fixed styling to match Madrasa form -->
+        <div class="button-container" style="display: flex; gap: 15px; justify-content: space-between; margin-top: 20px;">
+            <button type="button" class="back-button" onclick="window.location.href='volunteer.php'" style="flex: 1; width: 50%; height: 50px; font-size: 17px; font-weight: 700; padding: 14px 20px; border-radius: 10px; background-color: #1a541c; color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;">Back</button>
+            <button type="submit" class="sign-up-button" style="flex: 1; width: 50%; height: 50px; font-size: 17px; font-weight: 700; padding: 14px 20px; border-radius: 10px; background-color: #d72f2f; color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;">Sign Up</button>
+        </div>
+    </form>
 
     <?php include '../../includes/footer.php'; ?>
     <script src="../../js/regVolunteer.js"></script>

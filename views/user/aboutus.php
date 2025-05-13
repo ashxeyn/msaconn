@@ -1,7 +1,6 @@
 <?php
 // Include necessary files
 require_once __DIR__.'/../../classes/userClass.php';
-require_once __DIR__.'/../../includes/helpers.php'; // Make sure this includes the helper functions
 
 // Initialize User class
 $user = new User();
@@ -17,6 +16,12 @@ try {
     
     // Fetch downloadable files
     $downloadableFiles = $user->fetchDownloadableFiles();
+    
+    // Debug: print the downloadable files
+    echo "<!-- DEBUG: Files found: " . count($downloadableFiles) . " -->";
+    if (empty($downloadableFiles)) {
+        error_log("No downloadable files found in database");
+    }
 } catch (Exception $e) {
     // Handle the error gracefully
     error_log($e->getMessage());
@@ -63,130 +68,99 @@ if (!isset($base_url)) {
 <!-- Executive Team Section -->
 <section class="executive-officers">
     <h2>Executive Officers</h2>
+    
+    <!-- Preload the default officer image -->
+    <link rel="preload" href="<?php echo $base_url; ?>assets/images/officer.jpg" as="image">
+    
     <div id="executive-officers-container">
-        <!-- Placeholder Executive Officers -->
+        <!-- Initial placeholder card that will be replaced by JavaScript -->
         <div class="officer-card">
-            <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="President" class="officer-image">
-            <h3 class="officer-name">John Doe</h3>
-            <p class="officer-position">President</p>
-            <p class="officer-bio">Leading the MSA with dedication and vision.</p>
-        </div>
-        <div class="officer-card">
-        <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="President" class="officer-image">
-        <h3 class="officer-name">Jane Smith</h3>
-            <p class="officer-position">Vice President</p>
-            <p class="officer-bio">Supporting the organization's growth and development.</p>
-        </div>
-        <div class="officer-card">
-        <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="President" class="officer-image">
-        <h3 class="officer-name">Michael Johnson</h3>
-            <p class="officer-position">Secretary</p>
-            <p class="officer-bio">Managing communications and documentation.</p>
-        </div>
-        <div class="officer-card">
-        <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="President" class="officer-image">
-        <h3 class="officer-name">Sarah Williams</h3>
-            <p class="officer-position">Treasurer</p>
-            <p class="officer-bio">Overseeing financial matters and budgeting.</p>
-        </div>
-        <div class="officer-card">
-        <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="President" class="officer-image">
-        <h3 class="officer-name">David Brown</h3>
-            <p class="officer-position">Event Coordinator</p>
-            <p class="officer-bio">Planning and organizing MSA events and activities.</p>
-        </div>
-        <!-- 10 more officer cards -->
-        <div class="officer-card">
-        <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="President" class="officer-image">
-        <h3 class="officer-name">Emily Clark</h3>
-            <p class="officer-position">Public Relations Officer</p>
-            <p class="officer-bio">Connecting MSA with the community and media.</p>
-        </div>
-        <div class="officer-card">
-        <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="President" class="officer-image">
-        <h3 class="officer-name">Chris Evans</h3>
-            <p class="officer-position">Auditor</p>
-            <p class="officer-bio">Ensuring transparency and accountability in all activities.</p>
-        </div>
-        <div class="officer-card">
-        <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="President" class="officer-image">
-        <h3 class="officer-name">Olivia Lee</h3>
-            <p class="officer-position">Sports Coordinator</p>
-            <p class="officer-bio">Promoting health and wellness through sports events.</p>
-        </div>
-        <div class="officer-card">
-        <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="President" class="officer-image">
-        <h3 class="officer-name">Daniel Kim</h3>
-            <p class="officer-position">Logistics Head</p>
-            <p class="officer-bio">Coordinating resources and event logistics.</p>
-        </div>
-        <div class="officer-card">
-        <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="President" class="officer-image">
-        <h3 class="officer-name">Sophia Martinez</h3>
-            <p class="officer-position">Membership Chair</p>
-            <p class="officer-bio">Welcoming and supporting new members.</p>
-        </div>
-        <div class="officer-card">
-        <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="President" class="officer-image">
-        <h3 class="officer-name">Liam Patel</h3>
-            <p class="officer-position">IT Officer</p>
-            <p class="officer-bio">Managing the MSA website and digital presence.</p>
-        </div>
-        <div class="officer-card">
-        <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="President" class="officer-image">
-        <h3 class="officer-name">Ava Garcia</h3>
-            <p class="officer-position">Cultural Affairs</p>
-            <p class="officer-bio">Celebrating diversity and organizing cultural events.</p>
-        </div>
-        <div class="officer-card">
-        <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="President" class="officer-image">
-        <h3 class="officer-name">Noah Wilson</h3>
-            <p class="officer-position">Education Chair</p>
-            <p class="officer-bio">Facilitating learning and educational programs.</p>
-        </div>
-        <div class="officer-card">
-        <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="President" class="officer-image">
-        <h3 class="officer-name">Mia Chen</h3>
-            <p class="officer-position">Outreach Coordinator</p>
-            <p class="officer-bio">Building partnerships and outreach initiatives.</p>
-        </div>
-        <div class="officer-card">
-        <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="President" class="officer-image">
-        <h3 class="officer-name">William Scott</h3>
-            <p class="officer-position">Welfare Officer</p>
-            <p class="officer-bio">Ensuring the well-being of all members.</p>
-        </div>
-        <div class="officer-card">
-        <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="President" class="officer-image">
-        <h3 class="officer-name">Ella Rivera</h3>
-            <p class="officer-position">Assistant Secretary</p>
-            <p class="officer-bio">Assisting with records and correspondence.</p>
+            <div class="blur-bg"></div>
+            <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="Officer" class="officer-image">
+            <h3 class="officer-name">Loading Officers...</h3>
+            <p class="officer-position">Please wait a moment</p>
+            <p class="officer-bio">Officer information is loading. This will only take a moment.</p>
+            <ul class="social-links">
+                <li><a href="#"><i class="fas fa-envelope"></i></a></li>
+                <li><a href="#"><i class="fas fa-linkedin"></i></a></li>
+            </ul>
         </div>
     </div>
-    <div class="scroll-buttons">
-        <button class="scroll-button" onclick="scrollOfficers('left')">❮</button>
-        <button class="scroll-button" onclick="scrollOfficers('right')">❯</button>
-    </div>
+    
+    <!-- Preload Font Awesome script for icons -->
+    <script>
+        // Preload Font Awesome if not already loaded
+        if (!document.querySelector('link[href*="font-awesome"]')) {
+            const link = document.createElement('link');
+            link.rel = 'preload';
+            link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
+            link.as = 'style';
+            link.onload = function() { this.onload = null; this.rel = 'stylesheet'; };
+            document.head.appendChild(link);
+        }
+    </script>
 </section>
 
 <section class="downloadable-files">
     <div class="container">
         <h2>Downloadable Resources</h2>
         <div class="downloads-list">
-            <a href="#" class="download-card">
-                <div class="download-icon docx"></div>
-                <div class="download-info">
-                    <span class="download-title">Sample File</span>
-                    <span class="download-type">(DOCX)</span>
-                </div>
-            </a>
-            <a href="#" class="download-card">
-                <div class="download-icon pdf"></div>
-                <div class="download-info">
-                    <span class="download-title">Sample File</span>
-                    <span class="download-type">(PDF)</span>
-                </div>
-            </a>
+            <?php if (!empty($downloadableFiles)): ?>
+                <?php foreach ($downloadableFiles as $file): ?>
+                    <?php 
+                        $fileExtension = pathinfo($file['file_name'], PATHINFO_EXTENSION);
+                        $iconClass = 'file'; // Default icon class
+                        
+                        // Set icon class based on file type
+                        if (stripos($file['file_type'], 'pdf') !== false) {
+                            $iconClass = 'pdf';
+                        } elseif (stripos($file['file_type'], 'word') !== false || $fileExtension == 'docx' || $fileExtension == 'doc') {
+                            $iconClass = 'docx';
+                        } elseif (stripos($file['file_type'], 'excel') !== false || $fileExtension == 'xlsx' || $fileExtension == 'xls') {
+                            $iconClass = 'xlsx';
+                        } elseif (stripos($file['file_type'], 'power') !== false || $fileExtension == 'pptx' || $fileExtension == 'ppt') {
+                            $iconClass = 'pptx';
+                        } elseif (stripos($file['file_type'], 'text') !== false || $fileExtension == 'txt') {
+                            $iconClass = 'txt';
+                        } elseif (stripos($file['file_type'], 'zip') !== false || $fileExtension == 'zip' || $fileExtension == 'rar') {
+                            $iconClass = 'zip';
+                        }
+                        
+                        // Format file size
+                        $fileSize = isset($file['file_size']) ? intval($file['file_size']) : 0;
+                        $formattedSize = '';
+                        if ($fileSize < 1024) {
+                            $formattedSize = $fileSize . ' B';
+                        } elseif ($fileSize < 1048576) {
+                            $formattedSize = round($fileSize / 1024, 2) . ' KB';
+                        } else {
+                            $formattedSize = round($fileSize / 1048576, 2) . ' MB';
+                        }
+                        
+                        // Format date
+                        $createdDate = '';
+                        if (isset($file['created_at'])) {
+                            $date = new DateTime($file['created_at']);
+                            $createdDate = $date->format('F j, Y');
+                        }
+                    ?>
+                    <a href="<?php echo $base_url; ?>handler/user/download.php?file_id=<?= $file['file_id'] ?>" class="download-card">
+                        <div class="download-icon <?= $iconClass ?>"></div>
+                        <div class="download-info">
+                            <span class="download-title"><?= htmlspecialchars($file['file_name']) ?></span>
+                            <span class="download-type">(<?= strtoupper($fileExtension) ?>)</span>
+                            <?php if ($formattedSize): ?>
+                            <span class="download-size"><?= $formattedSize ?></span>
+                            <?php endif; ?>
+                            <?php if ($createdDate): ?>
+                            <span class="download-date">Added: <?= $createdDate ?></span>
+                            <?php endif; ?>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p class="no-downloads">No downloadable resources available at this time.</p>
+            <?php endif; ?>
         </div>
     </div>
 </section>

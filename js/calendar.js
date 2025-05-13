@@ -84,7 +84,29 @@ document.addEventListener('DOMContentLoaded', function () {
             dayCell.appendChild(dateText);
 
             const currentDateString = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            const dayActivities = activities.filter(activity => activity.activity_date === currentDateString);
+            
+            // Get activities for this day (including multi-day events)
+            const dayActivities = [];
+            
+            activities.forEach(activity => {
+                const startDate = new Date(activity.activity_date);
+                const endDate = activity.end_date ? new Date(activity.end_date) : startDate;
+                const currentCellDate = new Date(currentDateString);
+                
+                // Check if this day falls within the activity's date range
+                if (currentCellDate >= startDate && currentCellDate <= endDate) {
+                    // Create a copy of the activity for this day
+                    const activityCopy = {...activity};
+                    
+                    // Add an indicator if this is a multi-day event
+                    if (activity.end_date && activity.activity_date !== currentDateString) {
+                        activityCopy.isMultiDay = true;
+                        activityCopy.originalStartDate = activity.activity_date;
+                    }
+                    
+                    dayActivities.push(activityCopy);
+                }
+            });
 
             if (dayActivities.length > 0) {
                 dayCell.classList.add('has-events');
@@ -93,6 +115,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     const eventBadge = document.createElement('div');
                     eventBadge.classList.add('event-badge');
                     eventBadge.textContent = activity.title;
+                    
+                    // Add a class for multi-day events that are not on their start date
+                    if (activity.isMultiDay) {
+                        eventBadge.classList.add('continued-event');
+                    }
+                    
                     dayCell.appendChild(eventBadge);
                 });
                 
@@ -161,19 +189,39 @@ document.addEventListener('DOMContentLoaded', function () {
                     .then(data => {
                         if (data.status === 'success') {
                             const details = data.data;
+                            let multiDayInfo = '';
+                            
+                            // Add info for multi-day events showing the start date
+                            if (activity.isMultiDay) {
+                                const startDate = formatDate(activity.originalStartDate);
+                                multiDayInfo = `<p class="activity-start-date mb-1 text-event-start"><strong>Started on:</strong> ${startDate}</p>`;
+                            }
+                            
                             activityElement.innerHTML = `
                                 <h5 class="activity-title">${details.title}</h5>
                                 <div class="activity-details">
                                     <p class="activity-time mb-1"><strong>Time:</strong> ${details.time || 'N/A'}</p>
                                     <p class="activity-venue mb-1"><strong>Venue:</strong> ${details.venue || 'N/A'}</p>
+                                    ${multiDayInfo}
+                                    ${details.end_date ? `<p class="activity-end-date mb-1"><strong>Until:</strong> ${formatDate(details.end_date)}</p>` : ''}
                                     <p class="activity-description">${details.description || 'No description available.'}</p>
                                 </div>
                             `;
                         } else {
                             // Fallback to basic info if fetch fails
+                            let multiDayInfo = '';
+                            
+                            // Add info for multi-day events showing the start date
+                            if (activity.isMultiDay) {
+                                const startDate = formatDate(activity.originalStartDate);
+                                multiDayInfo = `<p class="activity-start-date mb-1 text-event-start"><strong>Started on:</strong> ${startDate}</p>`;
+                            }
+                            
                             activityElement.innerHTML = `
                                 <h5 class="activity-title">${activity.title}</h5>
                                 <div class="activity-details">
+                                    ${multiDayInfo}
+                                    ${activity.end_date ? `<p class="activity-end-date mb-1"><strong>Until:</strong> ${formatDate(activity.end_date)}</p>` : ''}
                                     <p class="activity-description">${activity.description || 'No description available.'}</p>
                                 </div>
                             `;
@@ -182,9 +230,19 @@ document.addEventListener('DOMContentLoaded', function () {
                     .catch(error => {
                         console.error('Error fetching activity details:', error);
                         // Fallback to basic info if fetch fails
+                        let multiDayInfo = '';
+                        
+                        // Add info for multi-day events showing the start date
+                        if (activity.isMultiDay) {
+                            const startDate = formatDate(activity.originalStartDate);
+                            multiDayInfo = `<p class="activity-start-date mb-1 text-event-start"><strong>Started on:</strong> ${startDate}</p>`;
+                        }
+                        
                         activityElement.innerHTML = `
                             <h5 class="activity-title">${activity.title}</h5>
                             <div class="activity-details">
+                                ${multiDayInfo}
+                                ${activity.end_date ? `<p class="activity-end-date mb-1"><strong>Until:</strong> ${formatDate(activity.end_date)}</p>` : ''}
                                 <p class="activity-description">${activity.description || 'No description available.'}</p>
                             </div>
                         `;
@@ -204,6 +262,18 @@ document.addEventListener('DOMContentLoaded', function () {
     function goToPrevMonth() {
         currentDate.setMonth(currentDate.getMonth() - 1);
         fetchCalendarActivities();
+    }
+
+    // Format date for display
+    function formatDate(dateString) {
+        if (!dateString) return 'N/A';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
     }
 
     // Go to the next month

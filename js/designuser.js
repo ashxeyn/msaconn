@@ -1,66 +1,86 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const container = document.getElementById('executive-officers-container');
-    const cards = Array.from(document.querySelectorAll('.officer-card'));
-    const cardWidth = cards[0].offsetWidth;
-    const gap = 24; // 1.5rem gap in pixels
-    let animationFrame;
-    let isPaused = false;
-    let speed = 2.5; // pixels per frame, increase for faster scroll
-    let position = -(cardWidth + gap); // Start at the first real card (after the clone)
-
-    // Clone all cards for seamless looping
-    cards.forEach(card => {
-        const clone = card.cloneNode(true);
-        clone.classList.add('clone');
-        container.appendChild(clone);
-    });
-
-    // Total width of all cards (original + clones)
-    const totalCards = container.querySelectorAll('.officer-card').length;
-    const totalWidth = (cardWidth + gap) * totalCards;
-    const originalCardsWidth = (cardWidth + gap) * cards.length;
-
-    // Set initial position
-    function setPosition() {
-        container.style.transition = 'none';
-        container.style.transform = `translateX(${position}px)`;
-    }
-
-    // Continuous animation loop
-    function animate() {
-        if (!isPaused) {
-            position -= speed;
-            // If we've scrolled past the original set, reset to start
-            if (Math.abs(position) >= originalCardsWidth) {
-                position = -(cardWidth + gap);
-            }
-            container.style.transform = `translateX(${position}px)`;
-        }
-        animationFrame = requestAnimationFrame(animate);
-    }
-
-    // Pause on hover
-    container.addEventListener('mouseenter', () => {
-        isPaused = true;
-    });
-    container.addEventListener('mouseleave', () => {
-        isPaused = false;
-    });
-
-    // Optional: Manual scroll buttons to speed up or reverse
-    const scrollLeft = document.querySelector('.scroll-button[onclick*="left"]');
-    const scrollRight = document.querySelector('.scroll-button[onclick*="right"]');
-    if (scrollLeft && scrollRight) {
-        scrollLeft.addEventListener('click', () => {
-            speed = Math.abs(speed) * -1; // Reverse direction
-        });
-        scrollRight.addEventListener('click', () => {
-            speed = Math.abs(speed); // Forward direction
-        });
-    }
-
-    // Set initial position and start animation
-    setPosition();
-    animate();
-    
+    // Initialize immediately
+    initGlassCards();
 });
+
+function initGlassCards() {
+    const container = document.getElementById('executive-officers-container');
+    if (!container) return;
+    
+    // Make container visible
+    container.style.opacity = 1;
+    
+    // Add font awesome stylesheet if not already added
+    if (!document.querySelector('link[href*="font-awesome"]')) {
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
+        document.head.appendChild(link);
+    }
+    
+    // Setup hover effects for existing cards
+    setupGlassCards();
+    
+    // Listen for officer content updates
+    document.addEventListener('officersUpdated', function() {
+        setupGlassCards();
+    });
+}
+
+function setupGlassCards() {
+    // Get all officer cards
+    const cards = document.querySelectorAll('.officer-card');
+    
+    cards.forEach(card => {
+        // Skip if already initialized
+        if (card.dataset.initialized) return;
+        
+        // Mark as initialized
+        card.dataset.initialized = true;
+        
+        // Add blur background if not present
+        if (!card.querySelector('.blur-bg')) {
+            const blurBg = document.createElement('div');
+            blurBg.className = 'blur-bg';
+            card.prepend(blurBg);
+        }
+        
+        // Add social links if not present
+        if (!card.querySelector('.social-links')) {
+            const socialLinks = document.createElement('ul');
+            socialLinks.className = 'social-links';
+            socialLinks.innerHTML = `
+                <li><a href="#"><i class="fas fa-envelope"></i></a></li>
+                <li><a href="#"><i class="fas fa-linkedin"></i></a></li>
+            `;
+            card.appendChild(socialLinks);
+        }
+        
+        // Add hover effects to enhance the glassmorphism feel
+        card.addEventListener('mouseenter', function() {
+            card.style.transform = 'translateY(-10px)';
+            card.style.background = 'rgba(255, 255, 255, 0.1)';
+            card.style.boxShadow = '0 15px 35px rgba(0, 0, 0, 0.2)';
+            
+            const image = card.querySelector('.officer-image');
+            if (image) {
+                image.style.transform = 'scale(1.05)';
+                image.style.boxShadow = '0 8px 25px rgba(0, 0, 0, 0.3)';
+                image.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+            }
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            card.style.transform = '';
+            card.style.background = '';
+            card.style.boxShadow = '';
+            
+            const image = card.querySelector('.officer-image');
+            if (image) {
+                image.style.transform = '';
+                image.style.boxShadow = '';
+                image.style.borderColor = '';
+            }
+        });
+    });
+}
