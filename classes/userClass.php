@@ -460,4 +460,12 @@ class User {
         $query->execute();
         return $query->fetchAll();
     }
+
+    // REGISTRATION MADRASA
+    function fetchRegistrationInfo() {
+        $sql = "SELECT * FROM site_pages WHERE page_type = 'registration' AND is_active = 1";
+        $query = $this->getConnection()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
 }

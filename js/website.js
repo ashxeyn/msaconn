@@ -38,7 +38,8 @@ let volunteerHeroInterval = null;
 let volunteerRefreshInterval = null;
 let calendarHeroInterval = null;
 let calendarRefreshInterval = null;
-
+let registrationHeroInterval = null;
+let registrationRefreshInterval = null;
 
 // LANDING PAGE FUNCTIONS
 function updateLandingPage() {
@@ -550,8 +551,109 @@ function initCalendarPage() {
     );
 }
 
+// REGISTRATION MADRASA PAGE FUNCTIONS
+
+function updateRegistrationPage() {
+    $.ajax({
+        url: base_url + 'handler/website/fetchRegistration.php',
+        method: 'GET',
+        dataType: 'json',
+        cache: false,
+        success: function(response) {
+            if (response.status === 'success') {
+                const data = response.data;
+                
+                if (data.backgroundImage && data.backgroundImage.length > 0) {
+                    updateRegistrationBackground(data.backgroundImage);
+                }
+                
+                if (data.registrationInfo && data.registrationInfo.length > 0) {
+                    updateRegistrationContent(data.registrationInfo);
+                }
+                
+                console.log('Registration madrasa content updated successfully at', new Date().toLocaleTimeString());
+            } else {
+                console.error('Error in response:', response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching registration data:', error);
+        }
+    });
+}
+
+function updateRegistrationBackground(backgroundImages) {
+    if (!backgroundImages || backgroundImages.length === 0) return;
+    
+    const heroBackground = $('.hero-background');
+    if (!heroBackground.length) return;
+
+    const image = backgroundImages[0];
+    const newImagePath = base_url + image.image_path;
+    const currentBgStyle = heroBackground.attr('style');
+    const newBgStyle = `background-image: url('${newImagePath}');`;
+    
+    if (!currentBgStyle || !currentBgStyle.includes(image.image_path)) {
+        heroBackground.attr('style', newBgStyle);
+        console.log('Registration background updated');
+    }
+}
+
+function updateRegistrationContent(registrationInfo) {
+    if (!registrationInfo || registrationInfo.length === 0) return;
+    
+    const heroContent = $('.hero-content');
+    if (!heroContent.length) return;
+
+    const info = registrationInfo[0];
+    const currentTitle = heroContent.find('h2').text().trim();
+    const currentDesc = heroContent.find('p').text().trim();
+
+    if (currentTitle !== info.title.trim() || currentDesc !== info.description.trim()) {
+        heroContent.find('h2').text(info.title);
+        heroContent.find('p').text(info.description);
+        console.log('Registration content updated');
+    }
+}
+
+function initRegistrationPage() {
+    if (registrationHeroInterval) {
+        clearInterval(registrationHeroInterval);
+    }
+    
+    if (registrationRefreshInterval) {
+        clearInterval(registrationRefreshInterval);
+    }
+
+    updateRegistrationPage();
+
+    registrationRefreshInterval = setInterval(function() {
+        updateRegistrationPage();
+    }, 10000);
+
+    $('.hero').hover(
+        function() {
+            if (registrationHeroInterval) {
+                clearInterval(registrationHeroInterval);
+            }
+            if (registrationRefreshInterval) {
+                clearInterval(registrationRefreshInterval);
+            }
+            console.log('Registration updates paused on hover');
+        },
+        function() {
+            registrationRefreshInterval = setInterval(function() {
+                updateRegistrationPage();
+            }, 12000);
+            console.log('Registration updates resumed after hover');
+        }
+    );
+}
+
 function isPageActive(pagePattern) {
-    return window.location.pathname.includes(pagePattern);
+    const isActive = window.location.pathname.includes(pagePattern);
+    console.log('Checking if page is active:', pagePattern, 'Result:', isActive, 'Current path:', window.location.pathname);
+    return isActive;
 }
 
 $(document).ready(function() {
@@ -561,6 +663,7 @@ $(document).ready(function() {
     }
     
     console.log('Website.js initialized on path:', window.location.pathname);
+    console.log('Base URL:', base_url);
     
     if (isPageActive('landing_page')) {
         console.log('Landing page detected, initializing carousel and content updates');
@@ -578,5 +681,10 @@ $(document).ready(function() {
     if (isPageActive('calendar')) {
         console.log('Calendar page detected, initializing content updates');
         initCalendarPage();
+    }
+
+    if (isPageActive('Registrationmadrasa')) {
+        console.log('Registration Madrasa page detected, initializing content updates');
+        initRegistrationPage();
     }
 });
