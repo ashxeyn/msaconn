@@ -5,8 +5,10 @@ body {
     padding: 0;
     box-sizing: border-box;
     overflow-x: hidden; /* Prevent horizontal scrolling */
-    background-color: #f4f4f4; /* Light background color */
+    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); /* Add a gradient background */
+    background-attachment: fixed; /* Keep the background fixed when scrolling */
     color: #333; /* Default text color */
+    min-height: 100vh; /* Ensure the background covers the entire viewport height */
 }
 
 /* Form Styles */

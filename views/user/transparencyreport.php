@@ -45,116 +45,122 @@ $totalFunds = $totalCashIn - $totalCashOut;
     
     <h3>Cash In</h3>
     <div class="table-container">
-      <table id="cashinTable" class="display" style="width:100%">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Day</th>
-            <th>Detail</th>
-            <th>Category</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-        <?php if ($cashIn): ?>
-            <?php foreach ($cashIn as $transaction): ?>
-                <?php
-                    $dateDisplay = date('M d, Y', strtotime($transaction['report_date']));
-                    if (!empty($transaction['end_date'])) {
-                        $dateDisplay .= ' to ' . date('M d, Y', strtotime($transaction['end_date']));
-                    }
-                    $startDay = date('l', strtotime($transaction['report_date']));
-                    if (!empty($transaction['end_date'])) {
-                        $endDay = date('l', strtotime($transaction['end_date']));
-                        $dayDisplay = ($startDay != $endDay) ? $startDay . ' - ' . $endDay : $startDay;
-                    } else {
-                        $dayDisplay = $startDay;
-                    }
-                ?>
-                <tr>
-                    <td><?php echo $dateDisplay; ?></td>
-                    <td><?php echo $dayDisplay; ?></td>
-                    <td><?php echo clean_input($transaction['expense_detail']); ?></td>
-                    <td><?php echo clean_input($transaction['expense_category']); ?></td>
-                    <td>₱<?php echo number_format($transaction['amount'], 2); ?></td>
-                </tr>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <tr><td colspan="5" class="text-center">No cash-in transactions found.</td></tr>
-        <?php endif; ?>
-        </tbody>
-      </table>
+      <div class="prayer-schedule-content">
+        <table id="cashinTable" class="display prayer-table" style="width:100%">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Day</th>
+              <th>Detail</th>
+              <th>Category</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+          <?php if ($cashIn): ?>
+              <?php foreach ($cashIn as $transaction): ?>
+                  <?php
+                      $dateDisplay = date('M d, Y', strtotime($transaction['report_date']));
+                      if (!empty($transaction['end_date'])) {
+                          $dateDisplay .= ' to ' . date('M d, Y', strtotime($transaction['end_date']));
+                      }
+                      $startDay = date('l', strtotime($transaction['report_date']));
+                      if (!empty($transaction['end_date'])) {
+                          $endDay = date('l', strtotime($transaction['end_date']));
+                          $dayDisplay = ($startDay != $endDay) ? $startDay . ' - ' . $endDay : $startDay;
+                      } else {
+                          $dayDisplay = $startDay;
+                      }
+                  ?>
+                  <tr>
+                      <td><?php echo $dateDisplay; ?></td>
+                      <td><?php echo $dayDisplay; ?></td>
+                      <td><?php echo clean_input($transaction['expense_detail']); ?></td>
+                      <td><?php echo clean_input($transaction['expense_category']); ?></td>
+                      <td>₱<?php echo number_format($transaction['amount'], 2); ?></td>
+                  </tr>
+              <?php endforeach; ?>
+          <?php else: ?>
+              <tr><td colspan="5" class="text-center">No cash-in transactions found.</td></tr>
+          <?php endif; ?>
+          </tbody>
+        </table>
+      </div>
     </div>
     
     <h3>Cash Out</h3>
     <div class="table-container">
-      <table id="cashoutTable" class="display" style="width:100%">
-        <thead>
-          <tr>
-            <th>Date</th>
-            <th>Day</th>
-            <th>Detail</th>
-            <th>Category</th>
-            <th>Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-        <?php if ($cashOut): ?>
-            <?php foreach ($cashOut as $transaction): ?>
-                <?php
-                    $dateDisplay = date('M d, Y', strtotime($transaction['report_date']));
-                    if (!empty($transaction['end_date'])) {
-                        $dateDisplay .= ' to ' . date('M d, Y', strtotime($transaction['end_date']));
-                    }
-                    $startDay = date('l', strtotime($transaction['report_date']));
-                    if (!empty($transaction['end_date'])) {
-                        $endDay = date('l', strtotime($transaction['end_date']));
-                        $dayDisplay = ($startDay != $endDay) ? $startDay . ' - ' . $endDay : $startDay;
-                    } else {
-                        $dayDisplay = $startDay;
-                    }
-                ?>
-                <tr>
-                    <td><?php echo $dateDisplay; ?></td>
-                    <td><?php echo $dayDisplay; ?></td>
-                    <td><?php echo clean_input($transaction['expense_detail']); ?></td>
-                    <td><?php echo clean_input($transaction['expense_category']); ?></td>
-                    <td>₱<?php echo number_format($transaction['amount'], 2); ?></td>
-                </tr>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <tr><td colspan="5" class="text-center">No cash-out transactions found.</td></tr>
-        <?php endif; ?>
-        </tbody>
-      </table>
+      <div class="prayer-schedule-content">
+        <table id="cashoutTable" class="display prayer-table" style="width:100%">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Day</th>
+              <th>Detail</th>
+              <th>Category</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+          <?php if ($cashOut): ?>
+              <?php foreach ($cashOut as $transaction): ?>
+                  <?php
+                      $dateDisplay = date('M d, Y', strtotime($transaction['report_date']));
+                      if (!empty($transaction['end_date'])) {
+                          $dateDisplay .= ' to ' . date('M d, Y', strtotime($transaction['end_date']));
+                      }
+                      $startDay = date('l', strtotime($transaction['report_date']));
+                      if (!empty($transaction['end_date'])) {
+                          $endDay = date('l', strtotime($transaction['end_date']));
+                          $dayDisplay = ($startDay != $endDay) ? $startDay . ' - ' . $endDay : $startDay;
+                      } else {
+                          $dayDisplay = $startDay;
+                      }
+                  ?>
+                  <tr>
+                      <td><?php echo $dateDisplay; ?></td>
+                      <td><?php echo $dayDisplay; ?></td>
+                      <td><?php echo clean_input($transaction['expense_detail']); ?></td>
+                      <td><?php echo clean_input($transaction['expense_category']); ?></td>
+                      <td>₱<?php echo number_format($transaction['amount'], 2); ?></td>
+                  </tr>
+              <?php endforeach; ?>
+          <?php else: ?>
+              <tr><td colspan="5" class="text-center">No cash-out transactions found.</td></tr>
+          <?php endif; ?>
+          </tbody>
+        </table>
+      </div>
     </div>
     
     <!-- Summary Table -->
     <div id="summaryTableContainer">
       <h3>Financial Summary</h3>
       <div class="table-container">
-        <table class="summary-table display" style="width:100%">
-          <thead>
-            <tr>
-              <th>Transaction Type</th>
-              <th>Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Total Cash-In</td>
-              <td>₱<?php echo number_format($totalCashIn, 2); ?></td>
-            </tr>
-            <tr>
-              <td>Total Cash-Out</td>
-              <td>₱<?php echo number_format($totalCashOut, 2); ?></td>
-            </tr>
-            <tr>
-              <td><strong>TOTAL FUNDS:</strong></td>
-              <td><strong>₱<?php echo number_format($totalFunds, 2); ?></strong></td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="prayer-schedule-content">
+          <table class="summary-table display prayer-table" style="width:100%">
+            <thead>
+              <tr>
+                <th>Transaction Type</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Total Cash-In</td>
+                <td>₱<?php echo number_format($totalCashIn, 2); ?></td>
+              </tr>
+              <tr>
+                <td>Total Cash-Out</td>
+                <td>₱<?php echo number_format($totalCashOut, 2); ?></td>
+              </tr>
+              <tr>
+                <td><strong>TOTAL FUNDS:</strong></td>
+                <td><strong>₱<?php echo number_format($totalFunds, 2); ?></strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>

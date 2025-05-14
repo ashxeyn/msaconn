@@ -55,13 +55,22 @@ $prayerSchedule = $adminObj->fetchPrayerSchedule();
         foreach ($limitedUpdates as $update) : 
             $formattedDate = date('F j, Y', strtotime($update['created_at']));
             $imagePath = !empty($update['image_path']) ? $base_url . 'assets' . $update['image_path'] : $base_url . 'assets/images/login.jpg';
+            
+            // Count words instead of characters
+            $words = explode(' ', $update['content']);
+            $truncatedContent = (count($words) > 95) ? implode(' ', array_slice($words, 0, 95)) . '...' : $update['content'];
         ?>
         <div class="update-item">
             <div class="update-details">
                 <img src="<?php echo $imagePath; ?>" alt="Update Image" class="update-image">
                 <p class="update-date"><?php echo $formattedDate; ?></p>
+<<<<<<< HEAD
+                <h3 class="update-title"><?php echo $update['title']; ?></h3>
+                <p class="update-content"><?php echo $truncatedContent; ?></p>
+=======
                 <h3 class="update-title"><?php echo clean_input($update['title']); ?></h3>
                 <p class="update-content"><?php echo clean_article_content($update['content']); ?></p>
+>>>>>>> e0ddf494fb59f4133807d71a85ddbe61e8882db2
             </div>
         </div>
         <?php endforeach; ?>

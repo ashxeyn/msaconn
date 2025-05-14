@@ -495,7 +495,7 @@ class User {
         return $query->fetchAll();
     }
 
-    // ABOUT US
+    // ABOUT US PAGE
     function fetchAboutInfo() {
         $sql = "SELECT * FROM site_pages WHERE page_type = 'about' AND is_active = 1";
         $query = $this->getConnection()->prepare($sql);

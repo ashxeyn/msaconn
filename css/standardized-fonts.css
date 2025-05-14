@@ -1,0 +1,111 @@
+/* Standardized Font Sizes for MSA Connect User Pages */
+
+:root {
+  /* Define font size variables */
+  --font-size-xs: 0.75rem;    /* 12px */
+  --font-size-sm: 0.875rem;   /* 14px */
+  --font-size-base: 1rem;     /* 16px - Base font size */
+  --font-size-md: 1.125rem;   /* 18px */
+  --font-size-lg: 1.25rem;    /* 20px */
+  --font-size-xl: 1.5rem;     /* 24px */
+  --font-size-2xl: 1.75rem;   /* 28px */
+  --font-size-3xl: 2rem;      /* 32px */
+  --font-size-4xl: 2.5rem;    /* 40px */
+  
+  /* Font families */
+  --main-font: 'Noto Naskh Arabic', serif;
+}
+
+/* Base styles */
+html, body {
+  font-family: var(--main-font);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+}
+
+/* Headings */
+h1 {
+  font-size: var(--font-size-3xl);
+}
+
+h2 {
+  font-size: var(--font-size-2xl);
+}
+
+h3 {
+  font-size: var(--font-size-xl);
+}
+
+h4 {
+  font-size: var(--font-size-lg);
+}
+
+h5 {
+  font-size: var(--font-size-md);
+}
+
+h6 {
+  font-size: var(--font-size-base);
+}
+
+/* Paragraphs and general text */
+p, span, li, td, label, input, select, textarea {
+  font-size: var(--font-size-base);
+}
+
+/* Small text elements */
+small, .small {
+  font-size: var(--font-size-sm);
+}
+
+/* Extra small text */
+.xsmall {
+  font-size: var(--font-size-xs);
+}
+
+/* Button text */
+button, .button {
+  font-size: var(--font-size-base);
+}
+
+/* Large text */
+.large-text {
+  font-size: var(--font-size-lg);
+}
+
+/* Header navbar text */
+.navbar .nav-links a {
+  font-size: var(--font-size-base);
+}
+
+/* Dropdown menu items */
+.dropdown-content a {
+  font-size: var(--font-size-base);
+}
+
+/* Footer text */
+footer p, footer a {
+  font-size: var(--font-size-sm);
+}
+
+/* Responsive font sizes for mobile */
+@media (max-width: 768px) {
+  html, body {
+    font-size: 15px; /* Slightly smaller base for mobile */
+  }
+  
+  h1 {
+    font-size: var(--font-size-2xl);
+  }
+  
+  h2 {
+    font-size: var(--font-size-xl);
+  }
+}
+
+/* Responsive font sizes for small mobile */
+@media (max-width: 480px) {
+  html, body {
+    font-size: 14px; /* Even smaller base for small screens */
+  }
+} 

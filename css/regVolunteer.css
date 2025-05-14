@@ -5,12 +5,172 @@ body {
     padding: 0;
     box-sizing: border-box;
     overflow-x: hidden;
-    background-image: url('../assets/images/background.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+    background: #ffffff;
     color: #333;
-    overflow-x: hidden;
+    position: relative;
+}
+
+/* Evenly distributed dots - first layer */
+body::before {
+    content: '';
+    position: fixed;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.07);
+    top: -50px;
+    right: -50px;
+    z-index: -1;
+    pointer-events: none;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.06);
+    bottom: -40px;
+    left: -40px;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Second layer - spread across corners */
+.main-content::before {
+    content: '';
+    position: fixed;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.05);
+    top: -30px;
+    left: 20%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.main-content::after {
+    content: '';
+    position: fixed;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.08);
+    bottom: 10%;
+    right: 25%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Third layer - wide distribution */
+form::before {
+    content: '';
+    position: fixed;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.06);
+    top: 15%;
+    right: 10%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+form::after {
+    content: '';
+    position: fixed;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.05);
+    bottom: 5%;
+    left: 30%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Fourth layer - farther apart */
+.form-columns::before {
+    content: '';
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.07);
+    top: 25%;
+    left: 5%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.form-columns::after {
+    content: '';
+    position: fixed;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.06);
+    top: 30%;
+    right: 5%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Fifth layer - top and bottom center */
+.button-container::before {
+    content: '';
+    position: fixed;
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.04);
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: -1;
+    pointer-events: none;
+}
+
+.button-container::after {
+    content: '';
+    position: fixed;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.05);
+    bottom: 5%;
+    left: 70%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Sixth layer - middle area */
+.form-section:nth-child(1)::before {
+    content: '';
+    position: fixed;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.04);
+    top: 60%;
+    left: 15%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.form-section:nth-child(1)::after {
+    content: '';
+    position: fixed;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.05);
+    top: 70%;
+    right: 15%;
+    z-index: -1;
+    pointer-events: none;
 }
 
 /* Main Content Container */
@@ -233,6 +393,8 @@ span p {
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
+
+/* Form Header */
 
 /* Responsive Fixes */
 @media (max-width: 768px) {
