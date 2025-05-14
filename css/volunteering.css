@@ -178,7 +178,7 @@ body {
 }
 
 .section-description {
-  font-size: 18px;
+  font-size: var(--font-size-base);
   color: #555;
   max-width: 800px;
   margin: 0 auto 30px;
@@ -345,4 +345,48 @@ body {
   .cor-row {
     align-items: stretch;
   }
+}
+
+.hero h2 {
+  font-size: var(--font-size-xl);
+}
+
+.volunteer-card h3 {
+  font-size: var(--font-size-base);
+}
+
+.volunteer-banner h2 {
+  font-size: var(--font-size-4xl);
+}
+
+.volunteer-banner p {
+  font-size: var(--font-size-md);
+}
+
+.volunteer-options h3 {
+  font-size: var(--font-size-md);
+}
+
+.volunteer-section-title {
+  font-size: var(--font-size-xl);
+}
+
+.category-description {
+  font-size: var(--font-size-base);
+}
+
+.committee-heading {
+  font-size: var(--font-size-md);
+}
+
+.committee-description {
+  font-size: var(--font-size-base);
+}
+
+.section-heading {
+  font-size: var(--font-size-xl);
+}
+
+.testimonial-text {
+  font-size: var(--font-size-base);
 }

@@ -708,8 +708,18 @@ function initializeExecutiveOfficers() {
 
     // Show loading state immediately
     officersContainer.setAttribute('data-loading', 'true');
+    
+    // Use a variable to track the fetch state to prevent duplicate requests
+    let isFetching = false;
+    // Use debounce to prevent multiple fetches during rapid viewport changes
+    let debounceTimer = null;
 
     async function fetchOfficers() {
+        // Prevent duplicate fetches
+        if (isFetching) return;
+        
+        isFetching = true;
+        
         try {
             // Use fetch with priority hint and cache control
             const controller = new AbortController();
@@ -745,6 +755,8 @@ function initializeExecutiveOfficers() {
             console.error('Error fetching officers:', error);
             officersContainer.innerHTML = '<div class="officer-card"><h3>Unable to load officers</h3><p>Please try again later.</p></div>';
             officersContainer.setAttribute('data-loading', 'false');
+        } finally {
+            isFetching = false;
         }
     }
 
@@ -756,7 +768,13 @@ function initializeExecutiveOfficers() {
             // Get base URL from a meta tag or elsewhere in the page
             const baseUrl = document.querySelector('base')?.href || window.location.origin + '/msaconnect/';
             
-            officers.forEach(officer => {
+            // Determine layout based on viewport width
+            const isMobile = window.innerWidth < 576;
+            
+            // For mobile, limit the number of officers shown initially
+            const displayOfficers = isMobile ? officers.slice(0, 4) : officers;
+            
+            displayOfficers.forEach(officer => {
                 const officerCard = document.createElement('div');
                 officerCard.classList.add('officer-card');
                 
@@ -767,21 +785,37 @@ function initializeExecutiveOfficers() {
                 }
                 fullName += officer.last_name;
                 
+                // Use smaller image paths for mobile to save bandwidth
+                const imgSrc = isMobile && officer.picture_small ? 
+                    officer.picture_small : officer.picture;
+                
                 // Create glassmorphism card structure
                 officerCard.innerHTML = `
                     <div class="blur-bg"></div>
-                    <img src="${officer.picture}" alt="${fullName}" class="officer-image">
+                    <img src="${imgSrc}" alt="${fullName}" class="officer-image" loading="lazy">
                     <h3 class="officer-name">${fullName}</h3>
                     <p class="officer-position">${officer.position}</p>
                     <p class="officer-bio">Dedicated member of the MSA leadership team serving as ${officer.position}.</p>
-                    <ul class="social-links">
-                        <li><a href="#"><i class="fas fa-envelope"></i></a></li>
-                        <li><a href="#"><i class="fas fa-linkedin"></i></a></li>
-                    </ul>
                 `;
                 
                 fragment.appendChild(officerCard);
             });
+            
+            // If on mobile and more officers exist, add a "View More" button
+            if (isMobile && officers.length > 4) {
+                const viewMoreBtn = document.createElement('button');
+                viewMoreBtn.className = 'view-more-btn';
+                viewMoreBtn.textContent = 'View All Officers';
+                viewMoreBtn.addEventListener('click', () => {
+                    // Replace with full officer list
+                    updateOfficersContent(officers);
+                });
+                
+                const btnContainer = document.createElement('div');
+                btnContainer.className = 'view-more-container';
+                btnContainer.appendChild(viewMoreBtn);
+                fragment.appendChild(btnContainer);
+            }
         } else {
             const placeholderCard = document.createElement('div');
             placeholderCard.classList.add('officer-card');
@@ -791,10 +825,6 @@ function initializeExecutiveOfficers() {
                 <h3 class="officer-name">No Officers Found</h3>
                 <p class="officer-position">Please check back later</p>
                 <p class="officer-bio">Executive officer information will be updated soon.</p>
-                <ul class="social-links">
-                    <li><a href="#"><i class="fas fa-envelope"></i></a></li>
-                    <li><a href="#"><i class="fas fa-linkedin"></i></a></li>
-                </ul>
             `;
             fragment.appendChild(placeholderCard);
         }
@@ -811,10 +841,23 @@ function initializeExecutiveOfficers() {
         const event = new CustomEvent('officersUpdated');
         document.dispatchEvent(event);
     }
+    
+    // Function to fetch data with debounce
+    function debouncedFetch() {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => {
+            fetchOfficers();
+        }, 100);
+    }
+    
+    // Listen to orientation change for mobile devices
+    window.addEventListener('orientationchange', debouncedFetch);
 
-    // Start fetch as soon as possible - don't wait for DOMContentLoaded
-    fetchOfficers();
+    // Start fetch after a 10-second delay
+    setTimeout(() => {
+        fetchOfficers();
+    }, 10000);
         
     // Poll for updates - less frequently to avoid animation disruption
-    setInterval(fetchOfficers, 60000); // Reduced to once per minute
+    setInterval(fetchOfficers, 10000); // Reduced to once per minute
 }

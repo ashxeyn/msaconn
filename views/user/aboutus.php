@@ -41,6 +41,7 @@ if (!isset($base_url)) {
 }
 ?>
 <?php include '../../includes/header.php'; ?>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="<?php echo $base_url; ?>css/aboutus.css">
 
@@ -91,25 +92,8 @@ if (!isset($base_url)) {
             <h3 class="officer-name">Loading Officers...</h3>
             <p class="officer-position">Please wait a moment</p>
             <p class="officer-bio">Officer information is loading. This will only take a moment.</p>
-            <ul class="social-links">
-                <li><a href="#"><i class="fas fa-envelope"></i></a></li>
-                <li><a href="#"><i class="fas fa-linkedin"></i></a></li>
-            </ul>
         </div>
     </div>
-    
-    <!-- Preload Font Awesome script for icons -->
-    <script>
-        // Preload Font Awesome if not already loaded
-        if (!document.querySelector('link[href*="font-awesome"]')) {
-            const link = document.createElement('link');
-            link.rel = 'preload';
-            link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css';
-            link.as = 'style';
-            link.onload = function() { this.onload = null; this.rel = 'stylesheet'; };
-            document.head.appendChild(link);
-        }
-    </script>
 </section>
 
 <section class="downloadable-files">

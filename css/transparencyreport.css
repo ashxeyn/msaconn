@@ -25,12 +25,15 @@ body {
 .hero {
   position: relative;
   width: 100%;
-  min-height: 300px;
+  min-height: 400px;
+  height: auto;
+  overflow: hidden;
   color: white;
   text-align: center;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 .hero-background {
@@ -39,10 +42,21 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: url('../assets/images/background.jpg');
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   z-index: -1;
+}
+
+.hero-background::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.6;
+  z-index: 2;
 }
 
 .hero-content {
@@ -50,6 +64,8 @@ body {
   padding: 20px;
   border-radius: 10px;
   max-width: 800px;
+  position: relative;
+  z-index: 3;
 }
 
 .hero h2 {
@@ -65,44 +81,67 @@ body {
   color: #1a541c;
   text-align: center;
   margin-bottom: 30px;
+  font-size: 2rem;
+  font-weight: bold;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 .transparency-report h3 {
   color: #1a541c;
   margin: 20px 0 10px;
   text-align: left;
+  font-weight: bold;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 /* Table Styles */
 .table-container {
   width: 100%;
+  max-width: 100vw;
+  margin: 0 auto;
   overflow-x: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 30px;
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 table {
   width: 100%;
+  min-width: 0;
   border-collapse: collapse;
+  font-size: 1rem;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 th, td {
-  padding: 12px 15px;
-  text-align: left;
+  padding: 15px 20px;
+  text-align: center;
+  font-family: 'Noto Naskh Arabic', serif;
   border-bottom: 1px solid #e0e0e0;
 }
 
 th {
   background-color: #1a541c;
-  color: white;
+  color: #ffffff;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   position: sticky;
   top: 0;
 }
 
+td {
+  color: #333333;
+}
+
 tr:nth-child(even) {
   background-color: #f9f9f9;
+}
+
+tr:hover {
+  background-color: #f1f1f1;
 }
 
 /* Summary Table Styles */
@@ -119,28 +158,41 @@ tr:nth-child(even) {
 
 .summary-table {
   width: 100%;
+  min-width: 0;
   border-collapse: collapse;
-  background-color: #fff;
-  border-radius: 10px;
+  font-size: 1rem;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  font-family: 'Noto Naskh Arabic', serif;
+  border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .summary-table thead th {
   background-color: #1a541c;
-  color: white;
-  padding: 12px 15px;
-  text-align: left;
+  color: #ffffff;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 15px 20px;
+  text-align: center;
 }
 
 .summary-table tbody td {
-  padding: 12px 15px;
-  text-align: left;
+  padding: 15px 20px;
+  text-align: center;
+  font-family: 'Noto Naskh Arabic', serif;
   border-bottom: 1px solid #e0e0e0;
+  color: #333333;
 }
 
 .summary-table tbody tr:nth-child(even) {
   background-color: #f9f9f9;
+}
+
+.summary-table tbody tr:hover {
+  background-color: #f1f1f1;
 }
 
 .summary-table tbody tr:last-child {
@@ -153,6 +205,7 @@ tr:nth-child(even) {
   color: #1a541c;
 }
 
+/* Keep the right-alignment for the amount columns */
 .summary-table td:last-child,
 .summary-table th:last-child {
   text-align: right;

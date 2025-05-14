@@ -22,9 +22,10 @@ $backgroundImage = $user->fetchBackgroundImage();
     <!-- Hero Section -->
     <div class="hero">
         <?php foreach ($backgroundImage as $image) : ?>
-        <div class="hero-background" style="background-image: url('<?php echo $base_url . $image['image_path']; ?>');"></div>
+        <div class="hero-background" style="background-image: url('<?php echo $base_url . $image['image_path']; ?>');">
         <?php endforeach; ?>
-            <div class="hero-content">
+        </div>
+        <div class="hero-content">
             <?php foreach ($faqs as $faq) : ?>
             <h2><?php echo $faq['title']; ?></h2>
             <p><?php echo $faq['description']; ?></p>

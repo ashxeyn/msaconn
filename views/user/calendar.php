@@ -69,9 +69,9 @@ $calendar = $adminObj->fetchDailyPrayers();
                     echo "$today ($dayName)";
                 ?>
             </div>
-            <div class="table-responsive">
-                <table class="table table-bordered align-middle prayer-table">
-                    <thead class="table-success">
+            <div class="table-container">
+                <table class="prayer-table">
+                    <thead>
                         <tr>
                             <th>Time</th>
                             <th>Prayer Type</th>
@@ -121,7 +121,6 @@ $calendar = $adminObj->fetchDailyPrayers();
             </div>
         </div>
     </div>
-
 
     <!-- Include Footer -->
     <?php include '../../includes/footer.php'; ?>

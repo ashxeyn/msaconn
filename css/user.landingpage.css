@@ -95,13 +95,13 @@ html, body {
 }
 
 .hero-content h2 {
-  font-size: 36px;
+  font-size: var(--font-size-3xl);
   margin-bottom: 20px;
   font-family: 'Noto Naskh Arabic', serif;
 }
 
 .hero-content p {
-  font-size: 16px;
+  font-size: var(--font-size-base);
   margin-bottom: 30px;
   font-family: 'Noto Naskh Arabic', serif;
 }
@@ -116,7 +116,7 @@ html, body {
   border: none;
   padding: 10px;
   cursor: pointer;
-  font-size: 24px;
+  font-size: var(--font-size-xl);
   z-index: 4;
   font-family: 'Noto Naskh Arabic', serif;
 }
@@ -142,7 +142,7 @@ html, body {
 }
 
 .latest-updates h2 {
-  font-size: 2rem;
+  font-size: var(--font-size-3xl);
   margin-bottom: 20px;
   color: #1a541c;
   font-weight: bold;
@@ -165,29 +165,131 @@ html, body {
   text-align: left;
   box-sizing: border-box;
   font-family: 'Noto Naskh Arabic', serif;
+  height: auto; /* Allow height to adjust to content */
+  min-height: 380px; /* Minimum height */
+  max-height: 480px; /* Maximum height */
+  display: flex;
+  flex-direction: column;
 }
 
 .update-item img {
   width: 100%;
-  height: 200px;
+  height: 180px; /* Slightly reduced image height */
   object-fit: cover;
+  flex-shrink: 0;
 }
 
 .update-details {
   padding: 15px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+  justify-content: flex-start; /* Align content to top */
+  gap: 8px; /* Add spacing between elements */
 }
 
 .update-date {
-  font-size: 0.9rem;
+  font-size: var(--font-size-sm);
   color: #888;
-  margin-bottom: 10px;
+  margin-bottom: 0;
   font-family: 'Noto Naskh Arabic', serif;
+  flex-shrink: 0;
 }
 
 .update-title {
-  font-size: 1.2rem;
+  font-size: var(--font-size-md);
   color: #333;
   font-family: 'Noto Naskh Arabic', serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 0;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 2;
+}
+
+.update-content {
+  font-size: var(--font-size-sm);
+  color: #555;
+  font-family: 'Noto Naskh Arabic', serif;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 6; /* Allow more lines */
+  -webkit-box-orient: vertical;
+  word-wrap: break-word;
+  line-height: 1.5;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+  max-height: 9em; /* Maximum height for content */
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 1024px) {
+  .update-item {
+    width: calc(33.33% - 20px);
+  }
+}
+
+@media (max-width: 768px) {
+  .carousel {
+    height: 350px;
+  }
+
+  .hero-content h2 {
+    font-size: var(--font-size-2xl);
+  }
+
+  .hero-content p {
+    font-size: var(--font-size-sm);
+  }
+
+  .update-item {
+    width: calc(50% - 20px);
+  }
+
+  .table-container {
+    width: 90%;
+  }
+}
+
+@media (max-width: 480px) {
+  .carousel {
+    height: 250px;
+  }
+
+  .hero-content h2 {
+    font-size: var(--font-size-xl);
+  }
+
+  .hero-content p {
+    font-size: var(--font-size-sm);
+  }
+
+  .update-item {
+    width: 100%;
+  }
+
+  .table-container {
+    width: 100vw;
+    max-width: 100vw;
+    overflow-x: auto;
+  }
+
+  .prayer-schedule table {
+    min-width: 300px; /* Allow some min-width for usability */
+  }
+
+  .volunteer h2 {
+    font-size: 1.6rem;
+  }
+
+  .volunteer p {
+    font-size: 0.9rem;
+  }
 }
 
 /* Prayer Schedule Section */
@@ -292,69 +394,4 @@ html, body {
   text-decoration: none;
   transition: background-color 0.3s ease;
   font-family: 'Noto Naskh Arabic', serif;
-}
-
-/* Media Queries for Responsiveness */
-@media (max-width: 1024px) {
-  .update-item {
-    width: calc(33.33% - 20px);
-  }
-}
-
-@media (max-width: 768px) {
-  .carousel {
-    height: 350px;
-  }
-
-  .hero-content h2 {
-    font-size: 28px;
-  }
-
-  .hero-content p {
-    font-size: 14px;
-  }
-
-  .update-item {
-    width: calc(50% - 20px);
-  }
-
-  .table-container {
-    width: 90%;
-  }
-}
-
-@media (max-width: 480px) {
-  .carousel {
-    height: 250px;
-  }
-
-  .hero-content h2 {
-    font-size: 24px;
-  }
-
-  .hero-content p {
-    font-size: 12px;
-  }
-
-  .update-item {
-    width: 100%;
-  }
-
-  .table-container {
-    width: 100vw;
-    max-width: 100vw;
-    overflow-x: auto;
-  }
-
-  .prayer-schedule table {
-    min-width: 300px; /* Allow some min-width for usability */
-  }
-
-  .volunteer h2 {
-    font-size: 1.6rem;
-  }
-
-  .volunteer p {
-    font-size: 0.9rem;
-  }
 }
