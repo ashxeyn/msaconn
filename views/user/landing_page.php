@@ -64,13 +64,8 @@ $prayerSchedule = $adminObj->fetchPrayerSchedule();
             <div class="update-details">
                 <img src="<?php echo $imagePath; ?>" alt="Update Image" class="update-image">
                 <p class="update-date"><?php echo $formattedDate; ?></p>
-<<<<<<< HEAD
-                <h3 class="update-title"><?php echo $update['title']; ?></h3>
-                <p class="update-content"><?php echo $truncatedContent; ?></p>
-=======
                 <h3 class="update-title"><?php echo clean_input($update['title']); ?></h3>
                 <p class="update-content"><?php echo clean_article_content($update['content']); ?></p>
->>>>>>> e0ddf494fb59f4133807d71a85ddbe61e8882db2
             </div>
         </div>
         <?php endforeach; ?>
@@ -85,6 +80,7 @@ $prayerSchedule = $adminObj->fetchPrayerSchedule();
                 <thead>
                     <tr>
                         <th>Date</th>
+                        <th>Time</th>
                         <th>Day</th>
                         <th>Khateeb</th>
                         <th>Topic</th>
@@ -97,6 +93,7 @@ $prayerSchedule = $adminObj->fetchPrayerSchedule();
                     ?>
                     <tr>
                         <td><?php echo date('F j, Y', strtotime($prayer['date'])); ?></td>
+                        <td><?php echo isset($prayer['time']) ? date('h:i A', strtotime($prayer['time'])) : 'N/A'; ?></td>
                         <td><?php echo $dayName; ?></td>
                         <td><?php echo $prayer['speaker']; ?></td>
                         <td><?php echo $prayer['topic']; ?></td>

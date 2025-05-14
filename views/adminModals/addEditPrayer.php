@@ -8,6 +8,12 @@
                 <div class="modal-body">
                     <input type="hidden" name="prayer_id" id="editPrayerId">
                     <div class="mb-3 position-relative">
+                        <label for="editTime" class="form-label">Time</label>
+                        <input type="time" class="form-control" id="editTime" name="time">
+                        <span class="invalid-icon" id="editTimeIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
+                        <div id="editTimeError" class="text-danger"></div>
+                    </div>
+                    <div class="mb-3 position-relative">
                         <label for="editDate" class="form-label">Date</label>
                         <input type="date" class="form-control" id="editDate" name="date">
                         <span class="invalid-icon" id="editDateIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>

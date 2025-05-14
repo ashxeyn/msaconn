@@ -12,6 +12,7 @@ $action = $_POST['action'] ?? '';
 $prayerId = $_POST['prayer_id'] ?? null;
 if ($action === 'edit') {
     $date = clean_input($_POST['date']);
+    $time = clean_input($_POST['time']);
     $topic = clean_input($_POST['topic']);
     $speaker = clean_input($_POST['speaker']);
     $location = clean_input($_POST['location']);
@@ -20,7 +21,7 @@ if ($action === 'edit') {
         echo "error: prayer_not_found";
         exit;
     }
-    $result = $adminObj->updatePrayer($prayerId, $date, $topic, $speaker, $location);
+    $result = $adminObj->updatePrayer($prayerId, $date, $time, $topic, $speaker, $location);
     echo $result ? "success" : "error";
 } elseif ($action === 'delete') {
     $reason = clean_input($_POST['reason']);
@@ -35,10 +36,11 @@ if ($action === 'edit') {
     echo $result ? "success" : "error";
 } elseif ($action === 'add') {
     $date = clean_input($_POST['date']);
+    $time = clean_input($_POST['time']);
     $topic = clean_input($_POST['topic']);
     $speaker = clean_input($_POST['speaker']);
     $location = clean_input($_POST['location']);
-    $result = $adminObj->addPrayer($date, $topic, $speaker, $location, $userId);
+    $result = $adminObj->addPrayer($date, $time, $topic, $speaker, $location, $userId);
     echo $result ? "success" : "error";
 } else {
     echo "invalid_action";

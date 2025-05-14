@@ -1051,12 +1051,12 @@ class Admin {
 
     // Prayer Schedule Functions
     function fetchPrayerSchedule() {
-        $sql = "SELECT ps.prayer_id, ps.prayer_type, ps.date, ps.speaker, ps.topic, ps.location, ps.created_at, ps.deleted_at,
+        $sql = "SELECT ps.prayer_id, ps.prayer_type, ps.date, ps.time, ps.speaker, ps.topic, ps.location, ps.created_at, ps.deleted_at,
                     u.username 
                 FROM prayer_schedule ps
                 LEFT JOIN users u ON ps.created_by = u.user_id
                 WHERE ps.deleted_at IS NULL AND ps.prayer_type = 'khutba'
-                ORDER BY ps.date ASC";
+                ORDER BY ps.date ASC, ps.time ASC"; 
 
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -1064,24 +1064,25 @@ class Admin {
     }
 
     function getPrayerById($prayerId) {
-        $sql = "SELECT ps.prayer_id, ps.prayer_type, ps.date, ps.speaker, ps.topic, ps.location, ps.created_at, ps.deleted_at,
+        $sql = "SELECT ps.prayer_id, ps.prayer_type, ps.date, ps.time, ps.speaker, ps.topic, ps.location, ps.created_at, ps.deleted_at,
                     u.username
                 FROM prayer_schedule ps
                 LEFT JOIN users u ON ps.created_by = u.user_id
-                WHERE ps.prayer_id = :prayer_id";
+                WHERE ps.prayer_id = :prayer_id AND ps.prayer_type = 'khutba'"; // Added prayer_type filter
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':prayer_id', $prayerId);
         $query->execute();
         return $query->fetch();
     }
 
-    function addPrayer($date, $topic, $speaker, $location, $userId) {
+    function addPrayer($date, $time, $topic, $speaker, $location, $userId) {
         $prayerType = 'khutba'; // Always set to khutba as specified
-        $sql = "INSERT INTO prayer_schedule (prayer_type, date, speaker, topic, location, created_by) 
-                VALUES (:prayer_type, :date, :speaker, :topic, :location, :created_by)";
+        $sql = "INSERT INTO prayer_schedule (prayer_type, date, time, speaker, topic, location, created_by) 
+                VALUES (:prayer_type, :date, :time, :speaker, :topic, :location, :created_by)";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':prayer_type', $prayerType);
         $query->bindParam(':date', $date);
+        $query->bindParam(':time', $time);
         $query->bindParam(':speaker', $speaker);
         $query->bindParam(':topic', $topic);
         $query->bindParam(':location', $location);
@@ -1089,12 +1090,13 @@ class Admin {
         return $query->execute();
     }
 
-    function updatePrayer($prayerId, $date, $topic, $speaker, $location) {
+    function updatePrayer($prayerId, $date, $time, $topic, $speaker, $location) {
         $sql = "UPDATE prayer_schedule 
-                SET date = :date, topic = :topic, speaker = :speaker, location = :location 
-                WHERE prayer_id = :prayer_id";
+                SET date = :date, time = :time, topic = :topic, speaker = :speaker, location = :location 
+                WHERE prayer_id = :prayer_id AND prayer_type = 'khutba'"; // Added prayer_type filter
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':date', $date);
+        $query->bindParam(':time', $time);
         $query->bindParam(':topic', $topic);
         $query->bindParam(':speaker', $speaker);
         $query->bindParam(':location', $location);
@@ -1102,7 +1104,7 @@ class Admin {
         return $query->execute();
     }
 
-    function softDeletePrayer($prayerId, $reason) {
+    public function softDeletePrayer($prayerId, $reason) {
         $sql = "UPDATE prayer_schedule 
                 SET is_deleted = 1, 
                     reason = :reason,

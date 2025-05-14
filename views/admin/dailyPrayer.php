@@ -355,8 +355,8 @@ $dailyPrayers = $adminObj->fetchDailyPrayers();
         <table id="table" class="display" style="width:100%">
             <thead>
                 <tr>
-                    <th>Time</th>
                     <th>Date</th>
+                    <th>Time</th>
                     <th>Day</th>
                     <th>Prayer Type</th>
                     <th>Speaker</th>
@@ -379,9 +379,6 @@ $dailyPrayers = $adminObj->fetchDailyPrayers();
                         $isFriday = (date('l', strtotime($prayer['date'])) === 'Friday');
                     ?>
                         <tr>
-                            <td>
-                                <?php echo !empty($prayer['time']) ? date('h:i A', strtotime($prayer['time'])) : '<span class="text-danger">No time set</span>'; ?>
-                            </td>
                             <td data-order="<?= $prayer['date'] ?>">
                                 <?= formatDate2($prayer['date']) ?>
                                 <?php if ($isPast): ?>
@@ -391,6 +388,9 @@ $dailyPrayers = $adminObj->fetchDailyPrayers();
                                 <?php else: ?>
                                     <br><span class="badge bg-primary">Upcoming</span>
                                 <?php endif; ?>
+                            </td>
+                            <td>
+                                <?php echo !empty($prayer['time']) ? date('h:i A', strtotime($prayer['time'])) : '<span class="text-danger">No time set</span>'; ?>
                             </td>
                             <td><?= date('l', strtotime($prayer['date'])) ?></td>
                             <td>

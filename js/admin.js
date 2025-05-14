@@ -798,6 +798,7 @@ function setPrayerId(prayerId, action) {
                     const prayer = JSON.parse(response);
                     $('#editPrayerId').val(prayer.prayer_id);
                     $('#editDate').val(prayer.date);
+                    $('#editTime').val(prayer.time);
                     $('#editTopic').val(prayer.topic);
                     $('#editSpeaker').val(prayer.speaker);
                     $('#editLocation').val(prayer.location);
@@ -864,6 +865,18 @@ function validatePrayerForm() {
     let isValid = true;
     clearPrayerValidationErrors();
 
+    const time = $('#editTime').val().trim();
+    if (time === '') {
+        $('#editTime').addClass('is-invalid');
+        $('#editTimeIcon').show();
+        $('#editTimeError').text('Time is required');
+        isValid = false;
+    } else {
+        $('#editTime').removeClass('is-invalid');
+        $('#editTimeIcon').hide();
+        $('#editTimeError').text('');
+    }
+
     const date = $('#editDate').val().trim();
     if (date === '') {
         $('#editDate').addClass('is-invalid');
@@ -925,14 +938,17 @@ function validatePrayerForm() {
 
 function clearPrayerValidationErrors() {
     $('#editDateError').text('');
+    $('#editTimeError').text('');
     $('#editTopicError').text('');
     $('#editSpeakerError').text('');
     $('#editLocationError').text('');
     $('#editDate').removeClass('is-invalid');
+    $('#editTime').removeClass('is-invalid');
     $('#editTopic').removeClass('is-invalid');
     $('#editSpeaker').removeClass('is-invalid');
     $('#editLocation').removeClass('is-invalid');
     $('#editDateIcon').hide();
+    $('#editTimeIcon').hide();
     $('#editTopicIcon').hide();
     $('#editSpeakerIcon').hide();
     $('#editLocationIcon').hide();

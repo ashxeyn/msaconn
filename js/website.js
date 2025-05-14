@@ -199,9 +199,11 @@ function updatePrayerSchedule(scheduleData) {
         dateObj.setHours(0,0,0,0); 
         if (dateObj < today) return; 
         const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+        const formattedTime = item.time ? new Date('1970-01-01T' + item.time + 'Z').toLocaleTimeString('en-US', {hour: 'numeric', minute:'2-digit', hour12: true, timeZone: 'UTC'}) : 'N/A';
         const row = `
             <tr>
                 <td>${formattedDate}</td>
+                <td>${formattedTime}</td>
                 <td>${getDayName(dateObj)}</td>
                 <td>${item.speaker}</td>
                 <td>${item.topic}</td>

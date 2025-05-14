@@ -322,6 +322,20 @@ $prayers = $adminObj->fetchPrayerSchedule();
                 border-radius: 0;
             }
         }
+
+        #table th:nth-child(3), 
+        #table td:nth-child(3) { /* Topic column */
+            width: 25%; 
+            max-width: 280px; 
+            overflow-wrap: break-word;
+        }
+
+        #table th:last-child, /* Action column */
+        #table td:last-child { /* Action column */
+            width: 120px; 
+            min-width: 120px;
+            text-align: center; 
+        }
     </style>
 </head>
 
@@ -354,6 +368,7 @@ $prayers = $adminObj->fetchPrayerSchedule();
             <thead>
                 <tr>
                     <th>Date</th>
+                    <th>Time</th>
                     <th>Topic</th>
                     <th>Speaker</th>
                     <th>Location</th>
@@ -380,6 +395,9 @@ $prayers = $adminObj->fetchPrayerSchedule();
                                     <br><span class="badge bg-primary">Upcoming</span>
                                 <?php endif; ?>
                             </td>
+                            <td data-order="<?= $prayer['date'] ?>">
+                                <?= isset($prayer['time']) ? date('h:i A', strtotime($prayer['time'])) : 'N/A' ?>
+                            </td>
                             <td><?= clean_input($prayer['topic']) ?></td>
                             <td><?= clean_input($prayer['speaker']) ?></td>
                             <td><?= clean_input($prayer['location']) ?></td>
@@ -396,7 +414,7 @@ $prayers = $adminObj->fetchPrayerSchedule();
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="6" class="text-center">No prayer schedules found.</td>
+                        <td colspan="7" class="text-center">No prayer schedules found.</td>
                     </tr>
                 <?php endif; ?>
             </tbody>
