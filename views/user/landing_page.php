@@ -60,8 +60,8 @@ $prayerSchedule = $adminObj->fetchPrayerSchedule();
             <div class="update-details">
                 <img src="<?php echo $imagePath; ?>" alt="Update Image" class="update-image">
                 <p class="update-date"><?php echo $formattedDate; ?></p>
-                <h3 class="update-title"><?php echo $update['title']; ?></h3>
-                <p class="update-content"><?php echo $update['content']; ?></p>
+                <h3 class="update-title"><?php echo clean_input($update['title']); ?></h3>
+                <p class="update-content"><?php echo clean_article_content($update['content']); ?></p>
             </div>
         </div>
         <?php endforeach; ?>

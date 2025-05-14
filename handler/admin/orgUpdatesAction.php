@@ -16,7 +16,7 @@ $updateId = $_POST['update_id'] ?? null;
 
 if ($action === 'edit') {
     $title = clean_input($_POST['title']);
-    $content = clean_input($_POST['content']);
+    $content = clean_article_content($_POST['content']);
 
     $existingUpdate = $adminObj->getUpdateById($updateId);
     if (!$existingUpdate) {
@@ -77,7 +77,7 @@ if ($action === 'edit') {
 
 } elseif ($action === 'add') {
     $title = clean_input($_POST['title']);
-    $content = clean_input($_POST['content']);
+    $content = clean_article_content($_POST['content']);
 
     // First, add the main update record
     $updateId = $adminObj->addOrgUpdate($title, $content, $userId);

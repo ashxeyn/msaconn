@@ -16,6 +16,12 @@ $orgUpdates = $adminObj->fetchOrgUpdates();
     <script src="../../js/admin.js"></script>
     <script src="../../js/modals.js"></script>
     <style>
+
+        #editUpdateModal .modal-body {
+            max-height: 70vh; 
+            overflow-y: auto;
+        }
+
         :root {
             --palestine-green: #0F8A53;
             --palestine-black: rgb(0, 0, 0);
@@ -258,7 +264,7 @@ $orgUpdates = $adminObj->fetchOrgUpdates();
                             <img src="../../assets/updates/<?= clean_input($mainImage) ?>" class="update-preview-img" alt="Update Image">
                             <div class="card-body">
                                 <p class="card-title"><?= clean_input($update['title']) ?><p>
-                                <p class="card-text"><?= clean_input(substr($update['content'], 0, 100)) ?>...</p>
+                                <p class="card-text"><?= clean_article_content(substr($update['content'], 0, 100)) ?>...</p>
                                 <div class="d-flex justify-content-between align-items-center mb-2">
                                     <small class="text-muted update-author">Posted by: <?= clean_input($update['created_by']) ?></small>
                                     <small class="text-muted"><?= date('M d, Y', strtotime($update['created_at'])) ?></small>

@@ -32,6 +32,27 @@ function formatDate2($date) {
     return date("F j, Y", strtotime($date));
 }
 
+function clean_article_content($input) {
+    $input = trim($input);
+    
+    $input = nl2br($input);
+    
+    $allowed_tags = '<p><br><strong><em><u><h1><h2><h3><h4><h5><h6><ul><ol><li><blockquote>';
+    $input = strip_tags($input, $allowed_tags);
+    
+    $input = preg_replace_callback('/<br\s*\/?>/i', function($matches) {
+        return $matches[0]; 
+    }, $input);
+    
+    $input = htmlspecialchars($input, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    
+    $input = str_replace('&#039;', "'", $input);
+    
+    $input = str_replace('&lt;br /&gt;', '<br />', $input);
+    $input = str_replace('&lt;br&gt;', '<br>', $input);
+    
+    return $input;
+}
 
 // function is_valid_email($email) {
 //     return filter_var($email, FILTER_VALIDATE_EMAIL);
