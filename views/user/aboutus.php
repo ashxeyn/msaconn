@@ -1,37 +1,41 @@
 <?php
-// Include necessary files
-require_once __DIR__.'/../../classes/userClass.php';
+require_once '../../classes/userClass.php';
+require_once '../../tools/function.php';
+require_once '../../classes/adminClass.php';
 
-// Initialize User class
-$user = new User();
+$userObj = new User();
+$backgroundImage = $userObj->fetchBackgroundImage();
+$aboutInfo = $userObj->fetchAboutInfo();
 
-try {
-    // Fetch the latest about data
-    $about_data = $user->getAboutMSAData();
+$adminObj = new Admin();
+$missionVision = $adminObj->fetchAbouts();
+$files = $adminObj->fetchDownloadableFiles();
 
-    // Set default values if no data exists
-    $mission = $about_data['mission'] ?? "Default mission text if none in database";
-    $vision = $about_data['vision'] ?? "Default vision text if none in database";
-    $description = $about_data['description'] ?? "Our website is dedicated to connecting volunteers...";
+// try {
+//     // Fetch the latest about data
+//     $about_data = $userObj->getAboutMSAData();
+
+//     // Set default values if no data exists
+//     $mission = $about_data['mission'] ?? "Default mission text if none in database";
+//     $vision = $about_data['vision'] ?? "Default vision text if none in database";
+//     $description = $about_data['description'] ?? "Our website is dedicated to connecting volunteers...";
     
-    // Fetch downloadable files
-    $downloadableFiles = $user->fetchDownloadableFiles();
+//     // Fetch downloadable files
+//     $downloadableFiles = $userObj->fetchDownloadableFiles();
     
-    // Debug: print the downloadable files
-    echo "<!-- DEBUG: Files found: " . count($downloadableFiles) . " -->";
-    if (empty($downloadableFiles)) {
-        error_log("No downloadable files found in database");
-    }
-} catch (Exception $e) {
-    // Handle the error gracefully
-    error_log($e->getMessage());
-    $mission = "Our mission statement";
-    $vision = "Our vision statement";
-    $description = "Our website is dedicated to connecting volunteers...";
-    $downloadableFiles = [];
-}
+//     // Debug: print the downloadable files
+//     echo "<!-- DEBUG: Files found: " . count($downloadableFiles) . " -->";
+//     if (empty($downloadableFiles)) {
+//         error_log("No downloadable files found in database");
+//     }
+// } catch (Exception $e) {
+//     error_log($e->getMessage());
+//     $mission = "Our mission statement";
+//     $vision = "Our vision statement";
+//     $description = "Our website is dedicated to connecting volunteers...";
+//     $downloadableFiles = [];
+// }
 
-// Get base_url from header.php or define it here if not available
 if (!isset($base_url)) {
     $base_url = 'http://' . $_SERVER['HTTP_HOST'] . '/msaconnect/';
 }
@@ -42,10 +46,15 @@ if (!isset($base_url)) {
 
 <!-- Hero Section -->
 <section class="hero">
-    <div class="hero-background"></div>
+    <?php foreach ($backgroundImage as $image) : ?>
+        <div class="hero-background" style="background-image: url('<?php echo $base_url . $image['image_path']; ?>');">
+        <?php endforeach; ?>
+        </div>
     <div class="hero-content">
-        <h2>About Us</h2>
-        <p><?php echo htmlspecialchars($description); ?></p>
+        <?php foreach ($aboutInfo as $info) : ?>
+            <h2><?php echo clean_input($info['title']); ?></h2>
+            <p><?php echo clean_input($info['description']); ?></p>
+        <?php endforeach; ?>
     </div>
 </section>
 
@@ -54,13 +63,15 @@ if (!isset($base_url)) {
     <div class="container">
         <div class="mission-vision">
             <div class="mission">
+                <?php foreach ($missionVision as $info) : ?>
                 <h3>Our Mission</h3>
-                <p><?php echo htmlspecialchars($mission); ?></p>
+                <p><?php echo clean_input($info['mission']); ?></p>
             </div>
             <div class="vision">
                 <h3>Our Vision</h3>
-                <p><?php echo htmlspecialchars($vision); ?></p>
+                <p><?php echo clean_input($info['vision']); ?></p>
             </div>
+            <?php endforeach; ?>
         </div>
     </div>
 </section>
@@ -105,28 +116,18 @@ if (!isset($base_url)) {
     <div class="container">
         <h2>Downloadable Resources</h2>
         <div class="downloads-list">
-            <?php if (!empty($downloadableFiles)): ?>
-                <?php foreach ($downloadableFiles as $file): ?>
+            <?php if (!empty($files)): ?>
+                <?php foreach ($files as $file): ?>
                     <?php 
                         $fileExtension = pathinfo($file['file_name'], PATHINFO_EXTENSION);
-                        $iconClass = 'file'; // Default icon class
+                        $iconClass = 'file'; 
                         
-                        // Set icon class based on file type
-                        if (stripos($file['file_type'], 'pdf') !== false) {
+                        if (stripos($file['file_type'], 'pdf') !== false || $fileExtension == 'pdf') {
                             $iconClass = 'pdf';
                         } elseif (stripos($file['file_type'], 'word') !== false || $fileExtension == 'docx' || $fileExtension == 'doc') {
                             $iconClass = 'docx';
-                        } elseif (stripos($file['file_type'], 'excel') !== false || $fileExtension == 'xlsx' || $fileExtension == 'xls') {
-                            $iconClass = 'xlsx';
-                        } elseif (stripos($file['file_type'], 'power') !== false || $fileExtension == 'pptx' || $fileExtension == 'ppt') {
-                            $iconClass = 'pptx';
-                        } elseif (stripos($file['file_type'], 'text') !== false || $fileExtension == 'txt') {
-                            $iconClass = 'txt';
-                        } elseif (stripos($file['file_type'], 'zip') !== false || $fileExtension == 'zip' || $fileExtension == 'rar') {
-                            $iconClass = 'zip';
                         }
                         
-                        // Format file size
                         $fileSize = isset($file['file_size']) ? intval($file['file_size']) : 0;
                         $formattedSize = '';
                         if ($fileSize < 1024) {
@@ -137,14 +138,13 @@ if (!isset($base_url)) {
                             $formattedSize = round($fileSize / 1048576, 2) . ' MB';
                         }
                         
-                        // Format date
                         $createdDate = '';
                         if (isset($file['created_at'])) {
                             $date = new DateTime($file['created_at']);
                             $createdDate = $date->format('F j, Y');
                         }
                     ?>
-                    <a href="<?php echo $base_url; ?>handler/user/download.php?file_id=<?= $file['file_id'] ?>" class="download-card">
+                    <a href="<?php echo $base_url; ?>assets/downloadables/<?= clean_input($file['file_path']) ?>" download class="download-card">
                         <div class="download-icon <?= $iconClass ?>"></div>
                         <div class="download-info">
                             <span class="download-title"><?= htmlspecialchars($file['file_name']) ?></span>

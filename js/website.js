@@ -558,7 +558,7 @@ function initCalendarPage() {
         function() {
             calendarRefreshInterval = setInterval(function() {
                 updateCalendarPage();
-            }, 15000);
+            }, 10000);
             console.log('Calendar updates resumed after hover');
         }
     );
@@ -896,6 +896,7 @@ function updateTransparencyTables(cashIn, cashOut, totalCashIn, totalCashOut, to
     console.log('Transaction tables and summary updated');
 }
 
+
 function initTransparencyPage() {
     if (transparencyHeroInterval) {
         clearInterval(transparencyHeroInterval);
@@ -926,6 +927,198 @@ function initTransparencyPage() {
                 updateTransparencyPage();
             }, 10000);
             console.log('Transparency updates resumed after hover');
+        }
+    );
+}
+
+// ABOUT PAGE FUNCTIONS
+function updateAboutPage() {
+    $.ajax({
+        url: base_url + 'handler/website/fetchAbouts.php',
+        method: 'GET',
+        dataType: 'json',
+        cache: false,
+        success: function(response) {
+            if (response.status === 'success') {
+                const data = response.data;
+                
+                if (data.backgroundImage && data.backgroundImage.length > 0) {
+                    updateAboutBackground(data.backgroundImage);
+                }
+                
+                if (data.aboutInfo && data.aboutInfo.length > 0) {
+                    updateAboutContent(data.aboutInfo);
+                }
+                
+                if (data.missionVision && data.missionVision.length > 0) {
+                    updateMissionVision(data.missionVision);
+                }
+                
+                if (data.files) {
+                    updateDownloadableFiles(data.files);
+                }
+                
+                console.log('About page content updated successfully at', new Date().toLocaleTimeString());
+            } else {
+                console.error('Error in response:', response.message);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching about page data:', error);
+        }
+    });
+}
+
+function updateAboutBackground(backgroundImages) {
+    if (!backgroundImages || backgroundImages.length === 0) return;
+    
+    const heroBackground = $('.hero-background');
+    if (!heroBackground.length) return;
+
+    const image = backgroundImages[0];
+    const newImagePath = base_url + image.image_path;
+    const currentBgStyle = heroBackground.attr('style');
+    const newBgStyle = `background-image: url('${newImagePath}');`;
+    
+    if (!currentBgStyle || !currentBgStyle.includes(image.image_path)) {
+        heroBackground.attr('style', newBgStyle);
+        console.log('About background updated');
+    }
+}
+
+function updateAboutContent(aboutInfo) {
+    if (!aboutInfo || aboutInfo.length === 0) return;
+    
+    const heroContent = $('.hero-content');
+    if (!heroContent.length) return;
+
+    const info = aboutInfo[0];
+    const currentTitle = heroContent.find('h2').text().trim();
+    const currentDesc = heroContent.find('p').text().trim();
+
+    if (currentTitle !== info.title.trim() || currentDesc !== info.description.trim()) {
+        heroContent.find('h2').text(info.title);
+        heroContent.find('p').text(info.description);
+        console.log('About content updated');
+    }
+}
+
+function updateMissionVision(missionVision) {
+    if (!missionVision || missionVision.length === 0) return;
+    
+    const missionElement = $('.mission p');
+    const visionElement = $('.vision p');
+    
+    if (!missionElement.length || !visionElement.length) return;
+
+    const info = missionVision[0];
+    const currentMission = missionElement.text().trim();
+    const currentVision = visionElement.text().trim();
+
+    if (currentMission !== info.mission.trim()) {
+        missionElement.text(info.mission);
+        console.log('Mission updated');
+    }
+
+    if (currentVision !== info.vision.trim()) {
+        visionElement.text(info.vision);
+        console.log('Vision updated');
+    }
+}
+
+function updateDownloadableFiles(files) {
+    if (!files) return;
+    
+    const downloadsContainer = $('.downloads-list');
+    if (!downloadsContainer.length) return;
+    
+    if (files.length === 0) {
+        downloadsContainer.html('<p class="no-downloads">No downloadable resources available at this time.</p>');
+        return;
+    }
+    
+    let newContent = '';
+    
+    files.forEach(file => {
+        const fileExtension = file.file_name.split('.').pop().toLowerCase();
+        let iconClass = 'file';
+        
+        if (file.file_type.includes('pdf') || fileExtension === 'pdf') {
+            iconClass = 'pdf';
+        } else if (file.file_type.includes('word') || fileExtension === 'docx' || fileExtension === 'doc') {
+            iconClass = 'docx';
+        }
+        
+        const fileSize = parseInt(file.file_size) || 0;
+        let formattedSize = '';
+        
+        if (fileSize < 1024) {
+            formattedSize = fileSize + ' B';
+        } else if (fileSize < 1048576) {
+            formattedSize = (fileSize / 1024).toFixed(2) + ' KB';
+        } else {
+            formattedSize = (fileSize / 1048576).toFixed(2) + ' MB';
+        }
+        
+        let createdDate = '';
+        if (file.created_at) {
+            const date = new Date(file.created_at);
+            createdDate = date.toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'});
+        }
+        
+        newContent += `
+            <a href="${base_url}assets/downloadables/${file.file_path}" download class="download-card">
+                <div class="download-icon ${iconClass}"></div>
+                <div class="download-info">
+                    <span class="download-title">${file.file_name}</span>
+                    <span class="download-type">(${fileExtension.toUpperCase()})</span>
+                    ${formattedSize ? `<span class="download-size">${formattedSize}</span>` : ''}
+                    ${createdDate ? `<span class="download-date">Added: ${createdDate}</span>` : ''}
+                </div>
+            </a>
+        `;
+    });
+    
+    const currentContent = downloadsContainer.html().trim();
+    if (currentContent !== newContent.trim()) {
+        downloadsContainer.html(newContent);
+        console.log('Downloadable files updated');
+    }
+}
+
+let aboutHeroInterval = null;
+let aboutRefreshInterval = null;
+
+function initAboutPage() {
+    if (aboutHeroInterval) {
+        clearInterval(aboutHeroInterval);
+    }
+    
+    if (aboutRefreshInterval) {
+        clearInterval(aboutRefreshInterval);
+    }
+
+    updateAboutPage();
+
+    aboutRefreshInterval = setInterval(function() {
+        updateAboutPage();
+    }, 10000); 
+
+    $('.hero').hover(
+        function() {
+            if (aboutHeroInterval) {
+                clearInterval(aboutHeroInterval);
+            }
+            if (aboutRefreshInterval) {
+                clearInterval(aboutRefreshInterval);
+            }
+            console.log('About page updates paused on hover');
+        },
+        function() {
+            aboutRefreshInterval = setInterval(function() {
+                updateAboutPage();
+            }, 10000);
+            console.log('About page updates resumed after hover');
         }
     );
 }
@@ -976,6 +1169,11 @@ $(document).ready(function() {
     if (isPageActive('transparencyreport')) {
         console.log('Transparency Report page detected, initializing content updates');
         initTransparencyPage();
+    }
+
+    if (isPageActive('aboutus')) {
+        console.log('About Us page detected, initializing content updates');
+        initAboutPage();
     }
 });
 
