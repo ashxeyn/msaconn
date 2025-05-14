@@ -1,28 +1,55 @@
 // FOOTER RELOAD FUNCTIONS
 function updateFooter() {
     $.ajax({
-        url: base_url + 'handler/website/fetchFooter.php',  // Add base_url to path
+        url: base_url + 'handler/website/fetchFooter.php',
         method: 'GET',
         dataType: 'json',
         success: function(response) {
             if (response.status === 'success') {
-                const footer = response.data.footer[0];
-                const logo = response.data.logo[0];
+                const footerData = response.data.footer && response.data.footer.length > 0 ? response.data.footer[0] : null;
+                const logoData = response.data.logo && response.data.logo.length > 0 ? response.data.logo[0] : null;
 
-                $('.header-top .logo img').attr('src', base_url + logo.image_path);
-                $('.header-top .logo-text').text(footer.web_name);
-                $('.header-top .logo-subtext').text(footer.org_name + ' | ' + footer.school_name);
-                
-                $('.footer-upper-left .logo').attr('src', base_url + logo.image_path);
-                $('.footer-upper-left .logo-text p:first-child strong').text(footer.web_name);
-                $('.footer-upper-left .logo-text p:last-child').text(footer.school_name);
-                $('.socials a').attr('href', footer.fb_link);
-                $('.contact-info p:first-child').text('Contact Us: ' + footer.contact_no);
-                $('.contact-info p:last-child').text('Email: ' + footer.email);
+                if (logoData) {
+                    $('.header-top .logo img').attr('src', base_url + logoData.image_path).show();
+                    $('.footer-upper-left .logo').attr('src', base_url + logoData.image_path).show();
+                } else {
+                    $('.header-top .logo img').attr('src', '').hide();
+                    $('.footer-upper-left .logo').attr('src', '').hide();
+                }
+
+                if (footerData) {
+                    $('.header-top .logo-text').text(footerData.web_name).show();
+                    $('.header-top .logo-subtext').text(footerData.org_name + ' | ' + footerData.school_name).show();
+                    $('.footer-upper-left .logo-text p:first-child strong').text(footerData.web_name).closest('p').show();
+                    $('.footer-upper-left .logo-text p:last-child').text(footerData.school_name).show();
+                    $('.socials a').attr('href', footerData.fb_link).closest('.socials').show();
+                    $('.contact-info p:first-child').text('Contact Us: ' + footerData.contact_no).show();
+                    $('.contact-info p:last-child').text('Email: ' + footerData.email).show();
+                } else {
+                    $('.header-top .logo-text').text('').hide();
+                    $('.header-top .logo-subtext').text('').hide();
+                    $('.footer-upper-left .logo-text p:first-child strong').text('').closest('p').hide();
+                    $('.footer-upper-left .logo-text p:last-child').text('').hide();
+                    $('.socials a').attr('href', '#').closest('.socials').hide();
+                    $('.contact-info p:first-child').text('').hide();
+                    $('.contact-info p:last-child').text('').hide();
+                }
+            } else {
+                $('.header-top .logo img').attr('src', '').hide();
+                $('.header-top .logo-text').text('').hide();
+                $('.header-top .logo-subtext').text('').hide();
+                $('.footer-upper-left .logo').attr('src', '').hide();
+                $('.footer-upper-left .logo-text p:first-child strong').text('').closest('p').hide();
+                $('.footer-upper-left .logo-text p:last-child').text('').hide();
+                $('.socials a').attr('href', '#').closest('.socials').hide();
+                $('.contact-info p:first-child').text('').hide();
+                $('.contact-info p:last-child').text('').hide();
             }
         },
         error: function(xhr, status, error) {
             console.error('Error fetching footer data:', error);
+            $('.header-top .logo img').attr('src', '').hide();
+            $('.header-top .logo-text').text('').hide();
         }
     });
 }
@@ -59,12 +86,10 @@ function updateLandingPage() {
             if (response.status === 'success') {
                 const data = response.data;
                 
-                // Update carousel first
                 if (data.carousel) {
                     updateCarousel(data.carousel);
                 }
                 
-                // Update other content
                 if (data.home) {
                     updateHomeContent(data.home);
                 }
@@ -89,14 +114,24 @@ function updateLandingPage() {
 }
 
 function updateCarousel(carouselData) {
-    if (!carouselData || carouselData.length === 0) return;
-    
     const carouselContainer = $('.carousel');
-    if (!carouselContainer.length) return; 
+    const heroContentContainer = $('.carousel .hero-content'); 
+
+    if (!carouselData || carouselData.length === 0) {
+        if (carouselContainer.length) {
+            carouselContainer.empty(); 
+            $('.carousel-indicators').empty(); 
+            carouselContainer.append('<div class="carousel-slide placeholder"><p>Carousel content is currently unavailable.</p></div>'); // Optional placeholder
+            if (carouselInterval) clearInterval(carouselInterval);
+            if (carouselRefreshInterval) clearInterval(carouselRefreshInterval); 
+            console.log('Carousel data empty, cleared carousel.');
+        }
+        return;
+    }
     
-    const heroContent = $('.hero-content').clone();
+    const originalHeroHTML = heroContentContainer.length > 0 ? heroContentContainer.prop('outerHTML') : '';
     
-    $('.carousel-slide').remove();
+    $('.carousel-slide').remove(); 
     
     carouselData.forEach((item, index) => {
         const isActive = index === 0 ? 'active' : '';
@@ -104,15 +139,14 @@ function updateCarousel(carouselData) {
             <div class="carousel-slide ${isActive}">
                 <div class="carousel-background" style="background-image: url('${base_url + item.image_path}');"></div>
                 <div class="carousel-overlay"></div>
-                ${index === 0 ? heroContent.prop('outerHTML') : ''}
+                ${index === 0 ? originalHeroHTML : ''} 
             </div>
         `;
         carouselContainer.append(slide);
     });
     
     updateCarouselIndicators(carouselData.length);
-    
-    initCarousel();
+    initCarousel(); 
 }
 
 function updateCarouselIndicators(slideCount) {
@@ -126,21 +160,28 @@ function updateCarouselIndicators(slideCount) {
 }
 
 function updateHomeContent(homeData) {
-    if (!homeData || homeData.length === 0) return;
+    const heroContent = $('.carousel .hero-content'); 
     
-    if (window.location.pathname.includes('landing_page')) {
-        const homeItem = homeData[0];
-        const heroContent = $('.carousel .hero-content');
-        
-        if (heroContent.length) {
-            const currentTitle = heroContent.find('h2').text();
-            const currentDesc = heroContent.find('p').text();
+    if (!heroContent.length) return; 
+
+    if (!homeData || homeData.length === 0) {
+        heroContent.find('h2').text('');
+        heroContent.find('p').text('');
+        // heroContent.hide(); 
+        // heroContent.html('<p>Welcome!</p>'); 
+        console.log('Home data empty, cleared hero content.');
+        return;
+    }
+    
+    // heroContent.show(); 
+    const homeItem = homeData[0];
+    const currentTitle = heroContent.find('h2').text();
+    const currentDesc = heroContent.find('p').text();
             
-            if (currentTitle !== homeItem.title || currentDesc !== homeItem.description) {
-                heroContent.find('h2').text(homeItem.title);
-                heroContent.find('p').text(homeItem.description);
-            }
-        }
+    if (currentTitle !== homeItem.title || currentDesc !== homeItem.description) {
+        heroContent.find('h2').text(homeItem.title);
+        heroContent.find('p').text(homeItem.description);
+        console.log('Hero content updated.');
     }
 }
 
@@ -151,12 +192,12 @@ function updatePrayerSchedule(scheduleData) {
     const currentContent = tableBody.html();
     let newContent = '';
     const today = new Date();
-    today.setHours(0,0,0,0); // Normalize to midnight
+    today.setHours(0,0,0,0); 
     
     scheduleData.forEach(item => {
         const dateObj = new Date(item.date);
-        dateObj.setHours(0,0,0,0); // Normalize to midnight
-        if (dateObj < today) return; // Skip past dates
+        dateObj.setHours(0,0,0,0); 
+        if (dateObj < today) return; 
         const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
         const row = `
             <tr>
@@ -320,7 +361,6 @@ function initCarousel() {
 // });
 
 // VOLUNTEER HERO FUNCTIONS
-
 function updateVolunteerHero() {
     $.ajax({
         url: base_url + 'handler/website/fetchVolunteerHero.php',
@@ -331,23 +371,20 @@ function updateVolunteerHero() {
             if (response.status === 'success') {
                 const data = response.data;
                 
-                // Update volunteer info content
-                if (data.volunteerInfo && data.volunteerInfo.length > 0) {
-                    updateVolunteerContent(data.volunteerInfo);
-                }
-                
-                // Update background image
-                if (data.backgroundImage && data.backgroundImage.length > 0) {
-                    updateVolunteerBackground(data.backgroundImage);
-                }
+                updateVolunteerContent(data.volunteerInfo);
+                updateVolunteerBackground(data.backgroundImage);
                 
                 console.log('Volunteer hero content updated successfully at', new Date().toLocaleTimeString());
             } else {
                 console.error('Error in response:', response.message);
+                updateVolunteerContent(null); 
+                updateVolunteerBackground(null);
             }
         },
         error: function(xhr, status, error) {
             console.error('Error fetching volunteer hero data:', error);
+            updateVolunteerContent(null); 
+            updateVolunteerBackground(null);
         }
     });
 }
@@ -355,6 +392,13 @@ function updateVolunteerHero() {
 function updateVolunteerContent(volunteerInfo) {
     const heroContent = $('.hero-content');
     if (!heroContent.length) return;
+
+    if (!volunteerInfo || volunteerInfo.length === 0) {
+        heroContent.find('h2').text('');
+        heroContent.find('p').text('');
+        console.log('Volunteer content data empty, cleared hero content.');
+        return;
+    }
 
     const info = volunteerInfo[0];
     const currentTitle = heroContent.find('h2').text().trim();
@@ -371,15 +415,18 @@ function updateVolunteerBackground(backgroundImages) {
     const heroBackground = $('.hero-background');
     if (!heroBackground.length) return;
 
+    if (!backgroundImages || backgroundImages.length === 0) {
+        heroBackground.removeAttr('style');
+        console.log('Volunteer background data empty, cleared background.');
+        return;
+    }
+
     const image = backgroundImages[0];
     const newImagePath = base_url + image.image_path;
-    const currentBgStyle = heroBackground.attr('style');
     const newBgStyle = `background-image: url('${newImagePath}');`;
     
-    if (!currentBgStyle || !currentBgStyle.includes(image.image_path)) {
-        heroBackground.attr('style', newBgStyle);
-        console.log('Volunteer background updated');
-    }
+    heroBackground.attr('style', newBgStyle);
+    console.log('Volunteer background updated');
 }
 
 function initVolunteerHero() {
@@ -427,13 +474,8 @@ function updateCalendarPage() {
             if (response.status === 'success') {
                 const data = response.data;
                 
-                if (data.backgroundImage && data.backgroundImage.length > 0) {
-                    updateCalendarBackground(data.backgroundImage);
-                }
-                
-                if (data.calendarInfo && data.calendarInfo.length > 0) {
-                    updateCalendarContent(data.calendarInfo);
-                }
+                updateCalendarBackground(data.backgroundImage);
+                updateCalendarContent(data.calendarInfo);
                 
                 if (data.dailyPrayers) {
                     updateDailyPrayers(data.dailyPrayers);
@@ -442,36 +484,48 @@ function updateCalendarPage() {
                 console.log('Calendar page content updated successfully at', new Date().toLocaleTimeString());
             } else {
                 console.error('Error in response:', response.message);
+                updateCalendarBackground(null);
+                updateCalendarContent(null);
+                // updateDailyPrayers(null);
             }
         },
         error: function(xhr, status, error) {
             console.error('Error fetching calendar data:', error);
+            updateCalendarBackground(null);
+            updateCalendarContent(null);
+            // updateDailyPrayers(null); 
         }
     });
 }
 
 function updateCalendarBackground(backgroundImages) {
-    if (!backgroundImages || backgroundImages.length === 0) return;
-    
     const heroBackground = $('.hero-background');
     if (!heroBackground.length) return;
 
+    if (!backgroundImages || backgroundImages.length === 0) {
+        heroBackground.removeAttr('style');
+        console.log('Calendar background data empty, cleared background.');
+        return;
+    }
+    
     const image = backgroundImages[0];
     const newImagePath = base_url + image.image_path;
-    const currentBgStyle = heroBackground.attr('style');
     const newBgStyle = `background-image: url('${newImagePath}');`;
     
-    if (!currentBgStyle || !currentBgStyle.includes(image.image_path)) {
-        heroBackground.attr('style', newBgStyle);
-        console.log('Calendar background updated');
-    }
+    heroBackground.attr('style', newBgStyle);
+    console.log('Calendar background updated');
 }
 
 function updateCalendarContent(calendarInfo) {
-    if (!calendarInfo || calendarInfo.length === 0) return;
-    
     const heroContent = $('.hero-content');
     if (!heroContent.length) return;
+
+    if (!calendarInfo || calendarInfo.length === 0) {
+        heroContent.find('h2').text('');
+        heroContent.find('p').text('');
+        console.log('Calendar content data empty, cleared hero content.');
+        return;
+    }
 
     const info = calendarInfo[0];
     const currentTitle = heroContent.find('h2').text().trim();
@@ -499,7 +553,7 @@ function updateDailyPrayers(dailyPrayers) {
             if (prayer.date !== todayDate) return;
             
             const prayerTypeDisplay = prayer.prayer_type.charAt(0).toUpperCase() + prayer.prayer_type.slice(1);
-            const isFriday = new Date(prayer.date).getDay() === 5; // 5 is Friday
+            const isFriday = new Date(prayer.date).getDay() === 5; 
             const timeDisplay = prayer.time ? new Date('1970-01-01T' + prayer.time).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', hour12: true}) : '<span class="text-danger">No time set</span>';
             
             newContent += `
@@ -565,7 +619,6 @@ function initCalendarPage() {
 }
 
 // REGISTRATION MADRASA PAGE FUNCTIONS
-
 function updateRegistrationPage() {
     $.ajax({
         url: base_url + 'handler/website/fetchRegistration.php',
@@ -576,47 +629,52 @@ function updateRegistrationPage() {
             if (response.status === 'success') {
                 const data = response.data;
                 
-                if (data.backgroundImage && data.backgroundImage.length > 0) {
-                    updateRegistrationBackground(data.backgroundImage);
-                }
-                
-                if (data.registrationInfo && data.registrationInfo.length > 0) {
-                    updateRegistrationContent(data.registrationInfo);
-                }
+                updateRegistrationBackground(data.backgroundImage);
+                updateRegistrationContent(data.registrationInfo);
                 
                 console.log('Registration madrasa content updated successfully at', new Date().toLocaleTimeString());
             } else {
                 console.error('Error in response:', response.message);
+                updateRegistrationBackground(null);
+                updateRegistrationContent(null);
             }
         },
         error: function(xhr, status, error) {
             console.error('Error fetching registration data:', error);
+            updateRegistrationBackground(null);
+            updateRegistrationContent(null);
         }
     });
 }
 
 function updateRegistrationBackground(backgroundImages) {
-    if (!backgroundImages || backgroundImages.length === 0) return;
-    
     const heroBackground = $('.hero-background');
     if (!heroBackground.length) return;
 
+    if (!backgroundImages || backgroundImages.length === 0) {
+        heroBackground.removeAttr('style');
+        console.log('Registration background data empty, cleared background.');
+        return;
+    }
+    
     const image = backgroundImages[0];
     const newImagePath = base_url + image.image_path;
-    const currentBgStyle = heroBackground.attr('style');
     const newBgStyle = `background-image: url('${newImagePath}');`;
     
-    if (!currentBgStyle || !currentBgStyle.includes(image.image_path)) {
-        heroBackground.attr('style', newBgStyle);
-        console.log('Registration background updated');
-    }
+    heroBackground.attr('style', newBgStyle);
+    console.log('Registration background updated');
 }
 
 function updateRegistrationContent(registrationInfo) {
-    if (!registrationInfo || registrationInfo.length === 0) return;
-    
     const heroContent = $('.hero-content');
     if (!heroContent.length) return;
+
+    if (!registrationInfo || registrationInfo.length === 0) {
+        heroContent.find('h2').text('');
+        heroContent.find('p').text('');
+        console.log('Registration content data empty, cleared hero content.');
+        return;
+    }
 
     const info = registrationInfo[0];
     const currentTitle = heroContent.find('h2').text().trim();
@@ -674,47 +732,52 @@ function updateFaqsPage() {
             if (response.status === 'success') {
                 const data = response.data;
                 
-                if (data.backgroundImage && data.backgroundImage.length > 0) {
-                    updateFaqsBackground(data.backgroundImage);
-                }
-                
-                if (data.faqsInfo && data.faqsInfo.length > 0) {
-                    updateFaqsContent(data.faqsInfo);
-                }
+                updateFaqsBackground(data.backgroundImage);
+                updateFaqsContent(data.faqsInfo);
                 
                 console.log('FAQs page content updated successfully at', new Date().toLocaleTimeString());
             } else {
                 console.error('Error in response:', response.message);
+                updateFaqsBackground(null);
+                updateFaqsContent(null);
             }
         },
         error: function(xhr, status, error) {
             console.error('Error fetching FAQs data:', error);
+            updateFaqsBackground(null);
+            updateFaqsContent(null);
         }
     });
 }
 
 function updateFaqsBackground(backgroundImages) {
-    if (!backgroundImages || backgroundImages.length === 0) return;
-    
     const heroBackground = $('.hero-background');
     if (!heroBackground.length) return;
 
+    if (!backgroundImages || backgroundImages.length === 0) {
+        heroBackground.removeAttr('style');
+        console.log('FAQs background data empty, cleared background.');
+        return;
+    }
+    
     const image = backgroundImages[0];
     const newImagePath = base_url + image.image_path;
-    const currentBgStyle = heroBackground.attr('style');
     const newBgStyle = `background-image: url('${newImagePath}');`;
     
-    if (!currentBgStyle || !currentBgStyle.includes(image.image_path)) {
-        heroBackground.attr('style', newBgStyle);
-        console.log('FAQs background updated');
-    }
+    heroBackground.attr('style', newBgStyle);
+    console.log('FAQs background updated');
 }
 
 function updateFaqsContent(faqsInfo) {
-    if (!faqsInfo || faqsInfo.length === 0) return;
-    
     const heroContent = $('.hero-content');
     if (!heroContent.length) return;
+
+    if (!faqsInfo || faqsInfo.length === 0) {
+        heroContent.find('h2').text('');
+        heroContent.find('p').text('');
+        console.log('FAQs content data empty, cleared hero content.');
+        return;
+    }
 
     const info = faqsInfo[0];
     const currentTitle = heroContent.find('h2').text().trim();
@@ -772,13 +835,8 @@ function updateTransparencyPage() {
             if (response.status === 'success') {
                 const data = response.data;
                 
-                if (data.backgroundImage && data.backgroundImage.length > 0) {
-                    updateTransparencyBackground(data.backgroundImage);
-                }
-                
-                if (data.transparencyInfo && data.transparencyInfo.length > 0) {
-                    updateTransparencyContent(data.transparencyInfo);
-                }
+                updateTransparencyBackground(data.backgroundImage);
+                updateTransparencyContent(data.transparencyInfo);
                 
                 if (data.cashIn && data.cashOut) {
                     updateTransparencyTables(data.cashIn, data.cashOut, 
@@ -788,36 +846,48 @@ function updateTransparencyPage() {
                 console.log('Transparency report content updated successfully at', new Date().toLocaleTimeString());
             } else {
                 console.error('Error in response:', response.message);
+                updateTransparencyBackground(null);
+                updateTransparencyContent(null);
+                // updateTransparencyTables(null, null, null, null, null); 
             }
         },
         error: function(xhr, status, error) {
             console.error('Error fetching transparency data:', error);
+            updateTransparencyBackground(null);
+            updateTransparencyContent(null);
+            // updateTransparencyTables(null, null, null, null, null); 
         }
     });
 }
 
 function updateTransparencyBackground(backgroundImages) {
-    if (!backgroundImages || backgroundImages.length === 0) return;
-    
     const heroBackground = $('.hero-background');
     if (!heroBackground.length) return;
 
+    if (!backgroundImages || backgroundImages.length === 0) {
+        heroBackground.removeAttr('style');
+        console.log('Transparency background data empty, cleared background.');
+        return;
+    }
+    
     const image = backgroundImages[0];
     const newImagePath = base_url + image.image_path;
-    const currentBgStyle = heroBackground.attr('style');
     const newBgStyle = `background-image: url('${newImagePath}');`;
     
-    if (!currentBgStyle || !currentBgStyle.includes(image.image_path)) {
-        heroBackground.attr('style', newBgStyle);
-        console.log('Transparency background updated');
-    }
+    heroBackground.attr('style', newBgStyle);
+    console.log('Transparency background updated');
 }
 
 function updateTransparencyContent(transparencyInfo) {
-    if (!transparencyInfo || transparencyInfo.length === 0) return;
-    
     const heroContent = $('.hero-content');
     if (!heroContent.length) return;
+
+    if (!transparencyInfo || transparencyInfo.length === 0) {
+        heroContent.find('h2').text('');
+        heroContent.find('p').text('');
+        console.log('Transparency content data empty, cleared hero content.');
+        return;
+    }
 
     const info = transparencyInfo[0];
     const currentTitle = heroContent.find('h2').text().trim();
@@ -942,18 +1012,12 @@ function updateAboutPage() {
             if (response.status === 'success') {
                 const data = response.data;
                 
-                if (data.backgroundImage && data.backgroundImage.length > 0) {
-                    updateAboutBackground(data.backgroundImage);
-                }
-                
-                if (data.aboutInfo && data.aboutInfo.length > 0) {
-                    updateAboutContent(data.aboutInfo);
-                }
+                updateAboutBackground(data.backgroundImage);
+                updateAboutContent(data.aboutInfo);
                 
                 if (data.missionVision && data.missionVision.length > 0) {
                     updateMissionVision(data.missionVision);
                 }
-                
                 if (data.files) {
                     updateDownloadableFiles(data.files);
                 }
@@ -961,36 +1025,46 @@ function updateAboutPage() {
                 console.log('About page content updated successfully at', new Date().toLocaleTimeString());
             } else {
                 console.error('Error in response:', response.message);
+                updateAboutBackground(null);
+                updateAboutContent(null);
             }
         },
         error: function(xhr, status, error) {
             console.error('Error fetching about page data:', error);
+            updateAboutBackground(null);
+            updateAboutContent(null);
         }
     });
 }
 
 function updateAboutBackground(backgroundImages) {
-    if (!backgroundImages || backgroundImages.length === 0) return;
-    
     const heroBackground = $('.hero-background');
     if (!heroBackground.length) return;
 
+    if (!backgroundImages || backgroundImages.length === 0) {
+        heroBackground.removeAttr('style');
+        console.log('About background data empty, cleared background.');
+        return;
+    }
+    
     const image = backgroundImages[0];
     const newImagePath = base_url + image.image_path;
-    const currentBgStyle = heroBackground.attr('style');
     const newBgStyle = `background-image: url('${newImagePath}');`;
     
-    if (!currentBgStyle || !currentBgStyle.includes(image.image_path)) {
-        heroBackground.attr('style', newBgStyle);
-        console.log('About background updated');
-    }
+    heroBackground.attr('style', newBgStyle);
+    console.log('About background updated');
 }
 
 function updateAboutContent(aboutInfo) {
-    if (!aboutInfo || aboutInfo.length === 0) return;
-    
     const heroContent = $('.hero-content');
     if (!heroContent.length) return;
+
+    if (!aboutInfo || aboutInfo.length === 0) {
+        heroContent.find('h2').text('');
+        heroContent.find('p').text('');
+        console.log('About hero content data empty, cleared hero content.');
+        return;
+    }
 
     const info = aboutInfo[0];
     const currentTitle = heroContent.find('h2').text().trim();
@@ -999,7 +1073,7 @@ function updateAboutContent(aboutInfo) {
     if (currentTitle !== info.title.trim() || currentDesc !== info.description.trim()) {
         heroContent.find('h2').text(info.title);
         heroContent.find('p').text(info.description);
-        console.log('About content updated');
+        console.log('About hero content updated');
     }
 }
 
