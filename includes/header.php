@@ -38,6 +38,7 @@ function is_current_page($page_names) {
         <link rel="stylesheet" href="<?php echo $base_url; ?>css/header.css?v=<?php echo time(); ?>">  
        <link rel="stylesheet" href="<?php echo $base_url; ?>css/no-scrollbar.css?v=<?php echo time(); ?>">   
      <link rel="stylesheet" href="<?php echo $base_url; ?>css/sticky-header-fix.css?v=<?php echo time(); ?>">
+     <link rel="stylesheet" href="<?php echo $base_url; ?>css/shared-tables.css?v=<?php echo time(); ?>">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>

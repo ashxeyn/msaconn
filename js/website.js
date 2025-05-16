@@ -1257,39 +1257,53 @@ $(document).ready(function() {
         console.log('About Us page detected, initializing content updates');
         initAboutPage();
     }
-});
 
-
-// DATA TABLES FOR TRANSPARENCY REPORT
-$(document).ready(function() {
-    var cashInTable = $('#cashinTable').DataTable({
-        pageLength: 10,
-        lengthChange: false,
-        searching: false,
-        ordering: true,
-        info: false,
-        paging: true
-    });
-    var cashOutTable = $('#cashoutTable').DataTable({
-        pageLength: 10,
-        lengthChange: false,
-        searching: false,
-        ordering: true,
-        info: false,
-        paging: true,
-        drawCallback: function(settings) {
-            var api = this.api();
-            var pageInfo = api.page.info();
-            if (pageInfo.page === pageInfo.pages - 1) {
-                $('#summaryTableContainer').show();
-            } else {
+    // DATA TABLES FOR TRANSPARENCY REPORT
+    if (!$.fn.dataTable.isDataTable('#cashinTable')) {
+        var cashInTable = $('#cashinTable').DataTable({
+            pageLength: 10,
+            lengthChange: false,
+            searching: false,
+            ordering: true,
+            info: false,
+            paging: true
+        });
+    }
+    
+    if (!$.fn.dataTable.isDataTable('#cashoutTable')) {
+        var cashOutTable = $('#cashoutTable').DataTable({
+            pageLength: 10,
+            lengthChange: false,
+            searching: false,
+            ordering: true,
+            info: false,
+            paging: true,
+            drawCallback: function(settings) {
+                var api = this.api();
+                var pageInfo = api.page.info();
+                if (pageInfo.page === pageInfo.pages - 1) {
+                    $('#summaryTableContainer').show();
+                } else {
+                    $('#summaryTableContainer').hide();
+                }
+            }
+        });
+        
+        var pageInfo = cashOutTable.page.info();
+        if (pageInfo.page !== pageInfo.pages - 1) {
+            $('#summaryTableContainer').hide();
+        }
+    } else {
+        // If already initialized, still handle the summary table visibility
+        if ($('#cashoutTable').length) {
+            var existingTable = $('#cashoutTable').DataTable();
+            var pageInfo = existingTable.page.info();
+            if (pageInfo.page !== pageInfo.pages - 1) {
                 $('#summaryTableContainer').hide();
+            } else {
+                $('#summaryTableContainer').show();
             }
         }
-    });
-    var pageInfo = cashOutTable.page.info();
-    if (pageInfo.page !== pageInfo.pages - 1) {
-        $('#summaryTableContainer').hide();
     }
 });
 

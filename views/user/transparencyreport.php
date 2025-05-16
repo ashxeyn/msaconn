@@ -22,145 +22,140 @@ foreach ($cashOut as $transaction) {
 $totalFunds = $totalCashIn - $totalCashOut;
 ?>
 <link rel="stylesheet" href="<?php echo $base_url; ?>css/transparencyreport.css">
+<link rel="stylesheet" href="<?php echo $base_url; ?>css/shared-tables.css">
 <!-- DataTables CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
 <div class="hero">
-        <?php foreach ($backgroundImage as $image) : ?>
+    <?php foreach ($backgroundImage as $image) : ?>
     <div class="hero-background" style="background-image: url('<?php echo $base_url . $image['image_path']; ?>');">
-        <?php endforeach; ?>
+    <?php endforeach; ?>
     </div>
     <div class="hero-content">
-            <?php foreach ($transparencyInfo as $info) : ?>
-                <h2><?php echo $info['title']; ?></h2>
-                <p><?php echo $info['description']; ?></p> 
-            <?php endforeach; ?>
-        </div>
+        <?php foreach ($transparencyInfo as $info) : ?>
+            <h2><?php echo $info['title']; ?></h2>
+            <p><?php echo $info['description']; ?></p> 
+        <?php endforeach; ?>
     </div>
+</div>
 
 <!-- Transparency Report Section -->
-<section class="transparency-report">
+<section class="table-section" style="background-color: #f5f5f5; padding: 40px 0;">
   <div class="container">
     <h2>Transaction Details</h2>
     
     <h3>Cash In</h3>
-    <div class="table-container">
-      <div class="prayer-schedule-content">
-        <table id="cashinTable" class="display prayer-table" style="width:100%">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Day</th>
-              <th>Detail</th>
-              <th>Category</th>
-              <th>Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-          <?php if ($cashIn): ?>
-              <?php foreach ($cashIn as $transaction): ?>
-                  <?php
-                      $dateDisplay = date('M d, Y', strtotime($transaction['report_date']));
-                      if (!empty($transaction['end_date'])) {
-                          $dateDisplay .= ' to ' . date('M d, Y', strtotime($transaction['end_date']));
-                      }
-                      $startDay = date('l', strtotime($transaction['report_date']));
-                      if (!empty($transaction['end_date'])) {
-                          $endDay = date('l', strtotime($transaction['end_date']));
-                          $dayDisplay = ($startDay != $endDay) ? $startDay . ' - ' . $endDay : $startDay;
-                      } else {
-                          $dayDisplay = $startDay;
-                      }
-                  ?>
-                  <tr>
-                      <td><?php echo $dateDisplay; ?></td>
-                      <td><?php echo $dayDisplay; ?></td>
-                      <td><?php echo clean_input($transaction['expense_detail']); ?></td>
-                      <td><?php echo clean_input($transaction['expense_category']); ?></td>
-                      <td>₱<?php echo number_format($transaction['amount'], 2); ?></td>
-                  </tr>
-              <?php endforeach; ?>
-          <?php else: ?>
-              <tr><td colspan="5" class="text-center">No cash-in transactions found.</td></tr>
-          <?php endif; ?>
-          </tbody>
-        </table>
-      </div>
+    <div class="table-container" style="background-color: #ffffff; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); border: 1px solid #f0f0f0;">
+      <table id="cashinTable" class="msa-table display" style="width:100%">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Day</th>
+            <th>Detail</th>
+            <th>Category</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+        <?php if ($cashIn): ?>
+            <?php foreach ($cashIn as $transaction): ?>
+                <?php
+                    $dateDisplay = date('M d, Y', strtotime($transaction['report_date']));
+                    if (!empty($transaction['end_date'])) {
+                        $dateDisplay .= ' to ' . date('M d, Y', strtotime($transaction['end_date']));
+                    }
+                    $startDay = date('l', strtotime($transaction['report_date']));
+                    if (!empty($transaction['end_date'])) {
+                        $endDay = date('l', strtotime($transaction['end_date']));
+                        $dayDisplay = ($startDay != $endDay) ? $startDay . ' - ' . $endDay : $startDay;
+                    } else {
+                        $dayDisplay = $startDay;
+                    }
+                ?>
+                <tr>
+                    <td><?php echo $dateDisplay; ?></td>
+                    <td><?php echo $dayDisplay; ?></td>
+                    <td><?php echo clean_input($transaction['expense_detail']); ?></td>
+                    <td><?php echo clean_input($transaction['expense_category']); ?></td>
+                    <td>₱<?php echo number_format($transaction['amount'], 2); ?></td>
+                </tr>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <tr><td colspan="5" class="text-center">No cash-in transactions found.</td></tr>
+        <?php endif; ?>
+        </tbody>
+      </table>
     </div>
     
     <h3>Cash Out</h3>
-    <div class="table-container">
-      <div class="prayer-schedule-content">
-        <table id="cashoutTable" class="display prayer-table" style="width:100%">
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Day</th>
-              <th>Detail</th>
-              <th>Category</th>
-              <th>Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-          <?php if ($cashOut): ?>
-              <?php foreach ($cashOut as $transaction): ?>
-                  <?php
-                      $dateDisplay = date('M d, Y', strtotime($transaction['report_date']));
-                      if (!empty($transaction['end_date'])) {
-                          $dateDisplay .= ' to ' . date('M d, Y', strtotime($transaction['end_date']));
-                      }
-                      $startDay = date('l', strtotime($transaction['report_date']));
-                      if (!empty($transaction['end_date'])) {
-                          $endDay = date('l', strtotime($transaction['end_date']));
-                          $dayDisplay = ($startDay != $endDay) ? $startDay . ' - ' . $endDay : $startDay;
-                      } else {
-                          $dayDisplay = $startDay;
-                      }
-                  ?>
-                  <tr>
-                      <td><?php echo $dateDisplay; ?></td>
-                      <td><?php echo $dayDisplay; ?></td>
-                      <td><?php echo clean_input($transaction['expense_detail']); ?></td>
-                      <td><?php echo clean_input($transaction['expense_category']); ?></td>
-                      <td>₱<?php echo number_format($transaction['amount'], 2); ?></td>
-                  </tr>
-              <?php endforeach; ?>
-          <?php else: ?>
-              <tr><td colspan="5" class="text-center">No cash-out transactions found.</td></tr>
-          <?php endif; ?>
-          </tbody>
-        </table>
-      </div>
+    <div class="table-container" style="background-color: #ffffff; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); border: 1px solid #f0f0f0;">
+      <table id="cashoutTable" class="msa-table display" style="width:100%">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Day</th>
+            <th>Detail</th>
+            <th>Category</th>
+            <th>Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+        <?php if ($cashOut): ?>
+            <?php foreach ($cashOut as $transaction): ?>
+                <?php
+                    $dateDisplay = date('M d, Y', strtotime($transaction['report_date']));
+                    if (!empty($transaction['end_date'])) {
+                        $dateDisplay .= ' to ' . date('M d, Y', strtotime($transaction['end_date']));
+                    }
+                    $startDay = date('l', strtotime($transaction['report_date']));
+                    if (!empty($transaction['end_date'])) {
+                        $endDay = date('l', strtotime($transaction['end_date']));
+                        $dayDisplay = ($startDay != $endDay) ? $startDay . ' - ' . $endDay : $startDay;
+                    } else {
+                        $dayDisplay = $startDay;
+                    }
+                ?>
+                <tr>
+                    <td><?php echo $dateDisplay; ?></td>
+                    <td><?php echo $dayDisplay; ?></td>
+                    <td><?php echo clean_input($transaction['expense_detail']); ?></td>
+                    <td><?php echo clean_input($transaction['expense_category']); ?></td>
+                    <td>₱<?php echo number_format($transaction['amount'], 2); ?></td>
+                </tr>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <tr><td colspan="5" class="text-center">No cash-out transactions found.</td></tr>
+        <?php endif; ?>
+        </tbody>
+      </table>
     </div>
     
     <!-- Summary Table -->
     <div id="summaryTableContainer">
       <h3>Financial Summary</h3>
-      <div class="table-container">
-        <div class="prayer-schedule-content">
-          <table class="summary-table display prayer-table" style="width:100%">
-            <thead>
-              <tr>
-                <th>Transaction Type</th>
-                <th>Amount</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Total Cash-In</td>
-                <td>₱<?php echo number_format($totalCashIn, 2); ?></td>
-              </tr>
-              <tr>
-                <td>Total Cash-Out</td>
-                <td>₱<?php echo number_format($totalCashOut, 2); ?></td>
-              </tr>
-              <tr>
-                <td><strong>TOTAL FUNDS:</strong></td>
-                <td><strong>₱<?php echo number_format($totalFunds, 2); ?></strong></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+      <div class="table-container" style="background-color: #ffffff; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); border: 1px solid #f0f0f0;">
+        <table class="msa-table" style="width:100%">
+          <thead>
+            <tr>
+              <th>Transaction Type</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Total Cash-In</td>
+              <td>₱<?php echo number_format($totalCashIn, 2); ?></td>
+            </tr>
+            <tr>
+              <td>Total Cash-Out</td>
+              <td>₱<?php echo number_format($totalCashOut, 2); ?></td>
+            </tr>
+            <tr class="total-row">
+              <td><strong>TOTAL FUNDS:</strong></td>
+              <td><strong>₱<?php echo number_format($totalFunds, 2); ?></strong></td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -170,3 +165,41 @@ $totalFunds = $totalCashIn - $totalCashOut;
 <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="../../js/website.js"></script>
+<script src="../../js/table-fix.js"></script>
+<script>
+  $(document).ready(function() {
+    // Apply custom styling to DataTables UI elements after tables are initialized
+    function checkAndApplyStyles() {
+      if ($('.dataTables_wrapper').length > 0) {
+        customizeDataTablesUI();
+      } else {
+        // If not ready yet, wait a bit and try again
+        setTimeout(checkAndApplyStyles, 100);
+      }
+    }
+    
+    // Start the check
+    checkAndApplyStyles();
+    
+    // Function to apply custom styling
+    function customizeDataTablesUI() {
+      $('.dataTables_wrapper .dataTables_filter input').css({
+        'border': '1px solid #eaecef',
+        'border-radius': '6px',
+        'padding': '6px 12px',
+        'margin-left': '8px',
+        'background-color': '#f8f9fa'
+      });
+      
+      $('.dataTables_wrapper .dataTables_length select').css({
+        'border': '1px solid #eaecef',
+        'border-radius': '6px',
+        'padding': '4px 8px',
+        'background-color': '#f8f9fa'
+      });
+      
+      // Add spacing at the bottom
+      $('.dataTables_wrapper').css('margin-bottom', '20px');
+    }
+  });
+</script>

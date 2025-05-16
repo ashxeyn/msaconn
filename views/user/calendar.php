@@ -28,6 +28,7 @@ $calendar = $adminObj->fetchDailyPrayers();
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?php echo $base_url; ?>css/calendar.css">
+    <link rel="stylesheet" href="<?php echo $base_url; ?>css/shared-tables.css">
 </head>
 <body class="calendar-page">
 <?php include '../../includes/header.php'; ?>
@@ -60,8 +61,8 @@ $calendar = $adminObj->fetchDailyPrayers();
 
     <!-- 5 Prayers of Islam Table Section -->
     <div class="container my-5">
-        <div class="bg-white p-4 rounded shadow">
-            <h3 class="mb-4" style="color:#1a541c;">Daily Prayers Schedule</h3>
+        <div class="table-section" style="background-color: #f5f5f5; padding: 30px 20px; border-radius: 10px;">
+            <h3 style="color:#1a541c;">Daily Prayers Schedule</h3>
             <div style="color:#333; font-size:32px; margin-bottom:12px;">
                 <?php 
                     $today = date('F d, Y');
@@ -69,8 +70,8 @@ $calendar = $adminObj->fetchDailyPrayers();
                     echo "$today ($dayName)";
                 ?>
             </div>
-            <div class="table-container">
-                <table class="prayer-table">
+            <div class="table-container" style="background-color: #ffffff; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); border: 1px solid #f0f0f0;">
+                <table class="msa-table">
                     <thead>
                         <tr>
                             <th>Time</th>
@@ -153,5 +154,8 @@ $calendar = $adminObj->fetchDailyPrayers();
 
     <!-- Include Calendar JavaScript -->
     <script src="<?php echo $base_url; ?>js/calendar.js"></script>
+    
+    <!-- Table Fix Script -->
+    <script src="<?php echo $base_url; ?>js/table-fix.js"></script>
 </body>
 </html>

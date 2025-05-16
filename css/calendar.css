@@ -500,51 +500,9 @@ p.activity-start-date {
   white-space: nowrap;
 }
 
-/* Prayer Table Styles */
-.prayer-table {
-  width: 100%;
-  min-width: 0;
-  border-collapse: collapse;
-  font-size: 1rem;
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  font-family: 'Noto Naskh Arabic', serif;
-}
-
-.prayer-table th {
-  background-color: #1a541c !important;
-  color: #ffffff;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 15px 20px;
-  text-align: center;
-}
-
-.prayer-table td {
-  padding: 15px 20px;
-  text-align: center;
-  font-family: 'Noto Naskh Arabic', serif;
-  border-bottom: 1px solid #e0e0e0;
-  color: #333333;
-}
-
-.prayer-table tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.prayer-table tr:hover {
-  background-color: #f1f1f1;
-}
-
-.table-responsive {
-  width: 100%;
-  max-width: 100vw;
-  margin: 0 auto;
-  overflow-x: auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+/* Prayer Table Styles - LEGACY - NOW USING SHARED-TABLES.CSS */
+/* These styles are kept for backwards compatibility only */
+/* Please use the .msa-table class for new tables */
 
 /* Modal Styles */
 #activity-date {

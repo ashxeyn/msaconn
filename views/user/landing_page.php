@@ -17,6 +17,7 @@ $prayerSchedule = $adminObj->fetchPrayerSchedule();
 <script src="../../js/website.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../../css/user.landingpage.css">
+<link rel="stylesheet" href="../../css/shared-tables.css">
 
 <style>
     /* Make update items show cursor pointer and have a hover effect */
@@ -89,41 +90,43 @@ $prayerSchedule = $adminObj->fetchPrayerSchedule();
 <!-- News article container for dynamic loading -->
 <div id="dynamic-news-container" style="display: none;"></div>
 
-<section id="prayer-schedule" class="prayer-schedule">
+<!-- Prayer Schedule Section -->
+<section id="prayer-schedule" class="table-section">
+  <div class="container" style="max-width: 1140px; width: 100%; margin-left: auto; margin-right: auto;">
     <h2>KHUTBAH SCHEDULE</h2>
-    <div class="table-container">
-        <div class="prayer-schedule-content" id="prayer-schedule-content">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Day</th>
-                        <th>Khateeb</th>
-                        <th>Topic</th>
-                        <th>Location</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($prayerSchedule as $prayer) : 
-                        $dayName = date('l', strtotime($prayer['date']));
-                    ?>
-                    <tr>
-                        <td><?php echo date('F j, Y', strtotime($prayer['date'])); ?></td>
-                        <td><?php echo isset($prayer['time']) ? date('h:i A', strtotime($prayer['time'])) : 'N/A'; ?></td>
-                        <td><?php echo $dayName; ?></td>
-                        <td><?php echo $prayer['speaker']; ?></td>
-                        <td><?php echo $prayer['topic']; ?></td>
-                        <td><?php echo $prayer['location']; ?></td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
+    <div class="table-container" style="background-color: #ffffff; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); border: 1px solid #f0f0f0;">
+      <table class="msa-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Day</th>
+            <th>Khateeb</th>
+            <th>Topic</th>
+            <th>Location</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($prayerSchedule as $prayer) : 
+              $dayName = date('l', strtotime($prayer['date']));
+          ?>
+          <tr>
+            <td><?php echo date('F j, Y', strtotime($prayer['date'])); ?></td>
+            <td><?php echo isset($prayer['time']) ? date('h:i A', strtotime($prayer['time'])) : 'N/A'; ?></td>
+            <td><?php echo $dayName; ?></td>
+            <td><?php echo $prayer['speaker']; ?></td>
+            <td><?php echo $prayer['topic']; ?></td>
+            <td><?php echo $prayer['location']; ?></td>
+          </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
     </div>
+  </div>
 </section>
 
 <?php include '../../includes/footer.php'; ?>
+<script src="../../js/table-fix.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const header = document.querySelector('header');

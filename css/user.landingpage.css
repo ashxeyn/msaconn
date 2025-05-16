@@ -302,7 +302,7 @@ html, body {
   }
 }
 
-/* Prayer Schedule Section */
+/* Prayer Schedule Section - LEGACY STYLES - REPLACED BY SHARED-TABLES.CSS */
 .prayer-schedule {
   text-align: center;
   padding: 40px 0;
@@ -319,50 +319,9 @@ html, body {
   font-family: 'Noto Naskh Arabic', serif;
 }
 
-.table-container {
-  width: 100%;
-  max-width: 100vw; /* Prevent overflow */
-  margin: 0 auto;
-  overflow-x: auto;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.prayer-schedule table {
-  width: 100%;
-  min-width: 0; /* Remove forced min-width */
-  border-collapse: collapse;
-  font-size: 1rem;
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  font-family: 'Noto Naskh Arabic', serif;
-}
-
-.prayer-schedule th, .prayer-schedule td {
-  padding: 15px 20px;
-  text-align: center;
-  font-family: 'Noto Naskh Arabic', serif;
-}
-
-.prayer-schedule th {
-  background-color: #1a541c;
-  color: #ffffff;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.prayer-schedule td {
-  color: #333333;
-}
-
-.prayer-schedule tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.prayer-schedule tr:hover {
-  background-color: #f1f1f1;
-}
+/* The table-specific styles below are now replaced by shared-tables.css */
+/* These styles are kept for backwards compatibility only */
+/* Please use the .msa-table class for new tables */
 
 /* Volunteer Section */
 .volunteer {
@@ -404,4 +363,26 @@ html, body {
   text-decoration: none;
   transition: background-color 0.3s ease;
   font-family: 'Noto Naskh Arabic', serif;
+}
+
+/* Additional Table Section Overrides */
+#prayer-schedule.table-section .container,
+.table-section .container {
+  max-width: 1140px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* For small screens, allow horizontal scrolling */
+@media (max-width: 768px) {
+  .table-container {
+    overflow-x: auto;
+  }
+  
+  .msa-table {
+    min-width: 768px;
+  }
 }

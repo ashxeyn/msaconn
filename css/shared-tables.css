@@ -1,0 +1,206 @@
+/* Modern Table Styles for MSA Connecticut */
+:root {
+  --primary-color: #1a541c;
+  --primary-light: #e8f3e8;
+  --primary-hover: #133a15;
+  --accent-color: #9f2626;
+  --table-border: #eaecef;
+  --table-header-bg: var(--primary-color);
+  --table-header-color: #ffffff;
+  --table-row-even: #f8f9fa;
+  --table-row-odd: #ffffff;
+  --table-row-hover: #f0f7f0;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Table Sections */
+.table-section {
+  padding: 25px 0;
+  width: 100%;
+  background-color: #f5f5f5;
+}
+
+.table-section .container {
+  max-width: 1140px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+/* Base Table Container */
+.table-container {
+  width: 100%;
+  margin: 0 auto 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  overflow: hidden;
+  background-color: #ffffff;
+  padding: 15px;
+  border: 1px solid #f0f0f0;
+}
+
+/* Table Styles */
+.msa-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: 'Noto Naskh Arabic', serif;
+  background-color: #ffffff;
+}
+
+.msa-table thead th {
+  background-color: var(--table-header-bg);
+  color: var(--table-header-color);
+  font-weight: 600;
+  text-transform: uppercase;
+  padding: 16px 20px;
+  text-align: left;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  letter-spacing: 0.5px;
+  font-size: 0.9rem;
+  border: none;
+}
+
+.msa-table thead th:first-child {
+  border-top-left-radius: 8px;
+}
+
+.msa-table thead th:last-child {
+  border-top-right-radius: 8px;
+}
+
+.msa-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.msa-table tbody tr:nth-child(odd) {
+  background-color: var(--table-row-odd);
+}
+
+.msa-table tbody tr:nth-child(even) {
+  background-color: var(--table-row-even);
+}
+
+.msa-table tbody tr:hover {
+  background-color: var(--table-row-hover);
+}
+
+.msa-table tbody td {
+  padding: 15px 20px;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--table-border);
+  font-size: 0.95rem;
+}
+
+/* Special Row Styling */
+.msa-table tr.total-row {
+  background-color: var(--primary-light);
+  font-weight: bold;
+}
+
+.msa-table tr.total-row td {
+  border-top: 2px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+/* Table Sections */
+.table-section {
+  padding: 25px 0;
+}
+
+.table-section h2, 
+.table-section h3 {
+  color: var(--primary-color);
+  margin-bottom: 15px;
+  font-weight: 600;
+  font-family: 'Noto Naskh Arabic', serif;
+}
+
+.table-section h2 {
+  font-size: 1.8rem;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.table-section h3 {
+  font-size: 1.4rem;
+  margin-top: 35px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .msa-table {
+    font-size: 0.9rem;
+  }
+  
+  .msa-table thead th,
+  .msa-table tbody td {
+    padding: 12px 15px;
+  }
+
+  .table-section h2 {
+    font-size: 1.5rem;
+  }
+  
+  .table-section h3 {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .table-container {
+    overflow-x: auto;
+    border-radius: 8px;
+  }
+  
+  .msa-table {
+    min-width: 550px;
+  }
+  
+  .msa-table thead th,
+  .msa-table tbody td {
+    padding: 10px 12px;
+    font-size: 0.85rem;
+  }
+}
+
+/* Data Tables Custom Styling */
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_processing,
+.dataTables_wrapper .dataTables_paginate {
+  color: var(--text-primary);
+  margin-bottom: 10px;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+  border: 1px solid var(--table-border);
+  border-radius: 4px;
+  padding: 5px 10px;
+  margin-left: 5px;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  border-radius: 4px;
+  border: 1px solid transparent;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+  background: var(--primary-color);
+  color: white !important;
+  border: 1px solid var(--primary-color);
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+  background: var(--primary-light);
+  color: var(--primary-color) !important;
+  border: 1px solid var(--primary-light);
+} 
