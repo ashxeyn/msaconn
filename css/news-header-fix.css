@@ -1,0 +1,112 @@
+/**
+ * Specific header fixes for news.php page
+ * This file targets only the header when viewed from news.php
+ * DIRECT APPROACH with !important flags to ensure header doesn't cover content
+ */
+
+/* Ensure body has proper spacing - DRASTIC REDUCTION */
+body.news-page {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+}
+
+/* Direct and specific selectors for news.php header */
+body.news-page header,
+html body.news-page header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    z-index: 999999 !important;
+    margin: 0 !important;
+    border: none !important;
+    overflow: visible !important;
+}
+
+/* Add margin to main to push content below header - DRASTICALLY REDUCED */
+body.news-page main {
+    margin-top: -10px !important; /* NEGATIVE margin to pull content up */
+    padding-top: 0 !important;
+    position: relative !important;
+}
+
+/* Direct reset for page container and its children */
+body.news-page .page-container {
+    margin-top: -5px !important; /* NEGATIVE margin to pull content up */
+    padding-top: 0 !important;
+    transform: none !important;
+    position: relative !important;
+    top: 0 !important;
+}
+
+/* Position article content with minimal spacing - DRASTICALLY REDUCED */
+body.news-page .article-container {
+    margin-top: 5px !important; /* DRASTICALLY REDUCED: from 20px to 5px */
+    padding-top: 0 !important;
+    transform: none !important;
+    position: relative !important;
+    top: 0 !important;
+}
+
+/* FORCEFUL positioning for sidebar container - DRASTICALLY REDUCED */
+body.news-page .sidebar-container {
+    margin-top: 5px !important; /* DRASTICALLY REDUCED: from 20px to 5px */
+    padding-top: 0 !important;
+    transform: none !important;
+}
+
+/* Desktop sidebar positioning - DRASTICALLY REDUCED */
+@media (min-width: 992px) {
+    body.news-page .sidebar-container {
+        position: sticky !important;
+        top: 70px !important; /* DRASTICALLY REDUCED: from 100px to 70px */
+        height: calc(100vh - 70px) !important;
+        max-height: calc(100vh - 70px) !important;
+    }
+}
+
+/* Mobile sidebar positioning */
+@media (max-width: 991px) {
+    body.news-page .sidebar-container {
+        position: relative !important;
+        top: 0 !important;
+        height: auto !important;
+        max-height: none !important;
+    }
+}
+
+/* Ensure dropdown menus still work */
+body.news-page .nav-links .dropdown-content {
+    position: absolute !important;
+    z-index: 9999999 !important;
+    display: none;
+}
+
+body.news-page .nav-links .dropdown {
+    position: relative !important;
+}
+
+body.news-page .nav-links .dropdown:hover .dropdown-content {
+    display: block !important;
+}
+
+body.news-page header .navbar {
+    overflow: visible !important;
+}
+
+/* Mobile adjustments - DRASTICALLY REDUCED */
+@media (max-width: 768px) {
+    body.news-page {
+        padding-top: 0 !important;
+    }
+    
+    body.news-page main {
+        margin-top: -10px !important; /* NEGATIVE margin to pull content up */
+    }
+    
+    body.news-page .article-container,
+    body.news-page .sidebar-container {
+        margin-top: 2px !important; /* DRASTICALLY REDUCED: from 10px to 2px */
+    }
+} 

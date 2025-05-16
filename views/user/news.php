@@ -109,6 +109,7 @@ if (!$isAjax || !isset($_GET['no_css'])) {
 ?>
 <link rel="stylesheet" href="../../css/user.landingpage.css">
 <link rel="stylesheet" href="../../css/news.css">
+<link rel="stylesheet" href="../../css/news-header-fix.css">
 
 <?php if (!$isAjax) { ?>
 <!-- Meta tags for JavaScript -->
@@ -116,6 +117,7 @@ if (!$isAjax || !isset($_GET['no_css'])) {
 <meta name="base-url" content="<?php echo $base_url; ?>">
 <!-- JavaScript -->
 <script src="../../js/news.js"></script>
+<script src="../../js/news-header-fix.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Ensure the sidebar scrollbar works
