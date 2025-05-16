@@ -111,6 +111,41 @@ if (!$isAjax || !isset($_GET['no_css'])) {
 <link rel="stylesheet" href="../../css/news.css">
 <link rel="stylesheet" href="../../css/news-header-fix.css">
 
+<style>
+.page-container {
+    display: flex;
+    height: calc(100vh - 120px); /* Adjust based on your header/footer size */
+}
+
+.article-container {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 20px;
+    height: 100%;
+}
+
+.sidebar-container {
+    width: 350px;
+    overflow-y: auto;
+    height: 100%;
+    padding-left: 10px;
+    border-left: 1px solid #e0e0e0;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+}
+
+.sidebar-container::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+}
+
+.sidebar-header {
+    background-color: #f5f5f5; /* Dirty white color */
+    color: #000; /* Black text */
+    padding: 10px;
+    font-weight: bold;
+}
+</style>
+
 <?php if (!$isAjax) { ?>
 <!-- Meta tags for JavaScript -->
 <meta name="article-id" content="<?php echo $updateId; ?>">
@@ -119,13 +154,79 @@ if (!$isAjax || !isset($_GET['no_css'])) {
 <script src="../../js/news.js"></script>
 <script src="../../js/news-header-fix.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Ensure the sidebar scrollbar works
-    const sidebar = document.querySelector('.sidebar-container');
-    if (sidebar) {
-        sidebar.style.overflowY = 'auto';
-    }
-});
+// Function to check for article updates
+function checkForArticleUpdates() {
+    const articleId = document.querySelector('meta[name="article-id"]').content;
+    const baseUrl = document.querySelector('meta[name="base-url"]').content;
+    
+    // Fetch the current article data from handler
+    fetch(`${baseUrl}handler/user/get_article.php?id=${articleId}&timestamp=${new Date().getTime()}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update article title if changed
+                const currentTitle = document.querySelector('.article-title').innerText;
+                if (data.article.title !== currentTitle) {
+                    document.querySelector('.article-title').innerText = data.article.title;
+                }
+                
+                // Update article date if changed
+                const currentDate = document.querySelector('.article-date').innerText;
+                const newDate = new Date(data.article.created_at).toLocaleDateString('en-US', {
+                    year: 'numeric', month: 'long', day: 'numeric'
+                });
+                if (newDate !== currentDate) {
+                    document.querySelector('.article-date').innerText = newDate;
+                }
+                
+                // Update article content if changed
+                const articleContent = document.querySelector('.article-content');
+                if (articleContent.innerHTML !== data.article.content) {
+                    articleContent.innerHTML = data.article.content;
+                }
+                
+                // Update image if changed
+                const mainImage = document.querySelector('.article-main-image');
+                if (mainImage && data.article.image_path) {
+                    const newImagePath = baseUrl + 'assets' + data.article.image_path;
+                    if (mainImage.src !== newImagePath) {
+                        mainImage.src = newImagePath;
+                    }
+                }
+
+                // If there are gallery images, update them
+                if (data.article.images && data.article.images.length > 0) {
+                    const galleryContainer = document.querySelector('.article-gallery') || document.createElement('div');
+                    if (!document.querySelector('.article-gallery')) {
+                        galleryContainer.className = 'article-gallery';
+                        
+                        // Replace the single image container with gallery if it exists
+                        const singleImageContainer = document.querySelector('.article-image-container');
+                        if (singleImageContainer) {
+                            singleImageContainer.parentNode.replaceChild(galleryContainer, singleImageContainer);
+                        } else {
+                            // Add after the article header
+                            document.querySelector('.article-header').after(galleryContainer);
+                        }
+                    }
+                    
+                    // Clear and rebuild gallery
+                    galleryContainer.innerHTML = '';
+                    data.article.images.forEach(image => {
+                        const imagePath = baseUrl + 'assets' + image.file_path;
+                        const imgDiv = document.createElement('div');
+                        imgDiv.className = 'gallery-image';
+                        imgDiv.innerHTML = `<img src="${imagePath}" alt="${data.article.title}" class="article-img">`;
+                        galleryContainer.appendChild(imgDiv);
+                    });
+                }
+            }
+        })
+        .catch(error => console.error('Error checking for updates:', error));
+}
+
+// Check for updates every 5 seconds
+setInterval(checkForArticleUpdates, 5000);
 </script>
 <?php } ?>
 <?php 
