@@ -7,6 +7,7 @@ $archivedColleges = $adminObj->fetchArchivedColleges();
 $archivedPrograms = $adminObj->fetchArchivedPrograms();
 $archivedCalendar = $adminObj->fetchArchivedCalendar();
 $archivedPrayers = $adminObj->fetchArchivedPrayers();
+$archivedDailyPrayers = $adminObj->fetchArchivedDailyPrayers();
 $archivedCashIn = $adminObj->fetchArchivedTransactions('Cash In');
 $archivedCashOut = $adminObj->fetchArchivedTransactions('Cash Out');
 $archivedFAQs = $adminObj->fetchArchivedFAQs();
@@ -362,11 +363,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
         #officersTab_length select,
         #volunteersTab_length select,
         #moderatorsTab_length select,
-        #archivedUpdatesTab_length select,
-        #schoolYearsTab_length select,
-        #collegesTab_length select,
-        #programsTab_length select,
-        #officerPositionsTab_length select {
+        #archivedUpdatesTab_length select {
             padding: 0.3rem 0.5rem !important;
             font-size: 0.875rem !important;
             border: 1.5px solid #000000 !important;
@@ -498,7 +495,8 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
         #schoolYearsTab_filter input,
         #collegesTab_filter input,
         #programsTab_filter input,
-        #officerPositionsTab_filter input {
+        #officerPositionsTab_filter input,
+        #dailyPrayerTab_filter input {
             padding: 0.5rem 0.75rem !important;
             font-size: 0.875rem !important;
             border: 1.5px solid #000000 !important;
@@ -541,7 +539,8 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
         #schoolYearsTab_length select,
         #collegesTab_length select,
         #programsTab_length select,
-        #officerPositionsTab_length select {
+        #officerPositionsTab_length select,
+        #dailyPrayerTab_length select {
             padding: 0.3rem 0.5rem !important;
             font-size: 0.875rem !important;
             border: 1.5px solid #000000 !important;
@@ -577,6 +576,12 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                             <button class="nav-link" id="prayer-tab" data-bs-toggle="tab" data-bs-target="#prayer" 
                                     type="button" role="tab" aria-controls="prayer" aria-selected="false">
                                 Prayer
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="daily-prayer-tab" data-bs-toggle="tab" data-bs-target="#daily-prayer" 
+                                    type="button" role="tab" aria-controls="daily-prayer" aria-selected="false">
+                                Daily Prayer
                             </button>
                         </li>
                         <li class="nav-item" role="presentation">
@@ -724,6 +729,49 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                     </td>
                                                     <td>
                                                         <button class="btn btn-sm btn-success" onclick="setPrayerId(<?= $prayer['prayer_id'] ?>, 'restore')">
+                                                            <i class="bi bi-arrow-counterclockwise"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="daily-prayer" role="tabpanel" aria-labelledby="daily-prayer-tab">
+                            <div class="table-responsive">
+                                <table id="dailyPrayerTab" class="table table-striped align-items-center mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Prayer Type</th>
+                                            <th>Time</th>
+                                            <th>Iqamah</th>
+                                            <th>Location</th>
+                                            <th>Reason</th>
+                                            <th>Archived At</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php if (empty($archivedDailyPrayers)): ?>
+                                            <tr>
+                                                <td colspan="8" class="text-center">No archived daily prayers</td>
+                                            </tr>
+                                        <?php else: ?>
+                                            <?php foreach ($archivedDailyPrayers as $dailyPrayer): ?>
+                                                <tr>
+                                                    <td><?= date('M d, Y', strtotime($dailyPrayer['date'])) ?></td>
+                                                    <td><?= clean_input($dailyPrayer['prayer_type']) ?></td>
+                                                    <td><?= $dailyPrayer['time'] ? date('h:i A', strtotime($dailyPrayer['time'])) : 'N/A' ?></td>
+                                                    <td><?= $dailyPrayer['iqamah'] ? date('h:i A', strtotime($dailyPrayer['iqamah'])) : 'N/A' ?></td>
+                                                    <td><?= clean_input($dailyPrayer['location'] ?? 'N/A') ?></td>
+                                                    <td><?= clean_input($dailyPrayer['reason']) ?></td>
+                                                    <td><?= $dailyPrayer['deleted_at'] ? date('M d, Y h:i A', strtotime($dailyPrayer['deleted_at'])) : 'N/A' ?></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-success" 
+                                                                onclick="setDailyPrayerId(<?= $dailyPrayer['prayer_id'] ?>, 'restore')">
                                                             <i class="bi bi-arrow-counterclockwise"></i>
                                                         </button>
                                                     </td>
@@ -1438,6 +1486,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
 <?php include_once '../adminModals/restoreEvent.html'; ?>
 <?php include_once '../adminModals/restoreCalendar.html'; ?>
 <?php include_once '../adminModals/restorePrayer.html'; ?>
+<?php include_once '../adminModals/restoreDailyPrayer.html'; ?>
 <?php include_once '../adminModals/restoreTransaction.html'; ?>
 <?php include_once '../adminModals/restoreFaq.html'; ?>
 <?php include_once '../adminModals/restoreAbouts.html'; ?>
@@ -1455,6 +1504,7 @@ $(document).ready(function() {
     // Initialize DataTables for all tables in archives
     $('#calendarTab').DataTable();
     $('#prayerTab').DataTable();
+    $('#dailyPrayerTab').DataTable();
     $('#cashinTab').DataTable();
     $('#cashoutTab').DataTable();
     $('#faqsTab').DataTable();
