@@ -396,6 +396,43 @@ $totalFunds = $totalCashIn - $totalCashOut;
                 margin: 0.5rem 0.5rem !important;
             }
         }
+        
+        /* Loading indicator styles */
+        #transparencyTableContainer.loading {
+            position: relative;
+            min-height: 100px;
+        }
+        
+        #transparencyTableContainer.loading::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.7);
+            z-index: 10;
+        }
+        
+        #transparencyTableContainer.loading::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 50px;
+            height: 50px;
+            margin: -25px 0 0 -25px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--palestine-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            z-index: 11;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head> 
 

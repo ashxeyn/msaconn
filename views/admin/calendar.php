@@ -86,6 +86,7 @@ $calEvents = $adminObj->fetchCalendarEvents();
         }
 
         .events-card {
+            position: relative;
             border-radius: 10px;
             margin-bottom: 20px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
@@ -363,6 +364,44 @@ $calEvents = $adminObj->fetchCalendarEvents();
                 border-radius: 0;
             }
         }
+
+        /* Reset previous styles */
+        .events-card .dataTables_filter,
+        .events-card .dataTables_paginate,
+        .events-card .dataTables_info {
+            position: static;
+            float: right;
+            background: none;
+            box-shadow: none;
+            z-index: auto;
+            display: block;
+        }
+
+        /* Move dataTables_info to left side */
+        .events-card .dataTables_info {
+            float: left;
+        }
+
+        /* Just ensure card is scrollable */
+        .events-card {
+            position: relative;
+            overflow-x: auto;
+        }
+
+        /* Hide all validation icons in calendar form */
+        .invalid-icon, 
+        #editTimeIcon, 
+        #editVenueIcon, 
+        #editTitleIcon, 
+        #editDescriptionIcon {
+            display: none !important;
+        }
+
+        /* Add left padding to invalid fields to avoid text shifting */
+        .is-invalid {
+            padding-right: 0.75rem !important;
+            background-image: none !important;
+        }
     </style>
 </head>
 
@@ -472,5 +511,44 @@ $calEvents = $adminObj->fetchCalendarEvents();
 include '../adminModals/addEditCalendar.php';
 include '../adminModals/deleteCalendar.html';
 ?>
+
+<script>
+$(document).ready(function() {
+    // Initialize DataTable with standard settings
+    $('#table').DataTable();
+    
+    // Get the scrollable container
+    const scrollContainer = $('.events-card');
+    const filterElement = $('.dataTables_filter');
+    const paginateElement = $('.dataTables_paginate');
+    const infoElement = $('.dataTables_info');
+    const lengthElement = $('.dataTables_length');
+    
+    // Set initial position
+    scrollContainer.on('scroll', function() {
+        // Get scroll position
+        const scrollLeft = $(this).scrollLeft();
+        const containerWidth = $(this).width();
+        const tableWidth = $('#table').width();
+        
+        // Calculate right-aligned position
+        const maxScroll = tableWidth - containerWidth;
+        
+        // Apply the transform to keep elements at the right side
+        if (scrollLeft > 0) {
+            filterElement.css('transform', `translateX(${scrollLeft}px)`);
+            paginateElement.css('transform', `translateX(${scrollLeft}px)`);
+            // Keep info and length elements at left when scrolling right
+            infoElement.css('transform', `translateX(${scrollLeft}px)`);
+            lengthElement.css('transform', `translateX(${scrollLeft}px)`);
+        } else {
+            filterElement.css('transform', 'translateX(0)');
+            paginateElement.css('transform', 'translateX(0)');
+            infoElement.css('transform', 'translateX(0)');
+            lengthElement.css('transform', 'translateX(0)');
+        }
+    });
+});
+</script>
 </body>
 </html>

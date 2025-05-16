@@ -28,9 +28,333 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
     <script src="../../js/modals.js"></script>
     <script src="../../js/admin.js"></script>
     <link rel="stylesheet" href="../../css/archives.css">
+    <style>
+        /* Force transparent background and green text for all table headers */
+        th {
+            background-color: transparent !important;
+            background: none !important;
+            color: #0F8A53 !important;
+            border: none !important;
+            text-transform: none !important; /* Ensure text is not uppercase */
+            font-weight: bold !important;
+        }
+        
+        /* Fix for specific tables */
+        #calendarTab th, #prayerTab th, #cashinTab th, #cashoutTab th, 
+        #collegesTab th, #programsTab th, #faqsTab th, #aboutTab th, 
+        #filesTab th, #onsiteTab th, #olTab th, #officersTab th, 
+        #volunteersTab th, #moderatorsTab th, #updatesTab th, 
+        #positionsTab th, #schoolYearsTab th {
+            background-color: transparent !important;
+            background: none !important;
+            color: #0F8A53 !important;
+            text-transform: none !important; /* Ensure text is not uppercase */
+            border: none !important;
+            font-weight: bold !important;
+        }
+        
+        /* Override Bootstrap or other framework styles */
+        .table thead th {
+            background-color: transparent !important;
+            background: none !important;
+            color: #0F8A53 !important;
+            text-transform: none !important; /* Ensure text is not uppercase */
+            border: none !important;
+            font-weight: bold !important;
+        }
+        
+        /* Additional override to ensure no uppercase in any table header */
+        table th, 
+        thead th, 
+        .table th,
+        .table thead th,
+        .dataTables_wrapper th {
+            text-transform: none !important;
+            border: none !important;
+            font-weight: bold !important;
+        }
+        
+        /* Make containers bigger and more rounded */
+        .card {
+            border: none !important;
+            border-radius: 0 !important;
+            box-shadow: none !important;
+            background-color: transparent !important;
+        }
+        
+        .card-body {
+            padding: 0 !important;
+            overflow: hidden;
+        }
+        
+        .table-responsive {
+            border-radius: 14px;
+            padding: 15px;
+            background-color: #fff;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            overflow-x: auto;
+            width: 100%;
+        }
+        
+        .tab-content {
+            padding: 0 !important;
+            background-color: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        
+        .dataTables_wrapper {
+            padding: 10px;
+            width: 100%;
+            overflow-x: auto;
+        }
+        
+        /* Make tab navigation horizontally scrollable without showing scrollbar */
+        .nav-tabs {
+            border-bottom: 1px solid #dee2e6 !important;
+            margin-bottom: 20px !important;
+            padding-bottom: 0 !important;
+            overflow-x: auto !important;
+            flex-wrap: nowrap !important;
+            white-space: nowrap !important;
+            scrollbar-width: none !important; /* Firefox */
+            -ms-overflow-style: none !important; /* IE and Edge */
+        }
+        
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .nav-tabs::-webkit-scrollbar {
+            display: none !important;
+        }
+        
+        .nav-tabs .nav-link {
+            border: none !important;
+            color: #6c757d !important;
+            padding: 10px 16px !important;
+            margin-right: 4px !important;
+            border-radius: 0 !important;
+            display: inline-block !important;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: #0F8A53 !important;
+            font-weight: 600 !important;
+            background-color: transparent !important;
+            border-bottom: 2px solid #0F8A53 !important;
+        }
+        
+        .nav-tabs .nav-link:hover:not(.active) {
+            color: #495057 !important;
+            border-bottom: 2px solid #dee2e6 !important;
+        }
+        
+        /* Apply the same scrollable behavior to subtabs */
+        #transparencySubTabs, #studentSubTabs, #schoolConfigSubTabs {
+            overflow-x: auto !important;
+            flex-wrap: nowrap !important;
+            white-space: nowrap !important;
+            scrollbar-width: none !important; /* Firefox */
+            -ms-overflow-style: none !important; /* IE and Edge */
+        }
+        
+        #transparencySubTabs::-webkit-scrollbar, 
+        #studentSubTabs::-webkit-scrollbar, 
+        #schoolConfigSubTabs::-webkit-scrollbar {
+            display: none !important;
+        }
+        
+        /* Fix for volunteers table specifically */
+        #volunteers .table-responsive,
+        #volunteersTab_wrapper {
+            overflow-x: auto !important;
+            max-width: 100% !important;
+            width: 100% !important;
+        }
+        
+        /* Make all tables full-width within their containers */
+        .tab-pane {
+            padding: 0 !important;
+        }
+        
+        /* Ensure tables don't overflow their containers */
+        table {
+            width: 100% !important;
+            table-layout: auto;
+        }
+        
+        /* Add horizontal scrolling if needed */
+        @media (max-width: 1200px) {
+            .table-responsive {
+                overflow-x: auto !important;
+            }
+        }
+        
+        /* Style action buttons to be square with black background */
+        .btn-sm.btn-success {
+            border-radius: 6px !important;
+            background-color: #000 !important;
+            border-color: #000 !important;
+            width: 36px !important;
+            height: 36px !important;
+            padding: 0 !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+        }
+        
+        .btn-sm.btn-success:hover {
+            background-color: #333 !important;
+            border-color: #333 !important;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .btn-sm.btn-success i {
+            font-size: 18px !important;
+            color: white !important;
+        }
+        
+        /* Style pagination (previous/next) buttons */
+        .dataTables_paginate {
+            margin-top: 15px !important;
+            display: flex !important;
+            justify-content: flex-end !important;
+        }
+        
+        .dataTables_paginate .paginate_button,
+        .paginate_button,
+        .previous,
+        .next {
+            padding: 6px 12px !important;
+            margin: 0 3px !important;
+            border-radius: 5px !important;
+            cursor: pointer !important;
+            border: 1px solid #dee2e6 !important;
+            color: #000 !important;
+            background-color: #fff !important;
+            transition: all 0.2s !important;
+        }
+        
+        .dataTables_paginate .paginate_button:hover,
+        .paginate_button:hover,
+        .previous:hover,
+        .next:hover {
+            background-color: #f8f9fa !important;
+            color: #0F8A53 !important;
+            border-color: #0F8A53 !important;
+        }
+        
+        .dataTables_paginate .paginate_button.current,
+        .paginate_button.current {
+            background-color: #0F8A53 !important;
+            color: white !important;
+            border-color: #0F8A53 !important;
+        }
+        
+        .dataTables_paginate .paginate_button.disabled,
+        .paginate_button.disabled,
+        .previous.disabled,
+        .next.disabled {
+            color: #6c757d !important;
+            pointer-events: none !important;
+            background-color: #fff !important;
+            border-color: #dee2e6 !important;
+        }
+        
+        /* New styles for transparent buttons with green icons */
+        .btn-sm.btn-success {
+            background-color: transparent !important;
+            border: 1px solid #0F8A53 !important;
+            box-shadow: none !important;
+            border-radius: 4px !important;
+        }
+        
+        .btn-sm.btn-success:hover {
+            background-color: rgba(15, 138, 83, 0.1) !important;
+            transform: translateY(-2px);
+            box-shadow: none !important;
+        }
+        
+        .btn-sm.btn-success i {
+            color: #0F8A53 !important;
+            font-size: 20px !important;
+        }
+        
+        /* Add new table styling to match the FAQs page layout */
+        .table {
+            border-collapse: separate !important;
+            border-spacing: 0 !important;
+            width: 100% !important;
+            border: none !important;
+        }
+        
+        .table th {
+            background-color: transparent !important;
+            color: #0F8A53 !important;
+            border: none !important;
+            padding: 12px 8px !important;
+            font-weight: bold !important;
+            text-transform: none !important;
+        }
+        
+        .table td {
+            border: none !important;
+            border-bottom: 1px solid #dee2e6 !important;
+            padding: 12px 8px !important;
+            vertical-align: middle !important;
+        }
+        
+        /* Update hover effect to green tint from FAQs page */
+        .table tbody tr:hover td {
+            background-color: rgba(15, 138, 83, 0.05) !important;
+        }
+        
+        /* Style pagination to match FAQs page */
+        .dataTables_paginate {
+            margin-top: 15px !important;
+            display: flex !important;
+            justify-content: flex-end !important;
+        }
+        
+        .paginate_button, .previous, .next {
+            padding: 6px 12px !important;
+            margin: 0 3px !important;
+            cursor: pointer !important;
+            border: none !important;
+            color: #000 !important;
+            background-color: transparent !important;
+            transition: all 0.2s !important;
+        }
+        
+        .paginate_button.current {
+            background-color: #0F8A53 !important;
+            color: white !important;
+            border-radius: 4px !important;
+        }
+        
+        /* Fix search and show entries styling */
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter {
+            margin-bottom: 20px !important;
+        }
+        
+        .dataTables_wrapper .dataTables_filter input {
+            border: 1px solid #ced4da !important;
+            border-radius: 4px !important;
+            padding: 6px 12px !important;
+        }
+        
+        .dataTables_wrapper .dataTables_length select {
+            border: 1px solid #ced4da !important;
+            border-radius: 4px !important;
+            padding: 6px 30px 6px 12px !important;
+            background-position: right 8px center !important;
+        }
+    </style>
 </head>
 
 <div class="container-fluid py-4">
+    <h1 class="archive-title">Archives</h1>
     <div class="row mb-4">
         <div class="col-12">
             <div class="card">
@@ -116,7 +440,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
 
                         <div class="tab-pane fade show active" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
                             <div class="table-responsive">
-                                <table id="calendarTab" class="table align-items-center mb-0">
+                                <table id="calendarTab" class="table table-striped align-items-center mb-0">
                                     <thead>
                                         <tr>
                                             <th>Title</th>
@@ -142,7 +466,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                     <td><?= $activity['deleted_at'] ? date('M d, Y h:i A', strtotime($activity['deleted_at'])) : 'N/A' ?></td>
                                                     <td>
                                                         <button class="btn btn-sm btn-success" onclick="setCalendarId(<?= $activity['activity_id'] ?>, 'restore')">
-                                                            <i class="bi bi-arrow-clockwise"></i>
+                                                            <i class="bi bi-trash"></i>
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -155,7 +479,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
 
                         <div class="tab-pane fade" id="prayer" role="tabpanel" aria-labelledby="prayer-tab">                            
                             <div class="table-responsive">
-                                <table id="prayerTab" class="table align-items-center mb-0">
+                                <table id="prayerTab" class="table table-striped align-items-center mb-0">
                                     <thead>
                                         <tr>
                                             <th>Date</th>
@@ -175,15 +499,27 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                         <?php else: ?>
                                             <?php foreach ($archivedPrayers as $prayer): ?>
                                                 <tr>
-                                                    <td><?= date('M d, Y', strtotime($prayer['khutbah_date'])) ?></td>
-                                                    <td><?= clean_input($prayer['speaker']) ?></td>
-                                                    <td><?= clean_input($prayer['topic']) ?></td>
-                                                    <td><?= clean_input($prayer['location']) ?></td>
-                                                    <td><?= clean_input($prayer['reason']) ?></td>
-                                                    <td><?= date('M d, Y h:i A', strtotime($prayer['deleted_at'])) ?></td>
+                                                    <td>
+                                                        <?php if (isset($prayer['khutbah_date']) && $prayer['khutbah_date']): ?>
+                                                            <?= date('M d, Y', strtotime($prayer['khutbah_date'])) ?>
+                                                        <?php else: ?>
+                                                            N/A
+                                                        <?php endif; ?>
+                                                    </td>
+                                                    <td><?= clean_input($prayer['speaker'] ?? 'N/A') ?></td>
+                                                    <td><?= clean_input($prayer['topic'] ?? 'N/A') ?></td>
+                                                    <td><?= clean_input($prayer['location'] ?? 'N/A') ?></td>
+                                                    <td><?= clean_input($prayer['reason'] ?? 'N/A') ?></td>
+                                                    <td>
+                                                        <?php if (isset($prayer['deleted_at']) && $prayer['deleted_at']): ?>
+                                                            <?= date('M d, Y h:i A', strtotime($prayer['deleted_at'])) ?>
+                                                        <?php else: ?>
+                                                            N/A
+                                                        <?php endif; ?>
+                                                    </td>
                                                     <td>
                                                         <button class="btn btn-sm btn-success" onclick="setPrayerId(<?= $prayer['prayer_id'] ?>, 'restore')">
-                                                            <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
+                                                            <i class="bi bi-trash"></i>
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -212,7 +548,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                             <div class="tab-content" id="transparencySubTabsContent">
                                 <div class="tab-pane fade show active" id="cashin" role="tabpanel" aria-labelledby="cashin-tab">
                                     <div class="table-responsive mt-3">
-                                        <table id="cashinTab" class="table align-items-center mb-0">
+                                        <table id="cashinTab" class="table table-striped align-items-center mb-0">
                                             <thead>
                                                 <tr>
                                                     <th>Date</th>
@@ -243,7 +579,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" 
                                                                         onclick="openTransactionModal('restoreTransactionModal', <?= $transaction['report_id'] ?>, 'restore', 'Cash In')">
-                                                                    <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
+                                                                    <i class="bi bi-trash"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -256,7 +592,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                 
                                 <div class="tab-pane fade" id="cashout" role="tabpanel" aria-labelledby="cashout-tab">
                                     <div class="table-responsive mt-3">
-                                        <table id="cashoutTab" class="table align-items-center mb-0">
+                                        <table id="cashoutTab" class="table table-striped align-items-center mb-0">
                                             <thead>
                                                 <tr>
                                                     <th>Date</th>
@@ -287,7 +623,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" 
                                                                         onclick="openTransactionModal('restoreTransactionModal', <?= $transaction['report_id'] ?>, 'restore', 'Cash Out')">
-                                                                    <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
+                                                                    <i class="bi bi-trash"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -301,7 +637,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                         </div>
                         <div class="tab-pane fade" id="faqs" role="tabpanel" aria-labelledby="faqs-tab">
                             <div class="table-responsive">
-                            <table id="faqsTab" class="table align-items-center mb-0">
+                            <table id="faqsTab" class="table table-striped align-items-center mb-0">
                                 <thead>
                                         <tr>
                                             <th>Question</th>
@@ -328,7 +664,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                     <td>
                                                         <button class="btn btn-sm btn-success" 
                                                                 onclick="openFaqModal('restoreFaqModal', <?= $faq['faq_id'] ?>, 'restore')">
-                                                            <i class="fas fa-rotate-left"></i> Restore
+                                                            <i class="bi bi-trash"></i>
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -340,7 +676,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                         </div>
                         <div class="tab-pane fade" id="about-msa-archives" role="tabpanel" aria-labelledby="about-msa-archives-tab">
                             <div class="table-responsive">
-                                <table id="aboutTab" class="table align-items-center mb-0">
+                                <table id="aboutTab" class="table table-striped align-items-center mb-0">
                                     <thead>
                                         <tr>
                                             <th>Mission</th>
@@ -364,7 +700,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                     <td><?= date('M j, Y', strtotime($about['deleted_at'])) ?></td>
                                                     <td>
                                                         <button class="btn btn-sm btn-success" onclick="openAboutModal('restoreAboutModal', <?= $about['id'] ?>, 'restore')">
-                                                            <i class="fas fa-rotate-left"></i> Restore
+                                                            <i class="bi bi-trash"></i>
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -376,7 +712,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                         </div>
                         <div class="tab-pane fade" id="files" role="tabpanel" aria-labelledby="file-tab">
                             <div class="table-responsive">
-                                <table id="filesTab" class="table align-items-center mb-0">
+                                <table id="filesTab" class="table table-striped align-items-center mb-0">
                                     <thead>
                                         <tr>
                                             <th>File Name</th>
@@ -402,7 +738,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                     <td><?= date('M j, Y', strtotime($file['deleted_at'])) ?></td>
                                                     <td>
                                                         <button class="btn btn-sm btn-success" onclick="openFileModal('restoreFileModal', <?= $file['file_id'] ?>, 'restore')">
-                                                            <i class="fas fa-rotate-left"></i> Restore
+                                                            <i class="bi bi-trash"></i>
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -431,7 +767,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                             <div class="tab-content" id="studentSubTabsContent">
                                 <div class="tab-pane fade show active" id="onsite-archived" role="tabpanel" aria-labelledby="onsite-tab">
                                     <div class="table-responsive mt-3">
-                                        <table id="osTab" class="table align-items-center mb-0">
+                                        <table id="osTab" class="table table-striped align-items-center mb-0">
                                             <thead>
                                                 <tr>
                                                     <th>Student Name</th>
@@ -464,7 +800,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" 
                                                                         onclick="openStudentModal('restoreStudentModal', <?= $student['enrollment_id'] ?>, 'restore')">
-                                                                    <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
+                                                                    <i class="bi bi-trash"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -477,7 +813,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                 
                                 <div class="tab-pane fade" id="online-archived" role="tabpanel" aria-labelledby="online-tab">
                                     <div class="table-responsive mt-3">
-                                        <table id="olTab" class="table align-items-center mb-0">
+                                        <table id="olTab" class="table table-striped align-items-center mb-0">
                                             <thead>
                                                 <tr>
                                                     <th>Student Name</th>
@@ -510,7 +846,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" 
                                                                         onclick="openStudentModal('restoreStudentModal', <?= $student['enrollment_id'] ?>, 'restore')">
-                                                                    <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
+                                                                    <i class="bi bi-trash"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -525,7 +861,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
 
                         <div class="tab-pane fade" id="officers" role="tabpanel" aria-labelledby="officers-tab">
                             <div class="table-responsive">
-                                    <table id="officersTab" class="table align-items-center mb-0">
+                                    <table id="officersTab" class="table table-striped align-items-center mb-0">
                                         <thead>
                                             <tr>
                                                 <th>Officer Name</th>
@@ -554,7 +890,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                         <td>
                                                             <button class="btn btn-sm btn-success" 
                                                                     onclick="openOfficerModal('restoreOfficerModal', <?= $officer['officer_id'] ?>, 'restore')">
-                                                                <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
+                                                                <i class="bi bi-trash"></i>
                                                             </button>
                                                         </td>
                                                     </tr>
@@ -567,7 +903,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
 
                             <div class="tab-pane fade" id="volunteers" role="tabpanel" aria-labelledby="volunteers-tab">
                                 <div class="table-responsive">
-                                    <table id="volunteersTab" class="table align-items-center mb-0">
+                                    <table id="volunteersTab" class="table table-striped align-items-center mb-0">
                                         <thead>
                                             <tr>
                                                 <th>Volunteer Name</th>
@@ -589,16 +925,16 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                 <?php foreach ($archivedVolunteers as $volunteer): ?>
                                                     <tr>
                                                         <td><?= clean_input(strtoupper($volunteer['full_name'])) ?></td>
-                                                        <td><?= clean_input($volunteer['program_name']) ?? 'N/A' ?></td>
-                                                        <td><?= clean_input($volunteer['yr_section']) ?></td>
-                                                        <td><?= clean_input($volunteer['contact']) ?></td>
-                                                        <td><?= clean_input($volunteer['email']) ?></td>
-                                                        <td><?= clean_input($volunteer['reason']) ?></td>
-                                                        <td><?= $volunteer['deleted_at'] ? date('M d, Y h:i A', strtotime($volunteer['deleted_at'])) : 'N/A' ?></td>
+                                                        <td><?= clean_input($volunteer['program_name'] ?? 'N/A') ?></td>
+                                                        <td><?= clean_input($volunteer['yr_section'] ?? 'N/A') ?></td>
+                                                        <td><?= clean_input($volunteer['contact'] ?? 'N/A') ?></td>
+                                                        <td><?= clean_input($volunteer['email'] ?? 'N/A') ?></td>
+                                                        <td><?= clean_input($volunteer['reason'] ?? 'N/A') ?></td>
+                                                        <td><?= isset($volunteer['deleted_at']) && $volunteer['deleted_at'] ? date('M d, Y h:i A', strtotime($volunteer['deleted_at'])) : 'N/A' ?></td>
                                                         <td>
                                                             <button class="btn btn-sm btn-success" 
                                                                     onclick="openVolunteerModal('restoreVolunteerModal', <?= $volunteer['volunteer_id'] ?>, 'restore')">
-                                                                <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
+                                                                <i class="bi bi-trash"></i>
                                                             </button>
                                                         </td>
                                                     </tr>
@@ -611,7 +947,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
 
                             <div class="tab-pane fade" id="moderators" role="tabpanel" aria-labelledby="moderators-tab">
                             <div class="table-responsive">
-                                <table id="moderatorsTab" class="table align-items-center mb-0">
+                                <table id="moderatorsTab" class="table table-striped align-items-center mb-0">
                                     <thead>
                                         <tr>
                                             <th>Name</th>
@@ -640,7 +976,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                     <td>
                                                         <button class="btn btn-sm btn-success" 
                                                                 onclick="openModeratorModal('restoreModeratorModal', <?= $moderator['user_id'] ?>, 'restore')">
-                                                            <i class="fas fa-rotate-left"></i> Restore
+                                                            <i class="bi bi-trash"></i>
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -652,7 +988,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                         </div>
                         <div class="tab-pane fade" id="archived-updates" role="tabpanel" aria-labelledby="archived-updates-tab">
                             <div class="table-responsive">
-                                <table id="archivedUpdatesTab" class="table align-items-center mb-0">
+                                <table id="archivedUpdatesTab" class="table table-striped align-items-center mb-0">
                                     <thead>
                                         <tr>
                                             <th>Title</th>
@@ -701,7 +1037,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                     <td>
                                                         <button class="btn btn-sm btn-success" 
                                                                 onclick="openUpdateModal('restoreUpdateModal', <?= $update['update_id'] ?>, 'restore')">
-                                                            <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
+                                                            <i class="bi bi-trash"></i>
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -742,7 +1078,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                             <div class="tab-content" id="schoolConfigSubTabsContent">
                                 <div class="tab-pane fade show active" id="schoolYears" role="tabpanel" aria-labelledby="schoolYears-tab">
                                     <div class="table-responsive mt-3">
-                                        <table id="schoolYearsTab" class="table align-items-center mb-0">
+                                        <table id="schoolYearsTab" class="table table-striped align-items-center mb-0">
                                             <thead>
                                                 <tr>
                                                     <th>School Year</th>
@@ -765,7 +1101,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" 
                                                                         onclick="openSchoolYearModal('restoreSchoolYearModal', <?= $schoolYear['school_year_id'] ?>, 'restore')">
-                                                                    <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
+                                                                    <i class="bi bi-trash"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -778,7 +1114,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                 
                                 <div class="tab-pane fade" id="officerPositions" role="tabpanel" aria-labelledby="officerPositions-tab">
                                     <div class="table-responsive mt-3">
-                                        <table id="officerPositionsTab" class="table align-items-center mb-0">
+                                        <table id="officerPositionsTab" class="table table-striped align-items-center mb-0">
                                             <thead>
                                                 <tr>
                                                     <th>Position Name</th>
@@ -801,7 +1137,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" 
                                                                         onclick="openPositionModal('restorePositionModal', <?= $position['position_id'] ?>, 'restore')">
-                                                                    <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
+                                                                    <i class="bi bi-trash"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -814,7 +1150,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                 
                                 <div class="tab-pane fade" id="colleges" role="tabpanel" aria-labelledby="colleges-tab">
                                     <div class="table-responsive">
-                                        <table id="collegesTab" class="table align-items-center mb-0">
+                                        <table id="collegesTab" class="table table-striped align-items-center mb-0">
                                             <thead>
                                                 <tr>
                                                     <th>College Name</th>
@@ -836,7 +1172,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td><?= $college['deleted_at'] ? date('M d, Y h:i A', strtotime($college['deleted_at'])) : 'N/A' ?></td>
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" onclick="setCollegeId(<?= $college['college_id'] ?>, 'restore')">
-                                                                    <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
+                                                                    <i class="bi bi-trash"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -849,7 +1185,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                 
                                 <div class="tab-pane fade" id="programs" role="tabpanel" aria-labelledby="programs-tab">
                                     <div class="table-responsive">
-                                        <table id="programsTab" class="table align-items-center mb-0">
+                                        <table id="programsTab" class="table table-striped align-items-center mb-0">
                                             <thead>
                                                 <tr>
                                                     <th>Program Name</th>
@@ -873,7 +1209,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td><?= $program['deleted_at'] ? date('M d, Y h:i A', strtotime($program['deleted_at'])) : 'N/A' ?></td>
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" onclick="setProgramId(<?= $program['program_id'] ?>, 'restore')">
-                                                                    <i class="bi bi-a<i class="bi bi-arrow-clockwise"></i>trash"></i>
+                                                                    <i class="bi bi-trash"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -908,6 +1244,29 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
 <?php include_once '../adminModals/restoreUpdates.html'; ?>
 <?php include_once '../adminModals/restoreExePosition.html'; ?>
 <?php include_once '../adminModals/restoreSchoolYear.html'; ?>
+
+<script>
+$(document).ready(function() {
+    // Initialize DataTables for all tables in archives
+    $('#calendarTab').DataTable();
+    $('#prayerTab').DataTable();
+    $('#cashinTab').DataTable();
+    $('#cashoutTab').DataTable();
+    $('#faqsTab').DataTable();
+    $('#aboutTab').DataTable();
+    $('#filesTab').DataTable();
+    $('#osTab').DataTable();
+    $('#olTab').DataTable();
+    $('#officersTab').DataTable();
+    $('#volunteersTab').DataTable();
+    $('#moderatorsTab').DataTable();
+    $('#archivedUpdatesTab').DataTable();
+    $('#schoolYearsTab').DataTable();
+    $('#collegesTab').DataTable();
+    $('#programsTab').DataTable();
+    $('#officerPositionsTab').DataTable();
+});
+</script>
 
 <!-- <script>
     $(document).ready(function() {

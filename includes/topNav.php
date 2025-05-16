@@ -19,6 +19,7 @@ $profileColor = generateColor($username);
 
 <head>
     <link rel="stylesheet" href="../../css/topNav.css"> 
+    <script src="../../js/topNavResponsive.js"></script>
     <!-- <?php include 'head.php'; ?>  -->
 </head>
 <div class="admin-topbar">

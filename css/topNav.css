@@ -2,7 +2,8 @@
     position: fixed;
     top: 0;
     right: 0;
-    left: 250px;
+    /* We will remove the hardcoded left value and let JavaScript calculate it */
+    /* left value will be set by JavaScript based on actual sidebar width */
     background: #fff;
     padding: 0.5rem 1rem;
     z-index: 1030;
@@ -11,6 +12,7 @@
     display: flex;
     justify-content: flex-end;  
     align-items: center;
+    transition: left 0.001s ease-in-out; /* Extremely fast animation - nearly instant */
 }
 
 .nav-item {
@@ -88,6 +90,13 @@
     padding: 8px 16px;
 }
 
+/* Media query to match sidebar breakpoints */
+@media (max-width: 1024px) {
+    .admin-topbar {
+        left: 155px; /* Reduced */
+    }
+}
+
 @media (max-width: 768px) {
     .admin-topbar {
         height: 50px;
@@ -116,5 +125,11 @@
 
     .dropdown-menu {
         min-width: 180px;
+    }
+}
+
+@media (max-width: 480px) {
+    .admin-topbar {
+        left: 45px; /* Reduced */
     }
 }

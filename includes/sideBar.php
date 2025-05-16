@@ -13,20 +13,20 @@ $userRole = $_SESSION['role'] ?? '';
 <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark sidebar" id="sidebar">
     <a href="#" class="d-flex align-items-center mb-3 text-white sidebar-header text-decoration-none logo-container">
         <img src="../../assets/images/msa_logo.png" alt="MSA Logo" width="40" height="50" class="me-2 logo">
-        <span class="sidebar-title">Muslim Student Assoc.</span>
+        <span class="sidebar-title" style="margin-left: -10px;">Muslim Student Assoc.</span>
         <hr class="sidebar-divider">
     </a>
     <hr class="text-white">
 
-    <ul class="nav nav-pills flex-column mb-auto">
+    <ul class="nav nav-pills flex-column mb-auto" style="padding-left: 0;">
         <li class="nav-item">
-            <a href="#" onclick="loadDashboardSection()" class="nav-link text-white">
+            <a href="#" onclick="loadDashboardSection()" class="nav-link text-white" style="padding-left: 10px;">
                 <i class="bi bi-house-door me-2"></i> <span class="sidebar-text">Dashboard</span>
             </a>
         </li>
 
         <li class="nav-item dropdown">
-            <a href="#" class="nav-link text-white dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            <a href="#" class="nav-link text-white dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="padding-left: 10px;">
                 <i class="bi bi-gear me-2"></i> <span class="sidebar-text">School Configuration</span>
             </a>
             <ul class="dropdown-menu">
