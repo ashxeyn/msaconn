@@ -21,6 +21,7 @@ if ($action === 'edit') {
     $position = clean_input($_POST['position']);
     $program = clean_input($_POST['program']);
     $schoolYear = clean_input($_POST['schoolYear']);
+    $office = isset($_POST['office']) ? clean_input($_POST['office']) : null;
     $image = null;
 
     $existingOfficer = $adminObj->getOfficerById($officerId);
@@ -31,7 +32,8 @@ if ($action === 'edit') {
 
     $positionName = $adminObj->getPositionById($position)['position_name'];
     if (strtolower($positionName) === 'adviser') {
-        $program = null; 
+        $program = null;
+        $office = 'N/A';
     }
 
     if (!empty($_FILES['image']['name'])) {
@@ -43,7 +45,7 @@ if ($action === 'edit') {
         $image = $existingOfficer['image']; 
     }
 
-    $result = $adminObj->updateOfficer($officerId, $firstName, $middleName, $surname, $position, $program, $schoolYear, $image);
+    $result = $adminObj->updateOfficer($officerId, $firstName, $middleName, $surname, $position, $program, $schoolYear, $image, $office);
     echo $result ? "success" : "error";
 
 } elseif ($action === 'delete') {
@@ -67,11 +69,13 @@ if ($action === 'edit') {
     $position = clean_input($_POST['position']);
     $program = clean_input($_POST['program']);
     $schoolYear = clean_input($_POST['schoolYear']);
+    $office = isset($_POST['office']) ? clean_input($_POST['office']) : null;
     $image = null;
 
     $positionName = $adminObj->getPositionById($position)['position_name'];
     if (strtolower($positionName) === 'adviser') {
-        $program = null; 
+        $program = null;
+        $office = null;
     }
 
     if (!empty($_FILES['image']['name'])) {
@@ -81,7 +85,7 @@ if ($action === 'edit') {
         move_uploaded_file($_FILES['image']['tmp_name'], $targetFile);
     }
 
-    $result = $adminObj->addOfficer($firstName, $middleName, $surname, $position, $program, $schoolYear, $image);
+    $result = $adminObj->addOfficer($firstName, $middleName, $surname, $position, $program, $schoolYear, $image, $office);
     echo $result ? "success" : "error";
 
 } else {

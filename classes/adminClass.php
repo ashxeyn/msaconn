@@ -32,19 +32,70 @@ class Admin {
     // Officer functions
     function fetchOfficers() {
         $sql = "SELECT 
-                    v.officer_id,
-                    CONCAT(v.last_name, ', ', v.first_name, ' ', v.middle_name) AS full_name, 
-                    p.program_name, 
-                    op.position_name, 
-                    sy.school_year, 
-                    v.image AS image,
-                    v.deleted_at
-                FROM executive_officers v 
-                LEFT JOIN programs p ON v.program_id = p.program_id 
-                LEFT JOIN officer_positions op ON v.position_id = op.position_id 
-                LEFT JOIN school_years sy ON v.school_year_id = sy.school_year_id
-                WHERE v.deleted_at IS NULL
-                ORDER BY v.officer_id ASC";
+                    eo.officer_id,
+                    CONCAT(eo.last_name, ', ', eo.first_name, ' ', IFNULL(eo.middle_name, '')) AS full_name,
+                    p.program_name,
+                    op.position_name,
+                    sy.school_year,
+                    eo.image,
+                    CASE 
+                        WHEN op.position_name = 'Adviser' THEN 'N/A'
+                        ELSE eo.office 
+                    END as office
+                FROM executive_officers eo
+                LEFT JOIN programs p ON eo.program_id = p.program_id
+                LEFT JOIN officer_positions op ON eo.position_id = op.position_id
+                LEFT JOIN school_years sy ON eo.school_year_id = sy.school_year_id
+                WHERE eo.deleted_at IS NULL 
+                AND (eo.office = 'male' OR op.position_name = 'Adviser')";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    function fetchWacOfficers() {
+        $sql = "SELECT 
+                    eo.officer_id,
+                    CONCAT(eo.last_name, ', ', eo.first_name, ' ', IFNULL(eo.middle_name, '')) AS full_name,
+                    p.program_name,
+                    op.position_name,
+                    sy.school_year,
+                    eo.image,
+                    CASE 
+                        WHEN op.position_name = 'Adviser' THEN 'N/A'
+                        ELSE eo.office 
+                    END as office
+                FROM executive_officers eo
+                LEFT JOIN programs p ON eo.program_id = p.program_id
+                LEFT JOIN officer_positions op ON eo.position_id = op.position_id
+                LEFT JOIN school_years sy ON eo.school_year_id = sy.school_year_id
+                WHERE eo.deleted_at IS NULL 
+                AND (eo.office = 'wac' OR op.position_name = 'Adviser')";
+        
+        $query = $this->db->connect()->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+
+    function fetchIlsOfficers() {
+        $sql = "SELECT 
+                    eo.officer_id,
+                    CONCAT(eo.last_name, ', ', eo.first_name, ' ', IFNULL(eo.middle_name, '')) AS full_name,
+                    p.program_name,
+                    op.position_name,
+                    sy.school_year,
+                    eo.image,
+                    CASE 
+                        WHEN op.position_name = 'Adviser' THEN 'N/A'
+                        ELSE eo.office 
+                    END as office
+                FROM executive_officers eo
+                LEFT JOIN programs p ON eo.program_id = p.program_id
+                LEFT JOIN officer_positions op ON eo.position_id = op.position_id
+                LEFT JOIN school_years sy ON eo.school_year_id = sy.school_year_id
+                WHERE eo.deleted_at IS NULL 
+                AND (eo.office = 'ils' OR op.position_name = 'Adviser')";
         
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
@@ -61,6 +112,7 @@ class Admin {
                     eo.image,
                     eo.school_year_id,
                     eo.program_id,
+                    eo.office,
                     eo.deleted_at,
                     p.program_name,
                     op.position_name,
@@ -77,9 +129,9 @@ class Admin {
         return $query->fetch();
     }
 
-    function addOfficer($firstName, $middleName, $surname, $position, $program, $schoolYear, $image) {
-        $sql = "INSERT INTO executive_officers (last_name, first_name, middle_name, position_id, program_id, school_year_id, image)
-                VALUES (:last_name, :first_name, :middle_name, :position, :program, :school_year, :image)";
+    function addOfficer($firstName, $middleName, $surname, $position, $program, $schoolYear, $image, $office) {
+        $sql = "INSERT INTO executive_officers (last_name, first_name, middle_name, position_id, program_id, school_year_id, image, office)
+                VALUES (:last_name, :first_name, :middle_name, :position, :program, :school_year, :image, :office)";
         
         $query = $this->db->connect()->prepare($sql);
 
@@ -90,11 +142,12 @@ class Admin {
         $query->bindParam(':program', $program);
         $query->bindParam(':school_year', $schoolYear);
         $query->bindParam(':image', $image);
+        $query->bindParam(':office', $office);
 
         return $query->execute();
     }
 
-    function updateOfficer($officerId, $firstName, $middleName, $surname, $position, $program, $schoolYear, $image) {
+    function updateOfficer($officerId, $firstName, $middleName, $surname, $position, $program, $schoolYear, $image, $office) {
         $sql = "UPDATE executive_officers 
                 SET last_name = :last_name, 
                     first_name = :first_name, 
@@ -102,7 +155,8 @@ class Admin {
                     position_id = :position_id, 
                     program_id = :program_id, 
                     school_year_id = :school_year_id, 
-                    image = :image 
+                    image = :image,
+                    office = :office
                 WHERE officer_id = :officer_id";
 
         $query = $this->db->connect()->prepare($sql);
@@ -114,6 +168,7 @@ class Admin {
         $query->bindParam(':program_id', $program);
         $query->bindParam(':school_year_id', $schoolYear);
         $query->bindParam(':image', $image);
+        $query->bindParam(':office', $office);
         $query->bindParam(':officer_id', $officerId);
 
         return $query->execute();

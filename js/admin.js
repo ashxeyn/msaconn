@@ -2608,6 +2608,11 @@ function setOfficerId(officerId, action) {
                     $('#editProgram').val(officer.program_id);
                     $('#editPosition').val(officer.position_id);
                     $('#editSchoolYear').val(officer.school_year_id);
+                    
+                    if (officer.office) {
+                        $(`input[name="office"][value="${officer.office}"]`).prop('checked', true);
+                    }
+                    
                     clearValidationErrors();
                     $('#editOfficerModal .modal-title').text('Edit Officer');
                     $('#editOfficerFormSubmit').text('Update Officer');
@@ -2685,8 +2690,8 @@ function validateOfficerForm() {
     const position = $('#editPosition').val().trim();
     const program = $('#editProgram').val().trim();
     const schoolYear = $('#editSchoolYear').val().trim();
-    const imageInput = $('#editImage')[0];
-    const isEdit = $('#editOfficerId').val() !== "";
+    const office = $('input[name="office"]:checked').val();
+    const positionText = $('#editPosition option:selected').text().trim().toLowerCase();
 
     if (firstName === '') {
         $('#editFirstNameError').text('First name is required');
@@ -2708,7 +2713,13 @@ function validateOfficerForm() {
         $('#editSurnameIcon').hide();
     }
 
-    const positionText = $('#editPosition option:selected').text().trim().toLowerCase();
+    if (positionText !== 'adviser' && !office) {
+        $('#editOfficeError').text('Please select an office');
+        isValid = false;
+    } else {
+        $('#editOfficeError').text('');
+    }
+
     if (positionText !== 'adviser' && program === '') {
         $('#editProgramError').text('Program is required');
         $('#editProgram').addClass('is-invalid');
@@ -2733,10 +2744,6 @@ function validateOfficerForm() {
     } else {
         $('#editSchoolYear').removeClass('is-invalid');
     }
-
-    $('#editImage').removeClass('is-invalid');
-    $('#editImageIcon').hide();
-    $('#editImageError').text('');
 
     return isValid;
 }
@@ -4884,4 +4891,46 @@ document.getElementById('addEditImage').addEventListener('change', function(even
         reader.readAsDataURL(file);
     }
 });
+
+function loadWacSection() {
+    $.ajax({
+        url: "../admin/wac.php",
+        method: 'GET',
+        success: function (response) {
+            $('#contentArea').html(response);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error loading WAC section:', error);
+            $('#contentArea').html('<p class="text-danger">Failed to load WAC section. Please try again.</p>');
+        }
+    });
+}
+
+function loadIlsSection() {
+    $.ajax({
+        url: "../admin/ils.php",
+        method: 'GET',
+        success: function (response) {
+            $('#contentArea').html(response);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error loading ILS section:', error);
+            $('#contentArea').html('<p class="text-danger">Failed to load ILS section. Please try again.</p>');
+        }
+    });
+}
+
+function loadMaleSection() {
+    $.ajax({
+        url: "../admin/officers.php",
+        method: 'GET',
+        success: function (response) {
+            $('#contentArea').html(response);
+        },
+        error: function (xhr, status, error) {
+            console.error('Error loading Male section:', error);
+            $('#contentArea').html('<p class="text-danger">Failed to load Male section. Please try again.</p>');
+        }
+    });
+}
 

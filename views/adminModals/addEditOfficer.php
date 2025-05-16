@@ -68,6 +68,24 @@ if ($officerId) {
                     <div class="modal-section flex-fill" style="min-width: 48%;">
                         <h6 class="section-title">Officer Details</h6>
                         <div class="mb-3">
+                            <label class="form-label">Office <span class="text-danger">*</span></label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="office" id="officeWac" value="wac" <?= ($officer && $officer['office'] === 'wac') ? 'checked' : '' ?>>
+                                    <label class="form-check-label" for="officeWac">WAC</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="office" id="officeMale" value="male" <?= ($officer && $officer['office'] === 'male') ? 'checked' : '' ?>>
+                                    <label class="form-check-label" for="officeMale">Executive</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="office" id="officeIls" value="ils" <?= ($officer && $officer['office'] === 'ils') ? 'checked' : '' ?>>
+                                    <label class="form-check-label" for="officeIls">ILS</label>
+                                </div>
+                            </div>
+                            <div id="editOfficeError" class="text-danger"></div>
+                        </div>
+                        <div class="mb-3">
                             <label for="editPosition" class="form-label">Position <span class="text-danger">*</span></label>
                             <select class="form-select" id="editPosition" name="position">
                                 <option value="">Select Position</option>

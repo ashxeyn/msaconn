@@ -4,7 +4,7 @@ require_once '../../classes/adminClass.php';
 require_once '../../tools/function.php'; 
 
 $adminObj = new Admin();
-$result = $adminObj->fetchOfficers();
+$result = $adminObj->fetchIlsOfficers();
 ?>
 
 <!DOCTYPE html>
@@ -12,7 +12,7 @@ $result = $adminObj->fetchOfficers();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Executive Officers</title>
+    <title>ILS Officers</title>
     <script src="../../js/admin.js"></script>
     <script src="../../js/modals.js"></script>
     <style>
@@ -34,7 +34,6 @@ $result = $adminObj->fetchOfficers();
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
-            margin-top: 1.5rem;
             border-bottom: 2px solid var(--palestine-green);
             padding: 0.5rem 0;
         }
@@ -84,6 +83,22 @@ $result = $adminObj->fetchOfficers();
         .admin-btn-add:hover {
             background-color: var(--palestine-hover);
             transform: translateY(-1px);
+        }
+
+        .tabs-container {
+            margin-bottom: 1.5rem;
+        }
+        
+        .nav-link:hover {
+            color: var(--palestine-green);
+            border-color: transparent;
+        }
+        
+        .nav-link.active {
+            color: var(--palestine-green);
+            background-color: #fff;
+            border-color: var(--table-border) var(--table-border) #fff;
+            border-bottom: 2px solid var(--palestine-green);
         }
 
         .officer-card {
@@ -293,19 +308,19 @@ $result = $adminObj->fetchOfficers();
     <div class="tabs-container">
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a class="nav-link active" id="male-tab" data-toggle="tab" href="#" role="tab">Executive Officers</a>
+                <a class="nav-link" id="male-tab" data-toggle="tab" href="#" role="tab" onclick="loadMaleSection()">Executive Officers</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" id="wac-tab" data-toggle="tab" href="#" role="tab" onclick="loadWacSection()">Women's Affairs Committee</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="ils-tab" data-toggle="tab" href="#" role="tab" onclick="loadIlsSection()">ILS Committee</a>
+                <a class="nav-link active" id="ils-tab" data-toggle="tab" href="#" role="tab">ILS Representatives</a>
             </li>
         </ul>
     </div>
 
     <div class="admin-page-header">
-        <h3><strong>Executive Officers</strong></h3>
+        <h3><strong>ILS Representatives</strong></h3>
         <button class="admin-btn admin-btn-add" onclick="openOfficerModal('addEditOfficerModal', null, 'add')">
             <i class="bi bi-plus-lg"></i>
         </button>
@@ -355,7 +370,7 @@ $result = $adminObj->fetchOfficers();
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="7" class="text-center">No executive officers found</td>
+                        <td colspan="7" class="text-center">No ILS officers found</td>
                     </tr>
                 <?php endif; ?>
             </tbody>
@@ -367,4 +382,4 @@ $result = $adminObj->fetchOfficers();
       include '../adminModals/addEditOfficer.php'; 
       include '../adminModals/corView.html'; ?>
 </body>
-</html>
+</html> 
