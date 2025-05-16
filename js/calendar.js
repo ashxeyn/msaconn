@@ -4,21 +4,34 @@ document.addEventListener('DOMContentLoaded', function () {
     const prevMonthButton = document.getElementById('prev-month');
     const nextMonthButton = document.getElementById('next-month');
     
-    // Initialize modal with centering options
+    // Initialize modal with centered position
     const activityModalEl = document.getElementById('activityModal');
     const activityModal = new bootstrap.Modal(activityModalEl, {
-        backdrop: true,
+        backdrop: 'static', // Prevent closing on backdrop click for better UX
         keyboard: true,
         focus: true
     });
     
-    // Ensure modal is in the center when shown
+    // Configure modal to be fixed in the center of the screen
     activityModalEl.addEventListener('show.bs.modal', function () {
-        setTimeout(function() {
-            const modalDialog = activityModalEl.querySelector('.modal-dialog');
-            modalDialog.style.display = 'flex';
-            modalDialog.style.alignItems = 'center';
-        }, 200);
+        // Prevent background scrolling
+        document.body.style.overflow = 'hidden';
+        
+        // Position modal in center (CSS handles most of this now)
+        const modalDialog = activityModalEl.querySelector('.modal-dialog');
+        
+        // Apply any additional positioning if needed at runtime
+        modalDialog.style.position = 'fixed';
+        
+        // Reset any previous inline styles that might interfere
+        modalDialog.style.top = '60%';
+        modalDialog.style.left = '50%';
+        modalDialog.style.transform = 'translate(-50%, -50%)';
+    });
+    
+    // Restore scrolling when modal is hidden
+    activityModalEl.addEventListener('hidden.bs.modal', function () {
+        document.body.style.overflow = '';
     });
 
     let currentDate = new Date(); // Initialize with today's date

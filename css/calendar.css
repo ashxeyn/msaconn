@@ -642,3 +642,83 @@ p.activity-start-date {
     padding: 0.15rem 0.3rem;
   }
 }
+
+/* Activity Details Modal - Center Fixed Style */
+#activityModal .modal-dialog {
+  margin: 0 auto;
+  width: 70%; /* Medium size */
+  max-width: 800px;
+  position: fixed;
+  top: 60%; /* Moved from 65% to 60% - 5% higher */
+  left: 50%;
+  transform: translate(-50%, -50%); /* Center horizontally, adjust vertically */
+  border-radius: 8px;
+  z-index: 1055; /* Higher than default to ensure visibility */
+}
+
+#activityModal .modal-content {
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  max-height: 80vh; /* Limit maximum height relative to viewport */
+  overflow: hidden; /* Ensure content doesn't overflow */
+  display: flex;
+  flex-direction: column;
+}
+
+#activityModal .modal-header {
+  border-bottom: 2px solid #1a541c;
+  background-color: #f8f9fa;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+#activityModal .modal-body {
+  max-height: calc(70vh - 130px); /* Ensure there's room for content */
+  overflow-y: auto;
+  flex: 1; /* Allow body to grow */
+}
+
+/* Ensure the modal stays fixed */
+#activityModal {
+  position: fixed;
+  padding-right: 0 !important;
+  overflow: hidden;
+}
+
+#activityModal.show {
+  padding-right: 0 !important;
+}
+
+/* Adjust padding for the body when modal is open */
+body.modal-open {
+  padding-right: 0 !important;
+  overflow: hidden !important; /* Prevent body scrolling when modal is open */
+}
+
+/* Responsive adjustments for the centered modal */
+@media (max-width: 992px) {
+  #activityModal .modal-dialog {
+    width: 85%;
+  }
+}
+
+@media (max-width: 768px) {
+  #activityModal .modal-dialog {
+    width: 90%;
+  }
+  
+  #activityModal .modal-body {
+    max-height: calc(70vh - 120px);
+  }
+}
+
+@media (max-width: 576px) {
+  #activityModal .modal-dialog {
+    width: 95%;
+  }
+  
+  #activityModal .modal-body {
+    max-height: calc(70vh - 100px);
+  }
+}

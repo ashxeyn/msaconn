@@ -166,15 +166,13 @@ body {
   display: inline-block;
 }
 
-.volunteer-section h3:after {
-  content: '';
-  position: absolute;
-  width: 60%;
-  height: 3px;
-  background-color: #1a541c;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
+.volunteer-section h2 {
+  font-family: 'Noto Naskh Arabic', serif;
+  font-size: 32px;
+  margin-bottom: 25px;
+  color: #1a541c;
+  position: relative;
+  display: inline-block;
 }
 
 .section-description {

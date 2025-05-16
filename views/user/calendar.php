@@ -63,7 +63,7 @@ $calendar = $adminObj->fetchDailyPrayers();
     <div style="background-color: #f5f5f5; width: 100%; padding: 40px 0;">
         <div class="container" style="max-width: 1140px; margin: 0 auto;">
             <div class="table-section">
-                <h3 style="color:#1a541c; text-align: center; margin-bottom: 15px;">DAILY PRAYER SCHEDULE</h3>
+                <h2 style="color:#1a541c; text-align: center; margin-bottom: 15px;">DAILY PRAYER SCHEDULE</h2>
                 <div style="color:#333; font-size:32px; margin-bottom:20px; text-align: center;">
                     <?php 
                         $today = date('F d, Y');
@@ -128,12 +128,13 @@ $calendar = $adminObj->fetchDailyPrayers();
     <!-- Include Footer -->
     <?php include '../../includes/footer.php'; ?>
 
-    <!-- Activity Details Modal -->
+    <!-- Activity Details Modal - Banner Style -->
     <div class="modal fade" id="activityModal" tabindex="-1" aria-labelledby="activityModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <!-- "Activity Details" text removed as requested -->
+                    <h5 class="modal-title" id="activityModalLabel">Event Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div id="activity-date" class="mb-2 fw-bold"></div>
