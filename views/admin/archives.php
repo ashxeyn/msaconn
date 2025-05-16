@@ -270,7 +270,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
         }
         
         .btn-sm.btn-success:hover {
-            background-color: rgba(15, 138, 83, 0.1) !important;
+            background-color: #0F8A53 !important;
             transform: translateY(-2px);
             box-shadow: none !important;
         }
@@ -278,6 +278,10 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
         .btn-sm.btn-success i {
             color: #0F8A53 !important;
             font-size: 20px !important;
+        }
+        
+        .btn-sm.btn-success:hover i {
+            color: white !important;
         }
         
         /* Add new table styling to match the FAQs page layout */
@@ -306,7 +310,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
         
         /* Update hover effect to green tint from FAQs page */
         .table tbody tr:hover td {
-            background-color: rgba(15, 138, 83, 0.05) !important;
+            background-color: rgba(255, 255, 255, 0.37) !important;
         }
         
         /* Style pagination to match FAQs page */
@@ -344,11 +348,212 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
             padding: 6px 12px !important;
         }
         
-        .dataTables_wrapper .dataTables_length select {
-            border: 1px solid #ced4da !important;
+        .dataTables_wrapper .dataTables_length select,
+        .table-responsive .dataTables_length select,
+        #calendarTab_length select,
+        #prayerTab_length select,
+        #cashinTab_length select,
+        #cashoutTab_length select,
+        #faqsTab_length select,
+        #aboutTab_length select,
+        #filesTab_length select,
+        #osTab_length select,
+        #olTab_length select,
+        #officersTab_length select,
+        #volunteersTab_length select,
+        #moderatorsTab_length select,
+        #archivedUpdatesTab_length select,
+        #schoolYearsTab_length select,
+        #collegesTab_length select,
+        #programsTab_length select,
+        #officerPositionsTab_length select {
+            padding: 0.3rem 0.5rem !important;
+            font-size: 0.875rem !important;
+            border: 1.5px solid #000000 !important;
+            border-radius: 8px !important;
+            transition: all 0.3s ease !important;
+            margin: 0 0.5rem !important;
+            height: 30px !important;
+            width: 60px !important;
+            min-width: 60px !important;
+            max-width: 60px !important;
+            color: #000000 !important;
+            background-color: white !important;
+        }
+
+        .dataTables_filter input:focus {
+            outline: none !important;
+            border-color: var(--palestine-green) !important;
+            box-shadow: 0 0 0 2px rgba(15, 138, 83, 0.25) !important;
+        }
+
+        .dataTables_filter label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .dataTables_length select:focus {
+            outline: none !important;
+            border-color: var(--palestine-green) !important;
+            box-shadow: 0 0 0 2px rgba(15, 138, 83, 0.25) !important;
+        }
+
+        .dataTables_length label {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 1rem !important;
+        }
+
+        .dataTables_paginate {
+            margin-top: 1rem !important;
+            font-size: 0.875rem !important;
+        }
+
+        .dataTables_paginate .paginate_button {
+            padding: 0.25rem 0.5rem !important;
+            margin: 0 0.15rem !important;
+            border: 1px solid transparent !important;
             border-radius: 4px !important;
-            padding: 6px 30px 6px 12px !important;
-            background-position: right 8px center !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .dataTables_paginate .paginate_button.current,
+        .dataTables_paginate .paginate_button.current:hover {
+            background: var(--palestine-green) !important;
+            color: white !important;
+            border-color: var(--palestine-green) !important;
+        }
+
+        .dataTables_paginate .paginate_button:hover {
+            background: var(--palestine-hover) !important;
+            color: white !important;
+            border-color: var(--palestine-hover) !important;
+        }
+
+        .dataTables_paginate .paginate_button.disabled,
+        .dataTables_paginate .paginate_button.disabled:hover {
+            background: transparent !important;
+            color: #6c757d !important;
+        }
+
+        .dataTables_info {
+            font-size: 0.875rem !important;
+            color: #6c757d !important;
+            padding-top: 1rem !important;
+        }
+        
+        /* Media queries for responsive design */
+        @media (max-width: 768px) {
+            .dataTables_length label,
+            .dataTables_filter label {
+                font-size: 0.8rem;
+            }
+            
+            .dataTables_length select,
+            .dataTables_filter input {
+                padding: 0.35rem 0.5rem !important;
+                font-size: 0.8rem !important;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .dataTables_wrapper .dataTables_length,
+            .dataTables_wrapper .dataTables_filter {
+                float: none !important;
+                width: 100% !important;
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .dataTables_length label,
+            .dataTables_filter label {
+                justify-content: space-between;
+                width: 100%;
+            }
+            
+            .dataTables_length select,
+            .dataTables_filter input {
+                width: 60% !important;
+                margin: 0 !important;
+            }
+        }
+
+        /* DataTables styling for "Show entries" and "Search" elements - copied from schoolConfig.php */
+        .dataTables_filter input,
+        .table-responsive .dataTables_filter input,
+        #calendarTab_filter input,
+        #prayerTab_filter input,
+        #cashinTab_filter input,
+        #cashoutTab_filter input,
+        #faqsTab_filter input,
+        #aboutTab_filter input,
+        #filesTab_filter input,
+        #osTab_filter input,
+        #olTab_filter input,
+        #officersTab_filter input,
+        #volunteersTab_filter input,
+        #moderatorsTab_filter input,
+        #archivedUpdatesTab_filter input,
+        #schoolYearsTab_filter input,
+        #collegesTab_filter input,
+        #programsTab_filter input,
+        #officerPositionsTab_filter input {
+            padding: 0.5rem 0.75rem !important;
+            font-size: 0.875rem !important;
+            border: 1.5px solid #000000 !important;
+            border-radius: 8px !important;
+            transition: all 0.3s ease !important;
+            margin-left: 0.5rem !important;
+            height: 38px !important;
+            min-width: 200px !important;
+            color: #000000 !important;
+            background-color: white !important;
+        }
+
+        .dataTables_filter input:focus {
+            outline: none !important;
+            border-color: var(--palestine-green) !important;
+            box-shadow: 0 0 0 2px rgba(15, 138, 83, 0.25) !important;
+        }
+
+        .dataTables_filter label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .dataTables_wrapper .dataTables_length select,
+        .table-responsive .dataTables_length select,
+        #calendarTab_length select,
+        #prayerTab_length select,
+        #cashinTab_length select,
+        #cashoutTab_length select,
+        #faqsTab_length select,
+        #aboutTab_length select,
+        #filesTab_length select,
+        #osTab_length select,
+        #olTab_length select,
+        #officersTab_length select,
+        #volunteersTab_length select,
+        #moderatorsTab_length select,
+        #archivedUpdatesTab_length select,
+        #schoolYearsTab_length select,
+        #collegesTab_length select,
+        #programsTab_length select,
+        #officerPositionsTab_length select {
+            padding: 0.3rem 0.5rem !important;
+            font-size: 0.875rem !important;
+            border: 1.5px solid #000000 !important;
+            border-radius: 8px !important;
+            transition: all 0.3s ease !important;
+            margin: 0 0.5rem !important;
+            height: 30px !important;
+            width: 60px !important;
+            min-width: 60px !important;
+            max-width: 60px !important;
+            color: #000000 !important;
+            background-color: white !important;
         }
     </style>
 </head>
@@ -466,7 +671,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                     <td><?= $activity['deleted_at'] ? date('M d, Y h:i A', strtotime($activity['deleted_at'])) : 'N/A' ?></td>
                                                     <td>
                                                         <button class="btn btn-sm btn-success" onclick="setCalendarId(<?= $activity['activity_id'] ?>, 'restore')">
-                                                            <i class="bi bi-trash"></i>
+                                                            <i class="bi bi-arrow-counterclockwise"></i>
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -519,7 +724,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                     </td>
                                                     <td>
                                                         <button class="btn btn-sm btn-success" onclick="setPrayerId(<?= $prayer['prayer_id'] ?>, 'restore')">
-                                                            <i class="bi bi-trash"></i>
+                                                            <i class="bi bi-arrow-counterclockwise"></i>
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -579,7 +784,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" 
                                                                         onclick="openTransactionModal('restoreTransactionModal', <?= $transaction['report_id'] ?>, 'restore', 'Cash In')">
-                                                                    <i class="bi bi-trash"></i>
+                                                                    <i class="bi bi-arrow-counterclockwise"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -623,7 +828,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" 
                                                                         onclick="openTransactionModal('restoreTransactionModal', <?= $transaction['report_id'] ?>, 'restore', 'Cash Out')">
-                                                                    <i class="bi bi-trash"></i>
+                                                                    <i class="bi bi-arrow-counterclockwise"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -664,7 +869,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                     <td>
                                                         <button class="btn btn-sm btn-success" 
                                                                 onclick="openFaqModal('restoreFaqModal', <?= $faq['faq_id'] ?>, 'restore')">
-                                                            <i class="bi bi-trash"></i>
+                                                            <i class="bi bi-arrow-counterclockwise"></i>
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -700,7 +905,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                     <td><?= date('M j, Y', strtotime($about['deleted_at'])) ?></td>
                                                     <td>
                                                         <button class="btn btn-sm btn-success" onclick="openAboutModal('restoreAboutModal', <?= $about['id'] ?>, 'restore')">
-                                                            <i class="bi bi-trash"></i>
+                                                            <i class="bi bi-arrow-counterclockwise"></i>
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -738,7 +943,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                     <td><?= date('M j, Y', strtotime($file['deleted_at'])) ?></td>
                                                     <td>
                                                         <button class="btn btn-sm btn-success" onclick="openFileModal('restoreFileModal', <?= $file['file_id'] ?>, 'restore')">
-                                                            <i class="bi bi-trash"></i>
+                                                            <i class="bi bi-arrow-counterclockwise"></i>
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -800,7 +1005,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" 
                                                                         onclick="openStudentModal('restoreStudentModal', <?= $student['enrollment_id'] ?>, 'restore')">
-                                                                    <i class="bi bi-trash"></i>
+                                                                    <i class="bi bi-arrow-counterclockwise"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -846,7 +1051,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" 
                                                                         onclick="openStudentModal('restoreStudentModal', <?= $student['enrollment_id'] ?>, 'restore')">
-                                                                    <i class="bi bi-trash"></i>
+                                                                    <i class="bi bi-arrow-counterclockwise"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -890,7 +1095,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                         <td>
                                                             <button class="btn btn-sm btn-success" 
                                                                     onclick="openOfficerModal('restoreOfficerModal', <?= $officer['officer_id'] ?>, 'restore')">
-                                                                <i class="bi bi-trash"></i>
+                                                                <i class="bi bi-arrow-counterclockwise"></i>
                                                             </button>
                                                         </td>
                                                     </tr>
@@ -934,7 +1139,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                         <td>
                                                             <button class="btn btn-sm btn-success" 
                                                                     onclick="openVolunteerModal('restoreVolunteerModal', <?= $volunteer['volunteer_id'] ?>, 'restore')">
-                                                                <i class="bi bi-trash"></i>
+                                                                <i class="bi bi-arrow-counterclockwise"></i>
                                                             </button>
                                                         </td>
                                                     </tr>
@@ -976,7 +1181,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                     <td>
                                                         <button class="btn btn-sm btn-success" 
                                                                 onclick="openModeratorModal('restoreModeratorModal', <?= $moderator['user_id'] ?>, 'restore')">
-                                                            <i class="bi bi-trash"></i>
+                                                            <i class="bi bi-arrow-counterclockwise"></i>
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -1037,7 +1242,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                     <td>
                                                         <button class="btn btn-sm btn-success" 
                                                                 onclick="openUpdateModal('restoreUpdateModal', <?= $update['update_id'] ?>, 'restore')">
-                                                            <i class="bi bi-trash"></i>
+                                                            <i class="bi bi-arrow-counterclockwise"></i>
                                                         </button>
                                                     </td>
                                                 </tr>
@@ -1101,7 +1306,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" 
                                                                         onclick="openSchoolYearModal('restoreSchoolYearModal', <?= $schoolYear['school_year_id'] ?>, 'restore')">
-                                                                    <i class="bi bi-trash"></i>
+                                                                    <i class="bi bi-arrow-counterclockwise"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -1137,7 +1342,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" 
                                                                         onclick="openPositionModal('restorePositionModal', <?= $position['position_id'] ?>, 'restore')">
-                                                                    <i class="bi bi-trash"></i>
+                                                                    <i class="bi bi-arrow-counterclockwise"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -1172,7 +1377,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td><?= $college['deleted_at'] ? date('M d, Y h:i A', strtotime($college['deleted_at'])) : 'N/A' ?></td>
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" onclick="setCollegeId(<?= $college['college_id'] ?>, 'restore')">
-                                                                    <i class="bi bi-trash"></i>
+                                                                    <i class="bi bi-arrow-counterclockwise"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
@@ -1209,7 +1414,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                                             <td><?= $program['deleted_at'] ? date('M d, Y h:i A', strtotime($program['deleted_at'])) : 'N/A' ?></td>
                                                             <td>
                                                                 <button class="btn btn-sm btn-success" onclick="setProgramId(<?= $program['program_id'] ?>, 'restore')">
-                                                                    <i class="bi bi-trash"></i>
+                                                                    <i class="bi bi-arrow-counterclockwise"></i>
                                                                 </button>
                                                             </td>
                                                         </tr>
