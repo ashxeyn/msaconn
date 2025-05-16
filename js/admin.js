@@ -735,6 +735,12 @@ function processCalendar(activityId, action) {
         title: $('#editTitle').val(),
         description: $('#editDescription').val()
     };
+
+    // Add reason for delete action
+    if (action === 'delete') {
+        data.reason = $('#archiveReason').val();
+    }
+
     $.ajax({
         url: '../../handler/admin/calendarAction.php',
         type: 'POST',
@@ -742,17 +748,15 @@ function processCalendar(activityId, action) {
         success: function(response) {
             if (response.trim() === 'success') {
                 showToast('Success', 'Calendar event updated.', 'success');
-                    if (typeof loadCalendarSection === 'function') {
-                        $(".modal").modal("hide");
-                        $("body").removeClass("modal-open");
-                        $(".modal-backdrop").remove();
-                        loadCalendarSection();
-                    } else {
-                        location.reload();
-                    }
-                
+                if (typeof loadCalendarSection === 'function') {
+                    $(".modal").modal("hide");
+                    $("body").removeClass("modal-open");
+                    $(".modal-backdrop").remove();
+                    loadCalendarSection();
+                } else {
+                    location.reload();
+                }
             } else if (response.trim() === 'error: time_venue_required') {
-                // Show error for time and venue
                 if ($('#editTime').val().trim() === '') {
                     $('#editTime').addClass('is-invalid');
                     $('#editTimeIcon').show();
@@ -766,6 +770,10 @@ function processCalendar(activityId, action) {
             } else if (response.trim() === 'error: end_date_before_start') {
                 $('#editEndDate').addClass('is-invalid');
                 $('#editEndDateError').text('End date must be after or equal to start date');
+            } else if (response.trim() === 'error: reason_required') {
+                $('#archiveReason').addClass('is-invalid');
+                $('#archiveReasonIcon').show();
+                $('#archiveReasonError').text('Please provide a reason for archiving');
             } else {
                 showToast('Error', 'Failed to update calendar event.', 'danger');
             }
