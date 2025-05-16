@@ -228,7 +228,7 @@ $regionData = [
 
                         <div class="mb-3">
                             <label for="province" class="form-label">Province</label>
-                            <select class="form-select" id="province" name="province">
+                            <select class="form-select" id="province" name="province" onchange="updateCities(this.value)">
                                 <option value="">Select Province</option>
                                 <?php foreach ($regionData['provinces'] as $province): ?>
                                         <option value="<?= $province ?>" <?= ($student && $student['province'] == $province) ? 'selected' : '' ?>>
@@ -241,7 +241,7 @@ $regionData = [
 
                         <div class="mb-3">
                             <label for="city" class="form-label">City/Municipality</label>
-                            <select class="form-select" id="city" name="city">
+                            <select class="form-select" id="city" name="city" onchange="updateBarangays(this.value)">
                                 <option value="">Select City/Municipality</option>
                                 <?php if ($student && $student['province'] && isset($regionData['cities'][$student['province']])): ?>
                                     <?php foreach ($regionData['cities'][$student['province']] as $city): ?>
@@ -375,4 +375,97 @@ $regionData = [
         </form>
     </div>
 </div>
+
+<script>
+// Store the region data in a global variable
+var cityData = <?= json_encode($regionData['cities']) ?>;
+var barangayData = <?= json_encode($regionData['barangays']) ?>;
+
+// Function to update cities dropdown
+function updateCities(province) {
+    var citySelect = document.getElementById('city');
+    var barangaySelect = document.getElementById('barangay');
+    
+    // Clear existing options
+    citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
+    barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+    
+    // If no province selected, exit the function
+    if (!province) return;
+    
+    // Get cities for the selected province
+    var cities = cityData[province] || [];
+    
+    // Add new options
+    for (var i = 0; i < cities.length; i++) {
+        var option = document.createElement('option');
+        option.value = cities[i];
+        option.textContent = cities[i];
+        citySelect.appendChild(option);
+    }
+    
+    // Log for debugging
+    console.log('Updated cities for province: ' + province);
+    console.log('Found ' + cities.length + ' cities');
+}
+
+// Function to update barangays dropdown
+function updateBarangays(city) {
+    var barangaySelect = document.getElementById('barangay');
+    
+    // Clear existing options
+    barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+    
+    // If no city selected, exit the function
+    if (!city) return;
+    
+    // Get barangays for the selected city
+    var barangays = barangayData[city] || [];
+    
+    // Add new options
+    for (var i = 0; i < barangays.length; i++) {
+        var option = document.createElement('option');
+        option.value = barangays[i];
+        option.textContent = barangays[i];
+        barangaySelect.appendChild(option);
+    }
+    
+    // Log for debugging
+    console.log('Updated barangays for city: ' + city);
+    console.log('Found ' + barangays.length + ' barangays');
+}
+
+// Initialize dropdowns when the page loads
+window.onload = function() {
+    // If editing a student, initialize the city dropdown
+    var provinceSelect = document.getElementById('province');
+    if (provinceSelect && provinceSelect.value) {
+        updateCities(provinceSelect.value);
+        
+        // Also initialize barangay dropdown if city is selected
+        var citySelect = document.getElementById('city');
+        if (citySelect && citySelect.value) {
+            updateBarangays(citySelect.value);
+        }
+    }
+    
+    console.log('Dropdowns initialized on page load');
+};
+
+// Also try to initialize when the modal opens (for Bootstrap modals)
+$(document).ready(function() {
+    $('#addEditStudentModal').on('shown.bs.modal', function () {
+        var provinceSelect = document.getElementById('province');
+        if (provinceSelect && provinceSelect.value) {
+            updateCities(provinceSelect.value);
+            
+            var citySelect = document.getElementById('city');
+            if (citySelect && citySelect.value) {
+                updateBarangays(citySelect.value);
+            }
+        }
+        console.log('Dropdowns initialized on modal shown');
+    });
+});
+</script>
 
