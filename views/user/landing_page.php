@@ -92,18 +92,18 @@ $prayerSchedule = $adminObj->fetchPrayerSchedule();
 
 <!-- Prayer Schedule Section -->
 <section id="prayer-schedule" class="table-section">
-  <div class="container" style="max-width: 1140px; width: 100%; margin-left: auto; margin-right: auto;">
+  <div class="container" style="max-width: 1140px; width: 100%; margin-left: auto; margin-right: auto; padding-left: 15px; padding-right: 15px;">
     <h2>KHUTBAH SCHEDULE</h2>
-    <div class="table-container" style="background-color: #ffffff; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); border: 1px solid #f0f0f0;">
-      <table class="msa-table">
+    <div class="table-container" style="background-color: #ffffff; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); border: 1px solid #f0f0f0; overflow-x: auto; -webkit-overflow-scrolling: touch;">
+      <table class="msa-table" style="min-width: 650px;">
         <thead>
           <tr>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Day</th>
-            <th>Khateeb</th>
-            <th>Topic</th>
-            <th>Location</th>
+            <th style="min-width: 120px;">Date</th>
+            <th style="min-width: 80px;">Time</th>
+            <th style="min-width: 80px;">Day</th>
+            <th style="min-width: 100px;">Khateeb</th>
+            <th style="min-width: 120px;">Topic</th>
+            <th style="min-width: 100px;">Location</th>
           </tr>
         </thead>
         <tbody>
@@ -124,6 +124,49 @@ $prayerSchedule = $adminObj->fetchPrayerSchedule();
     </div>
   </div>
 </section>
+
+<!-- Add responsive styles -->
+<style>
+  @media (max-width: 768px) {
+    #prayer-schedule .container {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+    
+    #prayer-schedule h2 {
+      font-size: 1.5rem;
+      margin-bottom: 15px;
+    }
+    
+    #prayer-schedule .table-container {
+      margin-bottom: 20px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    #prayer-schedule .container {
+      padding-left: 5px;
+      padding-right: 5px;
+    }
+    
+    #prayer-schedule h2 {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+    }
+    
+    /* Show a hint about scrolling on very small screens */
+    #prayer-schedule .table-container::after {
+      content: "Scroll horizontally to view full table →";
+      display: block;
+      text-align: center;
+      padding: 8px 0;
+      font-size: 12px;
+      color: #666;
+      background-color: #f8f8f8;
+      border-top: 1px solid #eee;
+    }
+  }
+</style>
 
 <?php include '../../includes/footer.php'; ?>
 <script src="../../js/table-fix.js"></script>
