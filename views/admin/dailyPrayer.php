@@ -325,6 +325,30 @@ $dailyPrayers = $adminObj->fetchDailyPrayers();
                 border-radius: 0;
             }
         }
+
+        /* Hide required icons for date, adhan and iqamah fields in daily prayer form */
+        #editDate.is-invalid,
+        #editTime.is-invalid,
+        #editIqamah.is-invalid,
+        #editPrayerDate.is-invalid,
+        #editPrayerTime.is-invalid,
+        #editPrayerIqamah.is-invalid {
+            background-image: none !important;
+            padding-right: 0.75rem !important;
+        }
+        
+        /* Hide specific validation icons */
+        #editDateIcon,
+        #editTimeIcon,
+        #editIqamahIcon,
+        #editPrayerDateIcon,
+        #editPrayerTimeIcon,
+        #editPrayerIqamahIcon,
+        .invalid-icon[id*="Date"],
+        .invalid-icon[id*="Time"],
+        .invalid-icon[id*="Iqamah"] {
+            display: none !important;
+        }
     </style>
 </head>
 

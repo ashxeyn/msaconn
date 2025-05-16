@@ -388,19 +388,20 @@ $calEvents = $adminObj->fetchCalendarEvents();
             overflow-x: auto;
         }
 
-        /* Hide all validation icons in calendar form */
-        .invalid-icon, 
-        #editTimeIcon, 
-        #editVenueIcon, 
-        #editTitleIcon, 
-        #editDescriptionIcon {
-            display: none !important;
-        }
-
-        /* Add left padding to invalid fields to avoid text shifting */
-        .is-invalid {
-            padding-right: 0.75rem !important;
+        /* Hide required icons only for start date and time in calendar form */
+        #activityDate.is-invalid,
+        #activityTime.is-invalid,
+        #editActivityDate.is-invalid,
+        #editActivityTime.is-invalid,
+        #editTime.is-invalid {
             background-image: none !important;
+            padding-right: 0.75rem !important;
+        }
+        
+        /* Hide specific time validation icons */
+        #editTimeIcon,
+        .invalid-icon[id*="Time"] {
+            display: none !important;
         }
     </style>
 </head>

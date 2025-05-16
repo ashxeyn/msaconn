@@ -433,6 +433,18 @@ $totalFunds = $totalCashIn - $totalCashOut;
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        /* Hide required icons for start date fields in cash in/out forms */
+        #cashInDate.is-invalid,
+        #cashOutDate.is-invalid {
+            background-image: none !important;
+            padding-right: 0.75rem !important;
+        }
+        
+        /* Hide specific validation icons for date fields */
+        .invalid-icon[id*="Date"] {
+            display: none !important;
+        }
     </style>
 </head> 
 

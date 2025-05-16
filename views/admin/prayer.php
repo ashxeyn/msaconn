@@ -336,6 +336,21 @@ $prayers = $adminObj->fetchPrayerSchedule();
             min-width: 120px;
             text-align: center; 
         }
+
+        /* Hide required icons for date and time fields in prayer form */
+        #editDate.is-invalid,
+        #editTime.is-invalid {
+            background-image: none !important;
+            padding-right: 0.75rem !important;
+        }
+        
+        /* Hide specific date and time validation icons */
+        #editDateIcon,
+        #editTimeIcon,
+        .invalid-icon[id*="Time"],
+        .invalid-icon[id*="Date"] {
+            display: none !important;
+        }
     </style>
 </head>
 
