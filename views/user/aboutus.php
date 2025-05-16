@@ -40,6 +40,27 @@ if (!isset($base_url)) {
     $base_url = 'http://' . $_SERVER['HTTP_HOST'] . '/msaconnect/';
 }
 ?>
+<!-- Inline style for fixing sticky header specifically for aboutus page -->
+<style>
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 999999 !important;
+    width: 100% !important;
+    left: 0 !important;
+}
+.header-top, .navbar {
+    width: 100% !important;
+}
+main {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+</style>
 <?php include '../../includes/header.php'; ?>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
@@ -151,4 +172,40 @@ if (!isset($base_url)) {
 
 <script src="<?php echo $base_url; ?>js/user.js"></script>
 <script src="<?php echo $base_url; ?>js/designuser.js"></script>
+
+<!-- Enhanced fix for sticky header -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Force header to be sticky with more aggressive approach
+        const header = document.querySelector('header');
+        if (header) {
+            // Apply all necessary styles directly to force stickiness
+            Object.assign(header.style, {
+                position: 'fixed !important',
+                top: '0 !important',
+                left: '0 !important',
+                right: '0 !important',
+                width: '100% !important',
+                zIndex: '9999999 !important',
+                backgroundColor: '#ffffff !important'
+            });
+            
+            // Override any potential conflicting styles
+            header.setAttribute('style', 'position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; z-index: 9999999 !important; background-color: #ffffff !important; box-shadow: 0 2px 10px rgba(0,0,0,0.2) !important;');
+            
+            // Get header height
+            const headerHeight = header.offsetHeight;
+            
+            // Apply padding to the hero section specifically instead of the body
+            const heroSection = document.querySelector('.hero');
+            if (heroSection) {
+                heroSection.style.paddingTop = headerHeight + 'px';
+                console.log('Added padding to hero section: ' + headerHeight + 'px');
+            }
+            
+            console.log('Fixed header applied with height: ' + headerHeight);
+        }
+    });
+</script>
+
 <?php include '../../includes/footer.php'; ?>

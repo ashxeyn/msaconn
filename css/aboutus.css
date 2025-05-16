@@ -5,6 +5,18 @@ html, body {
   position: relative;
 }
 
+/* Ensure header remains fixed on the about page - more reliable than sticky */
+header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 999999 !important;
+  width: 100% !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2) !important;
+}
+
 .hero-content,
 .about-section,
 .mission, 
@@ -36,6 +48,7 @@ body {
   background-color: #ffffff;
   color: #000000;
   margin-top: 0 !important; /* Ensure no top margin */
+  padding-top: 0 !important; /* Ensure no padding that might push content down */
 }
 
 /* Wrapper for Content and Footer */
@@ -78,6 +91,7 @@ body {
   text-align: center;
   color: white;
   overflow: hidden;
+  margin-top: 140px; /* Add default margin to account for fixed header */
 }
 
 .hero-background {

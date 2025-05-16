@@ -22,6 +22,39 @@ $first_nameErr = $last_nameErr = $addressErr = $programErr = $collegeErr = $imag
 $emailErr = $contactNumberErr = $yearErr = '';
 $college_id = $program_id = ''; // Initialize variables to avoid undefined variable warnings
 
+if (!isset($base_url)) {
+    $base_url = 'http://' . $_SERVER['HTTP_HOST'] . '/msaconn/';
+}
+?>
+<!-- Inline style for fixing sticky header -->
+<style>
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+header {
+    position: fixed !important;
+    top: 0 !important;
+    z-index: 999999 !important;
+    width: 100% !important;
+    left: 0 !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2) !important;
+}
+.header-top, .navbar {
+    width: 100% !important;
+}
+main {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+/* Add padding to the form container to prevent it from being hidden behind the header */
+.container {
+    padding-top: 150px !important;
+}
+</style>
+
+<?php
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Handle the registration type selection
     if (isset($_POST['registration_type'])) {
@@ -215,6 +248,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="../../css/registermadrasa.css">
     <?php include '../../includes/header.php'; ?>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
+    <!-- Additional form spacing style -->
+    <style>
+        form {
+            margin-top: 170px !important; /* Increased margin to prevent header overlap */
+            padding-top: 30px !important;
+        }
+        
+        /* Ensure the title doesn't get cut off */
+        form h2 {
+            margin-top: 0;
+            padding-top: 10px;
+        }
+        
+        /* Add space at the bottom too */
+        .form-columns {
+            margin-bottom: 30px;
+        }
+    </style>
 </head>
 <body>
     <?php
@@ -395,6 +446,37 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         regionSelect.dispatchEvent(new Event('change'));
                     }, 500);
                 }
+            }
+        });
+    </script>
+    
+    <!-- Script to ensure header remains fixed -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Force header to be fixed
+            const header = document.querySelector('header');
+            if (header) {
+                // Apply all necessary styles directly to force stickiness
+                header.setAttribute('style', 'position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; z-index: 9999999 !important; background-color: #ffffff !important; box-shadow: 0 2px 10px rgba(0,0,0,0.2) !important;');
+                
+                // Calculate header height with extra padding to prevent content from being cut off
+                const headerHeight = header.offsetHeight + 20; // Add 20px extra space
+                
+                // Apply padding to the form element
+                const formElement = document.querySelector('form');
+                if (formElement) {
+                    // Force a higher margin to ensure form is visible
+                    formElement.style.marginTop = (headerHeight + 30) + 'px';
+                    console.log('Added margin to form: ' + (headerHeight + 30) + 'px');
+                }
+                
+                // Also fix any other content that might be affected
+                const mainContent = document.querySelector('main');
+                if (mainContent) {
+                    mainContent.style.marginTop = headerHeight + 'px';
+                }
+                
+                console.log('Fixed header applied with height: ' + headerHeight);
             }
         });
     </script>
