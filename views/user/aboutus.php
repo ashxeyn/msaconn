@@ -123,19 +123,46 @@ if (!isset($base_url)) {
 
 <!-- Executive Team Section -->
 <section class="executive-officers">
-    <h2>Executive Officers</h2>
+    <h2>Executive Leadership</h2>
     
     <!-- Preload the default officer image -->
     <link rel="preload" href="<?php echo $base_url; ?>assets/images/officer.jpg" as="image">
     
-    <div id="executive-officers-container">
-        <!-- Initial placeholder card that will be replaced by JavaScript -->
-        <div class="officer-card">
-            <div class="blur-bg"></div>
-            <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="Officer" class="officer-image">
-            <h3 class="officer-name">Loading Officers...</h3>
-            <p class="officer-position">Please wait a moment</p>
-            <p class="officer-bio">Officer information is loading. This will only take a moment.</p>
+    <!-- Adviser Section - Will appear at the top -->
+    <div id="adviser-container" class="adviser-container">
+        <!-- Placeholder for adviser -->
+    </div>
+    
+    <!-- Tabs for the three branches -->
+    <div class="officer-tabs">
+        <button id="tab-male" class="tab-button active" onclick="switchOfficerTab('male')">Executive Officers</button>
+        <button id="tab-wac" class="tab-button" onclick="switchOfficerTab('wac')">Women's Affairs Committee</button>
+        <button id="tab-ils" class="tab-button" onclick="switchOfficerTab('ils')">ILS</button>
+    </div>
+    
+    <!-- Container for each branch, only one will be visible at a time -->
+    <div id="male-container" class="officer-branch-container active">
+        <div class="officers-grid" id="male-officers-grid">
+            <!-- Officers will be loaded by JavaScript -->
+            <div class="officer-card">
+                <div class="blur-bg"></div>
+                <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="Officer" class="officer-image">
+                <h3 class="officer-name">Loading Officers...</h3>
+                <p class="officer-position">Please wait a moment</p>
+                <p class="officer-bio">Officer information is loading. This will only take a moment.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="wac-container" class="officer-branch-container">
+        <div class="officers-grid" id="wac-officers-grid">
+            <!-- Officers will be loaded by JavaScript -->
+        </div>
+    </div>
+    
+    <div id="ils-container" class="officer-branch-container">
+        <div class="officers-grid" id="ils-officers-grid">
+            <!-- Officers will be loaded by JavaScript -->
         </div>
     </div>
 </section>

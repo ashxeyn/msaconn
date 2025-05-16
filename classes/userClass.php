@@ -290,13 +290,16 @@ class User {
     }
     public function fetchExecutiveOfficers() {
         try {
+            // Query all officers with their position and branch (office) information
             $sql = "
                 SELECT 
                     eo.first_name, 
                     eo.middle_name, 
                     eo.last_name, 
                     op.position_name AS position, 
-                    eo.image AS picture
+                    op.position_id,
+                    eo.image AS picture,
+                    eo.office
                 FROM 
                     executive_officers eo
                 INNER JOIN 
@@ -304,11 +307,45 @@ class User {
                 WHERE 
                     eo.is_deleted = 0
                 ORDER BY 
-                    op.position_id ASC
+                    eo.office,
+                    CASE 
+                        WHEN op.position_name = 'Adviser' THEN 0
+                        WHEN op.position_name = 'President' THEN 1
+                        WHEN op.position_name = 'Internal Vice President' THEN 2
+                        WHEN op.position_name = 'External Vice President' THEN 3
+                        WHEN op.position_name = 'Secretary' THEN 4
+                        WHEN op.position_name = 'Treasurer' THEN 5
+                        WHEN op.position_name = 'Auditor' THEN 6
+                        WHEN op.position_name = 'P.I.O.' THEN 7
+                        WHEN op.position_name = 'Project Manager' THEN 8
+                        ELSE 9
+                    END ASC
             ";
             $query = $this->getConnection()->prepare($sql);
             $query->execute();
-            return $query->fetchAll(PDO::FETCH_ASSOC);
+            $officers = $query->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Group officers by branch
+            $result = [
+                'adviser' => [],
+                'male' => [],
+                'wac' => [],
+                'ils' => []
+            ];
+            
+            foreach ($officers as $officer) {
+                if ($officer['position'] === 'Adviser') {
+                    $result['adviser'][] = $officer;
+                } elseif ($officer['office'] === 'male' || empty($officer['office'])) {
+                    $result['male'][] = $officer;
+                } elseif ($officer['office'] === 'wac') {
+                    $result['wac'][] = $officer;
+                } elseif ($officer['office'] === 'ils') {
+                    $result['ils'][] = $officer;
+                }
+            }
+            
+            return $result;
         } catch (PDOException $e) {
             error_log('Database error: ' . $e->getMessage());
             throw $e;

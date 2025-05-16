@@ -17,23 +17,26 @@ ob_start();
 
 try {
     $userObj = new User();
-    $officers = $userObj->fetchExecutiveOfficers();
+    $officersByBranch = $userObj->fetchExecutiveOfficers();
 
     // Debugging: Check if data is fetched
-    if (empty($officers)) {
+    if (empty($officersByBranch['male']) && empty($officersByBranch['wac']) && empty($officersByBranch['ils']) && empty($officersByBranch['adviser'])) {
         throw new Exception('No executive officers found in the database.');
     }
 
-    // Ensure the picture URL is properly formatted and optimize image paths
-    foreach ($officers as &$officer) {
-        $officer['picture'] = $officer['picture'] 
-            ? '../../assets/officers/' . $officer['picture'] 
-            : '../../assets/images/default-profile.png'; // Default image if no picture is available
+    // Process each branch to add proper image paths
+    foreach ($officersByBranch as $branch => $officers) {
+        foreach ($officers as &$officer) {
+            $officer['picture'] = $officer['picture'] 
+                ? '../../assets/officers/' . $officer['picture'] 
+                : '../../assets/images/default-profile.png'; // Default image
+        }
+        $officersByBranch[$branch] = $officers;
     }
 
     echo json_encode([
         'status' => 'success',
-        'data' => $officers
+        'data' => $officersByBranch
     ], JSON_UNESCAPED_SLASHES);
 } catch (Exception $e) {
     // Debugging: Log the error message

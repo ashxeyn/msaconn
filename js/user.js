@@ -704,28 +704,31 @@ function loadProgramsByCollege(collegeId) {
 
 // Executive Officers Section
 function initializeExecutiveOfficers() {
-    const officersContainer = document.getElementById('executive-officers-container');
-    if (!officersContainer) {
-        console.warn('Executive officers container not found. Skipping initializeExecutiveOfficers.');
+    // Check if we're on the right page
+    if (!document.querySelector('.executive-officers')) {
+        console.warn('Executive officers section not found. Skipping initializeExecutiveOfficers.');
         return;
     }
-
-    // Show loading state immediately
-    officersContainer.setAttribute('data-loading', 'true');
+    // Set loading state
+    const adviserContainer = document.getElementById('adviser-container');
+    const maleGrid = document.getElementById('male-officers-grid');
+    const wacGrid = document.getElementById('wac-officers-grid');
+    const ilsGrid = document.getElementById('ils-officers-grid');
     
-    // Use a variable to track the fetch state to prevent duplicate requests
+    if (maleGrid) maleGrid.setAttribute('data-loading', 'true');
+    if (wacGrid) wacGrid.setAttribute('data-loading', 'true');
+    if (ilsGrid) ilsGrid.setAttribute('data-loading', 'true');
+    
+    // Use variables to track fetch state
     let isFetching = false;
-    // Use debounce to prevent multiple fetches during rapid viewport changes
     let debounceTimer = null;
-
     async function fetchOfficers() {
         // Prevent duplicate fetches
         if (isFetching) return;
         
         isFetching = true;
-        
         try {
-            // Use fetch with priority hint and cache control
+            // Fetch with priority hint and cache control
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 5000); // 5-second timeout
             
@@ -746,32 +749,89 @@ function initializeExecutiveOfficers() {
             }
             
             const result = await response.json();
-
             if (result.status === 'success') {
                 updateOfficersContent(result.data);
-                officersContainer.setAttribute('data-loading', 'false');
+                if (maleGrid) maleGrid.setAttribute('data-loading', 'false');
+                if (wacGrid) wacGrid.setAttribute('data-loading', 'false');
+                if (ilsGrid) ilsGrid.setAttribute('data-loading', 'false');
             } else {
                 console.error('Error fetching officers:', result.message);
-                officersContainer.innerHTML = '<div class="officer-card"><h3>Unable to load officers</h3><p>Please try again later.</p></div>';
-                officersContainer.setAttribute('data-loading', 'false');
+                showErrorState();
             }
         } catch (error) {
             console.error('Error fetching officers:', error);
-            officersContainer.innerHTML = '<div class="officer-card"><h3>Unable to load officers</h3><p>Please try again later.</p></div>';
-            officersContainer.setAttribute('data-loading', 'false');
+            showErrorState();
         } finally {
             isFetching = false;
         }
     }
-
-    function updateOfficersContent(officers) {
-        // Performance optimization: prepare content off DOM
+    function showErrorState() {
+        const errorCard = `
+            <div class="officer-card">
+                <div class="blur-bg"></div>
+                <img src="assets/images/officer.jpg" alt="Officer" class="officer-image">
+                <h3 class="officer-name">Unable to load officers</h3>
+                <p class="officer-position">Please try again later</p>
+                <p class="officer-bio">There was a problem retrieving officer information.</p>
+            </div>
+        `;
+        if (adviserContainer) adviserContainer.innerHTML = errorCard;
+        if (maleGrid) maleGrid.innerHTML = errorCard;
+        if (wacGrid) wacGrid.innerHTML = errorCard;
+        if (ilsGrid) ilsGrid.innerHTML = errorCard;
+        
+        if (maleGrid) maleGrid.setAttribute('data-loading', 'false');
+        if (wacGrid) wacGrid.setAttribute('data-loading', 'false');
+        if (ilsGrid) ilsGrid.setAttribute('data-loading', 'false');
+    }
+    function updateOfficersContent(officersByBranch) {
+        // Get base URL from a meta tag or elsewhere in the page
+        const baseUrl = document.querySelector('base')?.href || window.location.origin + '/msaconnect/';
+        
+        // Process advisers
+        if (adviserContainer && officersByBranch.adviser && officersByBranch.adviser.length > 0) {
+            const adviserFragment = document.createDocumentFragment();
+            
+            officersByBranch.adviser.forEach(officer => {
+                const officerCard = createOfficerCard(officer, baseUrl);
+                adviserFragment.appendChild(officerCard);
+            });
+            
+            // Clear and update adviser container
+            while (adviserContainer.firstChild) {
+                adviserContainer.removeChild(adviserContainer.firstChild);
+            }
+            
+            adviserContainer.appendChild(adviserFragment);
+        } else if (adviserContainer) {
+            adviserContainer.style.display = 'none';
+        }
+        
+        // Process male officers
+        if (maleGrid) {
+            updateBranchOfficers(maleGrid, officersByBranch.male || [], baseUrl);
+        }
+        
+        // Process WAC officers
+        if (wacGrid) {
+            updateBranchOfficers(wacGrid, officersByBranch.wac || [], baseUrl);
+        }
+        
+        // Process ILS officers
+        if (ilsGrid) {
+            updateBranchOfficers(ilsGrid, officersByBranch.ils || [], baseUrl);
+        }
+        
+        // Trigger a custom event to notify that officers content has been updated
+        const event = new CustomEvent('officersUpdated');
+        document.dispatchEvent(event);
+    }
+    
+    function updateBranchOfficers(gridContainer, officers, baseUrl) {
         const fragment = document.createDocumentFragment();
+        const isWAC = gridContainer.id === 'wac-officers-grid';
         
         if (officers && officers.length > 0) {
-            // Get base URL from a meta tag or elsewhere in the page
-            const baseUrl = document.querySelector('base')?.href || window.location.origin + '/msaconnect/';
-            
             // Determine layout based on viewport width
             const isMobile = window.innerWidth < 576;
             
@@ -779,29 +839,26 @@ function initializeExecutiveOfficers() {
             const displayOfficers = isMobile ? officers.slice(0, 4) : officers;
             
             displayOfficers.forEach(officer => {
-                const officerCard = document.createElement('div');
-                officerCard.classList.add('officer-card');
+                let officerCard;
                 
-                // Create officer name (with middle initial if available)
-                let fullName = `${officer.first_name} `;
-                if (officer.middle_name) {
-                    fullName += `${officer.middle_name.charAt(0)}. `;
+                // Always use text-only cards for WAC
+                if (isWAC) {
+                    officerCard = createTextOnlyOfficerCard(officer, "Women's Affairs Committee");
+                } else {
+                    // For other sections, check if there's a real image
+                    const hasDefaultImage = officer.picture && officer.picture.includes('default-profile.png');
+                    
+                    if (hasDefaultImage) {
+                        // Use text-only card for officers without images
+                        const branchName = gridContainer.id === 'male-officers-grid' ? 
+                            'Executive Officers' : 'ILS';
+                        officerCard = createTextOnlyOfficerCard(officer, branchName);
+                    } else {
+                        // Use card with image
+                        officerCard = createOfficerCard(officer, baseUrl);
+                    }
                 }
-                fullName += officer.last_name;
-                
-                // Use smaller image paths for mobile to save bandwidth
-                const imgSrc = isMobile && officer.picture_small ? 
-                    officer.picture_small : officer.picture;
-                
-                // Create glassmorphism card structure
-                officerCard.innerHTML = `
-                    <div class="blur-bg"></div>
-                    <img src="${imgSrc}" alt="${fullName}" class="officer-image" loading="lazy">
-                    <h3 class="officer-name">${fullName}</h3>
-                    <p class="officer-position">${officer.position}</p>
-                    <p class="officer-bio">Dedicated member of the MSA leadership team serving as ${officer.position}.</p>
-                `;
-                
+                    
                 fragment.appendChild(officerCard);
             });
             
@@ -811,8 +868,8 @@ function initializeExecutiveOfficers() {
                 viewMoreBtn.className = 'view-more-btn';
                 viewMoreBtn.textContent = 'View All Officers';
                 viewMoreBtn.addEventListener('click', () => {
-                    // Replace with full officer list
-                    updateOfficersContent(officers);
+                    // Replace with full officer list for this branch
+                    updateBranchOfficers(gridContainer, officers, baseUrl);
                 });
                 
                 const btnContainer = document.createElement('div');
@@ -823,27 +880,77 @@ function initializeExecutiveOfficers() {
         } else {
             const placeholderCard = document.createElement('div');
             placeholderCard.classList.add('officer-card');
+            
+            // Always use text-only placeholder
             placeholderCard.innerHTML = `
                 <div class="blur-bg"></div>
-                <img src="assets/images/officer.jpg" alt="Officer" class="officer-image">
                 <h3 class="officer-name">No Officers Found</h3>
                 <p class="officer-position">Please check back later</p>
-                <p class="officer-bio">Executive officer information will be updated soon.</p>
+                <p class="officer-bio">Officer information will be updated soon.</p>
             `;
+            
             fragment.appendChild(placeholderCard);
         }
         
         // Clear existing content
-        while (officersContainer.firstChild) {
-            officersContainer.removeChild(officersContainer.firstChild);
+        while (gridContainer.firstChild) {
+            gridContainer.removeChild(gridContainer.firstChild);
         }
         
-        // Add new content in one DOM operation
-        officersContainer.appendChild(fragment);
+        // Add new content
+        gridContainer.appendChild(fragment);
+    }
+    
+    // Create text-only officer card (no image)
+    function createTextOnlyOfficerCard(officer, branchName) {
+        const officerCard = document.createElement('div');
+        officerCard.classList.add('officer-card', 'text-only-card');
         
-        // Trigger a custom event to notify that officers content has been updated
-        const event = new CustomEvent('officersUpdated');
-        document.dispatchEvent(event);
+        // Create officer name (with middle initial if available)
+        let fullName = `${officer.first_name} `;
+        if (officer.middle_name) {
+            fullName += `${officer.middle_name.charAt(0)}. `;
+        }
+        fullName += officer.last_name;
+        
+        // Create card HTML (without image)
+        officerCard.innerHTML = `
+            <div class="blur-bg"></div>
+            <h3 class="officer-name">${fullName}</h3>
+            <p class="officer-position">${officer.position}</p>
+            <p class="officer-bio">Dedicated member of the ${branchName} serving as ${officer.position}.</p>
+        `;
+        
+        return officerCard;
+    }
+    
+    // Create officer card with picture
+    function createOfficerCard(officer, baseUrl) {
+        const officerCard = document.createElement('div');
+        officerCard.classList.add('officer-card');
+        
+        // Create officer name (with middle initial if available)
+        let fullName = `${officer.first_name} `;
+        if (officer.middle_name) {
+            fullName += `${officer.middle_name.charAt(0)}. `;
+        }
+        fullName += officer.last_name;
+        
+        // Determine if mobile for image size
+        const isMobile = window.innerWidth < 576;
+        const imgSrc = isMobile && officer.picture_small ? 
+            officer.picture_small : officer.picture;
+        
+        // Create card HTML
+        officerCard.innerHTML = `
+            <div class="blur-bg"></div>
+            <img src="${imgSrc}" alt="${fullName}" class="officer-image" loading="lazy">
+            <h3 class="officer-name">${fullName}</h3>
+            <p class="officer-position">${officer.position}</p>
+            <p class="officer-bio">Dedicated member of the MSA leadership team serving as ${officer.position}.</p>
+        `;
+        
+        return officerCard;
     }
     
     // Function to fetch data with debounce
@@ -854,14 +961,38 @@ function initializeExecutiveOfficers() {
         }, 100);
     }
     
-    // Listen to orientation change for mobile devices
+    // Add event listeners
     window.addEventListener('orientationchange', debouncedFetch);
 
-    // Start fetch after a 10-second delay
-    setTimeout(() => {
-        fetchOfficers();
-    }, 10000);
-        
-    // Poll for updates - less frequently to avoid animation disruption
-    setInterval(fetchOfficers, 10000); // Reduced to once per minute
+    // Start fetch
+    fetchOfficers();
+    
+    // Poll for updates less frequently
+    setInterval(fetchOfficers, 5000); // Every 5 seconds
+}
+
+// Function to switch between officer tabs
+function switchOfficerTab(branchType) {
+    // Hide all branch containers
+    const containers = document.querySelectorAll('.officer-branch-container');
+    containers.forEach(container => {
+        container.classList.remove('active');
+    });
+    
+    // Show selected branch container
+    const selectedContainer = document.getElementById(`${branchType}-container`);
+    if (selectedContainer) {
+        selectedContainer.classList.add('active');
+    }
+    
+    // Update tab buttons
+    const tabButtons = document.querySelectorAll('.tab-button');
+    tabButtons.forEach(button => {
+        button.classList.remove('active');
+    });
+    
+    const selectedTab = document.getElementById(`tab-${branchType}`);
+    if (selectedTab) {
+        selectedTab.classList.add('active');
+    }
 }

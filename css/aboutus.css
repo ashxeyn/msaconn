@@ -208,27 +208,87 @@ body {
     background-color: rgba(0, 0, 0, 0.2);
 }
 
-#executive-officers-container {
+/* Adviser container styles */
+.adviser-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 3rem;
+    padding: 0 1rem;
+}
+
+.adviser-container .officer-card {
+    width: 300px;
+    max-width: 100%;
+}
+
+/* Officer tabs styles */
+.officer-tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.tab-button {
+    padding: 10px 20px;
+    background-color: #f5f5f5;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    font-family: 'Noto Naskh Arabic', serif;
+    color: #333;
+}
+
+.tab-button.active {
+    background-color: #1a541c;
+    color: white;
+}
+
+.tab-button:hover {
+    background-color: #e5e5e5;
+}
+
+.tab-button.active:hover {
+    background-color: #134015;
+}
+
+/* Branch container styles */
+.officer-branch-container {
+    display: none;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.officer-branch-container.active {
+    display: block;
+}
+
+.officers-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 2.5rem;
     padding: 1rem;
-    max-width: 1200px;
     width: 100%;
-    margin: 0 auto;
-    position: relative;
-    z-index: 1;
-    transition: opacity 0.3s ease;
     box-sizing: border-box;
 }
 
+/* Ensure 3 columns for larger screens */
+@media (min-width: 992px) {
+    .officers-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
 /* Loading indicator styling */
-#executive-officers-container[data-loading="true"] .officer-card {
+.officers-grid[data-loading="true"] .officer-card {
     position: relative;
     overflow: hidden;
 }
 
-#executive-officers-container[data-loading="true"] .officer-card::after {
+.officers-grid[data-loading="true"] .officer-card::after {
     content: '';
     position: absolute;
     top: 0;
@@ -871,4 +931,29 @@ body {
 .view-more-btn:active {
   transform: translateY(0);
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* Text-only cards (no images) */
+.text-only-card {
+    padding-top: 25px;
+    height: auto;
+    min-height: 200px;
+}
+
+.text-only-card .officer-name {
+    margin-top: 20px;
+    font-size: 1.6rem;
+}
+
+.text-only-card .officer-position {
+    font-size: 1.1rem;
+    margin-top: 10px;
+    color: #1a541c;
+    font-weight: 500;
+}
+
+.text-only-card .officer-bio {
+    margin-top: 15px;
+    padding: 0 20px;
+    font-size: 0.95rem;
 }
