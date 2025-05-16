@@ -16,7 +16,7 @@ $backgroundImage = $user->fetchBackgroundImage();
     <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo $base_url; ?>css/faqs.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="../../js/website.js"></script>
+    <script src="../../js/faqs.js"></script>
 </head>
 <body>
     <!-- Hero Section -->

@@ -335,19 +335,22 @@ function initializeFAQs() {
     function attachFaqListeners() {
         const faqQuestions = document.querySelectorAll('.faq-question');
         faqQuestions.forEach(question => {
-            question.addEventListener('click', () => {
+            question.addEventListener('click', (e) => {
+                // Get the answer element
                 const answer = question.nextElementSibling;
+                
+                // Toggle the current question/answer pair
                 question.classList.toggle('open');
                 answer.classList.toggle('open');
+                
+                // Stop event propagation to prevent issues
+                e.stopPropagation();
             });
         });
     }
 
-    // Fetch FAQs on page load
+    // Fetch FAQs on page load only, don't poll
     fetchFaqs();
-
-    // Poll for updates every 5 seconds
-    setInterval(fetchFaqs, 3000);
 }
 function initializeAboutContent() {
     const aboutUsHero = document.querySelector('.aboutus-hero');

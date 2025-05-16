@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Initial sidebar update after 3 seconds
-    setTimeout(updateSidebar, 3000);
+    setTimeout(updateSidebar, 5000);
     
     // Then regular updates every 10 seconds
     setInterval(updateSidebar, 10000);
