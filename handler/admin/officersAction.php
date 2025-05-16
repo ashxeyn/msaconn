@@ -29,6 +29,11 @@ if ($action === 'edit') {
         exit;
     }
 
+    $positionName = $adminObj->getPositionById($position)['position_name'];
+    if (strtolower($positionName) === 'adviser') {
+        $program = null; 
+    }
+
     if (!empty($_FILES['image']['name'])) {
         $targetDir = "../../assets/officers/";
         $image = basename($_FILES['image']['name']);
@@ -63,6 +68,11 @@ if ($action === 'edit') {
     $program = clean_input($_POST['program']);
     $schoolYear = clean_input($_POST['schoolYear']);
     $image = null;
+
+    $positionName = $adminObj->getPositionById($position)['position_name'];
+    if (strtolower($positionName) === 'adviser') {
+        $program = null; 
+    }
 
     if (!empty($_FILES['image']['name'])) {
         $targetDir = "../../assets/officers/";

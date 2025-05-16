@@ -2708,12 +2708,14 @@ function validateOfficerForm() {
         $('#editSurnameIcon').hide();
     }
 
-    if (program === '') {
+    const positionText = $('#editPosition option:selected').text().trim().toLowerCase();
+    if (positionText !== 'adviser' && program === '') {
         $('#editProgramError').text('Program is required');
         $('#editProgram').addClass('is-invalid');
         isValid = false;
     } else {
         $('#editProgram').removeClass('is-invalid');
+        $('#editProgramError').text('');
     }
 
     if (position === '') {
@@ -2732,15 +2734,9 @@ function validateOfficerForm() {
         $('#editSchoolYear').removeClass('is-invalid');
     }
 
-    if (!isEdit && imageInput && imageInput.files.length === 0) {
-        $('#editImageError').text('Officer image is required');
-        $('#editImage').addClass('is-invalid');
-        $('#editImageIcon').show();
-        isValid = false;
-    } else {
-        $('#editImage').removeClass('is-invalid');
-        $('#editImageIcon').hide();
-    }
+    $('#editImage').removeClass('is-invalid');
+    $('#editImageIcon').hide();
+    $('#editImageError').text('');
 
     return isValid;
 }
@@ -4123,7 +4119,6 @@ function openSiteModal(modalId, pageId, action, isActive) {
 
 function setSitePageId(pageId, action, isActive) {
     if (pageId === 'carousel_group' && action === 'edit_carousel_group') {
-        // Fetch carousel data and populate modal fields
         $.ajax({
             url: "../../handler/admin/getSite.php",
             type: "GET",
