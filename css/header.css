@@ -218,7 +218,7 @@ header {
   background-color: var(--text-color);
   min-width: 210px;
   box-shadow: 0px 8px 24px rgba(0,0,0,0.13);
-  z-index: 1001;
+  z-index: 999999;
   list-style: none;
   padding: 0;
   margin: 0;
@@ -255,7 +255,7 @@ header {
   background-color: #f1f1f1 !important;
 }
 
-/* Desktop dropdown behavior */
+/* Ensure dropdown shows on hover at larger screens */
 @media (min-width: 769px) {
   .nav-links .dropdown:hover .dropdown-content {
     display: block;
