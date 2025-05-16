@@ -60,65 +60,67 @@ $calendar = $adminObj->fetchDailyPrayers();
     </div>
 
     <!-- 5 Prayers of Islam Table Section -->
-    <div class="container my-5">
-        <div class="table-section" style="background-color: #f5f5f5; padding: 30px 20px; border-radius: 10px;">
-            <h3 style="color:#1a541c;">Daily Prayers Schedule</h3>
-            <div style="color:#333; font-size:32px; margin-bottom:12px;">
-                <?php 
-                    $today = date('F d, Y');
-                    $dayName = date('l');
-                    echo "$today ($dayName)";
-                ?>
-            </div>
-            <div class="table-container" style="background-color: #ffffff; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); border: 1px solid #f0f0f0;">
-                <table class="msa-table">
-                    <thead>
-                        <tr>
-                            <th>Time</th>
-                            <th>Prayer Type</th>
-                            <th>Imam</th>
-                            <th>Topic</th>
-                            <th>Location</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php 
-                        $todayDate = date('Y-m-d');
-                        $hasTodayPrayer = false;
-                        if ($calendar):
-                            foreach ($calendar as $prayer): 
-                                if ($prayer['date'] !== $todayDate) continue;
-                                $hasTodayPrayer = true;
-                                $prayerTypeDisplay = ucfirst($prayer['prayer_type']);
-                                $isFriday = (date('l', strtotime($prayer['date'])) === 'Friday');
-                        ?>
+    <div style="background-color: #f5f5f5; width: 100%; padding: 40px 0;">
+        <div class="container" style="max-width: 1140px; margin: 0 auto;">
+            <div class="table-section">
+                <h3 style="color:#1a541c; text-align: center; margin-bottom: 15px;">DAILY PRAYER SCHEDULE</h3>
+                <div style="color:#333; font-size:32px; margin-bottom:20px; text-align: center;">
+                    <?php 
+                        $today = date('F d, Y');
+                        $dayName = date('l');
+                        echo "$today ($dayName)";
+                    ?>
+                </div>
+                <div class="table-container" style="background-color: #ffffff; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); border: 1px solid #f0f0f0;">
+                    <table class="msa-table">
+                        <thead>
                             <tr>
-                                <td>
-                                    <?php echo !empty($prayer['time']) ? date('h:i A', strtotime($prayer['time'])) : '<span class="text-danger">No time set</span>'; ?>
-                                </td>
-                                <td>
-                                    <?= $prayerTypeDisplay ?>
-                                    <?php if ($isFriday && $prayer['prayer_type'] === 'jumu\'ah'): ?>
-                                        <br><small class="text-muted">(Friday Prayer)</small>
-                                    <?php endif; ?>
-                                </td>
-                                <td><?= clean_input($prayer['speaker']) ?></td>
-                                <td><?= clean_input($prayer['topic']) ?></td>
-                                <td><?= clean_input($prayer['location']) ?></td>
+                                <th>Time</th>
+                                <th>Prayer Type</th>
+                                <th>Imam</th>
+                                <th>Topic</th>
+                                <th>Location</th>
                             </tr>
-                        <?php endforeach; ?>
-                        <?php if (!$hasTodayPrayer): ?>
-                            <tr>
-                                <td colspan="5" class="text-center">No prayer schedules for today</td>
-                            </tr>
-                        <?php endif; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="5" class="text-center">No prayer schedules available</td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            <?php 
+                            $todayDate = date('Y-m-d');
+                            $hasTodayPrayer = false;
+                            if ($calendar):
+                                foreach ($calendar as $prayer): 
+                                    if ($prayer['date'] !== $todayDate) continue;
+                                    $hasTodayPrayer = true;
+                                    $prayerTypeDisplay = ucfirst($prayer['prayer_type']);
+                                    $isFriday = (date('l', strtotime($prayer['date'])) === 'Friday');
+                            ?>
+                                <tr>
+                                    <td>
+                                        <?php echo !empty($prayer['time']) ? date('h:i A', strtotime($prayer['time'])) : '<span class="text-danger">No time set</span>'; ?>
+                                    </td>
+                                    <td>
+                                        <?= $prayerTypeDisplay ?>
+                                        <?php if ($isFriday && $prayer['prayer_type'] === 'jumu\'ah'): ?>
+                                            <br><small class="text-muted">(Friday Prayer)</small>
+                                        <?php endif; ?>
+                                    </td>
+                                    <td><?= clean_input($prayer['speaker']) ?></td>
+                                    <td><?= clean_input($prayer['topic']) ?></td>
+                                    <td><?= clean_input($prayer['location']) ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                            <?php if (!$hasTodayPrayer): ?>
+                                <tr>
+                                    <td colspan="5" class="text-center">No prayer schedules for today</td>
+                                </tr>
+                            <?php endif; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="5" class="text-center">No prayer schedules available</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
