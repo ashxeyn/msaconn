@@ -1141,7 +1141,7 @@ class Admin {
 
     // Daily Prayer Functions
     function fetchDailyPrayers() {
-        $sql = "SELECT ps.prayer_id, ps.prayer_type, ps.date, ps.time, ps.speaker, ps.topic, ps.location, ps.created_at, ps.deleted_at,
+        $sql = "SELECT ps.prayer_id, ps.prayer_type, ps.date, ps.time, ps.iqamah, ps.location, ps.created_at, ps.deleted_at,
                 u.username 
             FROM prayer_schedule ps
             LEFT JOIN users u ON ps.created_by = u.user_id
@@ -1154,7 +1154,7 @@ class Admin {
     }
 
     function getDailyPrayerById($prayerId) {
-        $sql = "SELECT ps.prayer_id, ps.prayer_type, ps.date, ps.time, ps.speaker, ps.topic, ps.location, ps.created_at, ps.deleted_at,
+        $sql = "SELECT ps.prayer_id, ps.prayer_type, ps.date, ps.time, ps.iqamah, ps.location, ps.created_at, ps.deleted_at,
                 u.username
             FROM prayer_schedule ps
             LEFT JOIN users u ON ps.created_by = u.user_id
@@ -1165,28 +1165,28 @@ class Admin {
         return $query->fetch();
     }
 
-    function addDailyPrayer($prayerType, $date, $speaker, $topic, $location, $userId) {
-        $sql = "INSERT INTO prayer_schedule (prayer_type, date, speaker, topic, location, created_by) 
-                VALUES (:prayer_type, :date, :speaker, :topic, :location, :created_by)";
+    function addDailyPrayer($prayerType, $date, $time, $iqamah, $location, $userId) {
+        $sql = "INSERT INTO prayer_schedule (prayer_type, date, time, iqamah, location, created_by) 
+                VALUES (:prayer_type, :date, :time, :iqamah, :location, :created_by)";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':prayer_type', $prayerType);
         $query->bindParam(':date', $date);
-        $query->bindParam(':speaker', $speaker);
-        $query->bindParam(':topic', $topic);
+        $query->bindParam(':time', $time);
+        $query->bindParam(':iqamah', $iqamah);
         $query->bindParam(':location', $location);
         $query->bindParam(':created_by', $userId);
         return $query->execute();
     }
 
-    function updateDailyPrayer($prayerId, $prayerType, $date, $speaker, $topic, $location) {
+    function updateDailyPrayer($prayerId, $prayerType, $date, $time, $iqamah, $location) {
         $sql = "UPDATE prayer_schedule 
-                SET prayer_type = :prayer_type, date = :date, speaker = :speaker, topic = :topic, location = :location
+                SET prayer_type = :prayer_type, date = :date, time = :time, iqamah = :iqamah, location = :location
                 WHERE prayer_id = :prayer_id";
         $query = $this->db->connect()->prepare($sql);
         $query->bindParam(':prayer_type', $prayerType);
         $query->bindParam(':date', $date);
-        $query->bindParam(':speaker', $speaker);
-        $query->bindParam(':topic', $topic);
+        $query->bindParam(':time', $time);
+        $query->bindParam(':iqamah', $iqamah);
         $query->bindParam(':location', $location);
         $query->bindParam(':prayer_id', $prayerId);
         return $query->execute();
@@ -1216,7 +1216,7 @@ class Admin {
     }
 
     function fetchArchivedDailyPrayers() {
-        $sql = "SELECT ps.prayer_id, ps.prayer_type, ps.date, ps.time, ps.speaker, ps.topic, ps.location, ps.reason, ps.deleted_at,
+        $sql = "SELECT ps.prayer_id, ps.prayer_type, ps.date, ps.time, ps.iqamah, ps.location, ps.reason, ps.deleted_at,
                 u.username
             FROM prayer_schedule ps
             LEFT JOIN users u ON ps.created_by = u.user_id

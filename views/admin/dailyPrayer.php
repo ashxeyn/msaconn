@@ -356,11 +356,10 @@ $dailyPrayers = $adminObj->fetchDailyPrayers();
             <thead>
                 <tr>
                     <th>Date</th>
-                    <th>Time</th>
+                    <th>Adhan</th>
+                    <th>Iqamah</th>
                     <th>Day</th>
-                    <th>Prayer Type</th>
-                    <th>Speaker</th>
-                    <th>Topic</th>
+                    <th>Salah</th>
                     <th>Location</th>
                     <th>Created By</th>
                     <th>Action</th>
@@ -392,6 +391,9 @@ $dailyPrayers = $adminObj->fetchDailyPrayers();
                             <td>
                                 <?php echo !empty($prayer['time']) ? date('h:i A', strtotime($prayer['time'])) : '<span class="text-danger">No time set</span>'; ?>
                             </td>
+                            <td>
+                                <?php echo !empty($prayer['iqamah']) ? date('h:i A', strtotime($prayer['iqamah'])) : '<span class="text-danger">No time set</span>'; ?>
+                            </td>
                             <td><?= date('l', strtotime($prayer['date'])) ?></td>
                             <td>
                                 <?= $prayerTypeDisplay ?>
@@ -399,8 +401,6 @@ $dailyPrayers = $adminObj->fetchDailyPrayers();
                                     <br><small class="text-muted">(Friday Prayer)</small>
                                 <?php endif; ?>
                             </td>
-                            <td><?= clean_input($prayer['speaker']) ?></td>
-                            <td><?= clean_input($prayer['topic']) ?></td>
                             <td><?= clean_input($prayer['location']) ?></td>
                             <td><?= clean_input($prayer['username'] ?? 'N/A') ?></td>
                             <td>
@@ -415,7 +415,7 @@ $dailyPrayers = $adminObj->fetchDailyPrayers();
                     <?php endforeach; ?>
                 <?php else: ?>
                     <tr>
-                        <td colspan="9" class="text-center">No prayer schedules found.</td>
+                        <td colspan="8" class="text-center">No prayer schedules found.</td>
                     </tr>
                 <?php endif; ?>
             </tbody>

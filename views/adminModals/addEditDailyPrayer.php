@@ -8,9 +8,9 @@
                 <div class="modal-body">
                     <input type="hidden" name="prayer_id" id="editPrayerId">
                     <div class="mb-3 position-relative">
-                        <label for="editPrayerType" class="form-label">Prayer Type</label>
+                        <label for="editPrayerType" class="form-label">Salah</label>
                         <select class="form-control" id="editPrayerType" name="prayer_type">
-                            <option value="">Select Prayer Type</option>
+                            <option value="">Select Salah</option>
                             <option value="fajr">Fajr</option>
                             <option value="dhuhr">Dhuhr</option>
                             <option value="jumu'ah">Jumu'ah</option>
@@ -28,22 +28,16 @@
                         <div id="editPrayerDateError" class="text-danger"></div>
                     </div>
                     <div class="mb-3 position-relative">
-                        <label for="editPrayerTime" class="form-label">Time</label>
+                        <label for="editPrayerTime" class="form-label">Adhan</label>
                         <input type="time" class="form-control" id="editPrayerTime" name="time">
                         <span class="invalid-icon" id="editPrayerTimeIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
                         <div id="editPrayerTimeError" class="text-danger"></div>
                     </div>
                     <div class="mb-3 position-relative">
-                        <label for="editSpeaker" class="form-label">Speaker (leave empty for TBA)</label>
-                        <input type="text" class="form-control" id="editSpeaker" name="speaker">
-                        <span class="invalid-icon" id="editSpeakerIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
-                        <div id="editSpeakerError" class="text-danger"></div>
-                    </div>
-                    <div class="mb-3 position-relative">
-                        <label for="editTopic" class="form-label">Topic</label>
-                        <input type="text" class="form-control" id="editTopic" name="topic">
-                        <span class="invalid-icon" id="editTopicIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
-                        <div id="editTopicError" class="text-danger"></div>
+                        <label for="editPrayerIqamah" class="form-label">Iqamah</label>
+                        <input type="time" class="form-control" id="editPrayerIqamah" name="iqamah">
+                        <span class="invalid-icon" id="editPrayerIqamahIcon" style="display:none;"><i class="fas fa-exclamation-circle"></i></span>
+                        <div id="editPrayerIqamahError" class="text-danger"></div>
                     </div>
                     <div class="mb-3 position-relative">
                         <label for="editLocation" class="form-label">Location</label>

@@ -4603,8 +4603,7 @@ function setDailyPrayerId(prayerId, action) {
                     $('#editPrayerType').val(prayer.prayer_type);
                     $('#editPrayerDate').val(prayer.date);
                     $('#editPrayerTime').val(prayer.time || '');
-                    $('#editSpeaker').val(prayer.speaker);
-                    $('#editTopic').val(prayer.topic);
+                    $('#editPrayerIqamah').val(prayer.iqamah || '');
                     $('#editLocation').val(prayer.location);
                     $('#editDailyPrayerModal .modal-title').text('Edit Prayer Schedule');
                     $('#editDailyPrayerFormSubmit').text('Update Prayer Schedule');
@@ -4673,7 +4672,7 @@ function validateDailyPrayerForm() {
     if (prayerType === '') {
         $('#editPrayerType').addClass('is-invalid');
         $('#editPrayerTypeIcon').show();
-        $('#editPrayerTypeError').text('Prayer type is required');
+        $('#editPrayerTypeError').text('Salah is required');
         isValid = false;
     } else {
         $('#editPrayerType').removeClass('is-invalid');
@@ -4693,12 +4692,11 @@ function validateDailyPrayerForm() {
         $('#editPrayerDateError').text('');
     }
 
-    // Time validation
     const prayerTime = $('#editPrayerTime').val().trim();
     if (prayerTime === '') {
         $('#editPrayerTime').addClass('is-invalid');
         $('#editPrayerTimeIcon').show();
-        $('#editPrayerTimeError').text('Time is required');
+        $('#editPrayerTimeError').text('Adhan is required');
         isValid = false;
     } else {
         $('#editPrayerTime').removeClass('is-invalid');
@@ -4706,24 +4704,19 @@ function validateDailyPrayerForm() {
         $('#editPrayerTimeError').text('');
     }
 
-    const speaker = $('#editSpeaker').val().trim();
-    if (speaker === '') {
-        // If speaker is empty, set it to 'TBA'
-        $('#editSpeaker').val('TBA');
-    }
-
-    const topic = $('#editTopic').val().trim();
-    if (topic === '') {
-        $('#editTopic').addClass('is-invalid');
-        $('#editTopicIcon').show();
-        $('#editTopicError').text('Topic is required');
+    const prayerIqamah = $('#editPrayerIqamah').val().trim();
+    if (prayerIqamah === '') {
+        $('#editPrayerIqamah').addClass('is-invalid');
+        $('#editPrayerIqamahIcon').show();
+        $('#editPrayerIqamahError').text('Iqamah is required');
         isValid = false;
     } else {
-        $('#editTopic').removeClass('is-invalid');
-        $('#editTopicIcon').hide();
-        $('#editTopicError').text('');
+        $('#editPrayerIqamah').removeClass('is-invalid');
+        $('#editPrayerIqamahIcon').hide();
+        $('#editPrayerIqamahError').text('');
     }
 
+    // Location validation
     const location = $('#editLocation').val().trim();
     if (location === '') {
         $('#editLocation').addClass('is-invalid');
@@ -4742,20 +4735,20 @@ function validateDailyPrayerForm() {
 function clearDailyPrayerValidationErrors() {
     $('#editPrayerTypeError').text('');
     $('#editPrayerDateError').text('');
-    $('#editSpeakerError').text('');
-    $('#editTopicError').text('');
+    $('#editPrayerTimeError').text('');
+    $('#editPrayerIqamahError').text('');
     $('#editLocationError').text('');
     
     $('#editPrayerType').removeClass('is-invalid');
     $('#editPrayerDate').removeClass('is-invalid');
-    $('#editSpeaker').removeClass('is-invalid');
-    $('#editTopic').removeClass('is-invalid');
+    $('#editPrayerTime').removeClass('is-invalid');
+    $('#editPrayerIqamah').removeClass('is-invalid');
     $('#editLocation').removeClass('is-invalid');
     
     $('#editPrayerTypeIcon').hide();
     $('#editPrayerDateIcon').hide();
-    $('#editSpeakerIcon').hide();
-    $('#editTopicIcon').hide();
+    $('#editPrayerTimeIcon').hide();
+    $('#editPrayerIqamahIcon').hide();
     $('#editLocationIcon').hide();
 }
 
@@ -4798,12 +4791,20 @@ function processDailyPrayer(prayerId, action) {
                     action === 'restore' ? 'Prayer schedule has been restored.' :
                     'Prayer schedule has been ' + (action === 'edit' ? 'updated' : 'added') + '.', 
                     'success');
+            } else if (response.trim() === "error: missing_required_fields") {
+                showToast('Error', 'Please fill in all required fields.', 'error');
+            } else if (response.trim() === "error: reason_required") {
+                showToast('Error', 'Please provide a reason for archiving.', 'error');
+            } else if (response.trim() === "error: prayer_not_found") {
+                showToast('Error', 'Prayer schedule not found.', 'error');
+            } else if (response.trim() === "error: unauthorized") {
+                showToast('Error', 'You are not authorized to perform this action.', 'error');
             } else {
-                alert("Failed to process request: " + response);
+                showToast('Error', 'Failed to process request. Please try again.', 'error');
             }
         },
         error: function() {
-            alert("An error occurred while processing the request.");
+            showToast('Error', 'Failed to process request. Please try again.', 'error');
         }
     });
 }

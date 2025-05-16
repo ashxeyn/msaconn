@@ -16,13 +16,13 @@ $prayerId = $_POST['prayer_id'] ?? null;
 if ($action === 'edit') {
     $prayerType = clean_input($_POST['prayer_type']);
     $date = clean_input($_POST['date']);
-    $speaker = clean_input($_POST['speaker']);
-    $topic = clean_input($_POST['topic']);
+    $time = clean_input($_POST['time']);
+    $iqamah = clean_input($_POST['iqamah']);
     $location = clean_input($_POST['location']);
     
-    // Set speaker to TBA if empty
-    if (empty($speaker)) {
-        $speaker = 'TBA';
+    if (empty($prayerType) || empty($date) || empty($time) || empty($iqamah) || empty($location)) {
+        echo "error: missing_required_fields";
+        exit;
     }
     
     $existingPrayer = $adminObj->getDailyPrayerById($prayerId);
@@ -31,7 +31,7 @@ if ($action === 'edit') {
         exit;
     }
     
-    $result = $adminObj->updateDailyPrayer($prayerId, $prayerType, $date, $speaker, $topic, $location);
+    $result = $adminObj->updateDailyPrayer($prayerId, $prayerType, $date, $time, $iqamah, $location);
     echo $result ? "success" : "error";
     
 } elseif ($action === 'delete') {
@@ -52,15 +52,16 @@ if ($action === 'edit') {
 } elseif ($action === 'add') {
     $prayerType = clean_input($_POST['prayer_type']);
     $date = clean_input($_POST['date']);
-    $speaker = clean_input($_POST['speaker']);
-    $topic = clean_input($_POST['topic']);
+    $time = clean_input($_POST['time']);
+    $iqamah = clean_input($_POST['iqamah']);
     $location = clean_input($_POST['location']);
     
-    if (empty($speaker)) {
-        $speaker = 'TBA';
+    if (empty($prayerType) || empty($date) || empty($time) || empty($iqamah) || empty($location)) {
+        echo "error: missing_required_fields";
+        exit;
     }
     
-    $result = $adminObj->addDailyPrayer($prayerType, $date, $speaker, $topic, $location, $userId);
+    $result = $adminObj->addDailyPrayer($prayerType, $date, $time, $iqamah, $location, $userId);
     echo $result ? "success" : "error";
     
 } else {
