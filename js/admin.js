@@ -4111,6 +4111,11 @@ function openSiteModal(modalId, pageId, action, isActive) {
     $('.modal-backdrop').remove(); 
     setTimeout(() => {
         const modal = $('#' + modalId);
+        $('#logo-image-preview').hide();
+        $('#background-image-preview').hide();
+        $('#logo-preview-img').attr('src', '');
+        $('#background-preview-img').attr('src', '');
+        $('#addEditImage').val('');
         modal.modal('show'); 
         setSitePageId(pageId, action, isActive);
     }, 300);
@@ -4148,10 +4153,8 @@ function setSitePageId(pageId, action, isActive) {
             }
         });
 
-        // Attach submit handler
         $('#editCarouselGroupForm').off('submit').on('submit', function(e) {
             e.preventDefault();
-            // Validate at least one image or title is filled
             let valid = false;
             for (let i = 1; i <= 4; i++) {
                 if ($(`#carouselId${i}`).val() || $(`#carouselImage${i}`)[0].files.length > 0 || $(`#carouselTitle${i}`).val().trim() !== '') {
@@ -4218,6 +4221,13 @@ function setSitePageId(pageId, action, isActive) {
                     } else {
                         $('#logo-image-preview').hide();
                         $('#logo-preview-img').attr('src', '');
+                    }
+                    if (page.page_type === 'background' && page.image_path) {
+                        $('#background-image-preview').show();
+                        $('#background-preview-img').attr('src', '../../' + page.image_path);
+                    } else {
+                        $('#background-image-preview').hide();
+                        $('#background-preview-img').attr('src', '');
                     }
                 } catch (e) {
                     showToast('Error', 'Failed to load page details.', 'danger');
@@ -4303,7 +4313,6 @@ function setSitePageId(pageId, action, isActive) {
         clearSiteValidationErrors();
     });
 
-    // Back button handler
     $('#siteBackLink').off('click').on('click', function(e) {
         e.preventDefault();
         $('#siteStep1').show();
@@ -4333,8 +4342,16 @@ function setSitePageId(pageId, action, isActive) {
         if (file) {
             const reader = new FileReader();
             reader.onload = function(ev) {
-                $('#logo-image-preview').show();
-                $('#logo-preview-img').attr('src', ev.target.result);
+                const pageType = $('#addEditPageType').val();
+                if (pageType === 'logo') {
+                    $('#logo-image-preview').show();
+                    $('#logo-preview-img').attr('src', ev.target.result);
+                    $('#background-image-preview').hide();
+                } else if (pageType === 'background') {
+                    $('#background-image-preview').show();
+                    $('#background-preview-img').attr('src', ev.target.result);
+                    $('#logo-image-preview').hide();
+                }
             };
             reader.readAsDataURL(file);
         }
@@ -4342,7 +4359,6 @@ function setSitePageId(pageId, action, isActive) {
 }
 
 function toggleFieldsBasedOnType(pageType) {
-    // Hide all groups first
     $('#descriptionGroup').hide();
     $('#contactGroup').hide();
     $('#emailGroup').hide();
@@ -4353,8 +4369,11 @@ function toggleFieldsBasedOnType(pageType) {
     $('#schoolNameGroup').hide();
     $('#webNameGroup').hide();
     $('#fbLinkGroup').hide();
+    
+    $('#addEditImage').val('');
+    $('#logo-preview-img').attr('src', '');
+    $('#background-preview-img').attr('src', '');
 
-    // Show relevant groups based on page type
     if (["logo", "background", "carousel"].includes(pageType)) {
         $('#imageGroup').show();
     } else if (pageType === 'footer') {
@@ -4365,7 +4384,6 @@ function toggleFieldsBasedOnType(pageType) {
         $('#webNameGroup').show();
         $('#fbLinkGroup').show();
     } else {
-        // registration, about, volunteer, calendar, faqs, transparency, home
         $('#descriptionGroup').show();
     }
 }
@@ -4387,7 +4405,6 @@ function validateSiteForm(action) {
     }
 
     if (["logo", "background", "carousel"].includes(pageType)) {
-        // Validate image
         const image = $('#addEditImage')[0].files[0];
         if (!image && $('#logo-preview-img').attr('src') === '' && $('#background-preview-img').attr('src') === '') {
             $('#addEditImage').addClass('is-invalid');
@@ -4400,7 +4417,6 @@ function validateSiteForm(action) {
             $('#addEditImageError').text('');
         }
     } else if (pageType === 'footer') {
-        // Validate contact, email, org_name, school_name, web_name, fb_link
         const contactNo = $('#addEditContactNo').val().trim();
         if (!contactNo) {
             $('#addEditContactNo').addClass('is-invalid');
@@ -4854,7 +4870,6 @@ $(document).ready(function() {
     });
 });
 
-// Add image preview functionality
 document.getElementById('addEditImage').addEventListener('change', function(event) {
     const file = event.target.files[0];
     if (file) {
