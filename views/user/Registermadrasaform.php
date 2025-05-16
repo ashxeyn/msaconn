@@ -186,8 +186,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     file_put_contents('registration_debug.log', 'Registration successful! ID: ' . $result . ' - ' . date('Y-m-d H:i:s') . PHP_EOL, FILE_APPEND);
                     
                     // Important: Set session flag BEFORE any output
-                    $_SESSION['registration_success'] = true;
-                    $_SESSION['registration_message'] = "Registration successful! Your enrollment has been received.";
+                    $_SESSION['madrasa_registration_success'] = true;
+                    $_SESSION['registration_message'] = "Your enrollment for Madrasa has been received and will be processed by our team.";
                     
                     // Use JavaScript redirect for more reliable redirect
                     $redirect_url = 'registrationmadrasa.php';
@@ -217,70 +217,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
 </head>
 <body>
-    <?php 
+    <?php
     // Show success modal if registration was successful
-    if (isset($_SESSION['registration_success'])) {
-        $modalPath = dirname(dirname(dirname(__FILE__))) . '/usermodals/registrationforenrollmentmodal.php';
-        if (file_exists($modalPath)) {
-            include $modalPath;
-            echo "<script>console.log('Modal included from session');</script>";
-        } else {
-            echo "<script>console.log('Modal file not found');</script>";
-            // Fallback modal if file not found
-            echo '<div id="successModal" class="modal" style="display: block;">
-                    <div class="modal-content">
-                        <span class="close-button" onclick="closeSuccessModal()">&times;</span>
-                        <h2>Registration Successful!</h2>
-                        <p>You have successfully registered for Madrasa.</p>
-                        <div class="modal-actions">
-                            <button type="button" class="close-modal-btn" onclick="closeSuccessModal()">Close</button>
-                        </div>
-                    </div>
-                  </div>
-                  <script>
-                    function closeSuccessModal() {
-                        document.getElementById("successModal").style.display = "none";
-                        window.location.href = "registrationmadrasa.php";
-                    }
-                    
-                    document.addEventListener("DOMContentLoaded", function() {
-                        var modal = document.getElementById("successModal");
-                        if (modal) {
-                            modal.addEventListener("click", function(e) {
-                                if (e.target === this) {
-                                    closeSuccessModal();
-                                }
-                            });
-                            
-                            // Auto close after 5 seconds
-                            setTimeout(function() {
-                                closeSuccessModal();
-                            }, 5000);
-                        }
-                    });
-                  </script>
-                  <style>
-                    .modal-actions {
-                        margin-top: 20px;
-                        text-align: center;
-                    }
-                    
-                    .close-modal-btn {
-                        background-color: #d72f2f;
-                        color: white;
-                        border: none;
-                        padding: 8px 16px;
-                        border-radius: 4px;
-                        cursor: pointer;
-                        font-weight: bold;
-                    }
-                    
-                    .close-modal-btn:hover {
-                        background-color: #b12828;
-                    }
-                  </style>';
-        }
-        unset($_SESSION['registration_success']);
+    if (isset($_SESSION['madrasa_registration_success'])) {
+        $modalPath = dirname(dirname(dirname(__FILE__))) . '/views/usermodals/registrationforvolunteermodal.php';
+        include $modalPath;
+        unset($_SESSION['madrasa_registration_success']);
     }
     ?>
 
@@ -355,7 +297,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <!-- Optional Fields Indicator (Online Only) -->
                 <div class="form-section online-only" id="optional-indicator" style="display:none;">
                     <p style="color:#1a541c; font-size: 14px; margin-top: 0;">
-                        <em>Note: College, Program, Year Level, and School fields are optional for Online registration. Fill them only if you want to provide this information.</em>
+                        <em>Note: College, Program, Year Level, School fields, and COR are optional for Online registration. Fill them only if you want to provide this information.</em>
                     </p>
                 </div>
 

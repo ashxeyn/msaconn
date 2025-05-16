@@ -236,15 +236,21 @@ function updateOrgUpdates(updatesData) {
         const formattedDate = formatDate(new Date(item.created_at));
         const imagePath = item.image_path ? base_url + 'assets' + item.image_path : base_url + 'assets/images/login.jpg';
         
+        // Count words for truncated content
+        const words = item.content.split(' ');
+        const truncatedContent = (words.length > 95) ? words.slice(0, 95).join(' ') + '...' : item.content;
+        
         newContent += `
-            <div class="update-item">
-                <div class="update-details">
-                    <img src="${imagePath}" alt="Update Image" class="update-image">
-                    <p class="update-date">${formattedDate}</p>
-                    <h3 class="update-title">${item.title}</h3>
-                    <p class="update-content">${item.content}</p>
+            <a href="news.php?id=${item.update_id}" class="update-link" style="text-decoration: none; color: inherit; display: block;">
+                <div class="update-item">
+                    <div class="update-details">
+                        <img src="${imagePath}" alt="Update Image" class="update-image">
+                        <p class="update-date">${formattedDate}</p>
+                        <h3 class="update-title">${item.title}</h3>
+                        <p class="update-content">${truncatedContent}</p>
+                    </div>
                 </div>
-            </div>
+            </a>
         `;
     });
     

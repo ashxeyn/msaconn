@@ -130,7 +130,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
             
             // Set session variables
-            $_SESSION['registration_success'] = true;
+            $_SESSION['volunteer_registration_success'] = true;
             $_SESSION['registration_type'] = 'volunteer';
             
             // Make sure session is written before redirect
@@ -158,12 +158,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Include only the header content, not the full HTML structure
     $base_url = 'http://' . $_SERVER['HTTP_HOST'] . '/msaconn/'; 
     include '../../includes/header.php'; 
-    
-    // Show success modal if registration was successful
-    if (isset($_SESSION['registration_success'])) {
-        include '../usermodals/registrationforvolunteermodal.php';
-        unset($_SESSION['registration_success']);
-    }
     ?>
     
     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" enctype="multipart/form-data" autocomplete="on">

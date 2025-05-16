@@ -502,4 +502,81 @@ class User {
         $query->execute();
         return $query->fetchAll();
     }
+    
+    // Fetch all org updates for the sidebar, ordered by creation date (newest first)
+    function fetchAllOrgUpdates() {
+        try {
+            $sql = "
+                SELECT ou.update_id as id, ou.title, ou.content, ou.created_at,
+                      (SELECT ui.file_path 
+                       FROM update_images ui 
+                       WHERE ui.update_id = ou.update_id 
+                       ORDER BY ui.upload_order ASC 
+                       LIMIT 1) as image_path
+                FROM org_updates ou
+                WHERE ou.is_deleted = 0
+                ORDER BY ou.created_at DESC
+            ";
+            
+            $query = $this->getConnection()->prepare($sql);
+            $query->execute();
+            $updates = $query->fetchAll(PDO::FETCH_ASSOC);
+            
+            // Format image paths
+            foreach ($updates as &$update) {
+                if (!empty($update['image_path'])) {
+                    $update['image_path'] = '/updates/' . $update['image_path'];
+                }
+            }
+            
+            return $updates;
+        } catch (PDOException $e) {
+            error_log("Error fetching all org updates: " . $e->getMessage());
+            return [];
+        }
+    }
+    
+    // Fetch a single organization update by ID
+    function fetchOrgUpdateById($update_id) {
+        try {
+            // Get the main article data
+            $sql = "SELECT * FROM org_updates WHERE update_id = :update_id AND is_deleted = 0";
+            
+            $query = $this->getConnection()->prepare($sql);
+            $query->bindParam(':update_id', $update_id, PDO::PARAM_INT);
+            $query->execute();
+            
+            $update = $query->fetch(PDO::FETCH_ASSOC);
+            
+            if ($update) {
+                // Get all images for this update
+                $imagesSql = "SELECT image_id, file_path, upload_order 
+                             FROM update_images 
+                             WHERE update_id = :update_id
+                             ORDER BY upload_order ASC";
+                
+                $imagesQuery = $this->getConnection()->prepare($imagesSql);
+                $imagesQuery->bindParam(':update_id', $update_id, PDO::PARAM_INT);
+                $imagesQuery->execute();
+                $update['images'] = $imagesQuery->fetchAll(PDO::FETCH_ASSOC);
+                
+                // Format image paths
+                foreach ($update['images'] as &$image) {
+                    if (!empty($image['file_path'])) {
+                        $image['file_path'] = '/updates/' . $image['file_path'];
+                    }
+                }
+                
+                // Keep first image in image_path for backward compatibility
+                if (!empty($update['images'][0]['file_path'])) {
+                    $update['image_path'] = $update['images'][0]['file_path'];
+                }
+            }
+            
+            return $update;
+        } catch (PDOException $e) {
+            error_log("Error fetching org update by ID: " . $e->getMessage());
+            return false;
+        }
+    }
 }

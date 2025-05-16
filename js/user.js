@@ -444,13 +444,44 @@ async function fetchDownloadableFiles() {
     }
 }
 
+// Add a specific fix for the about us page header
+function fixAboutUsHeader() {
+    // Check if we're on the about us page
+    const isAboutPage = window.location.href.includes('aboutus');
+    if (!isAboutPage) {
+        return; // Not on about us page, skip fix
+    }
+    
+    // Force the header to be sticky
+    const header = document.querySelector('header');
+    if (header) {
+        header.style.position = 'sticky';
+        header.style.top = '0';
+        header.style.zIndex = '99999';
+        
+        // Add a class that we can target with CSS
+        header.classList.add('force-sticky');
+        
+        console.log('About us page detected: applying sticky header fix');
+    }
+}
+
+// Run the header fix on page load
+document.addEventListener('DOMContentLoaded', function() {
+    fixAboutUsHeader();
+    // Run other initialization functions
+    fetchDownloadableFiles();
+    fetchTransparencyData();
+    // ... rest of the DOMContentLoaded functions
+});
+
+// For good measure, also run it after a small delay to ensure DOM is fully processed
+setTimeout(fixAboutUsHeader, 500);
+
 // Trigger file download
 function downloadFile(fileId) {
     window.location.href = `../../handler/user/download.php?file_id=${fileId}`;
 }
-
-// Load files on page load
-document.addEventListener('DOMContentLoaded', fetchDownloadableFiles);
 
 document.addEventListener('DOMContentLoaded', function () {
     fetchTransparencyData();

@@ -1,0 +1,64 @@
+/* Hide spinner controls (up/down arrows) on content elements only */
+
+/* Target specific elements for spinner removal */
+.article-content,
+.article-content p, 
+.article-content div,
+.sidebar-excerpt,
+.sidebar-title,
+p, h1, h2, h3, h4, h5, h6 {
+    /* Hide inner spinners only, not scrollbars */
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+}
+
+/* Hide WebKit spinner buttons but not scrollbars */
+.article-content *::-webkit-inner-spin-button,
+.article-content *::-webkit-outer-spin-button,
+.sidebar-excerpt::-webkit-inner-spin-button,
+.sidebar-excerpt::-webkit-outer-spin-button,
+.article-date::-webkit-inner-spin-button,
+.sidebar-date::-webkit-inner-spin-button,
+p::-webkit-inner-spin-button,
+h1::-webkit-inner-spin-button,
+h2::-webkit-inner-spin-button,
+h3::-webkit-inner-spin-button {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+    margin: 0 !important;
+    opacity: 0 !important;
+}
+
+/* Ensure proper sidebar scrolling */
+.sidebar-container {
+    overflow-y: auto !important;
+    scrollbar-width: thin !important;
+    -ms-overflow-style: auto !important;
+}
+
+/* Custom scrollbar for Webkit browsers */
+.sidebar-container::-webkit-scrollbar {
+    width: 8px !important;
+    display: block !important;
+}
+
+.sidebar-container::-webkit-scrollbar-track {
+    background: #f5f5f5 !important;
+    display: block !important;
+}
+
+.sidebar-container::-webkit-scrollbar-thumb {
+    background-color: #1a541c !important;
+    border-radius: 4px !important;
+    display: block !important;
+}
+
+/* Fix for text fields and other input elements */
+input, 
+textarea, 
+select, 
+.form-control {
+    -moz-appearance: textfield !important;
+}

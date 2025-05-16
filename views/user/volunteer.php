@@ -5,11 +5,12 @@ $user = new User();
 $volunteerInfo = $user->fetchVolunteerInfo();
 $backgroundImage = $user->fetchBackgroundImage();
 
+// Set session flag if URL parameter is present
 if (isset($_GET['registration_success']) && $_GET['registration_success'] == '1') {
-    $_SESSION['registration_success'] = true;
+    $_SESSION['volunteer_registration_success'] = true;
 }
 
-$debug_session = isset($_SESSION['registration_success']) ? "Registration success is set" : "Registration success is NOT set";
+$debug_session = isset($_SESSION['volunteer_registration_success']) ? "Registration success is set" : "Registration success is NOT set";
 ?>
 
 <!DOCTYPE html>
@@ -68,14 +69,11 @@ $debug_session = isset($_SESSION['registration_success']) ? "Registration succes
     <?php include '../../includes/footer.php'; ?>
 
     <?php
-    $show_modal = isset($_SESSION['registration_success']) || (isset($_GET['registration_success']) && $_GET['registration_success'] == '1');
-    
-    if ($show_modal) {
+    // Show modal only once, then clear the session flag
+    if (isset($_SESSION['volunteer_registration_success'])) {
         include '../usermodals/registrationforvolunteermodal.php';
-        unset($_SESSION['registration_success']);
-        echo '<script>console.log("Modal included");</script>';
-    } else {
-        echo '<script>console.log("Modal not included: no success flag found");</script>';
+        unset($_SESSION['volunteer_registration_success']);
+        echo '<script>console.log("Registration success modal shown");</script>';
     }
     ?>
     <script src="<?php echo $base_url; ?>js/user.js"></script>

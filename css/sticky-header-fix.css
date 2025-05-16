@@ -1,0 +1,106 @@
+/* Forceful sticky header fix - override all other styles */
+
+/* Target header directly */
+header {
+    position: sticky !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 99999 !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2) !important;
+}
+
+/* Class-based approach (added by JS) */
+.sticky-header-forced {
+    position: sticky !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    z-index: 99999 !important;
+}
+
+/* Adjust body to make room for the fixed header */
+.has-sticky-header {
+    /* JS will set the exact padding value */
+    padding-top: 0; /* Changed from 140px fallback value */
+}
+
+/* Fix sidebar positioning to account for fixed header */
+.sidebar-container {
+    top: 140px !important; /* Start below the header - will be adjusted by JS */
+    padding-top: 0 !important;
+    height: calc(100vh - 140px) !important; /* Adjust height to account for header */
+    max-height: calc(100vh - 140px) !important;
+}
+
+/* Additional fixes specifically for news page */
+.page-container {
+    display: flex !important; 
+    flex-direction: row !important;
+    align-items: flex-start !important;
+    position: relative !important;
+}
+
+.article-container {
+    width: 70% !important;
+    flex: 7 !important;
+}
+
+.page-container .sidebar-container {
+    position: sticky !important;
+    flex: 3 !important;
+    width: 30% !important;
+    overflow-y: auto !important;
+    align-self: flex-start !important;
+    z-index: 9000 !important;
+    background: #fff !important;
+}
+
+/* Mobile view adjustments */
+@media (max-width: 992px) {
+    .sidebar-container {
+        position: relative !important;
+        top: 0 !important;
+        height: auto !important;
+        max-height: none !important;
+        margin-top: 20px !important;
+    }
+    
+    .page-container {
+        flex-direction: column !important;
+    }
+    
+    .article-container, 
+    .page-container .sidebar-container {
+        width: 100% !important;
+        flex: 1 0 auto !important;
+    }
+}
+
+/* Make sure elements in the header don't mess with the stickiness */
+header * {
+    max-height: none !important;
+    overflow: visible !important;
+}
+
+/* Ensure nested elements don't have conflicting positions */
+header nav, header .navbar {
+    position: relative !important;
+}
+
+/* Fix for Safari and some mobile browsers */
+@supports (position: sticky) {
+    header {
+        position: sticky !important;
+    }
+}
+
+/* IE11 fix */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    header {
+        position: sticky !important;
+    }
+    body {
+        padding-top: 0; /* Changed from 140px fallback for IE */
+    }
+} 

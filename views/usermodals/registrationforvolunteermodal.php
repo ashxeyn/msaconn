@@ -1,8 +1,4 @@
-<!-- filepath: c:\xampp\htdocs\msaconnect\views\usermodals\registrationforvolunteermodal.php -->
-<!-- Debug info -->
-<div style="background: green; color: white; padding: 5px; margin: 10px 0;">
-    Modal file included successfully
-</div>
+<!-- filepath: c:\xampp\htdocs\msaconn\views\usermodals\registrationforvolunteermodal.php -->
 
 <div id="successModal" class="modal" style="display: block !important;">
     <div class="modal-content">
@@ -10,7 +6,7 @@
             <i class="fa fa-check-circle"></i>
         </div>
         <h2>Registration Received</h2>
-        <p>Thank you for your volunteer registration. Your application has been received and will be reviewed by our team.</p>
+        <p>Your registration for volunteer has been received and will be processed by our team.</p>
         <div class="modal-actions">
             <button type="button" class="close-modal-btn" onclick="closeVolunteerModal()">Close</button>
         </div>
@@ -20,7 +16,7 @@
 <script>
     function closeVolunteerModal() {
         document.getElementById("successModal").style.display = "none";
-        window.location.href = "volunteer.php";
+        window.location.href = "registrationmadrasa.php";
     }
     
     // Auto close after 5 seconds
@@ -44,7 +40,7 @@
 
 <style>
     .modal {
-        display: none;
+        display: block; /* Changed from 'none' to 'block' to make sure it's visible */
         position: fixed;
         z-index: 1000;
         left: 0;
