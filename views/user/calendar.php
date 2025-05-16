@@ -75,11 +75,10 @@ $calendar = $adminObj->fetchDailyPrayers();
                     <table class="msa-table">
                         <thead>
                             <tr>
-                                <th>Time</th>
-                                <th>Prayer Type</th>
-                                <th>Imam</th>
-                                <th>Topic</th>
-                                <th>Location</th>
+                                <th>Salah</th>
+                                <th>Adhan</th>
+                                <th>Iqamah</th>
+                                <th>MSA Musallah</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -95,27 +94,28 @@ $calendar = $adminObj->fetchDailyPrayers();
                             ?>
                                 <tr>
                                     <td>
-                                        <?php echo !empty($prayer['time']) ? date('h:i A', strtotime($prayer['time'])) : '<span class="text-danger">No time set</span>'; ?>
-                                    </td>
-                                    <td>
                                         <?= $prayerTypeDisplay ?>
                                         <?php if ($isFriday && $prayer['prayer_type'] === 'jumu\'ah'): ?>
                                             <br><small class="text-muted">(Friday Prayer)</small>
                                         <?php endif; ?>
                                     </td>
-                                    <td><?= clean_input($prayer['speaker']) ?></td>
-                                    <td><?= clean_input($prayer['topic']) ?></td>
+                                    <td>
+                                        <?php echo !empty($prayer['time']) ? date('h:i A', strtotime($prayer['time'])) : '<span class="text-danger">No time set</span>'; ?>
+                                    </td>
+                                    <td>
+                                        <?php echo !empty($prayer['iqamah']) ? date('h:i A', strtotime($prayer['iqamah'])) : '<span class="text-danger">No time set</span>'; ?>
+                                    </td>
                                     <td><?= clean_input($prayer['location']) ?></td>
                                 </tr>
                             <?php endforeach; ?>
                             <?php if (!$hasTodayPrayer): ?>
                                 <tr>
-                                    <td colspan="5" class="text-center">No prayer schedules for today</td>
+                                    <td colspan="4" class="text-center">No prayer schedules for today</td>
                                 </tr>
                             <?php endif; ?>
                             <?php else: ?>
                                 <tr>
-                                    <td colspan="5" class="text-center">No prayer schedules available</td>
+                                    <td colspan="4" class="text-center">No prayer schedules available</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>

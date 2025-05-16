@@ -32,7 +32,7 @@ function is_current_page($page_names) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Two-Tone Header Design</title>
+    <title>MSA Connect</title>
     <?php $base_url = 'http://' . $_SERVER['HTTP_HOST'] . '/msaconn/'; ?>
         <link rel="stylesheet" href="<?php echo $base_url; ?>css/standardized-fonts.css?v=<?php echo time(); ?>">    
         <link rel="stylesheet" href="<?php echo $base_url; ?>css/header.css?v=<?php echo time(); ?>">  

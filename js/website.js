@@ -494,14 +494,12 @@ function updateCalendarPage() {
                 console.error('Error in response:', response.message);
                 updateCalendarBackground(null);
                 updateCalendarContent(null);
-                // updateDailyPrayers(null);
             }
         },
         error: function(xhr, status, error) {
             console.error('Error fetching calendar data:', error);
             updateCalendarBackground(null);
             updateCalendarContent(null);
-            // updateDailyPrayers(null); 
         }
     });
 }
@@ -549,7 +547,7 @@ function updateCalendarContent(calendarInfo) {
 function updateDailyPrayers(dailyPrayers) {
     if (!dailyPrayers) return;
     
-    const tableBody = $('.prayer-table tbody');
+    const tableBody = $('.msa-table tbody');
     if (!tableBody.length) return;
     
     const todayDate = new Date().toISOString().split('T')[0]; 
@@ -563,16 +561,16 @@ function updateDailyPrayers(dailyPrayers) {
             const prayerTypeDisplay = prayer.prayer_type.charAt(0).toUpperCase() + prayer.prayer_type.slice(1);
             const isFriday = new Date(prayer.date).getDay() === 5; 
             const timeDisplay = prayer.time ? new Date('1970-01-01T' + prayer.time).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', hour12: true}) : '<span class="text-danger">No time set</span>';
+            const iqamahDisplay = prayer.iqamah ? new Date('1970-01-01T' + prayer.iqamah).toLocaleTimeString('en-US', {hour: 'numeric', minute: '2-digit', hour12: true}) : '<span class="text-danger">No time set</span>';
             
             newContent += `
                 <tr>
-                    <td>${timeDisplay}</td>
                     <td>
                         ${prayerTypeDisplay}
                         ${(isFriday && prayer.prayer_type === "jumu'ah") ? '<br><small class="text-muted">(Friday Prayer)</small>' : ''}
                     </td>
-                    <td>${prayer.speaker}</td>
-                    <td>${prayer.topic}</td>
+                    <td>${timeDisplay}</td>
+                    <td>${iqamahDisplay}</td>
                     <td>${prayer.location}</td>
                 </tr>
             `;
@@ -580,7 +578,7 @@ function updateDailyPrayers(dailyPrayers) {
     } else {
         newContent = `
             <tr>
-                <td colspan="5" class="text-center">No prayer schedules for today</td>
+                <td colspan="4" class="text-center">No prayer schedules for today</td>
             </tr>
         `;
     }
@@ -588,7 +586,7 @@ function updateDailyPrayers(dailyPrayers) {
     const currentContent = tableBody.html().trim();
     if (currentContent !== newContent.trim()) {
         tableBody.html(newContent);
-        console.log('Daily prayers schedule updated');
+        console.log('Daily prayers schedule updated at', new Date().toLocaleTimeString());
     }
 }
 
@@ -601,12 +599,15 @@ function initCalendarPage() {
         clearInterval(calendarRefreshInterval);
     }
 
+    // Initial update
     updateCalendarPage();
 
+    // Set up periodic updates every 5 seconds
     calendarRefreshInterval = setInterval(function() {
         updateCalendarPage();
-    }, 10000); 
+    }, 5000); 
 
+    // Pause updates when user is interacting with the page
     $('.hero').hover(
         function() {
             if (calendarHeroInterval) {
@@ -620,10 +621,22 @@ function initCalendarPage() {
         function() {
             calendarRefreshInterval = setInterval(function() {
                 updateCalendarPage();
-            }, 10000);
+            }, 5000);
             console.log('Calendar updates resumed after hover');
         }
     );
+
+    // Force update when window regains focus
+    $(window).on('focus', function() {
+        updateCalendarPage();
+    });
+
+    // Force update when tab becomes visible
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            updateCalendarPage();
+        }
+    });
 }
 
 // REGISTRATION MADRASA PAGE FUNCTIONS

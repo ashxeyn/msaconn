@@ -579,4 +579,20 @@ class User {
             return false;
         }
     }
+
+    public function fetchDailyPrayers() {
+        try {
+            $sql = "SELECT prayer_id, date, time, iqamah, prayer_type, location 
+                    FROM prayer_schedule 
+                    WHERE is_deleted = 0 
+                    ORDER BY date ASC, time ASC";
+            
+            $query = $this->getConnection()->prepare($sql);
+            $query->execute();
+            return $query->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            error_log("Error in fetchDailyPrayers: " . $e->getMessage());
+            return [];
+        }
+    }
 }
