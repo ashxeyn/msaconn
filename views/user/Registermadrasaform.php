@@ -265,6 +265,79 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .form-columns {
             margin-bottom: 30px;
         }
+        
+        /* Fix dropdown styling */
+        select {
+            display: block;
+            width: 100%;
+            padding: 8px 12px;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #333;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+            transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+            margin-bottom: 15px;
+            -webkit-appearance: menulist; /* Safari and Chrome */
+            -moz-appearance: menulist; /* Firefox */
+            appearance: menulist; /* Standard */
+        }
+        
+        /* Address fields section styling */
+        .address-fields {
+            margin-bottom: 20px;
+        }
+        
+        .address-fields label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .address-fields select,
+        .address-fields input {
+            width: 100%;
+            margin-bottom: 15px;
+            height: 40px;
+            box-sizing: border-box;
+        }
+        
+        /* Enhanced dropdown styling for address fields */
+        #region, #province, #city, #barangay {
+            display: block;
+            width: 100% !important;
+            height: 40px !important;
+            margin-bottom: 15px !important;
+            padding: 8px 12px !important;
+            font-size: 14px !important;
+            border: 1px solid #ccc !important;
+            border-radius: 4px !important;
+            background-color: #fff !important;
+        }
+        
+        /* Ensure each address field appears on its own line */
+        .form-section.online-only.address-fields > * {
+            display: block;
+            width: 100%;
+            clear: both;
+        }
+        
+        /* Remove any horizontal alignment of address fields */
+        .address-row {
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        /* Ensure consistent field sizes */
+        input[type="text"], 
+        input[type="email"], 
+        input[type="tel"],
+        select {
+            height: 40px;
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body>
@@ -315,7 +388,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <?php if (!empty($contactNumberErr)): ?><span class="error"><?= $contactNumberErr ?></span><?php endif; ?>
                 </div>
                 <!-- Address Fields (Online Only) -->
-                <div class="form-section online-only">
+                <div class="form-section online-only address-fields">
+                    <h3>Address Information</h3>
+                    
                     <label for="region">Region:</label>
                     <select id="region" name="region" required>
                         <option value="">Select Region</option>
@@ -326,7 +401,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <option value="">Select Province</option>
                     </select>
 
-                    <label for="city">City:</label>
+                    <label for="city">City/Municipality:</label>
                     <select id="city" name="city" required>
                         <option value="">Select City/Municipality</option>
                     </select>
@@ -420,9 +495,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <?php include '../../includes/footer.php'; ?>
     
-   
+    <!-- First load user.js which contains the regionData -->
     <script src="../../js/user.js"></script>
-    <script src="https://f001.backblazeb2.com/file/buonzz-assets/jquery.ph-locations-v1.0.0.js"></script>
+    <!-- Then load registermadrasaform.js which uses the regionData -->
+    <script src="../../js/registermadrasaform.js"></script>
+    
     <script>
         // Initialize everything when the document is ready
         document.addEventListener('DOMContentLoaded', function() {
@@ -434,20 +511,110 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // Initialize toggleRegistrationTypeFields on page load
             toggleRegistrationTypeFields();
             
-            // Initialize address dropdowns
-            initializeAddressDropdowns();
-            
-            // Set initial value for region dropdown (Zamboanga Peninsula) if on online registration
-            if (document.getElementById('registration_type').value === 'Online') {
-                const regionSelect = document.getElementById('region');
-                if (regionSelect && regionSelect.options.length > 0) {
-                    setTimeout(function() {
-                        regionSelect.selectedIndex = 1; // Select first option after placeholder
-                        regionSelect.dispatchEvent(new Event('change'));
-                    }, 500);
-                }
-            }
+            // Explicitly initialize the address dropdowns
+            initAddressDropdowns();
         });
+        
+        // Backup implementation of address dropdowns initialization
+        function initAddressDropdowns() {
+            const regionSelect = document.getElementById('region');
+            const provinceSelect = document.getElementById('province');
+            const citySelect = document.getElementById('city');
+            const barangaySelect = document.getElementById('barangay');
+            
+            if(!regionSelect || !provinceSelect || !citySelect || !barangaySelect) {
+                console.error('Address dropdown elements not found');
+                return;
+            }
+            
+            // Clear existing options except the first one
+            regionSelect.innerHTML = '<option value="">Select Region</option>';
+            provinceSelect.innerHTML = '<option value="">Select Province</option>';
+            citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
+            barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+            
+            // Define region data if it's not already defined
+            if (typeof regionData === 'undefined') {
+                console.log('Defining regionData locally');
+                window.regionData = {
+                    regions: ['Zamboanga Peninsula'],
+                    provinces: [
+                        'Zamboanga del Norte',
+                        'Zamboanga del Sur',
+                        'Zamboanga Sibugay',
+                        'Zamboanga City',
+                        'Isabela City'
+                    ],
+                    cities: {
+                        'Zamboanga del Norte': ['Dapitan City', 'Dipolog City', 'Katipunan', 'La Libertad', 'Labason', 'Liloy', 'Manukan', 'Polanco', 'Rizal', 'Roxas', 'Sergio Osmeña Sr.', 'Siayan', 'Sindangan', 'Siocon', 'Tampilisan'],
+                        'Zamboanga del Sur': ['Aurora', 'Bayog', 'Dimataling', 'Dinas', 'Dumalinao', 'Dumingag', 'Guipos', 'Josefina', 'Kumalarang', 'Labangan', 'Lakewood', 'Lapuyan', 'Mahayag', 'Margosatubig', 'Midsalip', 'Molave', 'Pagadian City', 'Pitogo', 'Ramon Magsaysay', 'San Miguel', 'San Pablo', 'Sominot', 'Tabina', 'Tambulig', 'Tigbao', 'Tukuran', 'Vincenzo A. Sagun'],
+                        'Zamboanga Sibugay': ['Alicia', 'Buug', 'Diplahan', 'Imelda', 'Ipil', 'Kabasalan', 'Mabuhay', 'Malangas', 'Naga', 'Olutanga', 'Payao', 'Roseller Lim', 'Siay', 'Talusan', 'Titay', 'Tungawan'],
+                        'Zamboanga City': ['Zamboanga City'],
+                        'Isabela City': ['Isabela City']
+                    },
+                    barangays: {
+                        'Zamboanga City': ['Arena Blanco', 'Ayala', 'Baluno', 'Boalan', 'Bolong', 'Buenavista', 'Bunguiao', 'Busay', 'Cabaluay', 'Cabatangan', 'Calarian', 'Canelar', 'Divisoria', 'Guiwan', 'Lunzuran', 'Putik', 'Recodo', 'San Jose Gusu', 'Sta. Maria', 'Tetuan'],
+                        'Dipolog City': ['Barra', 'Biasong', 'Central', 'Cogon', 'Dicayas', 'Diwan', 'Estaka', 'Galas', 'Gulayon', 'Lugdungan', 'Magsaysay', 'Olingan', 'Sicayab', 'Sta. Isabel', 'Turno']
+                    }
+                };
+            }
+            
+            // Populate Regions
+            regionData.regions.forEach(region => {
+                const option = document.createElement('option');
+                option.value = region;
+                option.textContent = region;
+                regionSelect.appendChild(option);
+            });
+
+            // Handle Region Change
+            regionSelect.addEventListener('change', function() {
+                const selectedRegion = regionSelect.value;
+                provinceSelect.innerHTML = '<option value="">Select Province</option>';
+                citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
+                barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+
+                if (selectedRegion === 'Zamboanga Peninsula') {
+                    regionData.provinces.forEach(province => {
+                        const option = document.createElement('option');
+                        option.value = province;
+                        option.textContent = province;
+                        provinceSelect.appendChild(option);
+                    });
+                }
+            });
+
+            // Handle Province Change
+            provinceSelect.addEventListener('change', function() {
+                const selectedProvince = provinceSelect.value;
+                citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
+                barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+
+                if (regionData.cities[selectedProvince]) {
+                    regionData.cities[selectedProvince].forEach(city => {
+                        const option = document.createElement('option');
+                        option.value = city;
+                        option.textContent = city;
+                        citySelect.appendChild(option);
+                    });
+                }
+            });
+
+            // Handle City Change
+            citySelect.addEventListener('change', function() {
+                const selectedCity = citySelect.value;
+                barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+
+                if (regionData.barangays[selectedCity]) {
+                    regionData.barangays[selectedCity].forEach(barangay => {
+                        const option = document.createElement('option');
+                        option.value = barangay;
+                        option.textContent = barangay;
+                        barangaySelect.appendChild(option);
+                    });
+                }
+            });
+        }
     </script>
     
     <!-- Script to ensure header remains fixed -->
@@ -479,6 +646,74 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 console.log('Fixed header applied with height: ' + headerHeight);
             }
         });
+    </script>
+    
+    <script>
+        // Function to toggle fields based on registration type
+        function toggleRegistrationTypeFields() {
+            var regType = document.getElementById('registration_type').value;
+            var onsiteFields = document.querySelectorAll('.onsite-only');
+            var onlineFields = document.querySelectorAll('.online-only');
+            var optionalIndicator = document.getElementById('optional-indicator');
+            var addressFields = document.querySelector('.address-fields');
+            
+            // Hide all first
+            onsiteFields.forEach(function(el) { 
+                if (!el.classList.contains('online-only')) {
+                    el.style.display = 'none'; 
+                }
+            });
+            
+            onlineFields.forEach(function(el) { 
+                el.style.display = 'none';
+            });
+            
+            if (optionalIndicator) optionalIndicator.style.display = 'none';
+
+            // Show college/program/year for both, but required only for On-site
+            var college = document.getElementById('college_id');
+            var program = document.getElementById('program_id');
+            var year = document.getElementById('year_level');
+            var collegeSections = document.querySelectorAll('.form-section.onsite-only.online-only');
+            
+            // Always show address fields for both registration types
+            if (addressFields) {
+                addressFields.style.display = 'block';
+            }
+
+            if (regType === 'On-site') {
+                onsiteFields.forEach(function(el) { 
+                    el.style.display = 'block';
+                });
+                
+                collegeSections.forEach(function(el) { 
+                    el.style.display = 'block';
+                });
+                
+                if (college) college.required = true;
+                if (program) program.required = true;
+                if (year) year.required = true;
+            } else if (regType === 'Online') {
+                onlineFields.forEach(function(el) { 
+                    el.style.display = 'block';
+                });
+                
+                collegeSections.forEach(function(el) { 
+                    el.style.display = 'block';
+                });
+                
+                if (college) college.required = false;
+                if (program) program.required = false;
+                if (year) year.required = false;
+                
+                if (optionalIndicator) optionalIndicator.style.display = 'block';
+            }
+            
+            // Reinitialize address dropdowns to ensure they're properly styled
+            setTimeout(function() {
+                initAddressDropdowns();
+            }, 100);
+        }
     </script>
 </body>
 </html>

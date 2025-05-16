@@ -114,20 +114,49 @@ if (!$isAjax || !isset($_GET['no_css'])) {
 <style>
 .page-container {
     display: flex;
-    height: calc(100vh - 120px); /* Adjust based on your header/footer size */
+    min-height: calc(100vh - 120px);
+    height: 100%; /* Ensure it takes full height */
 }
 
 .article-container {
     flex: 1;
-    overflow-y: auto;
     padding-right: 20px;
-    height: 100%;
+    max-height: calc(100vh - 120px); /* Maximum height for scrolling */
+    height: calc(100vh - 120px); /* Fixed height to enable scrolling */
+    min-height: calc(100vh - 120px); /* Minimum height to ensure it fills the screen */
+    overflow-y: auto; /* Enable vertical scrolling */
+    position: relative;
+    scrollbar-width: none; /* Hide scrollbar in Firefox */
+    -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
+}
+
+/* Hide scrollbar for Webkit browsers */
+.article-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Ensure content is properly positioned within the article container */
+.article-content {
+    width: 100%;
+    height: auto;
+    min-height: 100%;
+    display: block;
+}
+
+/* For short content that doesn't fill the viewport */
+.short-content {
+    overflow: visible !important; /* Override auto-scrolling */
+    height: auto !important;     /* Allow container to shrink to content */
+    min-height: auto !important; /* Remove minimum height constraint */
+    max-height: none !important; /* Remove maximum height constraint */
 }
 
 .sidebar-container {
     width: 350px;
     overflow-y: auto;
-    height: 100%;
+    height: 100vh; /* Full viewport height for sidebar */
+    position: sticky;
+    top: 0;
     padding-left: 10px;
     border-left: 1px solid #e0e0e0;
     scrollbar-width: none; /* Firefox */
@@ -142,6 +171,7 @@ if (!$isAjax || !isset($_GET['no_css'])) {
     background-color: #f5f5f5; /* Dirty white color */
     color: #000; /* Black text */
     padding: 10px;
+    padding-top: 20px; /* Additional top padding to move text down */
     font-weight: bold;
 }
 </style>
@@ -227,6 +257,68 @@ function checkForArticleUpdates() {
 
 // Check for updates every 5 seconds
 setInterval(checkForArticleUpdates, 5000);
+
+// Add event listener to prevent scrolling beyond article container
+document.addEventListener('DOMContentLoaded', function() {
+    const articleContainer = document.querySelector('.article-container');
+    const articleContent = document.querySelector('.article-content');
+    
+    // Ensure short content is fully visible and long content scrolls
+    function adjustArticleHeight() {
+        // Force reflow to get accurate measurements
+        articleContainer.style.overflow = 'visible';
+        const containerHeight = articleContainer.clientHeight;
+        const contentHeight = Math.max(
+            articleContent.scrollHeight,
+            articleContent.offsetHeight,
+            articleContent.getBoundingClientRect().height
+        );
+        
+        console.log('Container height:', containerHeight, 'Content height:', contentHeight);
+        
+        // If content is shorter than container, make it fully visible
+        if (contentHeight <= containerHeight) {
+            articleContainer.classList.add('short-content');
+            articleContainer.style.overflow = 'visible';
+            articleContainer.style.display = 'flex';
+            articleContainer.style.flexDirection = 'column';
+            articleContent.style.flex = '1';
+        } else {
+            // Content is longer, enable scrolling
+            articleContainer.classList.remove('short-content');
+            articleContainer.style.overflow = 'auto';
+            articleContainer.style.overflowX = 'hidden';
+        }
+    }
+    
+    // Initial adjustment
+    adjustArticleHeight();
+    
+    // Run again after images and other resources load
+    window.addEventListener('load', adjustArticleHeight);
+    
+    // Run on window resize
+    window.addEventListener('resize', adjustArticleHeight);
+    
+    // Re-check periodically in case dynamic content changes (like images loading)
+    setTimeout(adjustArticleHeight, 1000);
+    
+    articleContainer.addEventListener('wheel', function(e) {
+        // If content is marked as short, allow normal page scrolling
+        if (articleContainer.classList.contains('short-content')) {
+            return;
+        }
+        
+        const { scrollTop, scrollHeight, clientHeight } = this;
+        
+        // If scrolled to the top and trying to scroll further up
+        if(scrollTop === 0 && e.deltaY < 0) {
+            e.preventDefault();
+        }
+        
+        // We allow natural scrolling at the article's bottom
+    }, { passive: false });
+});
 </script>
 <?php } ?>
 <?php 

@@ -232,49 +232,140 @@ function toggleRegistrationTypeFields() {
         if (year) year.required = false;
         if (optionalIndicator) optionalIndicator.style.display = '';
     }
-}
 
-
-function previewImage(event) {
-    var file = event.target.files[0];
-    if (file) {
-        var reader = new FileReader();
-        reader.onload = function(e) {
-            var preview = document.getElementById('image-preview');
-            var placeholder = document.getElementById('upload-placeholder');
-            var previewImg = document.getElementById('preview-img');
-            
-            if (preview && placeholder && previewImg) {
-                preview.style.display = 'block';
-                previewImg.src = e.target.result;
-                placeholder.style.display = 'none';
-            }
-        };
-        reader.readAsDataURL(file);
+    // Call the initializeAddressDropdowns function from user.js when online registration is selected
+    if (regType === 'Online') {
+        if (typeof regionData === 'undefined') {
+            console.error('regionData is not defined, cannot initialize dropdowns');
+            return;
+        }
+        
+        if (typeof initializeAddressDropdowns === 'function') {
+            // Wait a bit for all DOM elements to be visible
+            setTimeout(function() {
+                try {
+                    initializeAddressDropdowns();
+                    
+                    // Auto-select Zamboanga Peninsula region
+                    const regionSelect = document.getElementById('region');
+                    if (regionSelect && regionSelect.options.length > 1) {
+                        regionSelect.selectedIndex = 1; // Select first option after placeholder
+                        regionSelect.dispatchEvent(new Event('change'));
+                    }
+                } catch (error) {
+                    console.error('Error initializing address dropdowns:', error);
+                    // Fall back to manual initialization
+                    initializeAddressDropdownsManually();
+                }
+            }, 300);
+        } else {
+            console.error('initializeAddressDropdowns function not found, using fallback');
+            initializeAddressDropdownsManually();
+        }
     }
 }
 
-function removeImage() {
-    var fileInput = document.getElementById('cor_file');
-    var preview = document.getElementById('image-preview');
-    var placeholder = document.getElementById('upload-placeholder');
+// Fallback function to manually initialize address dropdowns
+function initializeAddressDropdownsManually() {
+    if (typeof regionData === 'undefined') {
+        console.error('regionData not defined in this scope');
+        return;
+    }
     
-    if (fileInput && preview && placeholder) {
-        fileInput.value = '';
-        preview.style.display = 'none';
-        placeholder.style.display = 'block';
+    const regionSelect = document.getElementById('region');
+    const provinceSelect = document.getElementById('province');
+    const citySelect = document.getElementById('city');
+    const barangaySelect = document.getElementById('barangay');
+    
+    if (!regionSelect || !provinceSelect || !citySelect || !barangaySelect) {
+        console.error('One or more address dropdown elements not found');
+        return;
+    }
+    
+    // Clear existing options
+    regionSelect.innerHTML = '<option value="">Select Region</option>';
+    provinceSelect.innerHTML = '<option value="">Select Province</option>';
+    citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
+    barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+    
+    // Populate regions
+    regionData.regions.forEach(region => {
+        const option = document.createElement('option');
+        option.value = region;
+        option.textContent = region;
+        regionSelect.appendChild(option);
+    });
+    
+    // Add event listeners for cascading dropdowns
+    regionSelect.addEventListener('change', function() {
+        const selectedRegion = this.value;
+        
+        // Clear dependent dropdowns
+        provinceSelect.innerHTML = '<option value="">Select Province</option>';
+        citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
+        barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+        
+        // Populate provinces based on selected region
+        if (selectedRegion && selectedRegion === 'Zamboanga Peninsula') {
+            regionData.provinces.forEach(province => {
+                const option = document.createElement('option');
+                option.value = province;
+                option.textContent = province;
+                provinceSelect.appendChild(option);
+            });
+        }
+    });
+    
+    provinceSelect.addEventListener('change', function() {
+        const selectedProvince = this.value;
+        
+        // Clear dependent dropdowns
+        citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
+        barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+        
+        // Populate cities based on selected province
+        if (selectedProvince && regionData.cities[selectedProvince]) {
+            regionData.cities[selectedProvince].forEach(city => {
+                const option = document.createElement('option');
+                option.value = city;
+                option.textContent = city;
+                citySelect.appendChild(option);
+            });
+        }
+    });
+    
+    citySelect.addEventListener('change', function() {
+        const selectedCity = this.value;
+        
+        // Clear barangay dropdown
+        barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+        
+        // Populate barangays based on selected city
+        if (selectedCity && regionData.barangays[selectedCity]) {
+            regionData.barangays[selectedCity].forEach(barangay => {
+                const option = document.createElement('option');
+                option.value = barangay;
+                option.textContent = barangay;
+                barangaySelect.appendChild(option);
+            });
+        }
+    });
+    
+    // Auto-select Zamboanga Peninsula as default region
+    if (regionSelect.options.length > 1) {
+        regionSelect.selectedIndex = 1; // Select first option after placeholder
+        regionSelect.dispatchEvent(new Event('change'));
     }
 }
 
-
-// Year Levels Update (placeholder)
 function updateYearLevels() {
-    const programId = this.value;
-    const yearLevelSelect = document.querySelector(SELECTORS.YEAR_LEVEL_SELECT);
-    // Implement year levels update logic
+    // For future year level updates based on program
 }
 
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-    initEventListeners();
+// Initialize everything when the document is ready
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize registration form
+    if (document.getElementById('registration_type')) {
+        toggleRegistrationTypeFields();
+    }
 });
