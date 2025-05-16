@@ -47,7 +47,7 @@ body {
     padding: 0 !important;
 }
 header {
-    position: sticky !important;
+    position: fixed !important;
     top: 0 !important;
     z-index: 999999 !important;
     width: 100% !important;
@@ -59,6 +59,12 @@ header {
 main {
     margin-top: 0 !important;
     padding-top: 0 !important;
+}
+/* Ensure the hero section stays properly positioned with fixed header */
+.hero {
+    margin-top: 140px !important; /* Match the header height */
+    min-height: 400px !important;
+    height: auto !important;
 }
 </style>
 <?php include '../../includes/header.php'; ?>
@@ -176,34 +182,66 @@ main {
 <!-- Enhanced fix for sticky header -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Force header to be sticky with more aggressive approach
+        // Force header to be fixed with more aggressive approach
         const header = document.querySelector('header');
         if (header) {
-            // Apply all necessary styles directly to force stickiness
-            Object.assign(header.style, {
+            // Set fixed positioning with high z-index
+            const headerStyles = {
                 position: 'fixed !important',
                 top: '0 !important',
                 left: '0 !important',
                 right: '0 !important',
                 width: '100% !important',
                 zIndex: '9999999 !important',
-                backgroundColor: '#ffffff !important'
+                backgroundColor: '#ffffff !important',
+                boxShadow: '0 2px 10px rgba(0,0,0,0.2) !important'
+            };
+            
+            // Apply styles directly to the element
+            Object.entries(headerStyles).forEach(([key, value]) => {
+                header.style.setProperty(key, value, 'important');
             });
             
-            // Override any potential conflicting styles
+            // Also set as inline style with !important to override any other styles
             header.setAttribute('style', 'position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; width: 100% !important; z-index: 9999999 !important; background-color: #ffffff !important; box-shadow: 0 2px 10px rgba(0,0,0,0.2) !important;');
             
             // Get header height
             const headerHeight = header.offsetHeight;
             
-            // Apply padding to the hero section specifically instead of the body
+            // Apply margin to the hero section
             const heroSection = document.querySelector('.hero');
             if (heroSection) {
-                heroSection.style.paddingTop = headerHeight + 'px';
-                console.log('Added padding to hero section: ' + headerHeight + 'px');
+                heroSection.style.setProperty('margin-top', headerHeight + 'px', 'important');
+                
+                // Apply consistent height
+                heroSection.style.setProperty('min-height', '400px', 'important');
+                
+                console.log('Hero section configured: margin-top=' + headerHeight + 'px, min-height=400px');
             }
             
-            console.log('Fixed header applied with height: ' + headerHeight);
+            // For small screens, adjust the margin
+            function adjustHeroMargin() {
+                if (window.innerWidth <= 768) {
+                    heroSection.style.setProperty('margin-top', '120px', 'important');
+                    
+                    if (window.innerWidth <= 576) {
+                        heroSection.style.setProperty('margin-top', '100px', 'important');
+                    }
+                    
+                    if (window.innerWidth <= 480) {
+                        heroSection.style.setProperty('margin-top', '90px', 'important');
+                    }
+                } else {
+                    // Reset to header height for larger screens
+                    heroSection.style.setProperty('margin-top', headerHeight + 'px', 'important');
+                }
+            }
+            
+            // Call once and add resize listener
+            adjustHeroMargin();
+            window.addEventListener('resize', adjustHeroMargin);
+            
+            console.log('Fixed header implemented with height: ' + headerHeight + 'px');
         }
     });
 </script>
