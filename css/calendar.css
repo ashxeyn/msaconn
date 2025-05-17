@@ -203,6 +203,14 @@ body {
   overflow: hidden;
 }
 
+/* More events indicator */
+.more-events-indicator {
+  background-color: #9f2626; /* Different color to stand out */
+  text-align: center;
+  font-weight: bold;
+  font-style: italic;
+}
+
 /* Continued event styling */
 .event-badge.continued-event {
   background-color: #2c7a30; /* Slightly lighter shade of green */

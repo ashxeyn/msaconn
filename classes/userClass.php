@@ -209,7 +209,8 @@ class User {
             $sql = "SELECT file_id, file_name, file_path, file_type, file_size, created_at 
                     FROM downloadable_files 
                     WHERE is_deleted = 0 AND deleted_at IS NULL 
-                    ORDER BY created_at DESC";
+                    ORDER BY created_at DESC
+                    LIMIT 6";  // Limit to 6 latest files
                     
             $query = $this->db->connect()->prepare($sql);
             $query->execute();

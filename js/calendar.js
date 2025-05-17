@@ -124,7 +124,11 @@ document.addEventListener('DOMContentLoaded', function () {
             if (dayActivities.length > 0) {
                 dayCell.classList.add('has-events');
                 
-                dayActivities.forEach(activity => {
+                // Limit displayed events to 3 and add "..." for more
+                const displayLimit = 3;
+                const displayActivities = dayActivities.slice(0, displayLimit);
+                
+                displayActivities.forEach(activity => {
                     const eventBadge = document.createElement('div');
                     eventBadge.classList.add('event-badge');
                     eventBadge.textContent = activity.title;
@@ -136,6 +140,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     
                     dayCell.appendChild(eventBadge);
                 });
+                
+                // Add "..." indicator if there are more than 3 events
+                if (dayActivities.length > displayLimit) {
+                    const moreEventsIndicator = document.createElement('div');
+                    moreEventsIndicator.classList.add('event-badge', 'more-events-indicator');
+                    moreEventsIndicator.textContent = "...";
+                    dayCell.appendChild(moreEventsIndicator);
+                }
                 
                 // Add the date string as a data attribute
                 dayCell.setAttribute('data-date', currentDateString);

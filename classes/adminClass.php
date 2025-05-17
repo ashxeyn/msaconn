@@ -1627,7 +1627,8 @@ class Admin {
                 FROM downloadable_files f
                 LEFT JOIN users u ON f.user_id = u.user_id
                 WHERE f.deleted_at IS NULL
-                ORDER BY f.file_id ASC";
+                ORDER BY f.created_at DESC
+                LIMIT 6";  // Limit to 6 latest files
         
         $query = $this->db->connect()->prepare($sql);
         $query->execute();
