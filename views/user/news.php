@@ -116,6 +116,7 @@ if (!$isAjax || !isset($_GET['no_css'])) {
     display: flex;
     min-height: calc(100vh - 120px);
     height: 100%; /* Ensure it takes full height */
+    flex-direction: row;
 }
 
 .article-container {
@@ -128,6 +129,7 @@ if (!$isAjax || !isset($_GET['no_css'])) {
     position: relative;
     scrollbar-width: none; /* Hide scrollbar in Firefox */
     -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
+    background: #fff;
 }
 
 /* Hide scrollbar for Webkit browsers */
@@ -161,6 +163,7 @@ if (!$isAjax || !isset($_GET['no_css'])) {
     border-left: 1px solid #e0e0e0;
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE and Edge */
+    background: #fff;
 }
 
 .sidebar-container::-webkit-scrollbar {
@@ -173,6 +176,56 @@ if (!$isAjax || !isset($_GET['no_css'])) {
     padding: 10px;
     padding-top: 20px; /* Additional top padding to move text down */
     font-weight: bold;
+}
+
+@media (max-width: 900px) {
+  .sidebar-container {
+    width: 280px;
+    padding-left: 0;
+  }
+  .article-container {
+    padding-right: 10px;
+  }
+}
+
+@media (max-width: 700px) {
+  .page-container {
+    flex-direction: column;
+    min-height: 0 !important;
+    height: auto !important;
+  }
+  .article-container {
+    max-height: none !important;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  .sidebar-container {
+    width: 100%;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    position: static;
+    border-left: none;
+    border-top: 1px solid #e0e0e0;
+    margin-top: 20px;
+    padding: 0 0 20px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .sidebar-header {
+    font-size: 1rem;
+    padding: 8px 4px 8px 4px;
+  }
+  .sidebar-container {
+    padding: 0 0 15px 0;
+  }
+  .article-header h1.article-title {
+    font-size: 1.2rem;
+  }
+  .article-date {
+    font-size: 0.9rem;
+  }
 }
 </style>
 
