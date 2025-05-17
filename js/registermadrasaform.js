@@ -30,7 +30,7 @@ function initEventListeners() {
     }
 
     if (form) {
-        form.addEventListener('submit', validateForm);
+        form.addEventListener('submit', validateMadrasaForm);
     }
 
     if (backButton) {
@@ -73,6 +73,185 @@ function resetImageInput() {
     previewContainer.style.display = 'none';
 }
 
+// Form Validation for Madrasa Registration
+function validateMadrasaForm(e) {
+    console.log('validateMadrasaForm called!');
+    
+    const regType = document.getElementById('registration_type').value;
+    let isValid = true;
+    
+    // Clear previous error messages and input styling
+    clearValidationErrors();
+    
+    // Common required fields validation (for both On-site and Online)
+    const requiredFields = [
+        { id: 'first_name', message: 'First name is required' },
+        { id: 'last_name', message: 'Last name is required' },
+        { id: 'email', message: 'Email is required' },
+        { id: 'contact_number', message: 'Contact number is required' }
+    ];
+
+    // Validate common fields
+    requiredFields.forEach(field => {
+        const input = document.getElementById(field.id);
+        if (input && !input.value.trim()) {
+            showValidationError(input, field.message);
+            isValid = false;
+        }
+    });
+    
+    // Address fields validation - group them together
+    const addressFields = [
+        { id: 'region', required: true },
+        { id: 'province', required: true },
+        { id: 'city', required: true },
+        { id: 'barangay', required: true },
+        { id: 'street', required: true },
+        { id: 'zip_code', required: true }
+    ];
+    
+    // Check if any address field is empty
+    let addressComplete = true;
+    addressFields.forEach(field => {
+        const input = document.getElementById(field.id);
+        if (input && field.required && !input.value.trim()) {
+            addressComplete = false;
+        }
+    });
+    
+    // If any address field is empty, show a single error message for zip_code field
+    if (!addressComplete) {
+        const zipCodeInput = document.getElementById('zip_code');
+        if (zipCodeInput) {
+            showValidationError(zipCodeInput, 'Address information is required');
+            isValid = false;
+        }
+    }
+    
+    // Email format validation
+    const emailInput = document.getElementById('email');
+    if (emailInput && emailInput.value.trim() && !validateEmail(emailInput.value)) {
+        showValidationError(emailInput, 'Invalid email format');
+        isValid = false;
+    }
+    
+    // Phone number format validation
+    const contactInput = document.getElementById('contact_number');
+    if (contactInput && contactInput.value.trim() && !validatePhoneNumber(contactInput.value)) {
+        showValidationError(contactInput, 'Invalid phone number format');
+        isValid = false;
+    }
+    
+    // On-site specific validations
+    if (regType === 'On-site') {
+        // College validation
+        const collegeInput = document.getElementById('college_id');
+        if (collegeInput && !collegeInput.value.trim()) {
+            showValidationError(collegeInput, 'College is required for On-site registration');
+            isValid = false;
+        }
+        
+        // Program validation
+        const programInput = document.getElementById('program_id');
+        if (programInput && !programInput.value.trim()) {
+            showValidationError(programInput, 'Program is required for On-site registration');
+            isValid = false;
+        }
+        
+        // Year level validation
+        const yearInput = document.getElementById('year_level');
+        if (yearInput && !yearInput.value.trim()) {
+            showValidationError(yearInput, 'Year level is required for On-site registration');
+            isValid = false;
+        }
+        
+        // COR file validation (required for On-site)
+        const corFile = document.getElementById('cor_file');
+        if (corFile && !corFile.files.length) {
+            // Special handling for file input since it's hidden
+            const uploadContainer = corFile.closest('.upload-container');
+            if (uploadContainer) {
+                // Create error message element
+                const errorSpan = document.createElement('span');
+                errorSpan.classList.add('validation-error');
+                errorSpan.textContent = 'COR file is required for On-site registration';
+                errorSpan.style.cssText = 'color: #b33a3a !important; font-size: 13px !important; display: block !important; margin-top: 5px !important; margin-bottom: 10px !important; font-style: italic !important; text-align: center !important;';
+                
+                // Remove any existing error
+                const existingError = uploadContainer.querySelector('.validation-error');
+                if (existingError) {
+                    existingError.remove();
+                }
+                
+                // Add the error message to the upload container
+                uploadContainer.appendChild(errorSpan);
+                
+                // Add red border to the upload area
+                const uploadArea = uploadContainer.querySelector('.upload-area');
+                if (uploadArea) {
+                    uploadArea.style.border = '2px dashed #b33a3a !important';
+                }
+                
+                isValid = false;
+            }
+        }
+    }
+    
+    // If validation fails, prevent form submission
+    if (!isValid) {
+        e.preventDefault();
+        // Scroll to the first error
+        const firstError = document.querySelector('.validation-error');
+        if (firstError) {
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+}
+
+function validateEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(String(email).toLowerCase());
+}
+
+function validatePhoneNumber(phone) {
+    // Simple validation for Philippine numbers
+    // Allows formats like: +639XXXXXXXXX, 09XXXXXXXXX, 639XXXXXXXXX
+    const re = /^(\+?63|0)9\d{9}$/;
+    return re.test(phone);
+}
+
+function showValidationError(input, message) {
+    console.log('Adding validation error:', message, 'to input:', input.id);
+    
+    // Remove any existing error for this input
+    const existingError = input.nextElementSibling;
+    if (existingError && existingError.classList.contains('validation-error')) {
+        existingError.remove();
+    }
+    
+    // Create error message element
+    const errorSpan = document.createElement('span');
+    errorSpan.classList.add('validation-error');
+    errorSpan.textContent = message;
+    
+    // Apply direct styling with !important to ensure it overrides any other styles
+    errorSpan.style.cssText = 'color: #b33a3a !important; font-size: 13px !important; display: block !important; margin-top: 5px !important; margin-bottom: 10px !important; font-style: italic !important;';
+    
+    // For file input, append to the upload container
+    if (input.type === 'file') {
+        const uploadContainer = input.closest('.upload-container');
+        if (uploadContainer) {
+            uploadContainer.appendChild(errorSpan);
+        }
+    } else {
+        // Add error message after the input
+        input.parentNode.insertBefore(errorSpan, input.nextSibling);
+    }
+    
+    // Add invalid class to input for visual feedback
+    input.classList.add('invalid');
+}
+
 // Form Validation
 function validateForm(e) {
     const registrationType = document.querySelector(SELECTORS.REGISTRATION_TYPE)?.value;
@@ -111,21 +290,17 @@ function validateForm(e) {
     }
 }
 
-function showValidationError(selector, message) {
-    const field = document.querySelector(selector);
-    if (!field) return;
-
-    const errorElement = document.createElement('div');
-    errorElement.className = 'error-message';
-    errorElement.textContent = message;
-    errorElement.style.color = 'red';
-    errorElement.style.fontSize = '0.8rem';
-    errorElement.style.marginTop = '5px';
-    
-    field.parentNode.appendChild(errorElement);
-}
-
+// Clear validation errors and reset input styling
 function clearValidationErrors() {
+    // Remove all error messages
+    document.querySelectorAll('.validation-error').forEach(el => el.remove());
+    
+    // Remove invalid class from all inputs
+    document.querySelectorAll('.invalid').forEach(input => {
+        input.classList.remove('invalid');
+    });
+    
+    // Also clear the original error messages if any
     document.querySelectorAll('.error-message').forEach(el => el.remove());
 }
 
@@ -217,6 +392,7 @@ function toggleRegistrationTypeFields() {
     var program = document.getElementById('program_id');
     var year = document.getElementById('year_level');
     var collegeSections = document.querySelectorAll('.form-section.onsite-only.online-only');
+    var corFile = document.getElementById('cor_file');
 
     if (regType === 'On-site') {
         onsiteFields.forEach(function(el) { el.style.display = ''; });
@@ -224,14 +400,19 @@ function toggleRegistrationTypeFields() {
         if (college) college.required = true;
         if (program) program.required = true;
         if (year) year.required = true;
+        if (corFile) corFile.required = true;
     } else if (regType === 'Online') {
         onlineFields.forEach(function(el) { el.style.display = ''; });
         collegeSections.forEach(function(el) { el.style.display = ''; });
         if (college) college.required = false;
         if (program) program.required = false;
         if (year) year.required = false;
+        if (corFile) corFile.required = false;
         if (optionalIndicator) optionalIndicator.style.display = '';
     }
+
+    // Remove previous validation errors when toggling registration type
+    clearValidationErrors();
 
     // Call the initializeAddressDropdowns function from user.js when online registration is selected
     if (regType === 'Online') {
@@ -362,10 +543,117 @@ function updateYearLevels() {
     // For future year level updates based on program
 }
 
+// Function to load programs by college
+function loadProgramsByCollege(collegeId) {
+    const programSelect = document.getElementById('program_id');
+    if (!programSelect || !collegeId) return;
+
+    // Simulate API call with a simple fetch
+    fetch(`/msaconn/handler/user/getProgramsByCollege.php?college_id=${collegeId}`)
+        .then(response => response.json())
+        .then(data => {
+            programSelect.innerHTML = '<option value="">Select Program</option>';
+            if (data && data.programs) {
+                data.programs.forEach(program => {
+                    const option = document.createElement('option');
+                    option.value = program.program_id;
+                    option.textContent = program.program_name;
+                    programSelect.appendChild(option);
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error loading programs:', error);
+            programSelect.innerHTML = '<option value="">Error loading programs</option>';
+        });
+}
+
+// Add input event listeners to clear validation errors when user types
+function addInputListeners() {
+    const formInputs = document.querySelectorAll('input, select');
+    formInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            // Remove error message for this input
+            const nextSibling = this.nextElementSibling;
+            if (nextSibling && nextSibling.classList.contains('validation-error')) {
+                nextSibling.remove();
+            }
+            // Remove invalid class from this input
+            this.classList.remove('invalid');
+            
+            // For address fields, if any address field is changed, remove the zip code error
+            if (['region', 'province', 'city', 'barangay', 'street'].includes(this.id)) {
+                const zipCodeInput = document.getElementById('zip_code');
+                if (zipCodeInput) {
+                    const zipCodeError = zipCodeInput.nextElementSibling;
+                    if (zipCodeError && zipCodeError.classList.contains('validation-error')) {
+                        zipCodeError.remove();
+                    }
+                    zipCodeInput.classList.remove('invalid');
+                }
+            }
+        });
+    });
+    
+    // Add special event listener for the file input
+    const corFileInput = document.getElementById('cor_file');
+    if (corFileInput) {
+        corFileInput.addEventListener('change', function() {
+            // Find and remove error message for file input
+            const uploadContainer = this.closest('.upload-container');
+            if (uploadContainer) {
+                const errorMsg = uploadContainer.querySelector('.validation-error');
+                if (errorMsg) errorMsg.remove();
+            }
+        });
+    }
+}
+
 // Initialize everything when the document is ready
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize registration form
-    if (document.getElementById('registration_type')) {
-        toggleRegistrationTypeFields();
+    // Initialize base functionality
+    initEventListeners();
+    
+    // Initialize form fields based on registration type
+    toggleRegistrationTypeFields();
+    
+    // Add change event listener to registration type
+    const registrationTypeSelect = document.getElementById('registration_type');
+    if (registrationTypeSelect) {
+        registrationTypeSelect.addEventListener('change', function() {
+            toggleRegistrationTypeFields();
+            // Clear all validation errors when switching registration types
+            clearValidationErrors();
+        });
+    }
+    
+    // Add change event listener for college selection
+    const collegeSelect = document.getElementById('college_id');
+    if (collegeSelect) {
+        collegeSelect.addEventListener('change', function() {
+            loadProgramsByCollege(this.value);
+            
+            // Remove validation error if present
+            const nextSibling = this.nextElementSibling;
+            if (nextSibling && nextSibling.classList.contains('validation-error')) {
+                nextSibling.remove();
+            }
+            this.classList.remove('invalid');
+        });
+        
+        // If college already has a value, load programs
+        if (collegeSelect.value) {
+            loadProgramsByCollege(collegeSelect.value);
+        }
+    }
+    
+    // Add input event listeners to fields
+    addInputListeners();
+    
+    // Initialize address dropdowns if needed
+    if (typeof initializeAddressDropdowns === 'function') {
+        initializeAddressDropdowns();
+    } else {
+        initializeAddressDropdownsManually();
     }
 });

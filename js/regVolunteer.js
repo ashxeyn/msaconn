@@ -136,6 +136,143 @@ function validateForm() {
     return true;
 }
 
+// Function to show error message
+function showError(inputId, message) {
+    const errorSpan = document.getElementById(inputId + '-error');
+    const inputElement = document.getElementById(inputId);
+    
+    if (errorSpan) {
+        errorSpan.textContent = message;
+        // Apply the error message styling to match Registermadrasaform.php
+        errorSpan.style.color = '#b33a3a';
+        errorSpan.style.fontSize = '13px';
+        errorSpan.style.display = 'block';
+        errorSpan.style.marginTop = '5px';
+        errorSpan.style.marginBottom = '10px';
+        errorSpan.style.fontStyle = 'italic';
+        errorSpan.style.fontFamily = "'Noto Naskh Arabic', serif";
+    }
+    
+    // Add the invalid class to the input element
+    if (inputElement) {
+        inputElement.classList.add('invalid');
+    }
+}
+
+// Function to clear error message
+function clearError(inputId) {
+    const errorSpan = document.getElementById(inputId + '-error');
+    const inputElement = document.getElementById(inputId);
+    
+    if (errorSpan) {
+        errorSpan.textContent = '';
+    }
+    
+    // Remove the invalid class from the input element
+    if (inputElement) {
+        inputElement.classList.remove('invalid');
+    }
+}
+
+// Function to validate form fields
+function validateFormFields() {
+    let valid = true;
+
+    // First Name
+    const firstname = document.getElementById('firstname');
+    if (!firstname.value.trim()) {
+        showError('firstname', 'First name is required');
+        valid = false;
+    } else {
+        clearError('firstname');
+    }
+
+    // Middle Name
+    const middlename = document.getElementById('middlename');
+    if (!middlename.value.trim()) {
+        showError('middlename', 'Middle name is required');
+        valid = false;
+    } else {
+        clearError('middlename');
+    }
+
+    // Last Name
+    const lastname = document.getElementById('lastname');
+    if (!lastname.value.trim()) {
+        showError('lastname', 'Last name is required');
+        valid = false;
+    } else {
+        clearError('lastname');
+    }
+
+    // College
+    const college = document.getElementById('college');
+    if (!college.value) {
+        showError('college', 'Please select a college');
+        valid = false;
+    } else {
+        clearError('college');
+    }
+
+    // Program
+    const program = document.getElementById('program');
+    if (!program.value) {
+        showError('program', 'Please select a program');
+        valid = false;
+    } else {
+        clearError('program');
+    }
+
+    // Year
+    const year = document.getElementById('year');
+    if (!year.value) {
+        showError('year', 'Please select year level');
+        valid = false;
+    } else {
+        clearError('year');
+    }
+
+    // Contact
+    const contact = document.getElementById('contact');
+    if (!contact.value.trim()) {
+        showError('contact', 'Please enter contact number');
+        valid = false;
+    } else {
+        clearError('contact');
+    }
+
+    // Email
+    const email = document.getElementById('email');
+    if (!email.value.trim()) {
+        showError('email', 'Please enter email');
+        valid = false;
+    } else {
+        clearError('email');
+    }
+
+    // COR Image
+    const image = document.getElementById('image');
+    const existingImage = document.querySelector('input[name="existing_image"]');
+    if ((!image.value || image.files.length === 0) && (!existingImage || !existingImage.value)) {
+        showError('image', 'Please upload your COR screenshot');
+        // Add a red border to the upload area
+        const uploadArea = document.querySelector('.upload-area');
+        if (uploadArea) {
+            uploadArea.style.border = '2px dashed #b33a3a';
+        }
+        valid = false;
+    } else {
+        clearError('image');
+        // Reset the border color
+        const uploadArea = document.querySelector('.upload-area');
+        if (uploadArea) {
+            uploadArea.style.border = '2px dashed #1a541c';
+        }
+    }
+
+    return valid;
+}
+
 // Initialize program dropdown if college is already selected on page load
 document.addEventListener('DOMContentLoaded', function() {
     const collegeSelect = document.getElementById('college');
@@ -156,9 +293,35 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form');
     if (form) {
         form.addEventListener('submit', function(e) {
-            if (!validateForm()) {
+            if (!validateFormFields()) {
                 e.preventDefault();
-                alert('Please ensure the selected program belongs to the selected college.');
+                
+                // Scroll to the first error
+                const firstError = document.querySelector('.error-message:not(:empty)');
+                if (firstError) {
+                    firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        });
+    }
+
+    // Add input event listeners to clear validation errors when user types
+    const allInputs = document.querySelectorAll('input, select');
+    allInputs.forEach(input => {
+        input.addEventListener('input', function() {
+            clearError(this.id);
+        });
+    });
+    
+    // Special handler for file input
+    const fileInput = document.getElementById('image');
+    if (fileInput) {
+        fileInput.addEventListener('change', function() {
+            clearError('image');
+            // Reset the border color
+            const uploadArea = document.querySelector('.upload-area');
+            if (uploadArea) {
+                uploadArea.style.border = '2px dashed #1a541c';
             }
         });
     }

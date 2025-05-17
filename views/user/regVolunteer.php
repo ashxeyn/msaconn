@@ -152,6 +152,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Volunteer Registration</title>
     <link rel="stylesheet" href="../../css/regVolunteer.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
+    <style>
+        /* Updated validation error styling to match Registermadrasaform.php */
+        .error-message {
+            color: #b33a3a !important;
+            font-size: 13px !important;
+            display: block !important;
+            margin-top: 5px !important;
+            margin-bottom: 10px !important;
+            font-style: italic !important;
+            font-family: 'Noto Naskh Arabic', serif !important;
+        }
+
+        /* Style for invalid form elements */
+        input.invalid, select.invalid {
+            border: 1px solid #b33a3a !important;
+            background-color: #fff !important;
+        }
+
+        /* Ensure consistent font family throughout the form */
+        form, input, select, button, label {
+            font-family: 'Noto Naskh Arabic', serif !important;
+        }
+    </style>
 </head>
 <body>
     <?php 
@@ -168,14 +191,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="form-section">
                     <label for="firstname">First Name:</label>
                     <input type="text" id="firstname" name="firstname" placeholder="First Name" value="<?= $first_name ?>" autocomplete="given-name">
-                    <?php if (!empty($first_nameErr)): ?><span class="error"><?= $first_nameErr ?></span><?php endif; ?>
+                    <span class="error-message" id="firstname-error"></span>
 
                     <label for="middlename">Middle Name:</label>
                     <input type="text" id="middlename" name="middlename" placeholder="Middle Name" value="<?= $middle_name ?>" autocomplete="additional-name">
+                    <span class="error-message" id="middlename-error"></span>
 
                     <label for="lastname">Last Name:</label>
                     <input type="text" id="lastname" name="lastname" placeholder="Last Name" value="<?= $last_name ?>" autocomplete="family-name">
-                    <?php if (!empty($last_nameErr)): ?><span class="error"><?= $last_nameErr ?></span><?php endif; ?>
+                    <span class="error-message" id="lastname-error"></span>
 
                     <label for="college">College:</label>
                     <select id="college" name="college" autocomplete="organization" onchange="loadProgramsByCollege(this.value)">
@@ -186,12 +210,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </option>
                         <?php endforeach; ?>
                     </select>
+                    <span class="error-message" id="college-error"></span>
 
                     <label for="program">Program:</label>
                     <select id="program" name="program" autocomplete="off">
                         <option value="">Select College First</option>
                     </select>
-                    <?php if (!empty($programErr)): ?><span class="error"><?= $programErr ?></span><?php endif; ?>
+                    <span class="error-message" id="program-error"></span>
                 </div>
             </div>
             <!-- Right Column -->
@@ -205,15 +230,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <option value="3rd Year" <?= ($year == "3rd Year") ? 'selected' : '' ?>>3rd Year</option>
                         <option value="4th Year" <?= ($year == "4th Year") ? 'selected' : '' ?>>4th Year</option>
                     </select>
-                    <?php if (!empty($yearErr)): ?><span class="error"><?= $yearErr ?></span><?php endif; ?>
+                    <span class="error-message" id="year-error"></span>
 
                     <label for="contact">Contact Number:</label>
                     <input type="text" id="contact" name="contact" placeholder="Contact Number" value="<?= $contact ?>" autocomplete="tel">
-                    <?php if (!empty($contactErr)): ?><span class="error"><?= $contactErr ?></span><?php endif; ?>
+                    <span class="error-message" id="contact-error"></span>
 
                     <label for="email">Email:</label>
                     <input type="email" id="email" name="email" placeholder="Email" value="<?= $email ?>" autocomplete="email">
-                    <?php if (!empty($emailErr)): ?><span class="error"><?= $emailErr ?></span><?php endif; ?>
+                    <span class="error-message" id="email-error"></span>
                 </div>
                 
                 <!-- COR upload -->
@@ -232,8 +257,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </div>
                         </div>
                         <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(event)" style="display: none;" autocomplete="off">
+                        <span class="error-message" id="image-error"></span>
                         <input type="hidden" name="existing_image" value="<?= $cor_file ?>" autocomplete="off">
-                        <?php if (!empty($imageErr)): ?><span class="error"><?= $imageErr ?></span><?php endif; ?>
                     </div>
                 </div>
             </div>
