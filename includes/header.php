@@ -33,7 +33,22 @@ function is_current_page($page_names) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MSA Connect</title>
-    <?php $base_url = 'http://' . $_SERVER['HTTP_HOST'] . '/msaconn/'; ?>
+    <?php 
+    // Dynamically determine the base URL to work in any environment
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+    $currentPath = $_SERVER['PHP_SELF'];
+    $pathInfo = pathinfo($currentPath);
+    $hostName = $_SERVER['HTTP_HOST'];
+    
+    // Extract the base directory by finding the position of '/views/'
+    $baseDir = '';
+    $viewsPos = strpos($currentPath, '/views/');
+    if ($viewsPos !== false) {
+        $baseDir = substr($currentPath, 0, $viewsPos);
+    }
+    
+    $base_url = $protocol . $hostName . $baseDir . '/';
+    ?>
         <link rel="stylesheet" href="<?php echo $base_url; ?>css/standardized-fonts.css?v=<?php echo time(); ?>">    
         <link rel="stylesheet" href="<?php echo $base_url; ?>css/header.css?v=<?php echo time(); ?>">  
        <link rel="stylesheet" href="<?php echo $base_url; ?>css/no-scrollbar.css?v=<?php echo time(); ?>">   
@@ -45,6 +60,7 @@ function is_current_page($page_names) {
         // Debug information
         console.log('Current PHP page: <?php echo $current_page; ?>');
         console.log('Full path: <?php echo $_SERVER["PHP_SELF"]; ?>');
+        console.log('Base URL: <?php echo $base_url; ?>');
     </script>
 </head>
 <body>
