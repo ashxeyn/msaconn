@@ -58,7 +58,7 @@ $debug_session = isset($_SESSION['volunteer_registration_success']) ? "Registrat
     </div>
 
     <div class="volunteer-section">
-        <h2 style="font-family: 'Noto Naskh Arabic', serif; font-size: 32px; margin-bottom: 25px; color: #1a541c; position: relative; display: inline-block;">Our Dedicated Volunteers</h2>
+        <h2 style="font-size: 1.8rem; color: #1a541c; text-align: center; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; margin-bottom: 30px; margin-top: -10px;">OUR DEDICATED VOLUNTEERS</h2>
         
         <div id="volunteer-grid" class="volunteer-grid">
             <!-- Volunteers will be loaded here dynamically -->

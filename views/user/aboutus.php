@@ -123,7 +123,7 @@ if (!isset($base_url)) {
 
 <!-- Executive Team Section -->
 <section class="executive-officers">
-    <h2>Executive Leadership</h2>
+    <h2 style="font-size: 1.8rem; color: #1a541c; text-align: center; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; margin-bottom: 30px; margin-top: -10px;">EXECUTIVE OFFICERS</h2>
     
     <!-- Preload the default officer image -->
     <link rel="preload" href="<?php echo $base_url; ?>assets/images/officer.jpg" as="image">
@@ -137,7 +137,7 @@ if (!isset($base_url)) {
     <div class="officer-tabs">
         <button id="tab-male" class="tab-button active" onclick="switchOfficerTab('male')">Executive Officers</button>
         <button id="tab-wac" class="tab-button" onclick="switchOfficerTab('wac')">Women's Affairs Committee</button>
-        <button id="tab-ils" class="tab-button" onclick="switchOfficerTab('ils')">ILS</button>
+        <button id="tab-ils" class="tab-button" onclick="switchOfficerTab('ils')">ILS Representatives</button>
     </div>
     
     <!-- Container for each branch, only one will be visible at a time -->
@@ -169,8 +169,8 @@ if (!isset($base_url)) {
 
 <!-- Downloadable Files Section -->
 <section class="downloadable-files">
+    <h2 class="section-title">Downloadable Resources</h2>
     <div class="container">
-        <h2>Downloadable Resources</h2>
         <div class="downloads-list">
             <?php if (!empty($files)): ?>
                 <?php foreach ($files as $file): ?>

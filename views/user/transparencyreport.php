@@ -51,8 +51,8 @@ $totalFunds = $totalCashIn - $totalCashOut;
     padding: 15px 20px !important;
     height: auto !important;
     line-height: 1.5 !important;
-    border-left: none !important; /* Remove left border */
-    border-right: none !important; /* Remove right border */
+    border-left: none !important;
+    border-right: none !important;
   }
   
   /* Remove vertical borders and keep only horizontal ones */
@@ -60,6 +60,8 @@ $totalFunds = $totalCashIn - $totalCashOut;
     border-collapse: collapse !important;
     border-left: none !important;
     border-right: none !important;
+    min-width: 650px; /* Ensure minimum width for scrolling */
+    width: 100%;
   }
   
   .msa-table th {
@@ -80,11 +82,13 @@ $totalFunds = $totalCashIn - $totalCashOut;
     border-bottom: none !important;
   }
   
-  /* Table container should have clean borders */
+  /* Table container should have clean borders and scrolling */
   .table-container {
     border-radius: 8px !important;
-    overflow: hidden !important;
+    overflow-x: auto !important;
     border: 1px solid #e0e0e0 !important;
+    -webkit-overflow-scrolling: touch !important; /* Smooth scrolling on iOS */
+    margin-bottom: 20px !important;
   }
   
   /* Ensure DataTables doesn't override our styles */
@@ -98,10 +102,49 @@ $totalFunds = $totalCashIn - $totalCashOut;
     padding: 8px !important;
   }
   
+  /* Fix pagination position */
+  .dataTables_wrapper .dataTables_paginate {
+    position: static !important;
+    float: none !important;
+    text-align: left !important;
+    margin-top: 15px !important;
+    width: auto !important;
+  }
+
+  .dataTables_wrapper .dataTables_paginate .paginate_button {
+    padding: 5px 10px !important;
+    margin: 0 2px !important;
+    border-radius: 4px !important;
+  }
+
+  .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: #1a541c !important;
+    color: white !important;
+    border: none !important;
+  }
+
+  .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: #134015 !important;
+    color: white !important;
+    border: none !important;
+  }
+  
   /* Make sure the table rows have consistent heights even after DataTables loads */
   .msa-table tr {
     height: auto !important;
     min-height: 50px !important;
+  }
+  
+  /* Transaction Details Title Style */
+  .transaction-title {
+    font-size: 1.8rem;
+    color: #1a541c;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 30px;
+    margin-top: 30px;
   }
   
   @media (max-width: 768px) {
@@ -112,6 +155,30 @@ $totalFunds = $totalCashIn - $totalCashOut;
     #summaryTableContainer .msa-table td,
     #summaryTableContainer .msa-table th {
       padding: 10px 12px !important;
+    }
+    
+    /* Add scroll hint for small screens */
+    .table-container::after {
+      content: "Scroll horizontally to view full table →";
+      display: block;
+      text-align: center;
+      padding: 8px 0;
+      font-size: 12px;
+      color: #666;
+      background-color: #f8f8f8;
+      border-top: 1px solid #eee;
+    }
+
+    /* Ensure pagination stays left-aligned on mobile */
+    .dataTables_wrapper .dataTables_paginate {
+      margin-top: 10px !important;
+      text-align: left !important;
+      width: auto !important;
+    }
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+      padding: 4px 8px !important;
+      font-size: 12px !important;
     }
   }
   
@@ -125,13 +192,19 @@ $totalFunds = $totalCashIn - $totalCashOut;
       padding: 8px 10px !important;
       font-size: 12px !important;
     }
+
+    /* Adjust pagination for very small screens */
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+      padding: 3px 6px !important;
+      font-size: 11px !important;
+    }
   }
 </style>
 
 <!-- Transparency Report Section -->
 <section class="table-section" style="background-color: #f5f5f5; padding: 40px 0;">
   <div class="container">
-    <h2>Transaction Details</h2>
+    <h2 class="transaction-title">TRANSACTION DETAILS</h2>
     
     <h3>Cash In</h3>
     <div class="table-container" style="background-color: #ffffff; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); border: 1px solid #f0f0f0; overflow-x: auto; -webkit-overflow-scrolling: touch;">

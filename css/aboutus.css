@@ -438,18 +438,33 @@ body {
     transform: translateY(-2px);
 }
 
+/* Section Title Style */
+.section-title {
+    font-size: 1.8rem;
+    color: #1a541c;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 30px;
+    margin-top: -10px;
+}
+
+/* Downloadable Files Section */
 .downloadable-files {
-    padding: 3rem 0;
-    background-color: #f9f9f9;
-    width: 100%;
-    overflow-x: hidden;
+    padding: 40px 0;
+    background-color: #f5f8f5;
 }
 
 .downloadable-files h2 {
-    text-align: center;
+    font-size: 1.8rem;
     color: #1a541c;
-    margin-bottom: 1.5rem;
-    font-size: 2rem;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 30px;
+    margin-top: -10px;
 }
 
 .downloadable-files .container {

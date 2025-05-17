@@ -103,9 +103,14 @@ body {
 
 .faqs-content h3 {
   font-family: 'Noto Naskh Arabic', serif;
-  font-size: 20px;
-  margin-bottom: 10px;
+  font-size: 24px;
+  margin-bottom: 20px;
   color: #1a541c;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 10px 0;
 }
 
 /* FAQ Item Styling - KEEPING THESE ANIMATIONS */
@@ -130,8 +135,8 @@ body {
 }
 
 .faq-question:hover {
-  background-color: #1a541c;
-  color: #fff;
+  background-color: #f0f0f0;
+  color: #333;
 }
 
 .faq-question .arrow {
