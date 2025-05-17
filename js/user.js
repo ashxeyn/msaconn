@@ -947,11 +947,19 @@ function initializeExecutiveOfficers() {
         // Get base URL from a meta tag or elsewhere in the page
         const baseUrl = document.querySelector('base')?.href || window.location.origin + '/msaconnect/';
         
-        // Process advisers
+        // Process advisers and consultants
         if (adviserContainer && officersByBranch.adviser && officersByBranch.adviser.length > 0) {
             const adviserFragment = document.createDocumentFragment();
             
-            officersByBranch.adviser.forEach(officer => {
+            // Sort advisers and consultants (just to be safe, though the backend should handle this)
+            const sortedAdvisers = officersByBranch.adviser.sort((a, b) => {
+                // Advisers come before consultants
+                if (a.position === 'Adviser' && b.position === 'Consultant') return -1;
+                if (a.position === 'Consultant' && b.position === 'Adviser') return 1;
+                return 0;
+            });
+            
+            sortedAdvisers.forEach(officer => {
                 const officerCard = createOfficerCard(officer, baseUrl);
                 adviserFragment.appendChild(officerCard);
             });
@@ -962,6 +970,7 @@ function initializeExecutiveOfficers() {
             }
             
             adviserContainer.appendChild(adviserFragment);
+            adviserContainer.style.display = 'flex'; // Ensure it's visible
         } else if (adviserContainer) {
             adviserContainer.style.display = 'none';
         }

@@ -311,15 +311,16 @@ class User {
                     eo.office,
                     CASE 
                         WHEN op.position_name = 'Adviser' THEN 0
-                        WHEN op.position_name = 'President' THEN 1
-                        WHEN op.position_name = 'Internal Vice President' THEN 2
-                        WHEN op.position_name = 'External Vice President' THEN 3
-                        WHEN op.position_name = 'Secretary' THEN 4
-                        WHEN op.position_name = 'Treasurer' THEN 5
-                        WHEN op.position_name = 'Auditor' THEN 6
-                        WHEN op.position_name = 'P.I.O.' THEN 7
-                        WHEN op.position_name = 'Project Manager' THEN 8
-                        ELSE 9
+                        WHEN op.position_name = 'Consultant' THEN 1
+                        WHEN op.position_name = 'President' THEN 2
+                        WHEN op.position_name = 'Internal Vice President' THEN 3
+                        WHEN op.position_name = 'External Vice President' THEN 4
+                        WHEN op.position_name = 'Secretary' THEN 5
+                        WHEN op.position_name = 'Treasurer' THEN 6
+                        WHEN op.position_name = 'Auditor' THEN 7
+                        WHEN op.position_name = 'P.I.O.' THEN 8
+                        WHEN op.position_name = 'Project Manager' THEN 9
+                        ELSE 10
                     END ASC
             ";
             $query = $this->getConnection()->prepare($sql);
@@ -335,7 +336,7 @@ class User {
             ];
             
             foreach ($officers as $officer) {
-                if ($officer['position'] === 'Adviser') {
+                if ($officer['position'] === 'Adviser' || $officer['position'] === 'Consultant') {
                     $result['adviser'][] = $officer;
                 } elseif ($officer['office'] === 'male' || empty($officer['office'])) {
                     $result['male'][] = $officer;

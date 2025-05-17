@@ -212,13 +212,20 @@ body {
 .adviser-container {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 4rem;
     margin-bottom: 3rem;
-    padding: 0 1rem;
+    padding: 0 2rem;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .adviser-container .officer-card {
     width: 300px;
     max-width: 100%;
+    flex: 0 0 auto;
+    margin: 0 1rem;
 }
 
 /* Officer tabs styles */
@@ -720,6 +727,15 @@ body {
     width: 100%;
     box-sizing: border-box;
   }
+
+  .adviser-container {
+    gap: 3rem;
+    padding: 0 1rem;
+  }
+  
+  .adviser-container .officer-card {
+    margin: 0 0.5rem;
+  }
 }
 
 @media (max-width: 576px) {
@@ -765,6 +781,15 @@ body {
 
   .download-card {
     padding: 12px;
+  }
+
+  .adviser-container {
+    gap: 2rem;
+  }
+  
+  .adviser-container .officer-card {
+    width: 250px;
+    margin: 0;
   }
 }
 

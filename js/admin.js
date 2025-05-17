@@ -2721,14 +2721,14 @@ function validateOfficerForm() {
         $('#editSurnameIcon').hide();
     }
 
-    if (positionText !== 'adviser' && !office) {
+    if (positionText !== 'adviser' && positionText !== 'consultant' && !office) {
         $('#editOfficeError').text('Please select an office');
         isValid = false;
     } else {
         $('#editOfficeError').text('');
     }
 
-    if (positionText !== 'adviser' && program === '') {
+    if (positionText !== 'adviser' && positionText !== 'consultant' && program === '') {
         $('#editProgramError').text('Program is required');
         $('#editProgram').addClass('is-invalid');
         isValid = false;

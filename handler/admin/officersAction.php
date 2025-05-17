@@ -31,7 +31,7 @@ if ($action === 'edit') {
     }
 
     $positionName = $adminObj->getPositionById($position)['position_name'];
-    if (strtolower($positionName) === 'adviser') {
+    if (strtolower($positionName) === 'adviser' || strtolower($positionName) === 'consultant') {
         $program = null;
         $office = 'N/A';
     }
@@ -73,7 +73,7 @@ if ($action === 'edit') {
     $image = null;
 
     $positionName = $adminObj->getPositionById($position)['position_name'];
-    if (strtolower($positionName) === 'adviser') {
+    if (strtolower($positionName) === 'adviser' || strtolower($positionName) === 'consultant') {
         $program = null;
         $office = null;
     }

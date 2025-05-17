@@ -40,6 +40,7 @@ class Admin {
                     eo.image,
                     CASE 
                         WHEN op.position_name = 'Adviser' THEN 'N/A'
+                        WHEN op.position_name = 'Consultant' THEN 'N/A'
                         ELSE eo.office 
                     END as office
                 FROM executive_officers eo
@@ -47,7 +48,7 @@ class Admin {
                 LEFT JOIN officer_positions op ON eo.position_id = op.position_id
                 LEFT JOIN school_years sy ON eo.school_year_id = sy.school_year_id
                 WHERE eo.deleted_at IS NULL 
-                AND (eo.office = 'male' OR op.position_name = 'Adviser')";
+                AND (eo.office = 'male' OR op.position_name = 'Adviser' OR op.position_name = 'Consultant')";
         
         $query = $this->db->connect()->prepare($sql);
         $query->execute();

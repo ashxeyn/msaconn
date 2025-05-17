@@ -123,8 +123,6 @@ if (!isset($base_url)) {
 
 <!-- Executive Team Section -->
 <section class="executive-officers">
-    <h2 style="font-size: 1.8rem; color: #1a541c; text-align: center; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; margin-bottom: 30px; margin-top: -10px;">EXECUTIVE OFFICERS</h2>
-    
     <!-- Preload the default officer image -->
     <link rel="preload" href="<?php echo $base_url; ?>assets/images/officer.jpg" as="image">
     
@@ -132,6 +130,8 @@ if (!isset($base_url)) {
     <div id="adviser-container" class="adviser-container">
         <!-- Placeholder for adviser -->
     </div>
+    
+    <h2 style="font-size: 1.8rem; color: #1a541c; text-align: center; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; margin-bottom: 30px; margin-top: 10px;">EXECUTIVE OFFICERS</h2>
     
     <!-- Tabs for the three branches -->
     <div class="officer-tabs">
