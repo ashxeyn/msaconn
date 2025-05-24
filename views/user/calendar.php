@@ -17,7 +17,6 @@ $calendar = $adminObj->fetchDailyPrayers();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendar</title>
-    <?php $base_url = 'http://' . $_SERVER['HTTP_HOST'] . '/msaconn/'; ?>
 
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -27,14 +26,14 @@ $calendar = $adminObj->fetchDailyPrayers();
     <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?php echo $base_url; ?>css/calendar.css">
-    <link rel="stylesheet" href="<?php echo $base_url; ?>css/shared-tables.css">
+    <link rel="stylesheet" href="../../css/calendar.css">
+    <link rel="stylesheet" href="../../css/shared-tables.css">
 </head>
 <body class="calendar-page">
 <?php include '../../includes/header.php'; ?>
     <div class="hero">
         <?php foreach ($backgroundImage as $image) : ?>
-        <div class="hero-background" style="background-image: url('<?php echo $base_url . $image['image_path']; ?>');">
+        <div class="hero-background" style="background-image: url('../../<?= $image['image_path']; ?>');">
         <?php endforeach; ?>
         </div>
         <div class="hero-content">
@@ -156,9 +155,9 @@ $calendar = $adminObj->fetchDailyPrayers();
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Include Calendar JavaScript -->
-    <script src="<?php echo $base_url; ?>js/calendar.js"></script>
+    <script src="../../js/calendar.js"></script>
     
     <!-- Table Fix Script -->
-    <script src="<?php echo $base_url; ?>js/table-fix.js"></script>
+    <script src="../../js/table-fix.js"></script>
 </body>
 </html>

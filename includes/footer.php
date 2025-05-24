@@ -13,11 +13,8 @@ $logo = $userObj->fetchLogo();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Footer with Logo</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script>
-        const base_url = "<?php echo $base_url; ?>";
-    </script>
-    <script src="<?php echo $base_url; ?>js/website.js"></script>
-    <link rel="stylesheet" href="<?php echo $base_url; ?>css/footer.css">
+    <script src="../../js/website.js"></script>
+    <link rel="stylesheet" href="../../css/footer.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
 </head>
@@ -26,7 +23,7 @@ $logo = $userObj->fetchLogo();
         <div class="footer-content">
             <div class="footer-upper-left">
                 <?php foreach ($logo as $logoItem): ?>
-                    <img src="<?php echo $base_url . clean_input($logoItem['image_path']); ?>" alt="MSA Connect Logo" class="logo">
+                    <img src="../../<?= clean_input($logoItem['image_path']); ?>" alt="MSA Connect Logo" class="logo">
                 <?php endforeach; ?>
                 <div class="logo-text">
                     <?php foreach ($footer as $foot): ?>

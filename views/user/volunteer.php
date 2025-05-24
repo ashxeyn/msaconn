@@ -43,7 +43,7 @@ $debug_session = isset($_SESSION['volunteer_registration_success']) ? "Registrat
     
     <div class="hero">
         <?php foreach ($backgroundImage as $image) : ?>
-    <div class="hero-background" style="background-image: url('<?php echo $base_url . $image['image_path']; ?>');">
+    <div class="hero-background" style="background-image: url('../../<?= $image['image_path']; ?>');">
         <?php endforeach; ?>
     </div>
     <div class="hero-content">
@@ -76,6 +76,6 @@ $debug_session = isset($_SESSION['volunteer_registration_success']) ? "Registrat
         echo '<script>console.log("Registration success modal shown");</script>';
     }
     ?>
-    <script src="<?php echo $base_url; ?>js/user.js"></script>
+    <script src="../../js/user.js"></script>
 </body>
 </html>

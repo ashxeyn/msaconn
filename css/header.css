@@ -398,15 +398,45 @@ header {
 
   .nav-links .dropdown .arrow {
     position: relative;
+    display: inline-block;
     margin-left: 8px;
     border-top: 6px solid var(--secondary-color);
     border-left: 6px solid transparent;
     border-right: 6px solid transparent;
     transition: transform 0.3s ease;
+    vertical-align: middle;
   }
   
-  .nav-links .dropdown.active .arrow {
+  /* Make dropdown arrows rotate on open/close with animation */
+  .nav-links .dropdown a .arrow {
+    transform: rotate(0deg);
+    transition: transform 0.3s ease;
+  }
+  
+  .nav-links .dropdown a.open .arrow {
     transform: rotate(180deg);
+    transition: transform 0.3s ease;
+  }
+  
+  /* Animate dropdown content */
+  .nav-links .dropdown-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+    position: static;
+    box-shadow: none;
+    display: block !important; /* Force display block */
+    animation: none;
+    padding: 0;
+    opacity: 0;
+    visibility: hidden;
+  }
+  
+  .nav-links .dropdown-content.active {
+    max-height: 1000px; /* Large enough to fit all content */
+    padding: 8px 0;
+    opacity: 1;
+    visibility: visible;
   }
 }
 

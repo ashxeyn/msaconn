@@ -30,9 +30,11 @@ document.addEventListener('DOMContentLoaded', function() {
     dropdowns.forEach((dropdown, index) => {
         const link = dropdown.querySelector('a');
         const dropdownContent = dropdown.querySelector('.dropdown-content');
+        const arrow = link ? link.querySelector('.arrow') : null;
         
         console.log(`Dropdown ${index}:`, { 
             link: link ? 'Found' : 'Not found',
+            arrow: arrow ? 'Found' : 'Not found',
             dropdownContent: dropdownContent ? 'Found' : 'Not found'
         });
         
@@ -45,28 +47,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     e.preventDefault();
                     e.stopPropagation(); // Prevent event bubbling
                     
-                    dropdown.classList.toggle('active');
+                    // Toggle open class for CSS animations
+                    const isOpen = link.classList.toggle('open');
+                    console.log(`Toggling dropdown ${index} to ${isOpen ? 'open' : 'closed'}`);
                     
-                    // Toggle this dropdown content
+                    // Toggle dropdown content visibility
                     if (dropdownContent) {
-                        const isActive = dropdownContent.classList.toggle('active');
-                        console.log(`Dropdown ${index} content toggled to: ${isActive ? 'active' : 'inactive'}`);
+                        // Toggle active class for styling
+                        dropdownContent.classList.toggle('active');
                         
-                        // Set display style directly in addition to class
-                        dropdownContent.style.display = isActive ? 'block' : 'none';
-                        
-                        // Close other dropdown contents
-                        dropdowns.forEach((otherDropdown, otherIndex) => {
-                            if (otherDropdown !== dropdown) {
-                                const otherContent = otherDropdown.querySelector('.dropdown-content');
-                                if (otherContent && otherContent.classList.contains('active')) {
-                                    otherDropdown.classList.remove('active');
-                                    otherContent.classList.remove('active');
-                                    otherContent.style.display = 'none';
-                                    console.log(`Closed other dropdown ${otherIndex}`);
-                                }
-                            }
-                        });
+                        // Toggle display style
+                        if (dropdownContent.classList.contains('active')) {
+                            dropdownContent.style.display = 'block';
+                            console.log(`Dropdown ${index} opened`);
+                        } else {
+                            dropdownContent.style.display = 'none';
+                            console.log(`Dropdown ${index} closed`);
+                        }
                     }
                 }
             });
@@ -86,6 +83,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Close all dropdown contents
                 dropdowns.forEach((dropdown, index) => {
+                    const link = dropdown.querySelector('a');
+                    if (link) link.classList.remove('open');
+                    
                     dropdown.classList.remove('active');
                     const dropdownContent = dropdown.querySelector('.dropdown-content');
                     if (dropdownContent) {
@@ -112,6 +112,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Reset all dropdowns
             dropdowns.forEach((dropdown, index) => {
+                const link = dropdown.querySelector('a');
+                if (link) link.classList.remove('open');
+                
                 dropdown.classList.remove('active');
                 const dropdownContent = dropdown.querySelector('.dropdown-content');
                 if (dropdownContent) {

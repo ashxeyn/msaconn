@@ -40,7 +40,7 @@ $prayerSchedule = $adminObj->fetchPrayerSchedule();
         $isActive = ($key === 0) ? 'active' : '';
     ?>
     <div class="carousel-slide <?php echo $isActive; ?>">
-        <div class="carousel-background" style="background-image: url('<?php echo $base_url . $carouselItem['image_path']; ?>');"></div>
+        <div class="carousel-background" style="background-image: url('../../<?= $carouselItem['image_path']; ?>');"></div>
         <div class="carousel-overlay"></div>
         <?php if ($key === 0) : ?>
         <div class="hero-content">
@@ -69,7 +69,7 @@ $prayerSchedule = $adminObj->fetchPrayerSchedule();
         $limitedUpdates = array_slice($orgUpdates, 0, 4);
         foreach ($limitedUpdates as $update) : 
             $formattedDate = date('F j, Y', strtotime($update['created_at']));
-            $imagePath = !empty($update['image_path']) ? $base_url . 'assets' . $update['image_path'] : $base_url . 'assets/images/login.jpg';
+            $imagePath = !empty($update['image_path']) ? '../../assets' . $update['image_path'] : '../../assets/images/login.jpg';
             
             // Count words instead of characters
             $words = explode(' ', $update['content']);

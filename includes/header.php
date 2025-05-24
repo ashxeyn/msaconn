@@ -33,34 +33,17 @@ function is_current_page($page_names) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MSA Connect</title>
-    <?php 
-    // Dynamically determine the base URL to work in any environment
-    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-    $currentPath = $_SERVER['PHP_SELF'];
-    $pathInfo = pathinfo($currentPath);
-    $hostName = $_SERVER['HTTP_HOST'];
-    
-    // Extract the base directory by finding the position of '/views/'
-    $baseDir = '';
-    $viewsPos = strpos($currentPath, '/views/');
-    if ($viewsPos !== false) {
-        $baseDir = substr($currentPath, 0, $viewsPos);
-    }
-    
-    $base_url = $protocol . $hostName . $baseDir . '/';
-    ?>
-        <link rel="stylesheet" href="<?php echo $base_url; ?>css/standardized-fonts.css?v=<?php echo time(); ?>">    
-        <link rel="stylesheet" href="<?php echo $base_url; ?>css/header.css?v=<?php echo time(); ?>">  
-       <link rel="stylesheet" href="<?php echo $base_url; ?>css/no-scrollbar.css?v=<?php echo time(); ?>">   
-     <link rel="stylesheet" href="<?php echo $base_url; ?>css/sticky-header-fix.css?v=<?php echo time(); ?>">
-     <link rel="stylesheet" href="<?php echo $base_url; ?>css/shared-tables.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../../css/standardized-fonts.css?v=<?php echo time(); ?>">    
+    <link rel="stylesheet" href="../../css/header.css?v=<?php echo time(); ?>">  
+    <link rel="stylesheet" href="../../css/no-scrollbar.css?v=<?php echo time(); ?>">   
+    <link rel="stylesheet" href="../../css/sticky-header-fix.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="../../css/shared-tables.css?v=<?php echo time(); ?>">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         // Debug information
         console.log('Current PHP page: <?php echo $current_page; ?>');
         console.log('Full path: <?php echo $_SERVER["PHP_SELF"]; ?>');
-        console.log('Base URL: <?php echo $base_url; ?>');
     </script>
 </head>
 <body>
@@ -68,9 +51,9 @@ function is_current_page($page_names) {
     <!-- Top Section: Logo and MSA CONNECT -->
     <div class="header-top">
         <div class="logo">
-            <a href="<?php echo $base_url; ?>views/user/landing_page">
+            <a href="../../views/user/landing_page.php">
                 <?php foreach ($logo as $logoItem): ?>
-                    <img src="<?php echo $base_url . clean_input($logoItem['image_path']); ?>" alt="MSA Connect Logo" class="logo">
+                    <img src="../../<?= clean_input($logoItem['image_path']); ?>" alt="MSA Connect Logo" class="logo">
                 <?php endforeach; ?>
                 <div class="logo-text-container">
                     <?php foreach ($footer as $foot): ?>
@@ -91,18 +74,18 @@ function is_current_page($page_names) {
     <!-- Bottom Section: Navigation Bar -->
     <nav class="navbar">
         <ul class="nav-links">
-            <li><a href="<?php echo $base_url; ?>views/user/landing_page" class="<?php echo is_current_page('landing_page.php') ? 'active' : ''; ?>">Home</a></li>
-            <li><a href="<?php echo $base_url; ?>views/user/volunteer" class="<?php echo is_current_page('volunteer.php') || is_current_page('regVolunteer.php') ? 'active' : ''; ?>">Be a Volunteer</a></li>
+            <li><a href="../../views/user/landing_page.php" class="<?php echo is_current_page('landing_page.php') ? 'active' : ''; ?>">Home</a></li>
+            <li><a href="../../views/user/volunteer.php" class="<?php echo is_current_page('volunteer.php') || is_current_page('regVolunteer.php') ? 'active' : ''; ?>">Be a Volunteer</a></li>
             <li class="dropdown">
                 <a href="javascript:void(0);" class="<?php echo is_current_page('aboutus.php') || is_current_page('Registrationmadrasa.php') || is_current_page('transparencyreport.php') ? 'active' : ''; ?>">About MSA <span class="arrow"></span></a>
                 <ul class="dropdown-content">
-                    <li><a href="<?php echo $base_url; ?>views/user/aboutus" class="<?php echo is_current_page('aboutus.php') ? 'active' : ''; ?>">About Us</a></li>
-                    <li><a href="<?php echo $base_url; ?>views/user/Registrationmadrasa" class="<?php echo is_current_page('Registrationmadrasa.php') ? 'active' : ''; ?>">Registration</a></li>
-                    <li><a href="<?php echo $base_url; ?>views/user/transparencyreport" class="<?php echo is_current_page('transparencyreport.php') ? 'active' : ''; ?>">Transparency</a></li>
+                    <li><a href="../../views/user/aboutus.php" class="<?php echo is_current_page('aboutus.php') ? 'active' : ''; ?>">About Us</a></li>
+                    <li><a href="../../views/user/Registrationmadrasa.php" class="<?php echo is_current_page('Registrationmadrasa.php') ? 'active' : ''; ?>">Registration</a></li>
+                    <li><a href="../../views/user/transparencyreport.php" class="<?php echo is_current_page('transparencyreport.php') ? 'active' : ''; ?>">Transparency</a></li>
                 </ul>
             </li>
-            <li><a href="<?php echo $base_url; ?>views/user/calendar" class="<?php echo is_current_page('calendar.php') ? 'active' : ''; ?>">Calendar</a></li>
-            <li><a href="<?php echo $base_url; ?>views/user/faqs" class="<?php echo is_current_page('faqs.php') ? 'active' : ''; ?>">FAQs</a></li>
+            <li><a href="../../views/user/calendar.php" class="<?php echo is_current_page('calendar.php') ? 'active' : ''; ?>">Calendar</a></li>
+            <li><a href="../../views/user/faqs.php" class="<?php echo is_current_page('faqs.php') ? 'active' : ''; ?>">FAQs</a></li>
         </ul>
     </nav>
 </header>
@@ -111,6 +94,6 @@ function is_current_page($page_names) {
 <!-- Page content will be loaded here -->
 </main>
 
-<script src="<?php echo $base_url; ?>js/header.js?v=<?php echo time(); ?>"></script>
+<script src="../../js/header.js?v=<?php echo time(); ?>"></script>
 </body>
 </html>

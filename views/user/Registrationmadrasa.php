@@ -22,7 +22,7 @@ $registrationInfo = $userObj->fetchRegistrationInfo();
     <script src="../../js/website.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">  
     <?php include '../../includes/header.php'; ?>
-    <link rel="stylesheet" href="<?php echo $base_url; ?>css/registrationmadrasa.css">
+    <link rel="stylesheet" href="../../css/registrationmadrasa.css">
     
     <!-- Success Message Modal -->
     <?php if (isset($_SESSION['madrasa_registration_success']) && $_SESSION['madrasa_registration_success']): ?>
@@ -38,7 +38,7 @@ $registrationInfo = $userObj->fetchRegistrationInfo();
     
     <!-- Hero Section -->
     <div class="hero">
-        <div class="hero-background" style="background-image: url('<?php echo $base_url . $backgroundImage[0]['image_path']; ?>');"></div>
+        <div class="hero-background" style="background-image: url('../../<?= $backgroundImage[0]['image_path']; ?>');"></div>
         <div class="hero-content">
             <?php foreach ($registrationInfo as $info) : ?>
             <h2><?php echo $info['title']; ?></h2>
@@ -46,7 +46,7 @@ $registrationInfo = $userObj->fetchRegistrationInfo();
             <?php endforeach; ?>
             <!-- Volunteer Now Button -->
             <div class="volunteer-button-container">
-            <button class="volunteer-button" onclick="window.location.href='Registermadrasaform'">Registration Form</button>            
+            <button class="volunteer-button" onclick="window.location.href='Registermadrasaform.php'">Registration Form</button>            
             </div>
         </div>
     </div>

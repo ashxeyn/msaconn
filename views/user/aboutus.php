@@ -10,10 +10,6 @@ $aboutInfo = $userObj->fetchAboutInfo();
 $adminObj = new Admin();
 $missionVision = $adminObj->fetchAbouts();
 $files = $adminObj->fetchDownloadableFiles();
-
-if (!isset($base_url)) {
-    $base_url = 'http://' . $_SERVER['HTTP_HOST'] . '/msaconn/';
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,7 +17,7 @@ if (!isset($base_url)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?php echo $base_url; ?>css/aboutus.css">
+    <link rel="stylesheet" href="../../css/aboutus.css">
     <style>
         /* Essential fixes for sticky header */
         html, body {
@@ -92,7 +88,7 @@ if (!isset($base_url)) {
 <!-- Hero Section -->
 <section class="hero">
     <?php if(!empty($backgroundImage)): ?>
-        <div class="hero-background" style="background-image: url('<?php echo $base_url . $backgroundImage[0]['image_path']; ?>');">
+        <div class="hero-background" style="background-image: url('../../<?= $backgroundImage[0]['image_path']; ?>');">
         </div>
     <?php endif; ?>
     <div class="hero-content">
@@ -124,7 +120,7 @@ if (!isset($base_url)) {
 <!-- Executive Team Section -->
 <section class="executive-officers">
     <!-- Preload the default officer image -->
-    <link rel="preload" href="<?php echo $base_url; ?>assets/images/officer.jpg" as="image">
+    <link rel="preload" href="../../assets/images/officer.jpg" as="image">
     
     <!-- Adviser Section - Will appear at the top -->
     <div id="adviser-container" class="adviser-container">
@@ -146,7 +142,7 @@ if (!isset($base_url)) {
             <!-- Officers will be loaded by JavaScript -->
             <div class="officer-card">
                 <div class="blur-bg"></div>
-                <img src="<?php echo $base_url; ?>assets/images/officer.jpg" alt="Officer" class="officer-image">
+                <img src="../../assets/images/officer.jpg" alt="Officer" class="officer-image">
                 <h3 class="officer-name">Loading Officers...</h3>
                 <p class="officer-position">Please wait a moment</p>
                 <p class="officer-bio">Officer information is loading. This will only take a moment.</p>
@@ -200,7 +196,7 @@ if (!isset($base_url)) {
                             $createdDate = $date->format('F j, Y');
                         }
                     ?>
-                    <a href="<?php echo $base_url; ?>assets/downloadables/<?= clean_input($file['file_path']) ?>" download class="download-card">
+                    <a href="../../assets/downloadables/<?= clean_input($file['file_path']) ?>" download class="download-card">
                         <div class="download-icon <?= $iconClass ?>"></div>
                         <div class="download-info">
                             <span class="download-title"><?= htmlspecialchars($file['file_name']) ?></span>
@@ -222,9 +218,9 @@ if (!isset($base_url)) {
 </section>
 
 <!-- Scripts -->
-<script src="<?php echo $base_url; ?>js/user.js"></script>
-<script src="<?php echo $base_url; ?>js/designuser.js"></script>
-<script src="<?php echo $base_url; ?>js/sticky-header.js"></script>
+<script src="../../js/user.js"></script>
+<script src="../../js/designuser.js"></script>
+<script src="../../js/sticky-header.js"></script>
 
 <?php include '../../includes/footer.php'; ?>
 </body>

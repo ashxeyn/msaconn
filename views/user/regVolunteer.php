@@ -178,8 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <?php 
-    // Include only the header content, not the full HTML structure
-    $base_url = 'http://' . $_SERVER['HTTP_HOST'] . '/msaconn/'; 
+    // Include header content
     include '../../includes/header.php'; 
     ?>
     

@@ -21,10 +21,6 @@ $email = $contact_number = '';
 $first_nameErr = $last_nameErr = $addressErr = $programErr = $collegeErr = $imageErr = '';
 $emailErr = $contactNumberErr = $yearErr = '';
 $college_id = $program_id = ''; // Initialize variables to avoid undefined variable warnings
-
-if (!isset($base_url)) {
-    $base_url = 'http://' . $_SERVER['HTTP_HOST'] . '/msaconn/';
-}
 ?>
 <!-- Inline style for fixing sticky header -->
 <style>

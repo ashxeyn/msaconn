@@ -21,14 +21,14 @@ foreach ($cashOut as $transaction) {
 }
 $totalFunds = $totalCashIn - $totalCashOut;
 ?>
-<link rel="stylesheet" href="<?php echo $base_url; ?>css/transparencyreport.css">
-<link rel="stylesheet" href="<?php echo $base_url; ?>css/shared-tables.css">
+<link rel="stylesheet" href="../../css/transparencyreport.css">
+<link rel="stylesheet" href="../../css/shared-tables.css">
 <!-- DataTables CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
 <div class="hero">
     <?php foreach ($backgroundImage as $image) : ?>
-    <div class="hero-background" style="background-image: url('<?php echo $base_url . $image['image_path']; ?>');">
+    <div class="hero-background" style="background-image: url('../../<?= $image['image_path']; ?>');">
     <?php endforeach; ?>
     </div>
     <div class="hero-content">

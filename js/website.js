@@ -1,3 +1,6 @@
+// Define base_url as a relative path
+const base_url = '../../';
+
 // FOOTER RELOAD FUNCTIONS
 function updateFooter() {
     $.ajax({
@@ -1225,11 +1228,6 @@ function isPageActive(pagePattern) {
 }
 
 $(document).ready(function() {
-    if (typeof base_url === 'undefined') {
-        const pathArray = window.location.pathname.split('/');
-        base_url = window.location.origin + '/' + pathArray[1] + '/';
-    }
-    
     console.log('Website.js initialized on path:', window.location.pathname);
     console.log('Base URL:', base_url);
     

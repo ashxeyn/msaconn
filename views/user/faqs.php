@@ -14,7 +14,7 @@ $backgroundImage = $user->fetchBackgroundImage();
     <title>FAQs</title>
     <?php include '../../includes/header.php'; ?>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?php echo $base_url; ?>css/faqs.css">
+    <link rel="stylesheet" href="../../css/faqs.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="../../js/faqs.js"></script>
 </head>
@@ -22,7 +22,7 @@ $backgroundImage = $user->fetchBackgroundImage();
     <!-- Hero Section -->
     <div class="hero">
         <?php foreach ($backgroundImage as $image) : ?>
-        <div class="hero-background" style="background-image: url('<?php echo $base_url . $image['image_path']; ?>');">
+        <div class="hero-background" style="background-image: url('../../<?= $image['image_path']; ?>');">
         <?php endforeach; ?>
         </div>
         <div class="hero-content">
@@ -39,6 +39,6 @@ $backgroundImage = $user->fetchBackgroundImage();
     </div>
 
     <?php include '../../includes/footer.php'; ?>
-    <script src="<?php echo $base_url; ?>js/user.js"></script>
+    <script src="../../js/user.js"></script>
 </body>
 </html>
