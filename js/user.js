@@ -929,7 +929,7 @@ function initializeExecutiveOfficers() {
             <div class="officer-card">
                 <div class="blur-bg"></div>
                 <img src="assets/images/officer.jpg" alt="Officer" class="officer-image">
-                <h3 class="officer-name">Unable to load officers</h3>
+                <h3 class="officer-name">UNABLE TO LOAD OFFICERS</h3>
                 <p class="officer-position">Please try again later</p>
                 <p class="officer-bio">There was a problem retrieving officer information.</p>
             </div>
@@ -1052,7 +1052,7 @@ function initializeExecutiveOfficers() {
             // Always use text-only placeholder
             placeholderCard.innerHTML = `
                 <div class="blur-bg"></div>
-                <h3 class="officer-name">No Officers Found</h3>
+                <h3 class="officer-name">NO OFFICERS FOUND</h3>
                 <p class="officer-position">Please check back later</p>
                 <p class="officer-bio">Officer information will be updated soon.</p>
             `;
@@ -1081,6 +1081,9 @@ function initializeExecutiveOfficers() {
         }
         fullName += officer.last_name;
         
+        // Convert name to uppercase
+        fullName = fullName.toUpperCase();
+        
         // Create card HTML (without image)
         officerCard.innerHTML = `
             <div class="blur-bg"></div>
@@ -1103,6 +1106,9 @@ function initializeExecutiveOfficers() {
             fullName += `${officer.middle_name.charAt(0)}. `;
         }
         fullName += officer.last_name;
+        
+        // Convert name to uppercase
+        fullName = fullName.toUpperCase();
         
         // Determine if mobile for image size
         const isMobile = window.innerWidth < 576;

@@ -300,7 +300,8 @@ class User {
                     op.position_name AS position, 
                     op.position_id,
                     eo.image AS picture,
-                    eo.office
+                    eo.office,
+                    eo.school_year_id
                 FROM 
                     executive_officers eo
                 INNER JOIN 
@@ -308,6 +309,7 @@ class User {
                 WHERE 
                     eo.is_deleted = 0
                 ORDER BY 
+                    eo.school_year_id DESC,
                     eo.office,
                     CASE 
                         WHEN op.position_name = 'Adviser' THEN 0
@@ -335,15 +337,34 @@ class User {
                 'ils' => []
             ];
             
+            // Track positions already added to avoid duplicates
+            $addedPositions = [
+                'adviser' => [],
+                'male' => [],
+                'wac' => [],
+                'ils' => []
+            ];
+            
+            // Process officers, taking only the first occurrence of each position
+            // Since we ordered by school_year_id DESC, the first occurrence will be the latest one
             foreach ($officers as $officer) {
+                $branch = '';
+                
                 if ($officer['position'] === 'Adviser' || $officer['position'] === 'Consultant') {
-                    $result['adviser'][] = $officer;
+                    $branch = 'adviser';
                 } elseif ($officer['office'] === 'male' || empty($officer['office'])) {
-                    $result['male'][] = $officer;
+                    $branch = 'male';
                 } elseif ($officer['office'] === 'wac') {
-                    $result['wac'][] = $officer;
+                    $branch = 'wac';
                 } elseif ($officer['office'] === 'ils') {
-                    $result['ils'][] = $officer;
+                    $branch = 'ils';
+                }
+                
+                // Only add this officer if we haven't already added one with the same position in this branch
+                $positionKey = $officer['position_id'] . '_' . $officer['office'];
+                if (!isset($addedPositions[$branch][$positionKey])) {
+                    $result[$branch][] = $officer;
+                    $addedPositions[$branch][$positionKey] = true;
                 }
             }
             

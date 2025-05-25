@@ -127,7 +127,7 @@ $files = $adminObj->fetchDownloadableFiles();
         <!-- Placeholder for adviser -->
     </div>
     
-    <h2 style="font-size: 1.8rem; color: #1a541c; text-align: center; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; margin-bottom: 30px; margin-top: 10px;">EXECUTIVE OFFICERS</h2>
+    <h2 style="font-size: 1.8rem; color: #1a541c; text-align: center; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; margin-bottom: 30px; margin-top: 10px;">LEAD</h2>
     
     <!-- Tabs for the three branches -->
     <div class="officer-tabs">

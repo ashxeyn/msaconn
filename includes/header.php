@@ -51,7 +51,7 @@ function is_current_page($page_names) {
     <!-- Top Section: Logo and MSA CONNECT -->
     <div class="header-top">
         <div class="logo">
-            <a href="../../views/user/landing_page.php">
+            <a href="../../views/user/landing_page">
                 <?php foreach ($logo as $logoItem): ?>
                     <img src="../../<?= clean_input($logoItem['image_path']); ?>" alt="MSA Connect Logo" class="logo">
                 <?php endforeach; ?>
@@ -74,18 +74,18 @@ function is_current_page($page_names) {
     <!-- Bottom Section: Navigation Bar -->
     <nav class="navbar">
         <ul class="nav-links">
-            <li><a href="../../views/user/landing_page.php" class="<?php echo is_current_page('landing_page.php') ? 'active' : ''; ?>">Home</a></li>
-            <li><a href="../../views/user/volunteer.php" class="<?php echo is_current_page('volunteer.php') || is_current_page('regVolunteer.php') ? 'active' : ''; ?>">Be a Volunteer</a></li>
+            <li><a href="../../views/user/landing_page" class="<?php echo is_current_page('landing_page.php') ? 'active' : ''; ?>">Home</a></li>
+            <li><a href="../../views/user/volunteer" class="<?php echo is_current_page('volunteer.php') || is_current_page('regVolunteer.php') ? 'active' : ''; ?>">Be a Volunteer</a></li>
             <li class="dropdown">
                 <a href="javascript:void(0);" class="<?php echo is_current_page('aboutus.php') || is_current_page('Registrationmadrasa.php') || is_current_page('transparencyreport.php') ? 'active' : ''; ?>">About MSA <span class="arrow"></span></a>
                 <ul class="dropdown-content">
-                    <li><a href="../../views/user/aboutus.php" class="<?php echo is_current_page('aboutus.php') ? 'active' : ''; ?>">About Us</a></li>
-                    <li><a href="../../views/user/Registrationmadrasa.php" class="<?php echo is_current_page('Registrationmadrasa.php') ? 'active' : ''; ?>">Registration</a></li>
-                    <li><a href="../../views/user/transparencyreport.php" class="<?php echo is_current_page('transparencyreport.php') ? 'active' : ''; ?>">Transparency</a></li>
+                    <li><a href="../../views/user/aboutus" class="<?php echo is_current_page('aboutus.php') ? 'active' : ''; ?>">About Us</a></li>
+                    <li><a href="../../views/user/Registrationmadrasa" class="<?php echo is_current_page('Registrationmadrasa.php') ? 'active' : ''; ?>">Registration</a></li>
+                    <li><a href="../../views/user/transparencyreport" class="<?php echo is_current_page('transparencyreport.php') ? 'active' : ''; ?>">Transparency</a></li>
                 </ul>
             </li>
-            <li><a href="../../views/user/calendar.php" class="<?php echo is_current_page('calendar.php') ? 'active' : ''; ?>">Calendar</a></li>
-            <li><a href="../../views/user/faqs.php" class="<?php echo is_current_page('faqs.php') ? 'active' : ''; ?>">FAQs</a></li>
+            <li><a href="../../views/user/calendar" class="<?php echo is_current_page('calendar.php') ? 'active' : ''; ?>">Calendar</a></li>
+            <li><a href="../../views/user/faqs" class="<?php echo is_current_page('faqs.php') ? 'active' : ''; ?>">FAQs</a></li>
         </ul>
     </nav>
 </header>
