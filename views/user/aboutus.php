@@ -122,12 +122,14 @@ $files = $adminObj->fetchDownloadableFiles();
     <!-- Preload the default officer image -->
     <link rel="preload" href="../../assets/images/officer.jpg" as="image">
     
+    <h2 style="font-size: 1.8rem; color: #1a541c; text-align: center; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; margin-bottom: 30px; margin-top: 10px;">LEADS</h2>
+    
     <!-- Adviser Section - Will appear at the top -->
     <div id="adviser-container" class="adviser-container">
         <!-- Placeholder for adviser -->
     </div>
     
-    <h2 style="font-size: 1.8rem; color: #1a541c; text-align: center; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; margin-bottom: 30px; margin-top: 10px;">LEAD</h2>
+    <h2 style="font-size: 1.8rem; color: #1a541c; text-align: center; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; margin-bottom: 30px; margin-top: 10px;">EXECUTIVE OFFICERS</h2>
     
     <!-- Tabs for the three branches -->
     <div class="officer-tabs">
@@ -148,17 +150,26 @@ $files = $adminObj->fetchDownloadableFiles();
                 <p class="officer-bio">Officer information is loading. This will only take a moment.</p>
             </div>
         </div>
+        <div class="view-more-container" style="display: none;">
+            <button class="view-more-btn" onclick="viewAllOfficers('male')">View All Officers</button>
+        </div>
     </div>
     
     <div id="wac-container" class="officer-branch-container">
         <div class="officers-grid" id="wac-officers-grid">
             <!-- Officers will be loaded by JavaScript -->
         </div>
+        <div class="view-more-container" style="display: none;">
+            <button class="view-more-btn" onclick="viewAllOfficers('wac')">View All Officers</button>
+        </div>
     </div>
     
     <div id="ils-container" class="officer-branch-container">
         <div class="officers-grid" id="ils-officers-grid">
             <!-- Officers will be loaded by JavaScript -->
+        </div>
+        <div class="view-more-container" style="display: none;">
+            <button class="view-more-btn" onclick="viewAllOfficers('ils')">View All Officers</button>
         </div>
     </div>
 </section>

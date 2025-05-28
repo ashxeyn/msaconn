@@ -46,7 +46,7 @@ $registrationInfo = $userObj->fetchRegistrationInfo();
             <?php endforeach; ?>
             <!-- Volunteer Now Button -->
             <div class="volunteer-button-container">
-            <button class="volunteer-button" onclick="window.location.href='Registermadrasaform.php'">Registration Form</button>            
+            <button class="volunteer-button" onclick="window.location.href='Registermadrasaform'">Registration Form</button>            
             </div>
         </div>
     </div>

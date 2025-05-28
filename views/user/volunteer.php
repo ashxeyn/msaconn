@@ -52,7 +52,7 @@ $debug_session = isset($_SESSION['volunteer_registration_success']) ? "Registrat
                 <p><?php echo $info['description']; ?></p> 
             <?php endforeach; ?>
                     <div class="volunteer-button-container">
-                        <a href="regVolunteer.php" class="volunteer-button">Volunteer Now</a>
+                        <a href="regVolunteer" class="volunteer-button">Volunteer Now</a>
                     </div>
         </div>
     </div>

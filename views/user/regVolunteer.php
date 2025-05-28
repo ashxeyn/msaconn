@@ -265,7 +265,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         <!-- Button Container - Fixed styling to match Madrasa form -->
         <div class="button-container" style="display: flex; gap: 15px; justify-content: space-between; margin-top: 20px;">
-            <button type="button" class="back-button" onclick="window.location.href='volunteer.php'" style="flex: 1; width: 50%; height: 50px; font-size: 17px; font-weight: 700; padding: 14px 20px; border-radius: 10px; background-color: #1a541c; color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;">Back</button>
+            <button type="button" class="back-button" onclick="window.location.href='volunteer'" style="flex: 1; width: 50%; height: 50px; font-size: 17px; font-weight: 700; padding: 14px 20px; border-radius: 10px; background-color: #1a541c; color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;">Back</button>
             <button type="submit" class="sign-up-button" style="flex: 1; width: 50%; height: 50px; font-size: 17px; font-weight: 700; padding: 14px 20px; border-radius: 10px; background-color: #d72f2f; color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;">Sign Up</button>
         </div>
     </form>

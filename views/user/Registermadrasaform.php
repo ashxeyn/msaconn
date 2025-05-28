@@ -665,7 +665,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                     <!-- Submit Button -->
                     <div class="button-container">
-                        <button type="button" class="back-button" onclick="window.location.href='registrationmadrasa.php'">Back</button>
+                        <button type="button" class="back-button" onclick="window.location.href='registrationmadrasa'">Back</button>
                         <button type="submit" name="submit_registration" id="submit_button">Submit Registration</button>
                     </div>
                 </div>

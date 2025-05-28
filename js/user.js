@@ -861,6 +861,64 @@ function loadProgramsByCollege(collegeId) {
         });
 }
 
+// Create text-only officer card (no image)
+function createTextOnlyOfficerCard(officer, branchName) {
+    const officerCard = document.createElement('div');
+    officerCard.classList.add('officer-card', 'text-only-card');
+    
+    // Create officer name (with middle initial if available)
+    let fullName = `${officer.first_name} `;
+    if (officer.middle_name) {
+        fullName += `${officer.middle_name.charAt(0)}. `;
+    }
+    fullName += officer.last_name;
+    
+    // Convert name to uppercase
+    fullName = fullName.toUpperCase();
+    
+    // Create card HTML (without image)
+    officerCard.innerHTML = `
+        <div class="blur-bg"></div>
+        <h3 class="officer-name">${fullName}</h3>
+        <p class="officer-position">${officer.position}</p>
+        <p class="officer-bio">Dedicated member of the ${branchName} serving as ${officer.position}.</p>
+    `;
+    
+    return officerCard;
+}
+
+// Create officer card with picture
+function createOfficerCard(officer, baseUrl) {
+    const officerCard = document.createElement('div');
+    officerCard.classList.add('officer-card');
+    
+    // Create officer name (with middle initial if available)
+    let fullName = `${officer.first_name} `;
+    if (officer.middle_name) {
+        fullName += `${officer.middle_name.charAt(0)}. `;
+    }
+    fullName += officer.last_name;
+    
+    // Convert name to uppercase
+    fullName = fullName.toUpperCase();
+    
+    // Determine if mobile for image size
+    const isMobile = window.innerWidth < 576;
+    const imgSrc = isMobile && officer.picture_small ? 
+        officer.picture_small : officer.picture;
+    
+    // Create card HTML
+    officerCard.innerHTML = `
+        <div class="blur-bg"></div>
+        <img src="${imgSrc}" alt="${fullName}" class="officer-image" loading="lazy">
+        <h3 class="officer-name">${fullName}</h3>
+        <p class="officer-position">${officer.position}</p>
+        <p class="officer-bio">Dedicated member of the MSA leadership team serving as ${officer.position}.</p>
+    `;
+    
+    return officerCard;
+}
+
 // Executive Officers Section
 function initializeExecutiveOfficers() {
     // Check if we're on the right page
@@ -951,9 +1009,16 @@ function initializeExecutiveOfficers() {
         if (adviserContainer && officersByBranch.adviser && officersByBranch.adviser.length > 0) {
             const adviserFragment = document.createDocumentFragment();
             
-            // Sort advisers and consultants (just to be safe, though the backend should handle this)
+            // Sort advisers by position_id (primary) and then by role (secondary)
             const sortedAdvisers = officersByBranch.adviser.sort((a, b) => {
-                // Advisers come before consultants
+                // First try to sort by position_id
+                const posA = parseInt(a.position_id) || 999;
+                const posB = parseInt(b.position_id) || 999;
+                if (posA !== posB) {
+                    return posA - posB; // Sort by position_id first
+                }
+                
+                // If position_ids are the same, sort by role (Advisers before Consultants)
                 if (a.position === 'Adviser' && b.position === 'Consultant') return -1;
                 if (a.position === 'Consultant' && b.position === 'Adviser') return 1;
                 return 0;
@@ -998,13 +1063,25 @@ function initializeExecutiveOfficers() {
     function updateBranchOfficers(gridContainer, officers, baseUrl) {
         const fragment = document.createDocumentFragment();
         const isWAC = gridContainer.id === 'wac-officers-grid';
+        const branchType = gridContainer.id.split('-')[0]; // 'male', 'wac', or 'ils'
         
         if (officers && officers.length > 0) {
+            // Sort officers by position_id (where lower numbers come first)
+            officers.sort((a, b) => {
+                // Use parseInt to ensure numeric comparison
+                const posA = parseInt(a.position_id) || 999; // Default to a high number if not available
+                const posB = parseInt(b.position_id) || 999;
+                return posA - posB; // Lower numbers first
+            });
+            
             // Determine layout based on viewport width
             const isMobile = window.innerWidth < 576;
             
-            // For mobile, limit the number of officers shown initially
-            const displayOfficers = isMobile ? officers.slice(0, 4) : officers;
+            // Check if we're already showing all officers
+            const isShowingAll = gridContainer.dataset.showingAll === 'true';
+            
+            // For mobile, limit the number of officers shown initially UNLESS we're showing all
+            const displayOfficers = (isMobile && !isShowingAll) ? officers.slice(0, 4) : officers;
             
             displayOfficers.forEach(officer => {
                 let officerCard;
@@ -1030,20 +1107,26 @@ function initializeExecutiveOfficers() {
                 fragment.appendChild(officerCard);
             });
             
-            // If on mobile and more officers exist, add a "View More" button
-            if (isMobile && officers.length > 4) {
-                const viewMoreBtn = document.createElement('button');
-                viewMoreBtn.className = 'view-more-btn';
-                viewMoreBtn.textContent = 'View All Officers';
-                viewMoreBtn.addEventListener('click', () => {
-                    // Replace with full officer list for this branch
-                    updateBranchOfficers(gridContainer, officers, baseUrl);
-                });
-                
-                const btnContainer = document.createElement('div');
-                btnContainer.className = 'view-more-container';
-                btnContainer.appendChild(viewMoreBtn);
-                fragment.appendChild(btnContainer);
+            // Show or hide the View More button based on mobile and officer count
+            const viewMoreContainer = document.querySelector(`#${branchType}-container .view-more-container`);
+            const viewMoreButton = viewMoreContainer ? viewMoreContainer.querySelector('.view-more-btn') : null;
+            
+            if (viewMoreContainer) {
+                if (isMobile && officers.length > 4) {
+                    viewMoreContainer.style.display = 'block';
+                    
+                    // Update button text based on current state
+                    if (viewMoreButton) {
+                        viewMoreButton.textContent = isShowingAll ? 'Show Less' : 'View All Officers';
+                    }
+                    
+                    // Initialize data attribute if not set
+                    if (!gridContainer.hasAttribute('data-showing-all')) {
+                        gridContainer.dataset.showingAll = 'false';
+                    }
+                } else {
+                    viewMoreContainer.style.display = 'none';
+                }
             }
         } else {
             const placeholderCard = document.createElement('div');
@@ -1058,6 +1141,12 @@ function initializeExecutiveOfficers() {
             `;
             
             fragment.appendChild(placeholderCard);
+            
+            // Hide view more button when no officers
+            const viewMoreContainer = document.querySelector(`#${branchType}-container .view-more-container`);
+            if (viewMoreContainer) {
+                viewMoreContainer.style.display = 'none';
+            }
         }
         
         // Clear existing content
@@ -1067,64 +1156,6 @@ function initializeExecutiveOfficers() {
         
         // Add new content
         gridContainer.appendChild(fragment);
-    }
-    
-    // Create text-only officer card (no image)
-    function createTextOnlyOfficerCard(officer, branchName) {
-        const officerCard = document.createElement('div');
-        officerCard.classList.add('officer-card', 'text-only-card');
-        
-        // Create officer name (with middle initial if available)
-        let fullName = `${officer.first_name} `;
-        if (officer.middle_name) {
-            fullName += `${officer.middle_name.charAt(0)}. `;
-        }
-        fullName += officer.last_name;
-        
-        // Convert name to uppercase
-        fullName = fullName.toUpperCase();
-        
-        // Create card HTML (without image)
-        officerCard.innerHTML = `
-            <div class="blur-bg"></div>
-            <h3 class="officer-name">${fullName}</h3>
-            <p class="officer-position">${officer.position}</p>
-            <p class="officer-bio">Dedicated member of the ${branchName} serving as ${officer.position}.</p>
-        `;
-        
-        return officerCard;
-    }
-    
-    // Create officer card with picture
-    function createOfficerCard(officer, baseUrl) {
-        const officerCard = document.createElement('div');
-        officerCard.classList.add('officer-card');
-        
-        // Create officer name (with middle initial if available)
-        let fullName = `${officer.first_name} `;
-        if (officer.middle_name) {
-            fullName += `${officer.middle_name.charAt(0)}. `;
-        }
-        fullName += officer.last_name;
-        
-        // Convert name to uppercase
-        fullName = fullName.toUpperCase();
-        
-        // Determine if mobile for image size
-        const isMobile = window.innerWidth < 576;
-        const imgSrc = isMobile && officer.picture_small ? 
-            officer.picture_small : officer.picture;
-        
-        // Create card HTML
-        officerCard.innerHTML = `
-            <div class="blur-bg"></div>
-            <img src="${imgSrc}" alt="${fullName}" class="officer-image" loading="lazy">
-            <h3 class="officer-name">${fullName}</h3>
-            <p class="officer-position">${officer.position}</p>
-            <p class="officer-bio">Dedicated member of the MSA leadership team serving as ${officer.position}.</p>
-        `;
-        
-        return officerCard;
     }
     
     // Function to fetch data with debounce
@@ -1168,5 +1199,148 @@ function switchOfficerTab(branchType) {
     const selectedTab = document.getElementById(`tab-${branchType}`);
     if (selectedTab) {
         selectedTab.classList.add('active');
+    }
+}
+
+// Function to show all officers in a branch tab when view all button is clicked
+function viewAllOfficers(branchType) {
+    // Get the container for this branch
+    const gridContainer = document.getElementById(`${branchType}-officers-grid`);
+    const viewMoreContainer = document.querySelector(`#${branchType}-container .view-more-container`);
+    const viewMoreButton = viewMoreContainer ? viewMoreContainer.querySelector('.view-more-btn') : null;
+    
+    if (!gridContainer || !viewMoreContainer || !viewMoreButton) {
+        console.error('Required elements not found for viewAllOfficers');
+        return;
+    }
+
+    // Check if we're currently showing all officers or not
+    const isShowingAll = gridContainer.dataset.showingAll === 'true';
+    
+    // Add loading indicator
+    gridContainer.setAttribute('data-loading', 'true');
+    
+    // If we're already showing all, collapse back to showing just 4
+    if (isShowingAll) {
+        // Fetch the data again to get original view
+        fetch('../../handler/user/fetchExecutiveOfficers.php', {
+            method: 'GET',
+            headers: {
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`Server responded with ${response.status}`);
+            return response.json();
+        })
+        .then(result => {
+            if (result.status === 'success') {
+                // Get officers for this branch
+                const officers = result.data[branchType] || [];
+                const baseUrl = document.querySelector('base')?.href || window.location.origin + '/msaconnect/';
+                
+                // Sort officers by position_id
+                officers.sort((a, b) => {
+                    const posA = parseInt(a.position_id) || 999;
+                    const posB = parseInt(b.position_id) || 999;
+                    return posA - posB; // Lower numbers first
+                });
+                
+                // Only show first 4 officers
+                const displayOfficers = officers.slice(0, 4);
+                
+                // Clear grid
+                while (gridContainer.firstChild) {
+                    gridContainer.removeChild(gridContainer.firstChild);
+                }
+                
+                // Create and append cards for display officers
+                displayOfficers.forEach(officer => {
+                    let officerCard;
+                    const isWAC = branchType === 'wac';
+                    
+                    if (isWAC) {
+                        officerCard = createTextOnlyOfficerCard(officer, "Women's Affairs Committee");
+                    } else {
+                        const hasDefaultImage = officer.picture && officer.picture.includes('default-profile.png');
+                        if (hasDefaultImage) {
+                            const branchName = branchType === 'male' ? 'Executive Officers' : 'ILS';
+                            officerCard = createTextOnlyOfficerCard(officer, branchName);
+                        } else {
+                            officerCard = createOfficerCard(officer, baseUrl);
+                        }
+                    }
+                    gridContainer.appendChild(officerCard);
+                });
+                
+                // Update button text and data attribute
+                viewMoreButton.textContent = 'View All Officers';
+                gridContainer.dataset.showingAll = 'false';
+            }
+        })
+        .catch(error => console.error('Error fetching officers:', error))
+        .finally(() => {
+            gridContainer.setAttribute('data-loading', 'false');
+        });
+    } else {
+        // Show all officers
+        fetch('../../handler/user/fetchExecutiveOfficers.php', {
+            method: 'GET',
+            headers: {
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache'
+            }
+        })
+        .then(response => {
+            if (!response.ok) throw new Error(`Server responded with ${response.status}`);
+            return response.json();
+        })
+        .then(result => {
+            if (result.status === 'success') {
+                // Get all officers for this branch
+                const allOfficers = result.data[branchType] || [];
+                const baseUrl = document.querySelector('base')?.href || window.location.origin + '/msaconnect/';
+                
+                // Sort officers by position_id
+                allOfficers.sort((a, b) => {
+                    const posA = parseInt(a.position_id) || 999;
+                    const posB = parseInt(b.position_id) || 999;
+                    return posA - posB; // Lower numbers first
+                });
+                
+                // Clear grid
+                while (gridContainer.firstChild) {
+                    gridContainer.removeChild(gridContainer.firstChild);
+                }
+                
+                // Create and append cards for all officers
+                allOfficers.forEach(officer => {
+                    let officerCard;
+                    const isWAC = branchType === 'wac';
+                    
+                    if (isWAC) {
+                        officerCard = createTextOnlyOfficerCard(officer, "Women's Affairs Committee");
+                    } else {
+                        const hasDefaultImage = officer.picture && officer.picture.includes('default-profile.png');
+                        if (hasDefaultImage) {
+                            const branchName = branchType === 'male' ? 'Executive Officers' : 'ILS';
+                            officerCard = createTextOnlyOfficerCard(officer, branchName);
+                        } else {
+                            officerCard = createOfficerCard(officer, baseUrl);
+                        }
+                    }
+                    gridContainer.appendChild(officerCard);
+                });
+                
+                // Update button text and data attribute
+                viewMoreButton.textContent = 'Show Less';
+                gridContainer.dataset.showingAll = 'true';
+            }
+        })
+        .catch(error => console.error('Error fetching officers:', error))
+        .finally(() => {
+            gridContainer.setAttribute('data-loading', 'false');
+        });
     }
 }

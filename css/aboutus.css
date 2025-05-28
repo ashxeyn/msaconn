@@ -952,6 +952,10 @@ body {
   width: 100%;
 }
 
+.view-more-container.hidden {
+  display: none !important;
+}
+
 .view-more-btn {
   background-color: #1a541c;
   color: white;
