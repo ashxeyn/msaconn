@@ -421,6 +421,10 @@ function addInputListeners() {
 
 // Initialize address dropdowns using Philippine Address API
 function initAddressDropdowns() {
+    // ====================== START OF API CODE ======================
+    // This section implements the Philippine Standard Geographic Code (PSGC) API
+    // to populate address dropdowns with regions, provinces, cities, and barangays
+    
     const regionSelect = document.getElementById('region');
     const provinceSelect = document.getElementById('province');
     const citySelect = document.getElementById('city');
@@ -681,6 +685,8 @@ function initAddressDropdowns() {
                 });
         }
     });
+    
+    // ====================== END OF API CODE ======================
 }
 
 // Initialize everything when the document is ready
