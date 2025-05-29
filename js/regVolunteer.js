@@ -41,8 +41,8 @@ function loadProgramsByCollege(collegeId) {
         return;
     }
     
-    // Get base URL dynamically
-    const baseUrl = window.location.href.split('/').slice(0, -2).join('/');
+    // Get base URL dynamically - FIX: Change the path to point to the correct location
+    const baseUrl = window.location.protocol + '//' + window.location.host + '/msaconn';
     const apiUrl = `${baseUrl}/handler/user/fetchProgramsByCollege.php?college_id=${collegeId}`;
     
     console.log('Fetching programs from:', apiUrl);
@@ -190,8 +190,8 @@ function validateFormFields() {
     // Middle Name
     const middlename = document.getElementById('middlename');
     if (!middlename.value.trim()) {
-        showError('middlename', 'Middle name is required');
-        valid = false;
+        // Middle name is optional, no error needed
+        clearError('middlename');
     } else {
         clearError('middlename');
     }

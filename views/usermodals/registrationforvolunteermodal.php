@@ -16,7 +16,7 @@
 <script>
     function closeVolunteerModal() {
         document.getElementById("successModal").style.display = "none";
-        window.location.href = "registrationmadrasa.php";
+        window.location.href = "volunteer.php";
     }
     
     // Auto close after 5 seconds

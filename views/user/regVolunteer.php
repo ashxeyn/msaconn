@@ -137,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             session_write_close();
             
             // Redirect with session in URL as a fallback
-            header("Location: volunteer.php?registration_success=1");
+            header("Location: volunteer?registration_success=1");
             exit;
         }
     }
@@ -182,7 +182,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     include '../../includes/header.php'; 
     ?>
     
-    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" enctype="multipart/form-data" autocomplete="on">
+    <form action="regVolunteer" method="POST" enctype="multipart/form-data" autocomplete="on" id="volunteerForm">
         <h2>Volunteer Registration Form</h2>
         <div class="form-columns">
             <!-- Left Column -->
