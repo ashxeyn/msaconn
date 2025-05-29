@@ -419,7 +419,7 @@ function addInputListeners() {
     }
 }
 
-// Initialize address dropdowns
+// Initialize address dropdowns using Philippine Address API
 function initAddressDropdowns() {
     const regionSelect = document.getElementById('region');
     const provinceSelect = document.getElementById('province');
@@ -431,91 +431,254 @@ function initAddressDropdowns() {
         return;
     }
     
-    // Clear existing options except the first one
+    // Clear existing options
     regionSelect.innerHTML = '<option value="">Select Region</option>';
     provinceSelect.innerHTML = '<option value="">Select Province</option>';
     citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
     barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
     
-    // Define region data if it's not already defined
-    if (typeof regionData === 'undefined') {
-        console.log('Defining regionData locally');
-        window.regionData = {
-            regions: ['Zamboanga Peninsula'],
-            provinces: [
-                'Zamboanga del Norte',
-                'Zamboanga del Sur',
-                'Zamboanga Sibugay',
-                'Zamboanga City',
-                'Isabela City'
-            ],
-            cities: {
-                'Zamboanga del Norte': ['Dapitan City', 'Dipolog City', 'Katipunan', 'La Libertad', 'Labason', 'Liloy', 'Manukan', 'Polanco', 'Rizal', 'Roxas', 'Sergio Osmeña Sr.', 'Siayan', 'Sindangan', 'Siocon', 'Tampilisan'],
-                'Zamboanga del Sur': ['Aurora', 'Bayog', 'Dimataling', 'Dinas', 'Dumalinao', 'Dumingag', 'Guipos', 'Josefina', 'Kumalarang', 'Labangan', 'Lakewood', 'Lapuyan', 'Mahayag', 'Margosatubig', 'Midsalip', 'Molave', 'Pagadian City', 'Pitogo', 'Ramon Magsaysay', 'San Miguel', 'San Pablo', 'Sominot', 'Tabina', 'Tambulig', 'Tigbao', 'Tukuran', 'Vincenzo A. Sagun'],
-                'Zamboanga Sibugay': ['Alicia', 'Buug', 'Diplahan', 'Imelda', 'Ipil', 'Kabasalan', 'Mabuhay', 'Malangas', 'Naga', 'Olutanga', 'Payao', 'Roseller Lim', 'Siay', 'Talusan', 'Titay', 'Tungawan'],
-                'Zamboanga City': ['Zamboanga City'],
-                'Isabela City': ['Isabela City']
-            },
-            barangays: {
-                'Zamboanga City': ['Arena Blanco', 'Ayala', 'Baluno', 'Boalan', 'Bolong', 'Buenavista', 'Bunguiao', 'Busay', 'Cabaluay', 'Cabatangan', 'Calarian', 'Canelar', 'Divisoria', 'Guiwan', 'Lunzuran', 'Putik', 'Recodo', 'San Jose Gusu', 'Sta. Maria', 'Tetuan'],
-                'Dipolog City': ['Barra', 'Biasong', 'Central', 'Cogon', 'Dicayas', 'Diwan', 'Estaka', 'Galas', 'Gulayon', 'Lugdungan', 'Magsaysay', 'Olingan', 'Sicayab', 'Sta. Isabel', 'Turno']
-            }
-        };
-    }
+    // Disable dropdowns until data is loaded
+    provinceSelect.disabled = true;
+    citySelect.disabled = true;
+    barangaySelect.disabled = true;
     
-    // Populate Regions
-    regionData.regions.forEach(region => {
-        const option = document.createElement('option');
-        option.value = region;
-        option.textContent = region;
-        regionSelect.appendChild(option);
-    });
-
+    // Base URL for the Philippine Addresses API
+    const baseApiUrl = 'https://psgc.gitlab.io/api';
+    
+    // Load Regions
+    fetch(`${baseApiUrl}/regions`)
+        .then(response => response.json())
+        .then(regions => {
+            // Sort regions by name
+            regions.sort((a, b) => a.name.localeCompare(b.name));
+            
+            // Add regions to dropdown
+            regions.forEach(region => {
+                const option = document.createElement('option');
+                option.value = region.code;
+                option.textContent = region.name;
+                regionSelect.appendChild(option);
+            });
+            
+            regionSelect.disabled = false;
+        })
+        .catch(error => {
+            console.error('Error loading regions:', error);
+            showValidationError(regionSelect, 'Failed to load regions. Please try again later.');
+        });
+    
     // Handle Region Change
     regionSelect.addEventListener('change', function() {
-        const selectedRegion = regionSelect.value;
+        const regionCode = this.value;
+        
+        // Reset and disable dependent dropdowns
         provinceSelect.innerHTML = '<option value="">Select Province</option>';
         citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
         barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-
-        if (selectedRegion === 'Zamboanga Peninsula') {
-            regionData.provinces.forEach(province => {
-                const option = document.createElement('option');
-                option.value = province;
-                option.textContent = province;
-                provinceSelect.appendChild(option);
+        
+        provinceSelect.disabled = true;
+        citySelect.disabled = true;
+        barangaySelect.disabled = true;
+        
+        if (!regionCode) return;
+        
+        // Load provinces for selected region
+        fetch(`${baseApiUrl}/regions/${regionCode}/provinces`)
+            .then(response => response.json())
+            .then(provinces => {
+                // Sort provinces by name
+                provinces.sort((a, b) => a.name.localeCompare(b.name));
+                
+                // Add provinces to dropdown
+                provinces.forEach(province => {
+                    const option = document.createElement('option');
+                    option.value = province.code;
+                    option.textContent = province.name;
+                    provinceSelect.appendChild(option);
+                });
+                
+                provinceSelect.disabled = false;
+                
+                // Also load highly urbanized cities directly into the city dropdown
+                // with a note that these don't require selecting a province
+                return fetch(`${baseApiUrl}/regions/${regionCode}/cities`);
+            })
+            .then(response => response.json())
+            .then(cities => {
+                if (cities && cities.length > 0) {
+                    // Add a special option to indicate these are highly urbanized cities
+                    citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
+                    
+                    // Add a separator for highly urbanized cities
+                    const separator = document.createElement('option');
+                    separator.disabled = true;
+                    separator.textContent = '─────── Highly Urbanized Cities ───────';
+                    citySelect.appendChild(separator);
+                    
+                    // Sort cities by name
+                    cities.sort((a, b) => a.name.localeCompare(b.name));
+                    
+                    // Add independent cities
+                    cities.forEach(city => {
+                        const option = document.createElement('option');
+                        option.value = `city-${city.code}`; // Add prefix to differentiate
+                        option.textContent = city.name;
+                        option.classList.add('independent-city');
+                        citySelect.appendChild(option);
+                    });
+                    
+                    // Add note to select province for other cities
+                    const note = document.createElement('option');
+                    note.disabled = true;
+                    note.textContent = '─────── Select a Province for Other Cities ───────';
+                    citySelect.appendChild(note);
+                    
+                    // Enable city selection
+                    citySelect.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error loading data:', error);
             });
-        }
     });
-
+    
     // Handle Province Change
     provinceSelect.addEventListener('change', function() {
-        const selectedProvince = provinceSelect.value;
+        const provinceCode = this.value;
+        
+        // Reset and disable dependent dropdowns
         citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
         barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-
-        if (regionData.cities[selectedProvince]) {
-            regionData.cities[selectedProvince].forEach(city => {
-                const option = document.createElement('option');
-                option.value = city;
-                option.textContent = city;
-                citySelect.appendChild(option);
+        
+        citySelect.disabled = true;
+        barangaySelect.disabled = true;
+        
+        if (!provinceCode) return;
+        
+        // Load municipalities and cities for the selected province
+        
+        // First load municipalities
+        fetch(`${baseApiUrl}/provinces/${provinceCode}/municipalities`)
+            .then(response => response.json())
+            .then(municipalities => {
+                // Sort municipalities by name
+                municipalities.sort((a, b) => a.name.localeCompare(b.name));
+                
+                // Add municipalities to dropdown
+                municipalities.forEach(municipality => {
+                    const option = document.createElement('option');
+                    option.value = municipality.code;
+                    option.textContent = municipality.name;
+                    citySelect.appendChild(option);
+                });
+                
+                // Also load component cities
+                return fetch(`${baseApiUrl}/provinces/${provinceCode}/cities`);
+            })
+            .then(response => response.json())
+            .then(cities => {
+                if (cities && cities.length > 0) {
+                    // Sort cities by name
+                    cities.sort((a, b) => a.name.localeCompare(b.name));
+                    
+                    // Add a separator if there are municipalities already
+                    if (citySelect.options.length > 1) {
+                        const separator = document.createElement('option');
+                        separator.disabled = true;
+                        separator.textContent = '─────── Component Cities ───────';
+                        citySelect.appendChild(separator);
+                    }
+                    
+                    // Add component cities
+                    cities.forEach(city => {
+                        const option = document.createElement('option');
+                        option.value = city.code;
+                        option.textContent = city.name;
+                        citySelect.appendChild(option);
+                    });
+                }
+                
+                citySelect.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error loading municipalities/cities:', error);
+                citySelect.disabled = false;
+                showValidationError(citySelect, 'Failed to load municipalities/cities. Please try again later.');
             });
-        }
     });
-
+    
     // Handle City Change
     citySelect.addEventListener('change', function() {
-        const selectedCity = citySelect.value;
+        const cityValue = this.value;
+        
+        // Reset and disable barangay dropdown
         barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-
-        if (regionData.barangays[selectedCity]) {
-            regionData.barangays[selectedCity].forEach(barangay => {
-                const option = document.createElement('option');
-                option.value = barangay;
-                option.textContent = barangay;
-                barangaySelect.appendChild(option);
-            });
+        barangaySelect.disabled = true;
+        
+        if (!cityValue) return;
+        
+        // Check if this is a highly urbanized city (added directly to city dropdown)
+        if (cityValue.startsWith('city-')) {
+            const cityCode = cityValue.replace('city-', '');
+            
+            // For highly urbanized cities, load barangays directly
+            fetch(`${baseApiUrl}/cities/${cityCode}/barangays`)
+                .then(response => response.json())
+                .then(barangays => {
+                    // Sort barangays by name
+                    barangays.sort((a, b) => a.name.localeCompare(b.name));
+                    
+                    // Add barangays to dropdown
+                    barangays.forEach(barangay => {
+                        const option = document.createElement('option');
+                        option.value = barangay.name;
+                        option.textContent = barangay.name;
+                        barangaySelect.appendChild(option);
+                    });
+                    
+                    barangaySelect.disabled = false;
+                })
+                .catch(error => {
+                    console.error('Error loading barangays for HUC:', error);
+                    barangaySelect.disabled = false;
+                    showValidationError(barangaySelect, 'Failed to load barangays. Please try again later.');
+                });
+        } else {
+            // Regular municipality or component city
+            const cityCode = cityValue;
+            
+            // Determine if selected value is a municipality or a component city
+            let url = `${baseApiUrl}/municipalities/${cityCode}/barangays`;
+            
+            // Load barangays
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        // If not found as municipality, try as component city
+                        return fetch(`${baseApiUrl}/cities/${cityCode}/barangays`);
+                    }
+                    return response;
+                })
+                .then(response => response.json())
+                .then(barangays => {
+                    // Sort barangays by name
+                    barangays.sort((a, b) => a.name.localeCompare(b.name));
+                    
+                    // Add barangays to dropdown
+                    barangays.forEach(barangay => {
+                        const option = document.createElement('option');
+                        option.value = barangay.name;
+                        option.textContent = barangay.name;
+                        barangaySelect.appendChild(option);
+                    });
+                    
+                    barangaySelect.disabled = false;
+                })
+                .catch(error => {
+                    console.error('Error loading barangays:', error);
+                    barangaySelect.disabled = false;
+                    showValidationError(barangaySelect, 'Failed to load barangays. Please try again later.');
+                });
         }
     });
 }

@@ -365,6 +365,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-family: 'Noto Naskh Arabic', serif !important;
         }
         
+        /* Styling for disabled select elements */
+        select:disabled {
+            background-color: #f0f0f0 !important;
+            color: #888 !important;
+            cursor: not-allowed !important;
+        }
+        
+        /* Styling for separator options */
+        option:disabled {
+            color: #1a541c !important;
+            font-weight: bold !important;
+            background-color: #f0f0f0 !important;
+        }
+        
+        /* Styling for independent city options */
+        option.independent-city {
+            font-style: italic !important;
+            color: #1a541c !important;
+        }
+        
         /* Label styling */
         label {
             display: block !important;
@@ -677,9 +697,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <?php include '../../includes/footer.php'; ?>
     
-    <!-- First load user.js which contains the regionData -->
-    <script src="../../js/user.js"></script>
-    <!-- Then load registermadrasaform.js which uses the regionData -->
+    <!-- Load only registermadrasaform.js which now uses the Philippine Address API -->
     <script src="../../js/registermadrasaform.js"></script>
 </body>
 </html>
