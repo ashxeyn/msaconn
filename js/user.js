@@ -464,12 +464,18 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function fetchTransparencyData() {
+    const cashInTbody = document.getElementById('cash-in-tbody');
+    const cashOutTbody = document.getElementById('cash-out-tbody');
+    
+    // Return early if elements don't exist on this page
+    if (!cashInTbody || !cashOutTbody) {
+        console.log('Transparency tables not found on this page');
+        return;
+    }
+    
     fetch('../../handler/user/fetchTransaction.php')
         .then(response => response.json())
         .then(data => {
-            const cashInTbody = document.getElementById('cash-in-tbody');
-            const cashOutTbody = document.getElementById('cash-out-tbody');
-
             cashInTbody.innerHTML = '';
             cashOutTbody.innerHTML = '';
 
@@ -745,6 +751,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function fetchLatestUpdates() {
     const updatesContainer = document.getElementById('updates-container');
+    
+    // Return early if the container doesn't exist on this page
+    if (!updatesContainer) {
+        console.log('Updates container not found on this page');
+        return;
+    }
 
     async function loadUpdates() {
         try {

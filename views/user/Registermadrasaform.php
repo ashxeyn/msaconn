@@ -1,4 +1,7 @@
 <?php
+// Start output buffering to ensure headers can be sent
+ob_start();
+
 require_once '../../tools/function.php';
 require_once '../../classes/userClass.php';
 
@@ -218,9 +221,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $_SESSION['madrasa_registration_success'] = true;
                     $_SESSION['registration_message'] = "Your enrollment for Madrasa has been received and will be processed by our team.";
                     
-                    // Use JavaScript redirect for more reliable redirect
-                    $redirect_url = 'registrationmadrasa.php';
-                    echo "<script>window.location.href = '$redirect_url';</script>";
+                    // Use PHP header redirect instead of JavaScript
+                    header('Location: registrationmadrasa.php');
                     exit;
                 } else {
                     // Log when registration fails
@@ -681,3 +683,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script src="../../js/registermadrasaform.js"></script>
 </body>
 </html>
+<?php
+// Flush the output buffer and send all output to the browser
+ob_end_flush();
+?>

@@ -109,9 +109,8 @@ function loadProgramsByCollege(collegeId) {
     // Show loading state
     programSelect.innerHTML = '<option value="">Loading programs...</option>';
 
-    // Get base URL dynamically
-    const baseUrl = window.location.href.split('/').slice(0, -2).join('/');
-    const apiUrl = `${baseUrl}/handler/user/getProgramsByCollege.php?college_id=${collegeId}`;
+    // Correctly build the URL by going from the current directory (views/user) up to the root
+    const apiUrl = '/msaconn/handler/user/fetchProgramsByCollege.php?college_id=' + collegeId;
     
     console.log('Fetching programs from:', apiUrl);
     
@@ -131,10 +130,10 @@ function loadProgramsByCollege(collegeId) {
             programSelect.innerHTML = '<option value="">Select Program</option>';
             
             // Check if data has expected structure
-            if (data && Array.isArray(data)) {
-                if (data.length > 0) {
+            if (data && data.success && data.data && Array.isArray(data.data)) {
+                if (data.data.length > 0) {
                     // Add program options
-                    data.forEach(program => {
+                    data.data.forEach(program => {
                         const option = document.createElement('option');
                         option.value = program.program_id;
                         option.textContent = program.program_name;
@@ -151,8 +150,8 @@ function loadProgramsByCollege(collegeId) {
             console.error('Error fetching programs:', error);
             programSelect.innerHTML = '<option value="">Error loading programs</option>';
             
-            // Try fallback approach with direct URL
-            const fallbackUrl = `/msaconn/handler/user/getProgramsByCollege.php?college_id=${collegeId}`;
+            // Try another alternative path as fallback
+            const fallbackUrl = '../../handler/user/fetchProgramsByCollege.php?college_id=' + collegeId;
             console.log('Trying fallback URL:', fallbackUrl);
             
             fetch(fallbackUrl)
@@ -167,8 +166,8 @@ function loadProgramsByCollege(collegeId) {
                     
                     programSelect.innerHTML = '<option value="">Select Program</option>';
                     
-                    if (data && Array.isArray(data) && data.length > 0) {
-                        data.forEach(program => {
+                    if (data && data.success && data.data && Array.isArray(data.data) && data.data.length > 0) {
+                        data.data.forEach(program => {
                             const option = document.createElement('option');
                             option.value = program.program_id;
                             option.textContent = program.program_name;
@@ -180,6 +179,31 @@ function loadProgramsByCollege(collegeId) {
                 })
                 .catch(fallbackError => {
                     console.error('Fallback error:', fallbackError);
+                    
+                    // Last resort - try a third path
+                    const lastResortUrl = '/handler/user/fetchProgramsByCollege.php?college_id=' + collegeId;
+                    console.log('Trying last resort URL:', lastResortUrl);
+                    
+                    fetch(lastResortUrl)
+                        .then(response => response.json())
+                        .then(data => {
+                            programSelect.innerHTML = '<option value="">Select Program</option>';
+                            
+                            if (data && data.success && data.data && Array.isArray(data.data) && data.data.length > 0) {
+                                data.data.forEach(program => {
+                                    const option = document.createElement('option');
+                                    option.value = program.program_id;
+                                    option.textContent = program.program_name;
+                                    programSelect.appendChild(option);
+                                });
+                            } else {
+                                programSelect.innerHTML = '<option value="">No programs found</option>';
+                            }
+                        })
+                        .catch(e => {
+                            console.error('All attempts failed:', e);
+                            programSelect.innerHTML = '<option value="">Unable to load programs</option>';
+                        });
                 });
         });
 }
@@ -249,7 +273,6 @@ function showValidationError(inputId, message) {
 // Main form validation function
 function validateMadrasaFormDirect(e) {
     console.log('Validating form...');
-    e.preventDefault(); // Prevent default form submission
     
     let isValid = true;
     
@@ -332,16 +355,18 @@ function validateMadrasaFormDirect(e) {
         }
     }
     
-    // If valid, submit the form
-    if (isValid) {
-        console.log('Form validation passed, submitting form');
-        document.getElementById('madrasaForm').submit();
-    } else {
+    // If not valid, prevent form submission and show errors
+    if (!isValid) {
+        e.preventDefault(); // Only prevent default if validation fails
+        
         // Scroll to the first error
         const firstError = document.querySelector('.validation-error');
         if (firstError) {
             firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
+    } else {
+        console.log('Form validation passed, allowing form submission');
+        // Allow normal form submission
     }
     
     return isValid;
@@ -535,23 +560,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add input event listeners to fields to clear errors when typing
     addInputListeners();
     
-    // Initialize form with direct validation method
-    const madrasaForm = document.getElementById('madrasaForm');
-    if (madrasaForm) {
-        console.log('Form found, attaching submit event listener');
-        madrasaForm.addEventListener('submit', function(e) {
-            return validateMadrasaFormDirect(e);
-        });
-    } else {
-        console.error('Madrasa form not found!');
-    }
+    // We don't need to add another event listener here since we're using onsubmit attribute
+    // This avoids duplicate validation
     
     // Add click handler for submit button as backup
     const submitButton = document.getElementById('submit_button');
     if (submitButton) {
         submitButton.addEventListener('click', function(e) {
-            // This will trigger the form's onsubmit handler
             console.log('Submit button clicked');
+            // Let the form's native onsubmit handler handle validation
         });
     }
 }); 
