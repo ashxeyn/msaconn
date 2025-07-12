@@ -1118,7 +1118,6 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                         <thead>
                                             <tr>
                                                 <th>Officer Name</th>
-                                                <th>Program</th>
                                                 <th>Position</th>
                                                 <th>School Year</th>
                                                 <th>Reason</th>
@@ -1129,7 +1128,7 @@ $archivedSchoolYears = $adminObj->fetchArchivedSchoolYears();
                                         <tbody>
                                             <?php if (empty($archivedOfficers)): ?>
                                                 <tr>
-                                                    <td colspan="7" class="text-center">No archived officers</td>
+                                                    <td colspan="6" class="text-center">No archived officers</td>
                                                 </tr>
                                             <?php else: ?>
                                                 <?php foreach ($archivedOfficers as $officer): ?>
