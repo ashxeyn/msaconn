@@ -11,11 +11,11 @@ $userRole = $_SESSION['role'] ?? '';
 </head>
 
 <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark sidebar" id="sidebar">
-    <a href="#" class="d-flex align-items-center mb-3 text-white sidebar-header text-decoration-none logo-container">
-        <img src="../../assets/images/msa_logo.png" alt="MSA Logo" width="40" height="50" class="me-2 logo">
-        <span class="sidebar-title" style="margin-left: -10px;">Muslim Student Assoc.</span>
-        <hr class="sidebar-divider">
-    </a>
+    <!-- Logo container with adjusted positioning -->
+    <div class="logo-container">
+        <img src="../../assets/images/msa_logo.png" alt="MSA Logo" class="logo">
+        <span class="sidebar-title">Muslim Student Assoc.</span>
+    </div>
     <hr class="text-white">
 
     <ul class="nav nav-pills flex-column mb-auto" style="padding-left: 0;">

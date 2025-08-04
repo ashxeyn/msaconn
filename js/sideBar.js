@@ -404,3 +404,31 @@ function loadSettings () {
         }
     });
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Sticky dropdown for School Configuration on mobile
+    const schoolConfigBtn = document.querySelector('.nav-link.dropdown-toggle');
+    const dropdownMenu = document.querySelector('.sidebar .dropdown-menu');
+
+    if (schoolConfigBtn && dropdownMenu) {
+        schoolConfigBtn.addEventListener('click', function() {
+            if (window.innerWidth <= 768) {
+                // Get the button's position relative to the viewport
+                const rect = schoolConfigBtn.getBoundingClientRect();
+                // Set both top and left to align dropdown with button
+                dropdownMenu.style.setProperty('--dropdown-top', `${rect.top}px`);
+                dropdownMenu.style.setProperty('--dropdown-left', `${rect.right + 8}px`); // 8px gap from sidebar
+            } else {
+                dropdownMenu.style.removeProperty('--dropdown-top');
+            }
+        });
+        // Optional: update position on scroll for stickiness
+        window.addEventListener('scroll', function() {
+            if (window.innerWidth <= 768 && dropdownMenu.classList.contains('show')) {
+                const rect = schoolConfigBtn.getBoundingClientRect();
+                dropdownMenu.style.setProperty('--dropdown-top', `${rect.top}px`);
+                dropdownMenu.style.setProperty('--dropdown-left', `${rect.right + 8}px`); // 8px gap from sidebar
+            }
+        });
+    }
+});

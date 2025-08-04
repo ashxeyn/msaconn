@@ -360,7 +360,6 @@ $calEvents = $adminObj->fetchCalendarEvents();
             }
             
             .nav-link {
-                text-align: center;
                 border-radius: 0;
             }
         }
