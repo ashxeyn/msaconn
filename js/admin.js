@@ -1964,6 +1964,115 @@ function formatFileSize(bytes) {
 }
 
 // STUDENT FUNCTIONS
+function initAddressDropdowns() {
+    console.log("Initializing address dropdowns..."); // Debug log
+
+    $('#addEditStudentModal').on('shown.bs.modal', function() {
+        fetchRegions();
+    });
+
+    $('#region').on('change', function() {
+        const regionCode = $(this).val();
+        if (regionCode) {
+            fetchProvinces(regionCode);
+        } else {
+            resetDropdowns(['province', 'city', 'barangay']);
+        }
+    });
+
+    $('#province').on('change', function() {
+        const provinceCode = $(this).val();
+        if (provinceCode) {
+            fetchCities(provinceCode);
+        } else {
+            resetDropdowns(['city', 'barangay']);
+        }
+    });
+
+    $('#city').on('change', function() {
+        const cityCode = $(this).val();
+        if (cityCode) {
+            fetchBarangays(cityCode);
+        } else {
+            resetDropdowns(['barangay']);
+        }
+    });
+}
+
+function fetchRegions() {
+    $.ajax({
+        url: 'https://psgc.gitlab.io/api/regions',
+        method: 'GET',
+        success: function(regions) {
+            const regionSelect = $('#region');
+            regionSelect.empty().append('<option value="">Select Region</option>');
+            regions.forEach(region => {
+                regionSelect.append(`<option value="${region.code}">${region.name}</option>`);
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching regions:', error);
+        }
+    });
+}
+
+function fetchProvinces(regionCode) {
+    $.ajax({
+        url: `https://psgc.gitlab.io/api/regions/${regionCode}/provinces`,
+        method: 'GET',
+        success: function(provinces) {
+            const provinceSelect = $('#province');
+            provinceSelect.empty().append('<option value="">Select Province</option>');
+            provinces.forEach(province => {
+                provinceSelect.append(`<option value="${province.code}">${province.name}</option>`);
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching provinces:', error);
+        }
+    });
+}
+
+function fetchCities(provinceCode) {
+    $.ajax({
+        url: `https://psgc.gitlab.io/api/provinces/${provinceCode}/cities-municipalities`,
+        method: 'GET',
+        success: function(cities) {
+            const citySelect = $('#city');
+            citySelect.empty().append('<option value="">Select City/Municipality</option>');
+            cities.forEach(city => {
+                citySelect.append(`<option value="${city.code}">${city.name}</option>`);
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching cities:', error);
+        }
+    });
+}
+
+function fetchBarangays(cityCode) {
+    $.ajax({
+        url: `https://psgc.gitlab.io/api/cities-municipalities/${cityCode}/barangays`,
+        method: 'GET',
+        success: function(barangays) {
+            const barangaySelect = $('#barangay');
+            barangaySelect.empty().append('<option value="">Select Barangay</option>');
+            barangays.forEach(barangay => {
+                barangaySelect.append(`<option value="${barangay.code}">${barangay.name}</option>`);
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching barangays:', error);
+        }
+    });
+}
+
+function resetDropdowns(dropdowns) {
+    dropdowns.forEach(dropdown => {
+        $(`#${dropdown}`).empty().append(`<option value="">Select ${dropdown.charAt(0).toUpperCase() + dropdown.slice(1)}</option>`);
+    });
+}
+
 function openStudentModal(modalId, studentId, action) {
     $('.modal').modal('hide');
     $('.modal-backdrop').remove(); 
@@ -1991,16 +2100,28 @@ function setStudentId(studentId, action) {
                     $('#email').val(student.email);
                     $('#contactNumber').val(student.contact_number);
                     $('#existing_image').val(student.cor_path);
-                    $('#region').val(student.region);
-                    $('#province').val(student.province);
-                    $('#province').trigger('change');
-                    setTimeout(() => {
-                        $('#city').val(student.city);
-                        $('#city').trigger('change');
+                    
+                    initAddressDropdowns();
+                    
+                    if (student.region_code) {
+                        $('#region').val(student.region_code).trigger('change');
                         setTimeout(() => {
-                            $('#barangay').val(student.barangay);
-                        }, 100);
-                    }, 100);
+                            if (student.province_code) {
+                                $('#province').val(student.province_code).trigger('change');
+                                setTimeout(() => {
+                                    if (student.city_code) {
+                                        $('#city').val(student.city_code).trigger('change');
+                                        setTimeout(() => {
+                                            if (student.barangay_code) {
+                                                $('#barangay').val(student.barangay_code);
+                                            }
+                                        }, 500);
+                                    }
+                                }, 500);
+                            }
+                        }, 500);
+                    }
+                    
                     $('#street').val(student.street);
                     $('#zipCode').val(student.zip_code);
 
@@ -2054,6 +2175,8 @@ function setStudentId(studentId, action) {
         
         $('#classificationStep').show();
         $('#studentDetailsStep').hide();
+        
+        initAddressDropdowns();
         
         $('#studentForm').off('submit').on('submit', function(e) {
             e.preventDefault();
@@ -4941,4 +5064,5 @@ function loadMaleSection() {
         }
     });
 }
+
 

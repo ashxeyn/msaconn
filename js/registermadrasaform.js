@@ -419,11 +419,9 @@ function addInputListeners() {
     }
 }
 
-// Initialize address dropdowns using Philippine Address API
+// FIXED: Initialize address dropdowns - Now stores NAMES instead of CODES
 function initAddressDropdowns() {
-    // ====================== START OF API CODE ======================
-    // This section implements the Philippine Standard Geographic Code (PSGC) API
-    // to populate address dropdowns with regions, provinces, cities, and barangays
+    console.log('Initializing address dropdowns...');
     
     const regionSelect = document.getElementById('region');
     const provinceSelect = document.getElementById('province');
@@ -449,17 +447,29 @@ function initAddressDropdowns() {
     // Base URL for the Philippine Addresses API
     const baseApiUrl = 'https://psgc.gitlab.io/api';
     
+    // Store region lookup data (name -> code mapping for API calls)
+    let regionLookup = {};
+    let provinceLookup = {};
+    let cityLookup = {};
+    
     // Load Regions
     fetch(`${baseApiUrl}/regions`)
         .then(response => response.json())
         .then(regions => {
+            console.log('Loaded regions:', regions.length);
+            
             // Sort regions by name
             regions.sort((a, b) => a.name.localeCompare(b.name));
             
-            // Add regions to dropdown
+            // Store region data for API lookups
+            regions.forEach(region => {
+                regionLookup[region.name] = region.code;
+            });
+            
+            // FIXED: Add regions with NAME as value (not code)
             regions.forEach(region => {
                 const option = document.createElement('option');
-                option.value = region.code;
+                option.value = region.name; // STORE NAME, NOT CODE
                 option.textContent = region.name;
                 regionSelect.appendChild(option);
             });
@@ -473,9 +483,12 @@ function initAddressDropdowns() {
     
     // Handle Region Change
     regionSelect.addEventListener('change', function() {
-        const regionCode = this.value;
+        const selectedRegionName = this.value; // This is now the NAME
+        const regionCode = regionLookup[selectedRegionName]; // Get code for API call
         
-        // Reset and disable dependent dropdowns
+        console.log('Region selected:', selectedRegionName, 'Code:', regionCode);
+        
+        // Reset dependent dropdowns
         provinceSelect.innerHTML = '<option value="">Select Province</option>';
         citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
         barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
@@ -484,36 +497,45 @@ function initAddressDropdowns() {
         citySelect.disabled = true;
         barangaySelect.disabled = true;
         
+        // Clear lookups
+        provinceLookup = {};
+        cityLookup = {};
+        
         if (!regionCode) return;
         
-        // Load provinces for selected region
+        // Load provinces for selected region using the CODE for API call
         fetch(`${baseApiUrl}/regions/${regionCode}/provinces`)
             .then(response => response.json())
             .then(provinces => {
+                console.log('Loaded provinces:', provinces.length);
+                
                 // Sort provinces by name
                 provinces.sort((a, b) => a.name.localeCompare(b.name));
                 
-                // Add provinces to dropdown
+                // Store province data for API lookups
+                provinces.forEach(province => {
+                    provinceLookup[province.name] = province.code;
+                });
+                
+                // FIXED: Add provinces with NAME as value (not code)
                 provinces.forEach(province => {
                     const option = document.createElement('option');
-                    option.value = province.code;
+                    option.value = province.name; // STORE NAME, NOT CODE
                     option.textContent = province.name;
                     provinceSelect.appendChild(option);
                 });
                 
                 provinceSelect.disabled = false;
                 
-                // Also load highly urbanized cities directly into the city dropdown
-                // with a note that these don't require selecting a province
+                // Also load highly urbanized cities for the region
                 return fetch(`${baseApiUrl}/regions/${regionCode}/cities`);
             })
             .then(response => response.json())
             .then(cities => {
                 if (cities && cities.length > 0) {
-                    // Add a special option to indicate these are highly urbanized cities
-                    citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
+                    console.log('Loaded regional cities (HUCs):', cities.length);
                     
-                    // Add a separator for highly urbanized cities
+                    // Add separator for highly urbanized cities
                     const separator = document.createElement('option');
                     separator.disabled = true;
                     separator.textContent = '─────── Highly Urbanized Cities ───────';
@@ -522,11 +544,17 @@ function initAddressDropdowns() {
                     // Sort cities by name
                     cities.sort((a, b) => a.name.localeCompare(b.name));
                     
-                    // Add independent cities
+                    // Store city data for API lookups
+                    cities.forEach(city => {
+                        cityLookup[city.name] = city.code;
+                    });
+                    
+                    // FIXED: Add independent cities with NAME as value (not code)
                     cities.forEach(city => {
                         const option = document.createElement('option');
-                        option.value = `city-${city.code}`; // Add prefix to differentiate
+                        option.value = city.name; // STORE NAME, NOT CODE
                         option.textContent = city.name;
+                        option.dataset.type = 'huc';
                         option.classList.add('independent-city');
                         citySelect.appendChild(option);
                     });
@@ -534,70 +562,110 @@ function initAddressDropdowns() {
                     // Add note to select province for other cities
                     const note = document.createElement('option');
                     note.disabled = true;
-                    note.textContent = '─────── Select a Province for Other Cities ───────';
+                    note.textContent = '─────── Select Province for Other Cities ───────';
                     citySelect.appendChild(note);
                     
-                    // Enable city selection
                     citySelect.disabled = false;
                 }
             })
             .catch(error => {
-                console.error('Error loading data:', error);
+                console.error('Error loading provinces/cities:', error);
             });
     });
     
     // Handle Province Change
     provinceSelect.addEventListener('change', function() {
-        const provinceCode = this.value;
+        const selectedProvinceName = this.value; // This is now the NAME
+        const provinceCode = provinceLookup[selectedProvinceName]; // Get code for API call
         
-        // Reset and disable dependent dropdowns
+        console.log('Province selected:', selectedProvinceName, 'Code:', provinceCode);
+        
+        // Keep existing HUCs and reset the rest
+        const existingOptions = Array.from(citySelect.options);
+        const hucOptions = existingOptions.filter(option => 
+            option.dataset.type === 'huc' || option.disabled
+        );
+        
+        // Reset city dropdown but keep HUCs
         citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
-        barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+        hucOptions.forEach(option => {
+            citySelect.appendChild(option.cloneNode(true));
+        });
         
-        citySelect.disabled = true;
+        barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
         barangaySelect.disabled = true;
         
-        if (!provinceCode) return;
+        if (!provinceCode) {
+            citySelect.disabled = false; // Keep enabled for HUCs
+            return;
+        }
         
-        // Load municipalities and cities for the selected province
-        
-        // First load municipalities
+        // Load municipalities for the selected province using the CODE for API call
         fetch(`${baseApiUrl}/provinces/${provinceCode}/municipalities`)
             .then(response => response.json())
             .then(municipalities => {
+                console.log('Loaded municipalities:', municipalities.length);
+                
                 // Sort municipalities by name
                 municipalities.sort((a, b) => a.name.localeCompare(b.name));
                 
-                // Add municipalities to dropdown
+                // Store municipality data for API lookups
+                municipalities.forEach(municipality => {
+                    cityLookup[municipality.name] = municipality.code;
+                });
+                
+                // Add separator if there are HUCs
+                const hasHUCs = citySelect.options.length > 1;
+                if (hasHUCs && municipalities.length > 0) {
+                    const separator = document.createElement('option');
+                    separator.disabled = true;
+                    separator.textContent = '─────── Municipalities ───────';
+                    citySelect.appendChild(separator);
+                }
+                
+                // FIXED: Add municipalities with NAME as value (not code)
                 municipalities.forEach(municipality => {
                     const option = document.createElement('option');
-                    option.value = municipality.code;
+                    option.value = municipality.name; // STORE NAME, NOT CODE
                     option.textContent = municipality.name;
+                    option.dataset.type = 'municipality';
                     citySelect.appendChild(option);
                 });
                 
-                // Also load component cities
+                // Also load component cities for the province
                 return fetch(`${baseApiUrl}/provinces/${provinceCode}/cities`);
             })
             .then(response => response.json())
             .then(cities => {
                 if (cities && cities.length > 0) {
+                    console.log('Loaded component cities:', cities.length);
+                    
                     // Sort cities by name
                     cities.sort((a, b) => a.name.localeCompare(b.name));
                     
-                    // Add a separator if there are municipalities already
-                    if (citySelect.options.length > 1) {
+                    // Store city data for API lookups
+                    cities.forEach(city => {
+                        cityLookup[city.name] = city.code;
+                    });
+                    
+                    // Add separator for component cities
+                    const hasOtherOptions = Array.from(citySelect.options).some(opt => 
+                        opt.dataset.type === 'municipality' || opt.dataset.type === 'huc'
+                    );
+                    
+                    if (hasOtherOptions) {
                         const separator = document.createElement('option');
                         separator.disabled = true;
                         separator.textContent = '─────── Component Cities ───────';
                         citySelect.appendChild(separator);
                     }
                     
-                    // Add component cities
+                    // FIXED: Add component cities with NAME as value (not code)
                     cities.forEach(city => {
                         const option = document.createElement('option');
-                        option.value = city.code;
+                        option.value = city.name; // STORE NAME, NOT CODE
                         option.textContent = city.name;
+                        option.dataset.type = 'component-city';
                         citySelect.appendChild(option);
                     });
                 }
@@ -613,87 +681,70 @@ function initAddressDropdowns() {
     
     // Handle City Change
     citySelect.addEventListener('change', function() {
-        const cityValue = this.value;
+        const selectedCityName = this.value; // This is now the NAME
+        const cityCode = cityLookup[selectedCityName]; // Get code for API call
+        const selectedOption = this.options[this.selectedIndex];
+        const cityType = selectedOption ? selectedOption.dataset.type : null;
         
-        // Reset and disable barangay dropdown
+        console.log('City selected:', selectedCityName, 'Code:', cityCode, 'Type:', cityType);
+        
+        // Reset barangay dropdown
         barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
         barangaySelect.disabled = true;
         
-        if (!cityValue) return;
+        if (!cityCode || !selectedCityName) return;
         
-        // Check if this is a highly urbanized city (added directly to city dropdown)
-        if (cityValue.startsWith('city-')) {
-            const cityCode = cityValue.replace('city-', '');
-            
-            // For highly urbanized cities, load barangays directly
-            fetch(`${baseApiUrl}/cities/${cityCode}/barangays`)
-                .then(response => response.json())
-                .then(barangays => {
-                    // Sort barangays by name
-                    barangays.sort((a, b) => a.name.localeCompare(b.name));
-                    
-                    // Add barangays to dropdown
-                    barangays.forEach(barangay => {
-                        const option = document.createElement('option');
-                        option.value = barangay.name;
-                        option.textContent = barangay.name;
-                        barangaySelect.appendChild(option);
-                    });
-                    
-                    barangaySelect.disabled = false;
-                })
-                .catch(error => {
-                    console.error('Error loading barangays for HUC:', error);
-                    barangaySelect.disabled = false;
-                    showValidationError(barangaySelect, 'Failed to load barangays. Please try again later.');
-                });
+        // Determine API endpoint based on city type
+        let apiUrl;
+        if (cityType === 'municipality') {
+            apiUrl = `${baseApiUrl}/municipalities/${cityCode}/barangays`;
         } else {
-            // Regular municipality or component city
-            const cityCode = cityValue;
-            
-            // Determine if selected value is a municipality or a component city
-            let url = `${baseApiUrl}/municipalities/${cityCode}/barangays`;
-            
-            // Load barangays
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        // If not found as municipality, try as component city
-                        return fetch(`${baseApiUrl}/cities/${cityCode}/barangays`);
-                    }
-                    return response;
-                })
-                .then(response => response.json())
-                .then(barangays => {
-                    // Sort barangays by name
-                    barangays.sort((a, b) => a.name.localeCompare(b.name));
-                    
-                    // Add barangays to dropdown
-                    barangays.forEach(barangay => {
-                        const option = document.createElement('option');
-                        option.value = barangay.name;
-                        option.textContent = barangay.name;
-                        barangaySelect.appendChild(option);
-                    });
-                    
-                    barangaySelect.disabled = false;
-                })
-                .catch(error => {
-                    console.error('Error loading barangays:', error);
-                    barangaySelect.disabled = false;
-                    showValidationError(barangaySelect, 'Failed to load barangays. Please try again later.');
-                });
+            // For both HUC and component cities
+            apiUrl = `${baseApiUrl}/cities/${cityCode}/barangays`;
         }
+        
+        // Load barangays using the CODE for API call
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    // Fallback: try the other endpoint
+                    const fallbackUrl = cityType === 'municipality' 
+                        ? `${baseApiUrl}/cities/${cityCode}/barangays`
+                        : `${baseApiUrl}/municipalities/${cityCode}/barangays`;
+                    return fetch(fallbackUrl);
+                }
+                return response;
+            })
+            .then(response => response.json())
+            .then(barangays => {
+                console.log('Loaded barangays:', barangays.length);
+                
+                // Sort barangays by name
+                barangays.sort((a, b) => a.name.localeCompare(b.name));
+                
+                // FIXED: Add barangays with NAME as value (already correct - API returns name)
+                barangays.forEach(barangay => {
+                    const option = document.createElement('option');
+                    option.value = barangay.name; // This is already NAME, which is correct
+                    option.textContent = barangay.name;
+                    barangaySelect.appendChild(option);
+                });
+                
+                barangaySelect.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error loading barangays:', error);
+                barangaySelect.disabled = false;
+                showValidationError(barangaySelect, 'Failed to load barangays. Please try again later.');
+            });
     });
-    
-    // ====================== END OF API CODE ======================
 }
 
 // Initialize everything when the document is ready
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM fully loaded - initializing form validation');
     
-    // Initialize address dropdowns
+    // Initialize address dropdowns with fixed implementation
     initAddressDropdowns();
     
     // Initialize form fields based on registration type
@@ -728,16 +779,4 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add input event listeners to fields to clear errors when typing
     addInputListeners();
-    
-    // We don't need to add another event listener here since we're using onsubmit attribute
-    // This avoids duplicate validation
-    
-    // Add click handler for submit button as backup
-    const submitButton = document.getElementById('submit_button');
-    if (submitButton) {
-        submitButton.addEventListener('click', function(e) {
-            console.log('Submit button clicked');
-            // Let the form's native onsubmit handler handle validation
-        });
-    }
-}); 
+});

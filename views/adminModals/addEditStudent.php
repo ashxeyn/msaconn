@@ -14,128 +14,6 @@ $colleges = $adminObj->fetchAllColleges();
 $programs = $student && $student['college_id'] ? $adminObj->fetchProgramsByCollege($student['college_id']) : [];
 $yearLevels = ['1st year', '2nd year', '3rd year', '4th year', 'Others'];
 
-$regionData = [
-    'regions' => [
-        'Zamboanga Peninsula'
-    ],
-    'provinces' => [
-        'Zamboanga del Norte',
-        'Zamboanga del Sur',
-        'Zamboanga Sibugay',
-        'Zamboanga City',
-        'Isabela City'
-    ],
-    'cities' => [
-        'Zamboanga del Norte' => [
-            'Dapitan City',
-            'Dipolog City',
-            'Katipunan',
-            'La Libertad',
-            'Labason',
-            'Liloy',
-            'Manukan',
-            'Polanco',
-            'Rizal',
-            'Roxas',
-            'Sergio Osmeña Sr.',
-            'Siayan',
-            'Sindangan',
-            'Siocon',
-            'Tampilisan'
-        ],
-        'Zamboanga del Sur' => [
-            'Aurora',
-            'Bayog',
-            'Dimataling',
-            'Dinas',
-            'Dumalinao',
-            'Dumingag',
-            'Guipos',
-            'Josefina',
-            'Kumalarang',
-            'Labangan',
-            'Lakewood',
-            'Lapuyan',
-            'Mahayag',
-            'Margosatubig',
-            'Midsalip',
-            'Molave',
-            'Pagadian City',
-            'Pitogo',
-            'Ramon Magsaysay',
-            'San Miguel',
-            'San Pablo',
-            'Sominot',
-            'Tabina',
-            'Tambulig',
-            'Tigbao',
-            'Tukuran',
-            'Vincenzo A. Sagun'
-        ],
-        'Zamboanga Sibugay' => [
-            'Alicia',
-            'Buug',
-            'Diplahan',
-            'Imelda',
-            'Ipil',
-            'Kabasalan',
-            'Mabuhay',
-            'Malangas',
-            'Naga',
-            'Olutanga',
-            'Payao',
-            'Roseller Lim',
-            'Siay',
-            'Talusan',
-            'Titay',
-            'Tungawan'
-        ],
-        'Zamboanga City' => [
-            'Zamboanga City'
-        ],
-        'Isabela City' => [
-            'Isabela City'
-        ]
-    ],
-    'barangays' => [
-        'Zamboanga City' => [
-            'Arena Blanco',
-            'Ayala',
-            'Baluno',
-            'Boalan',
-            'Bolong',
-            'Buenavista',
-            'Bunguiao',
-            'Busay',
-            'Cabaluay',
-            'Cabatangan'
-        ],
-        'Dipolog City' => [
-            'Barra',
-            'Biasong',
-            'Central',
-            'Cogon',
-            'Dicayas',
-            'Diwan',
-            'Estaka',
-            'Galas',
-            'Gulayon',
-            'Lugdungan'
-        ],
-        'Pagadian City' => [
-            'Balangasan',
-            'Balintawak',
-            'Baliwasan',
-            'Baloyboan',
-            'Banale',
-            'Bogo Capalaran',
-            'Buenavista',
-            'Bulatok',
-            'Bulatin',
-            'Dampalan'
-        ]
-    ]
-];
 ?>
 
 <!-- Student Modal -->
@@ -215,56 +93,32 @@ $regionData = [
                             <h6 class="section-title">Address Information</h6>
                         <div class="mb-3">
                             <label for="region" class="form-label">Region</label>
-                            <select class="form-select" id="region" name="region">
+                            <select class="form-select" id="region" name="region" required>
                                 <option value="">Select Region</option>
-                                <?php foreach ($regionData['regions'] as $region): ?>
-                                        <option value="<?= $region ?>" <?= ($student && $student['region'] == $region) ? 'selected' : '' ?>>
-                                        <?= $region ?>
-                                    </option>
-                                <?php endforeach; ?>
                             </select>
                             <div id="regionError" class="text-danger"></div>
                         </div>
 
                         <div class="mb-3">
                             <label for="province" class="form-label">Province</label>
-                            <select class="form-select" id="province" name="province" onchange="updateCities(this.value)">
+                            <select class="form-select" id="province" name="province" required>
                                 <option value="">Select Province</option>
-                                <?php foreach ($regionData['provinces'] as $province): ?>
-                                        <option value="<?= $province ?>" <?= ($student && $student['province'] == $province) ? 'selected' : '' ?>>
-                                        <?= $province ?>
-                                    </option>
-                                <?php endforeach; ?>
                             </select>
                             <div id="provinceError" class="text-danger"></div>
                         </div>
 
                         <div class="mb-3">
                             <label for="city" class="form-label">City/Municipality</label>
-                            <select class="form-select" id="city" name="city" onchange="updateBarangays(this.value)">
+                            <select class="form-select" id="city" name="city" required>
                                 <option value="">Select City/Municipality</option>
-                                <?php if ($student && $student['province'] && isset($regionData['cities'][$student['province']])): ?>
-                                    <?php foreach ($regionData['cities'][$student['province']] as $city): ?>
-                                            <option value="<?= $city ?>" <?= ($student && $student['city'] == $city) ? 'selected' : '' ?>>
-                                            <?= $city ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
                             </select>
                             <div id="cityError" class="text-danger"></div>
                         </div>
 
                         <div class="mb-3">
                             <label for="barangay" class="form-label">Barangay</label>
-                            <select class="form-select" id="barangay" name="barangay">
+                            <select class="form-select" id="barangay" name="barangay" required>
                                 <option value="">Select Barangay</option>
-                                <?php if ($student && $student['city'] && isset($regionData['barangays'][$student['city']])): ?>
-                                    <?php foreach ($regionData['barangays'][$student['city']] as $barangay): ?>
-                                            <option value="<?= $barangay ?>" <?= ($student && $student['barangay'] == $barangay) ? 'selected' : '' ?>>
-                                            <?= $barangay ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
                             </select>
                             <div id="barangayError" class="text-danger"></div>
                         </div>
@@ -377,55 +231,177 @@ $regionData = [
 </div>
 
 <script>
-var cityData = <?= json_encode($regionData['cities']) ?>;
-var barangayData = <?= json_encode($regionData['barangays']) ?>;
+var selectedRegion = <?= json_encode($student['region'] ?? '') ?>;
+var selectedProvince = <?= json_encode($student['province'] ?? '') ?>;
+var selectedCity = <?= json_encode($student['city'] ?? '') ?>;
+var selectedBarangay = <?= json_encode($student['barangay'] ?? '') ?>;
+</script>
 
-function updateCities(province, selectedCity = null) {
-    var citySelect = document.getElementById('city');
-    var barangaySelect = document.getElementById('barangay');
+<script>
+function initAddressDropdowns() {
+    const regionSelect = document.getElementById('region');
+    const provinceSelect = document.getElementById('province');
+    const citySelect = document.getElementById('city');
+    const barangaySelect = document.getElementById('barangay');
+
+    regionSelect.innerHTML = '<option value="">Select Region</option>';
+    provinceSelect.innerHTML = '<option value="">Select Province</option>';
     citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
     barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-    if (!province) return;
-    var cities = cityData[province] || [];
-    for (var i = 0; i < cities.length; i++) {
-        var option = document.createElement('option');
-        option.value = cities[i];
-        option.textContent = cities[i];
-        if (selectedCity && cities[i] === selectedCity) {
-            option.selected = true;
-        }
-        citySelect.appendChild(option);
-    }
-}
 
-function updateBarangays(city, selectedBarangay = null) {
-    var barangaySelect = document.getElementById('barangay');
-    barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
-    if (!city) return;
-    var barangays = barangayData[city] || [];
-    for (var i = 0; i < barangays.length; i++) {
-        var option = document.createElement('option');
-        option.value = barangays[i];
-        option.textContent = barangays[i];
-        if (selectedBarangay && barangays[i] === selectedBarangay) {
-            option.selected = true;
-        }
-        barangaySelect.appendChild(option);
-    }
-}
+    provinceSelect.disabled = true;
+    citySelect.disabled = true;
+    barangaySelect.disabled = true;
 
-$(document).ready(function() {
-    $('#addEditStudentModal').on('shown.bs.modal', function () {
-        var province = $('#province').val();
-        var city = $('#city').val();
-        var barangay = $('#barangay').val();
-        if (province) {
-            updateCities(province, city);
-            if (city) {
-                updateBarangays(city, barangay);
+    const baseApiUrl = 'https://psgc.gitlab.io/api';
+
+    // Load Regions
+    fetch(`${baseApiUrl}/regions`)
+        .then(response => response.json())
+        .then(regions => {
+            regions.sort((a, b) => a.name.localeCompare(b.name));
+            regions.forEach(region => {
+                const option = document.createElement('option');
+                option.value = region.name;
+                option.textContent = region.name;
+                regionSelect.appendChild(option);
+            });
+            regionSelect.disabled = false;
+            if (selectedRegion) {
+                regionSelect.value = selectedRegion;
+                regionSelect.dispatchEvent(new Event('change'));
             }
-        }
+        })
+        .catch(error => {
+            console.error('Error loading regions:', error);
+        });
+
+    regionSelect.addEventListener('change', function() {
+        const regionCode = this.value;
+        provinceSelect.innerHTML = '<option value="">Select Province</option>';
+        citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
+        barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+        provinceSelect.disabled = true;
+        citySelect.disabled = true;
+        barangaySelect.disabled = true;
+        if (!regionCode) return;
+        // Find the region object by name to get its code
+        fetch(`${baseApiUrl}/regions`)
+            .then(response => response.json())
+            .then(regions => {
+                const regionObj = regions.find(r => r.name === regionCode);
+                if (!regionObj) return;
+                const regionApiCode = regionObj.code;
+                fetch(`${baseApiUrl}/regions/${regionApiCode}/provinces`)
+                    .then(response => response.json())
+                    .then(provinces => {
+                        provinces.sort((a, b) => a.name.localeCompare(b.name));
+                        provinces.forEach(province => {
+                            const option = document.createElement('option');
+                            option.value = province.name;
+                            option.textContent = province.name;
+                            provinceSelect.appendChild(option);
+                        });
+                        provinceSelect.disabled = false;
+                        if (selectedProvince) {
+                            provinceSelect.value = selectedProvince;
+                            provinceSelect.dispatchEvent(new Event('change'));
+                        }
+                        return fetch(`${baseApiUrl}/regions/${regionApiCode}/cities`);
+                    })
+                    .then(response => response.json())
+                    .then(cities => {
+                        // Optionally handle highly urbanized cities
+                    })
+                    .catch(error => {
+                        console.error('Error loading provinces/cities:', error);
+                    });
+            });
     });
+
+    provinceSelect.addEventListener('change', function() {
+        const provinceName = this.value;
+        citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
+        barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+        citySelect.disabled = true;
+        barangaySelect.disabled = true;
+        if (!provinceName) return;
+        // Find the province object by name to get its code
+        fetch(`${baseApiUrl}/provinces`)
+            .then(response => response.json())
+            .then(provinces => {
+                const provinceObj = provinces.find(p => p.name === provinceName);
+                if (!provinceObj) return;
+                const provinceApiCode = provinceObj.code;
+                fetch(`${baseApiUrl}/provinces/${provinceApiCode}/municipalities`)
+                    .then(response => response.json())
+                    .then(municipalities => {
+                        municipalities.sort((a, b) => a.name.localeCompare(b.name));
+                        municipalities.forEach(municipality => {
+                            const option = document.createElement('option');
+                            option.value = municipality.name;
+                            option.textContent = municipality.name;
+                            citySelect.appendChild(option);
+                        });
+                        return fetch(`${baseApiUrl}/provinces/${provinceApiCode}/cities`);
+                    })
+                    .then(response => response.json())
+                    .then(cities => {
+                        cities.sort((a, b) => a.name.localeCompare(b.name));
+                        cities.forEach(city => {
+                            const option = document.createElement('option');
+                            option.value = city.name;
+                            option.textContent = city.name;
+                            citySelect.appendChild(option);
+                        });
+                        citySelect.disabled = false;
+                        if (selectedCity) {
+                            citySelect.value = selectedCity;
+                            citySelect.dispatchEvent(new Event('change'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading municipalities/cities:', error);
+                    });
+            });
+    });
+
+    citySelect.addEventListener('change', function() {
+        const cityName = this.value;
+        barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
+        barangaySelect.disabled = true;
+        if (!cityName) return;
+        // Find the city object by name to get its code
+        fetch(`${baseApiUrl}/cities`)
+            .then(response => response.json())
+            .then(cities => {
+                const cityObj = cities.find(c => c.name === cityName);
+                if (!cityObj) return;
+                const cityApiCode = cityObj.code;
+                fetch(`${baseApiUrl}/cities/${cityApiCode}/barangays`)
+                    .then(response => response.json())
+                    .then(barangays => {
+                        barangays.sort((a, b) => a.name.localeCompare(b.name));
+                        barangays.forEach(barangay => {
+                            const option = document.createElement('option');
+                            option.value = barangay.name;
+                            option.textContent = barangay.name;
+                            barangaySelect.appendChild(option);
+                        });
+                        barangaySelect.disabled = false;
+                        if (selectedBarangay) {
+                            barangaySelect.value = selectedBarangay;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error loading barangays:', error);
+                    });
+            });
+    });
+}
+
+$('#addEditStudentModal').on('shown.bs.modal', function () {
+    initAddressDropdowns();
 });
 </script>
 
