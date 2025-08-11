@@ -32,7 +32,6 @@ $calEvents = $adminObj->fetchCalendarEvents();
         .admin-page-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             margin-bottom: 1rem;
             border-bottom: 2px solid var(--palestine-green);
             padding: 0.5rem 0;
@@ -224,7 +223,6 @@ $calEvents = $adminObj->fetchCalendarEvents();
 
         .dataTables_filter label {
             display: flex;
-            align-items: center;
             margin-bottom: 1.5rem;
         }
 
@@ -246,7 +244,6 @@ $calEvents = $adminObj->fetchCalendarEvents();
 
         .dataTables_length label {
             display: flex;
-            align-items: center;
             flex-wrap: wrap;
             margin-bottom: 1rem !important;
         }

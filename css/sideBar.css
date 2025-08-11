@@ -237,8 +237,9 @@
 @media (max-width: 768px) {
     .sidebar .dropdown-menu {
         position: fixed !important;
-        left: var(--dropdown-left, 70px) !important; /* sticky to button */
+        left: var(--dropdown-left, 0px) !important; /* flush with sidebar or set by JS */
         top: var(--dropdown-top, 0px) !important;
+        transform: translateY(50px) !important;
         width: var(--dropdown-width, 180px) !important;
         min-width: 140px !important;
         max-width: 90vw !important;

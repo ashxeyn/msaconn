@@ -413,11 +413,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (schoolConfigBtn && dropdownMenu) {
         schoolConfigBtn.addEventListener('click', function() {
             if (window.innerWidth <= 768) {
-                // Get the button's position relative to the viewport
                 const rect = schoolConfigBtn.getBoundingClientRect();
-                // Set both top and left to align dropdown with button
-                dropdownMenu.style.setProperty('--dropdown-top', `${rect.top}px`);
-                dropdownMenu.style.setProperty('--dropdown-left', `${rect.right + 8}px`); // 8px gap from sidebar
+                // Set top to button, left flush with sidebar
+                dropdownMenu.style.setProperty('--dropdown-top', `${rect.top - 10}px`);
+                dropdownMenu.style.setProperty('--dropdown-left', `10px`);
             } else {
                 dropdownMenu.style.removeProperty('--dropdown-top');
             }
@@ -426,8 +425,8 @@ document.addEventListener('DOMContentLoaded', function() {
         window.addEventListener('scroll', function() {
             if (window.innerWidth <= 768 && dropdownMenu.classList.contains('show')) {
                 const rect = schoolConfigBtn.getBoundingClientRect();
-                dropdownMenu.style.setProperty('--dropdown-top', `${rect.top}px`);
-                dropdownMenu.style.setProperty('--dropdown-left', `${rect.right + 8}px`); // 8px gap from sidebar
+                dropdownMenu.style.setProperty('--dropdown-top', `${rect.top - 10}px`);
+                dropdownMenu.style.setProperty('--dropdown-left', `10px`);
             }
         });
     }

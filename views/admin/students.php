@@ -1,7 +1,3 @@
-        /* Always left-align nav-link text, even on mobile */
-        .nav-link, .nav-tabs .nav-link {
-            text-align: left !important;
-        }
 <?php
 session_start();
 require_once '../../classes/adminClass.php';
@@ -32,6 +28,9 @@ $result = $adminObj->fetchOnsiteEnrolledStudents();
             max-width: 1200px;
             padding-top: 3rem;
         }
+
+        /* / Always left-align .nav-link text, even on mobile */ .nav-link, .nav-tabs .nav-link { text-align: left !important; }
+
 
         .admin-page-header {
             display: flex;
