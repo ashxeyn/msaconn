@@ -2,18 +2,15 @@
 require_once '../../tools/function.php';
 require_once '../../classes/userClass.php';
 
-// Debug code to check database connection
 $diagnosis = [];
 try {
     $userObj = new User();
     $diagnosis['connection'] = 'Database connection successful';
     
-    // Test fetching colleges
     $colleges = $userObj->fetchColleges();
     $diagnosis['colleges_count'] = count($colleges);
     $diagnosis['first_college'] = !empty($colleges) ? $colleges[0]['college_name'] : 'No colleges found';
     
-    // Test fetching programs for a specific college (e.g., College of Computing Studies, ID 3)
     $testCollegeId = 3;
     $programs = $userObj->fetchProgramsByCollege($testCollegeId);
     $diagnosis['programs_count'] = count($programs);
@@ -25,7 +22,6 @@ try {
     $diagnosis['error'] = $e->getMessage();
 }
 
-// Only display diagnostics if requested via query parameter
 if (isset($_GET['debug']) && $_GET['debug'] === 'true') {
     echo '<pre>';
     print_r($diagnosis);
@@ -38,8 +34,6 @@ $userObj = new User();
 $colleges = $userObj->fetchColleges();
 $programs = $userObj->fetchProgram();
 
-// Debug - see structure of program data
-// echo '<pre>'; print_r($programs); echo '</pre>';
 
 $first_name = $last_name = $middle_name = $year = $program = $cor_file = $contact = $email = '';
 $college_id = '';
@@ -74,7 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $emailErr = "Please enter email!";
     }
 
-    // Validate that program belongs to selected college
     if (!empty($program) && !empty($college_id)) {
         $programValid = false;
         foreach ($programs as $prog) {
@@ -119,24 +112,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     
     if (empty($first_nameErr) && empty($last_nameErr) && empty($contactErr) && empty($emailErr) && empty($programErr) && empty($yearErr) && empty($imageErr)) {
-        // Use parameters instead of properties
-        $section = ''; // Add empty section since we removed the field
+        $section = ''; 
         $result = $userObj->addVolunteer($first_name, $last_name, $middle_name, $year, $section, $program, $contact, $email, $cor_file);
         
         if ($result) {
-            // Ensure session is started
             if (session_status() === PHP_SESSION_NONE) {
                 session_start();
             }
             
-            // Set session variables
             $_SESSION['volunteer_registration_success'] = true;
             $_SESSION['registration_type'] = 'volunteer';
             
-            // Make sure session is written before redirect
             session_write_close();
             
-            // Redirect with session in URL as a fallback
             header("Location: volunteer?registration_success=1");
             exit;
         }
@@ -153,7 +141,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel="stylesheet" href="../../css/regVolunteer.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
     <style>
-        /* Updated validation error styling to match Registermadrasaform.php */
         .error-message {
             color: #b33a3a !important;
             font-size: 13px !important;
@@ -164,13 +151,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-family: 'Noto Naskh Arabic', serif !important;
         }
 
-        /* Style for invalid form elements */
         input.invalid, select.invalid {
             border: 1px solid #b33a3a !important;
             background-color: #fff !important;
         }
 
-        /* Ensure consistent font family throughout the form */
         form, input, select, button, label {
             font-family: 'Noto Naskh Arabic', serif !important;
         }
@@ -178,14 +163,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <?php 
-    // Include header content
     include '../../includes/header.php'; 
     ?>
     
     <form action="regVolunteer" method="POST" enctype="multipart/form-data" autocomplete="on" id="volunteerForm">
         <h2>Volunteer Registration Form</h2>
         <div class="form-columns">
-            <!-- Left Column -->
             <div class="form-col">
                 <div class="form-section">
                     <label for="firstname">First Name:</label>
@@ -218,7 +201,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <span class="error-message" id="program-error"></span>
                 </div>
             </div>
-            <!-- Right Column -->
             <div class="form-col">
                 <div class="form-section">
                     <label for="year">Year Level:</label>
@@ -240,7 +222,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <span class="error-message" id="email-error"></span>
                 </div>
                 
-                <!-- COR upload -->
                 <div class="cor-row">
                     <label for="image">Upload COR Picture:</label>
                     <div class="upload-container">
@@ -263,7 +244,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </div>
         </div>
         
-        <!-- Button Container - Fixed styling to match Madrasa form -->
         <div class="button-container" style="display: flex; gap: 15px; justify-content: space-between; margin-top: 20px;">
             <button type="button" class="back-button" onclick="window.location.href='volunteer'" style="flex: 1; width: 50%; height: 50px; font-size: 17px; font-weight: 700; padding: 14px 20px; border-radius: 10px; background-color: #1a541c; color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;">Back</button>
             <button type="submit" class="sign-up-button" style="flex: 1; width: 50%; height: 50px; font-size: 17px; font-weight: 700; padding: 14px 20px; border-radius: 10px; background-color: #d72f2f; color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;">Sign Up</button>
@@ -273,18 +253,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php include '../../includes/footer.php'; ?>
     <script src="../../js/regVolunteer.js"></script>
     <script>
-        // Initialize everything when the document is ready
         document.addEventListener('DOMContentLoaded', function() {
             const collegeSelect = document.getElementById('college');
             
-            // Re-attach event listener to ensure it's working
             if (collegeSelect) {
                 collegeSelect.addEventListener('change', function() {
                     console.log('College selected:', this.value);
                     loadProgramsByCollege(this.value);
                 });
                 
-                // Load programs if a college is already selected
                 if (collegeSelect.value) {
                     console.log('Initial college value:', collegeSelect.value);
                     loadProgramsByCollege(collegeSelect.value);
@@ -293,7 +270,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 console.error('College select element not found!');
             }
             
-            // Debug program field
             const programSelect = document.getElementById('program');
             if (!programSelect) {
                 console.error('Program select element not found!');

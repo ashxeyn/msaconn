@@ -16,7 +16,7 @@ $registrationInfo = $userObj->fetchRegistrationInfo();
 </head>
 <body>
     <?php
-    session_start(); // Start the session to access session variables
+    session_start(); 
     ?>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="../../js/website.js"></script>
@@ -24,19 +24,16 @@ $registrationInfo = $userObj->fetchRegistrationInfo();
     <?php include '../../includes/header.php'; ?>
     <link rel="stylesheet" href="../../css/registrationmadrasa.css">
     
-    <!-- Success Message Modal -->
     <?php if (isset($_SESSION['madrasa_registration_success']) && $_SESSION['madrasa_registration_success']): ?>
     <?php 
     $modalPath = dirname(dirname(dirname(__FILE__))) . '/views/usermodals/registerformadrasamodal.php';
     include $modalPath;
     
-    // Clear the session variables after showing the message
     unset($_SESSION['madrasa_registration_success']);
     unset($_SESSION['registration_message']);
     ?>
     <?php endif; ?>
     
-    <!-- Hero Section -->
     <div class="hero">
         <div class="hero-background" style="background-image: url('../../<?= $backgroundImage[0]['image_path']; ?>');"></div>
         <div class="hero-content">
@@ -44,14 +41,12 @@ $registrationInfo = $userObj->fetchRegistrationInfo();
             <h2><?php echo $info['title']; ?></h2>
             <p><?php echo $info['description']; ?></p>
             <?php endforeach; ?>
-            <!-- Volunteer Now Button -->
             <div class="volunteer-button-container">
             <button class="volunteer-button" onclick="window.location.href='Registermadrasaform'">Registration Form</button>            
             </div>
         </div>
     </div>
 
-    <!-- Volunteer Section -->
   
 
     <?php include '../../includes/footer.php'; ?>

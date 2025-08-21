@@ -19,7 +19,6 @@ $files = $adminObj->fetchDownloadableFiles();
     <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../css/aboutus.css">
     <style>
-        /* Essential fixes for sticky header */
         html, body {
             margin: 0;
             padding: 0;
@@ -28,30 +27,26 @@ $files = $adminObj->fetchDownloadableFiles();
         }
         
         body {
-            padding-top: 0; /* Remove padding from body */
+            padding-top: 0; 
         }
         
-        /* Move padding to main content instead of body */
         main#content {
-            padding-top: 0; /* Let JS handle spacing */
+            padding-top: 0; 
         }
         
-        /* Hero section specific fixes */
         .hero {
             position: relative;
-            margin-top: 0; /* Let JS handle this dynamically */
+            margin-top: 0; 
             min-height: 400px;
             width: 100%;
             z-index: 1;
             box-sizing: border-box;
         }
         
-        /* Fix any potential gap issues */
         header {
             margin-bottom: 0 !important;
         }
         
-        /* Ensure hero background fills the space */
         .hero-background {
             position: absolute;
             top: 0;
@@ -67,7 +62,7 @@ $files = $adminObj->fetchDownloadableFiles();
                 padding-top: 0;
             }
             .hero {
-                margin-top: 0; /* Let JS handle this */
+                margin-top: 0; 
             }
         }
         
@@ -76,7 +71,7 @@ $files = $adminObj->fetchDownloadableFiles();
                 padding-top: 0;
             }
             .hero {
-                margin-top: 0; /* Let JS handle this */
+                margin-top: 0; 
             }
         }
     </style>
@@ -85,7 +80,6 @@ $files = $adminObj->fetchDownloadableFiles();
 
 <?php include '../../includes/header.php'; ?>
 
-<!-- Hero Section -->
 <section class="hero">
     <?php if(!empty($backgroundImage)): ?>
         <div class="hero-background" style="background-image: url('../../<?= $backgroundImage[0]['image_path']; ?>');">
@@ -99,7 +93,6 @@ $files = $adminObj->fetchDownloadableFiles();
     </div>
 </section>
 
-<!-- Mission and Vision Section -->
 <section id="about" class="about-section">
     <div class="container">
         <?php if(!empty($missionVision)): ?>
@@ -117,31 +110,24 @@ $files = $adminObj->fetchDownloadableFiles();
     </div>
 </section>
 
-<!-- Executive Team Section -->
 <section class="executive-officers">
-    <!-- Preload the default officer image -->
     <link rel="preload" href="../../assets/images/officer.jpg" as="image">
     
     <h2 style="font-size: 1.8rem; color: #1a541c; text-align: center; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; margin-bottom: 30px; margin-top: 10px;">LEADS</h2>
     
-    <!-- Adviser Section - Will appear at the top -->
     <div id="adviser-container" class="adviser-container">
-        <!-- Placeholder for adviser -->
     </div>
     
     <h2 style="font-size: 1.8rem; color: #1a541c; text-align: center; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; margin-bottom: 30px; margin-top: 10px;">EXECUTIVE OFFICERS</h2>
     
-    <!-- Tabs for the three branches -->
     <div class="officer-tabs">
         <button id="tab-male" class="tab-button active" onclick="switchOfficerTab('male')">Executive Officers</button>
         <button id="tab-wac" class="tab-button" onclick="switchOfficerTab('wac')">Women's Affairs Committee</button>
         <button id="tab-ils" class="tab-button" onclick="switchOfficerTab('ils')">ILS Representatives</button>
     </div>
     
-    <!-- Container for each branch, only one will be visible at a time -->
     <div id="male-container" class="officer-branch-container active">
         <div class="officers-grid" id="male-officers-grid">
-            <!-- Officers will be loaded by JavaScript -->
             <div class="officer-card">
                 <div class="blur-bg"></div>
                 <img src="../../assets/images/officer.jpg" alt="Officer" class="officer-image">
@@ -157,7 +143,6 @@ $files = $adminObj->fetchDownloadableFiles();
     
     <div id="wac-container" class="officer-branch-container">
         <div class="officers-grid" id="wac-officers-grid">
-            <!-- Officers will be loaded by JavaScript -->
         </div>
         <div class="view-more-container" style="display: none;">
             <button class="view-more-btn" onclick="viewAllOfficers('wac')">View All Officers</button>
@@ -166,7 +151,6 @@ $files = $adminObj->fetchDownloadableFiles();
     
     <div id="ils-container" class="officer-branch-container">
         <div class="officers-grid" id="ils-officers-grid">
-            <!-- Officers will be loaded by JavaScript -->
         </div>
         <div class="view-more-container" style="display: none;">
             <button class="view-more-btn" onclick="viewAllOfficers('ils')">View All Officers</button>
@@ -174,7 +158,6 @@ $files = $adminObj->fetchDownloadableFiles();
     </div>
 </section>
 
-<!-- Downloadable Files Section -->
 <section class="downloadable-files">
     <h2 class="section-title">Downloadable Resources</h2>
     <div class="container">
@@ -228,7 +211,6 @@ $files = $adminObj->fetchDownloadableFiles();
     </div>
 </section>
 
-<!-- Scripts -->
 <script src="../../js/user.js"></script>
 <script src="../../js/designuser.js"></script>
 <script src="../../js/sticky-header.js"></script>

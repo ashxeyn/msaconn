@@ -23,7 +23,6 @@ $totalFunds = $totalCashIn - $totalCashOut;
 ?>
 <link rel="stylesheet" href="../../css/transparencyreport.css">
 <link rel="stylesheet" href="../../css/shared-tables.css">
-<!-- DataTables CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
 <div class="hero">
@@ -39,9 +38,7 @@ $totalFunds = $totalCashIn - $totalCashOut;
     </div>
 </div>
 
-<!-- Add these styles to the head section to ensure they override other styles -->
 <style>
-  /* Override DataTables styling to ensure consistent row heights */
   #cashinTable td, 
   #cashinTable th,
   #cashoutTable td, 
@@ -55,12 +52,11 @@ $totalFunds = $totalCashIn - $totalCashOut;
     border-right: none !important;
   }
   
-  /* Remove vertical borders and keep only horizontal ones */
   .msa-table {
     border-collapse: collapse !important;
     border-left: none !important;
     border-right: none !important;
-    min-width: 650px; /* Ensure minimum width for scrolling */
+    min-width: 650px; 
     width: 100%;
   }
   
@@ -82,16 +78,14 @@ $totalFunds = $totalCashIn - $totalCashOut;
     border-bottom: none !important;
   }
   
-  /* Table container should have clean borders and scrolling */
   .table-container {
     border-radius: 8px !important;
     overflow-x: auto !important;
     border: 1px solid #e0e0e0 !important;
-    -webkit-overflow-scrolling: touch !important; /* Smooth scrolling on iOS */
+    -webkit-overflow-scrolling: touch !important; 
     margin-bottom: 20px !important;
   }
   
-  /* Ensure DataTables doesn't override our styles */
   .dataTables_wrapper .dataTables_length, 
   .dataTables_wrapper .dataTables_filter, 
   .dataTables_wrapper .dataTables_info, 
@@ -102,7 +96,6 @@ $totalFunds = $totalCashIn - $totalCashOut;
     padding: 8px !important;
   }
   
-  /* Fix pagination position */
   .dataTables_wrapper .dataTables_paginate {
     position: static !important;
     float: none !important;
@@ -129,13 +122,11 @@ $totalFunds = $totalCashIn - $totalCashOut;
     border: none !important;
   }
   
-  /* Make sure the table rows have consistent heights even after DataTables loads */
   .msa-table tr {
     height: auto !important;
     min-height: 50px !important;
   }
   
-  /* Transaction Details Title Style */
   .transaction-title {
     font-size: 1.8rem;
     color: #1a541c;
@@ -157,7 +148,6 @@ $totalFunds = $totalCashIn - $totalCashOut;
       padding: 10px 12px !important;
     }
     
-    /* Add scroll hint for small screens */
     .table-container::after {
       content: "Scroll horizontally to view full table →";
       display: block;
@@ -169,7 +159,6 @@ $totalFunds = $totalCashIn - $totalCashOut;
       border-top: 1px solid #eee;
     }
 
-    /* Ensure pagination stays left-aligned on mobile */
     .dataTables_wrapper .dataTables_paginate {
       margin-top: 10px !important;
       text-align: left !important;
@@ -193,7 +182,6 @@ $totalFunds = $totalCashIn - $totalCashOut;
       font-size: 12px !important;
     }
 
-    /* Adjust pagination for very small screens */
     .dataTables_wrapper .dataTables_paginate .paginate_button {
       padding: 3px 6px !important;
       font-size: 11px !important;
@@ -201,7 +189,6 @@ $totalFunds = $totalCashIn - $totalCashOut;
   }
 </style>
 
-<!-- Transparency Report Section -->
 <section class="table-section" style="background-color: #f5f5f5; padding: 40px 0;">
   <div class="container">
     <h2 class="transaction-title">TRANSACTION DETAILS</h2>
@@ -292,7 +279,6 @@ $totalFunds = $totalCashIn - $totalCashOut;
       </table>
     </div>
     
-    <!-- Summary Table -->
     <div id="summaryTableContainer">
       <h3>Financial Summary</h3>
       <div class="table-container" style="background-color: #ffffff; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); border: 1px solid #f0f0f0; overflow-x: auto; -webkit-overflow-scrolling: touch;">
@@ -323,7 +309,6 @@ $totalFunds = $totalCashIn - $totalCashOut;
   </div>
 </section>
 
-<!-- Add responsive styles -->
 <style>
   @media (max-width: 768px) {
     .table-section .container {
@@ -363,7 +348,6 @@ $totalFunds = $totalCashIn - $totalCashOut;
       font-size: 12px;
     }
     
-    /* Show a hint about scrolling on very small screens */
     .table-section .table-container::after {
       content: "Scroll horizontally to view full table →";
       display: block;
@@ -384,20 +368,16 @@ $totalFunds = $totalCashIn - $totalCashOut;
 <script src="../../js/table-fix.js"></script>
 <script>
   $(document).ready(function() {
-    // Apply custom styling to DataTables UI elements after tables are initialized
     function checkAndApplyStyles() {
       if ($('.dataTables_wrapper').length > 0) {
         customizeDataTablesUI();
       } else {
-        // If not ready yet, wait a bit and try again
         setTimeout(checkAndApplyStyles, 100);
       }
     }
     
-    // Start the check
     checkAndApplyStyles();
     
-    // Function to apply custom styling
     function customizeDataTablesUI() {
       $('.dataTables_wrapper .dataTables_filter input').css({
         'border': '1px solid #eaecef',
@@ -414,11 +394,8 @@ $totalFunds = $totalCashIn - $totalCashOut;
         'background-color': '#f8f9fa'
       });
       
-      // Add spacing at the bottom
       $('.dataTables_wrapper').css('margin-bottom', '20px');
       
-      // Enforce consistent row heights even after DataTables initialization
-      // Apply these styles after a short delay to ensure they override DataTables
       setTimeout(function() {
         $('#cashinTable td, #cashinTable th, #cashoutTable td, #cashoutTable th, #summaryTableContainer .msa-table td, #summaryTableContainer .msa-table th').css({
           'padding': '15px 20px',
@@ -428,7 +405,6 @@ $totalFunds = $totalCashIn - $totalCashOut;
           'border-right': 'none'
         });
         
-        // Remove vertical borders
         $('.msa-table').css({
           'border-collapse': 'collapse',
           'border-left': 'none',
@@ -453,14 +429,12 @@ $totalFunds = $totalCashIn - $totalCashOut;
           'border-bottom': 'none'
         });
         
-        // Table container should have clean borders
         $('.table-container').css({
           'border-radius': '8px',
           'overflow': 'hidden',
           'border': '1px solid #e0e0e0'
         });
         
-        // Ensure rows have consistent height
         $('.msa-table tr').css({
           'height': 'auto',
           'min-height': '50px'
@@ -468,9 +442,7 @@ $totalFunds = $totalCashIn - $totalCashOut;
       }, 200);
     }
     
-    // Apply styles again whenever DataTables redraws the table (sorting, paging, etc.)
     $('#cashinTable, #cashoutTable').on('draw.dt', function() {
-      // Re-apply row styling after table redraw
       $(this).find('td').css({
         'padding': '15px 20px',
         'height': 'auto',

@@ -1,7 +1,5 @@
-// Define base_url as a relative path
 const base_url = '../../';
 
-// FOOTER RELOAD FUNCTIONS
 function updateFooter() {
     $.ajax({
         url: base_url + 'handler/website/fetchFooter.php',
@@ -63,7 +61,6 @@ $(document).ready(function() {
     updateFooter();
 });
 
-// GENERAL PAGE FUNCTIONS
 let carouselInterval = null;
 let carouselRefreshInterval = null;
 let volunteerHeroInterval = null;
@@ -78,7 +75,6 @@ let transparencyHeroInterval = null;
 let transparencyRefreshInterval = null;
 
 
-// LANDING PAGE FUNCTIONS
 function updateLandingPage() {
     $.ajax({
         url: base_url + 'handler/website/fetchLandingPage.php',
@@ -170,13 +166,10 @@ function updateHomeContent(homeData) {
     if (!homeData || homeData.length === 0) {
         heroContent.find('h2').text('');
         heroContent.find('p').text('');
-        // heroContent.hide(); 
-        // heroContent.html('<p>Welcome!</p>'); 
         console.log('Home data empty, cleared hero content.');
         return;
     }
     
-    // heroContent.show(); 
     const homeItem = homeData[0];
     const currentTitle = heroContent.find('h2').text();
     const currentDesc = heroContent.find('p').text();
@@ -239,7 +232,6 @@ function updateOrgUpdates(updatesData) {
         const formattedDate = formatDate(new Date(item.created_at));
         const imagePath = item.image_path ? base_url + 'assets' + item.image_path : base_url + 'assets/images/login.jpg';
         
-        // Count words for truncated content
         const words = item.content.split(' ');
         const truncatedContent = (words.length > 95) ? words.slice(0, 95).join(' ') + '...' : item.content;
         
@@ -359,19 +351,7 @@ function initCarousel() {
     );
 }
 
-// $(document).ready(function() {
-//     if (typeof base_url === 'undefined') {
-//         const pathArray = window.location.pathname.split('/');
-//         base_url = window.location.origin + '/' + pathArray[1] + '/';
-//     }
-    
-//     if (window.location.pathname.includes('landing_page')) {
-//         updateLandingPage();
-//         initCarousel();
-//     }
-// });
 
-// VOLUNTEER HERO FUNCTIONS
 function updateVolunteerHero() {
     $.ajax({
         url: base_url + 'handler/website/fetchVolunteerHero.php',
@@ -474,7 +454,6 @@ function initVolunteerHero() {
     );
 }
 
-// CALENDAR PAGE FUNCTIONS
 function updateCalendarPage() {
     $.ajax({
         url: base_url + 'handler/website/fetchCalendar.php',
@@ -602,15 +581,12 @@ function initCalendarPage() {
         clearInterval(calendarRefreshInterval);
     }
 
-    // Initial update
     updateCalendarPage();
 
-    // Set up periodic updates every 5 seconds
     calendarRefreshInterval = setInterval(function() {
         updateCalendarPage();
     }, 5000); 
 
-    // Pause updates when user is interacting with the page
     $('.hero').hover(
         function() {
             if (calendarHeroInterval) {
@@ -629,12 +605,10 @@ function initCalendarPage() {
         }
     );
 
-    // Force update when window regains focus
     $(window).on('focus', function() {
         updateCalendarPage();
     });
 
-    // Force update when tab becomes visible
     document.addEventListener('visibilitychange', function() {
         if (!document.hidden) {
             updateCalendarPage();
@@ -642,7 +616,6 @@ function initCalendarPage() {
     });
 }
 
-// REGISTRATION MADRASA PAGE FUNCTIONS
 function updateRegistrationPage() {
     $.ajax({
         url: base_url + 'handler/website/fetchRegistration.php',
@@ -745,7 +718,6 @@ function initRegistrationPage() {
     );
 }
 
-// FAQS PAGE FUNCTIONS
 function updateFaqsPage() {
     $.ajax({
         url: base_url + 'handler/website/fetchFaqs.php',
@@ -848,7 +820,6 @@ function initFaqsPage() {
     );
 }
 
-// TRANSPARENCY REPORT PAGE FUNCTIONS
 function updateTransparencyPage() {
     $.ajax({
         url: base_url + 'handler/website/fetchTransparency.php',
@@ -872,14 +843,12 @@ function updateTransparencyPage() {
                 console.error('Error in response:', response.message);
                 updateTransparencyBackground(null);
                 updateTransparencyContent(null);
-                // updateTransparencyTables(null, null, null, null, null); 
             }
         },
         error: function(xhr, status, error) {
             console.error('Error fetching transparency data:', error);
             updateTransparencyBackground(null);
             updateTransparencyContent(null);
-            // updateTransparencyTables(null, null, null, null, null); 
         }
     });
 }
@@ -1025,7 +994,6 @@ function initTransparencyPage() {
     );
 }
 
-// ABOUT PAGE FUNCTIONS
 function updateAboutPage() {
     $.ajax({
         url: base_url + 'handler/website/fetchAbouts.php',
@@ -1269,7 +1237,6 @@ $(document).ready(function() {
         initAboutPage();
     }
 
-    // DATA TABLES FOR TRANSPARENCY REPORT
     if (!$.fn.dataTable.isDataTable('#cashinTable')) {
         var cashInTable = $('#cashinTable').DataTable({
             pageLength: 10,
@@ -1305,7 +1272,6 @@ $(document).ready(function() {
             $('#summaryTableContainer').hide();
         }
     } else {
-        // If already initialized, still handle the summary table visibility
         if ($('#cashoutTable').length) {
             var existingTable = $('#cashoutTable').DataTable();
             var pageInfo = existingTable.page.info();

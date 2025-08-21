@@ -19,7 +19,6 @@ $backgroundImage = $user->fetchBackgroundImage();
     <script src="../../js/faqs.js"></script>
 </head>
 <body>
-    <!-- Hero Section -->
     <div class="hero">
         <?php foreach ($backgroundImage as $image) : ?>
         <div class="hero-background" style="background-image: url('../../<?= $image['image_path']; ?>');">
@@ -33,9 +32,7 @@ $backgroundImage = $user->fetchBackgroundImage();
         </div>
     </div>
 
-    <!-- FAQs Content -->
     <div class="faqs-content" id="faqs-content">  
-        <!-- FAQs will be dynamically loaded here -->
     </div>
 
     <?php include '../../includes/footer.php'; ?>

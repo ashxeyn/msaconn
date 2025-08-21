@@ -5,7 +5,6 @@ $user = new User();
 $volunteerInfo = $user->fetchVolunteerInfo();
 $backgroundImage = $user->fetchBackgroundImage();
 
-// Set session flag if URL parameter is present
 if (isset($_GET['registration_success']) && $_GET['registration_success'] == '1') {
     $_SESSION['volunteer_registration_success'] = true;
 }
@@ -61,7 +60,6 @@ $debug_session = isset($_SESSION['volunteer_registration_success']) ? "Registrat
         <h2 style="font-size: 1.8rem; color: #1a541c; text-align: center; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; margin-bottom: 30px; margin-top: -10px;">OUR DEDICATED VOLUNTEERS</h2>
         
         <div id="volunteer-grid" class="volunteer-grid">
-            <!-- Volunteers will be loaded here dynamically -->
         </div>
         
     </div>
@@ -69,7 +67,6 @@ $debug_session = isset($_SESSION['volunteer_registration_success']) ? "Registrat
     <?php include '../../includes/footer.php'; ?>
 
     <?php
-    // Show modal only once, then clear the session flag
     if (isset($_SESSION['volunteer_registration_success'])) {
         include '../usermodals/registrationforvolunteermodal.php';
         unset($_SESSION['volunteer_registration_success']);

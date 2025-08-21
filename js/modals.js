@@ -1,4 +1,3 @@
-// STUDENT MODAL TOGGLE FUNCTIONS
 function toggleClassificationFields() {
     const classification = $('#classification').val();
     

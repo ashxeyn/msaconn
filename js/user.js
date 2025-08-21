@@ -6,28 +6,24 @@ document.addEventListener('DOMContentLoaded', function () {
     initializeFridayPrayers();
     initializeExecutiveOfficers();
     
-    // Initialize toggle for registration type if on the registration form page
     if (document.getElementById('registration_type')) {
         toggleRegistrationTypeFields();
     }
 });
 
-// Function to toggle fields based on registration type
 function toggleRegistrationTypeFields() {
     const regType = document.getElementById('registration_type').value;
     const onsiteOnlyElements = document.querySelectorAll('.onsite-only');
     const onlineOnlyElements = document.querySelectorAll('.online-only');
-    const addressFields = document.querySelector('.form-section.online-only'); // Get the address section
+    const addressFields = document.querySelector('.form-section.online-only'); 
     const optionalIndicator = document.getElementById('optional-indicator');
     
-    // Adjust required attributes for college and program fields
     const collegeSelect = document.getElementById('college_id');
     const programSelect = document.getElementById('program_id');
     const yearLevelSelect = document.getElementById('year_level');
     const corFileInput = document.getElementById('cor_file');
     
     if (regType === 'On-site') {
-        // Show on-site only elements, hide online only EXCEPT address fields
         onsiteOnlyElements.forEach(el => el.style.display = 'block');
         onlineOnlyElements.forEach(el => {
             if (!el.classList.contains('onsite-only') && el !== addressFields) {
@@ -35,36 +31,29 @@ function toggleRegistrationTypeFields() {
             }
         });
         
-        // Always show address fields
         if (addressFields) {
             addressFields.style.display = 'block';
         }
         
-        // Make fields required for on-site
         if (collegeSelect) collegeSelect.required = true;
         if (programSelect) programSelect.required = true;
         if (yearLevelSelect) yearLevelSelect.required = true;
         if (corFileInput) corFileInput.required = true;
         
-        // Hide optional indicator
         if (optionalIndicator) optionalIndicator.style.display = 'none';
         
     } else if (regType === 'Online') {
-        // Show online only elements
         onlineOnlyElements.forEach(el => el.style.display = 'block');
         
-        // Make fields optional for online
         if (collegeSelect) collegeSelect.required = false;
         if (programSelect) programSelect.required = false;
         if (yearLevelSelect) yearLevelSelect.required = false;
         if (corFileInput) corFileInput.required = false;
         
-        // Show optional indicator
         if (optionalIndicator) optionalIndicator.style.display = 'block';
     }
 }
 
-// Function to automatically fill address fields when in on-site mode
 function fillAddressFieldsForOnsite() {
     if (document.getElementById('registration_type').value === 'On-site') {
         document.getElementById('region').value = 'Zamboanga Peninsula';
@@ -76,7 +65,6 @@ function fillAddressFieldsForOnsite() {
     }
 }
 
-// Volunteers Section
 function initializeVolunteers() {
     const volunteerGrid = document.getElementById('volunteer-grid');
     const volunteerCount = document.getElementById('volunteer-count');
@@ -85,7 +73,6 @@ function initializeVolunteers() {
         return;
     }
 
-    // Helper function to capitalize each word in a name
     function capitalizeName(name) {
         return name.split(' ')
             .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
@@ -99,7 +86,6 @@ function initializeVolunteers() {
 
             volunteerGrid.innerHTML = '';
             if (data.length > 0) {
-                // Update volunteer count
                 if (volunteerCount) {
                     volunteerCount.textContent = data.length;
                 }
@@ -135,14 +121,11 @@ function initializeVolunteers() {
         }
     }
 
-    // Load volunteers on page load
     loadVolunteers();
 
-    // Poll for updates every 5 seconds
     setInterval(loadVolunteers, 5000);
 }
 
-// Prayer Schedule Section
 function initializePrayerSchedules() {
     const prayerScheduleContent = document.getElementById('prayer-schedule-content');
     if (!prayerScheduleContent) {
@@ -168,7 +151,7 @@ function initializePrayerSchedules() {
     }
 
     function updatePrayerScheduleContent(schedules) {
-        prayerScheduleContent.innerHTML = ''; // Clear existing content
+        prayerScheduleContent.innerHTML = ''; 
 
         if (schedules.length > 0) {
             let table = `
@@ -204,10 +187,8 @@ function initializePrayerSchedules() {
         }
     }
 
-    // Fetch prayer schedules on page load
     fetchPrayerSchedules();
 
-    // Poll for updates every 5 seconds
     setInterval(fetchPrayerSchedules, 3000);
 }
 
@@ -218,25 +199,10 @@ function initializeFridayPrayers() {
         return;
     }
 
-    // async function fetchFridayPrayers() {
-    //     try {
-    //         const response = await fetch('../../handler/user/fetchFridayPrayers.php');
-    //         const data = await response.json();
-
-    //         if (data.status === 'success') {
-    //             updatePrayerScheduleContent(data.data);
-    //         } else {
-    //             console.error('Error fetching Friday prayers:', data.message);
-    //             prayerScheduleContent.innerHTML = '<p>Failed to load Friday prayers.</p>';
-    //         }
-    //     } catch (error) {
-    //         console.error('Error fetching Friday prayers:', error);
-    //         prayerScheduleContent.innerHTML = '<p>Failed to load Friday prayers.</p>';
-    //     }
-    // }
+    
 
     function updatePrayerScheduleContent(prayers) {
-        prayerScheduleContent.innerHTML = ''; // Clear existing content
+        prayerScheduleContent.innerHTML = ''; 
 
         if (prayers.length > 0) {
             let table = `
@@ -272,10 +238,8 @@ function initializeFridayPrayers() {
         }
     }
 
-    // Fetch Friday prayers on page load
     fetchFridayPrayers();
 
-    // Poll for updates every 5 seconds
     setInterval(fetchFridayPrayers, 5000);
 }
 
@@ -306,7 +270,7 @@ function initializeFAQs() {
         faqs.forEach(faq => {
             if (currentCategory !== faq.category) {
                 if (currentCategory !== null) {
-                    html += '</div>'; // Close previous category section
+                    html += '</div>'; 
                 }
                 currentCategory = faq.category;
                 html += `<h3>${faq.category}</h3>`;
@@ -325,10 +289,9 @@ function initializeFAQs() {
             `;
         });
         if (currentCategory !== null) {
-            html += '</div>'; // Close the last category section
+            html += '</div>'; 
         }
         faqsContent.innerHTML = html;
-        // Reattach event listeners for toggling FAQ answers
         attachFaqListeners();
     }
 
@@ -336,20 +299,16 @@ function initializeFAQs() {
         const faqQuestions = document.querySelectorAll('.faq-question');
         faqQuestions.forEach(question => {
             question.addEventListener('click', (e) => {
-                // Get the answer element
                 const answer = question.nextElementSibling;
                 
-                // Toggle the current question/answer pair
                 question.classList.toggle('open');
                 answer.classList.toggle('open');
                 
-                // Stop event propagation to prevent issues
                 e.stopPropagation();
             });
         });
     }
 
-    // Fetch FAQs on page load only, don't poll
     fetchFaqs();
 }
 function initializeAboutContent() {
@@ -399,13 +358,10 @@ function initializeAboutContent() {
         }
     }
 
-    // Fetch about content on page load
     fetchAboutContent();
 
-    // Poll for updates every 10 seconds
     setInterval(fetchAboutContent, 3000);
 }
-// Fetch and display downloadable files
 async function fetchDownloadableFiles() {
     const container = document.getElementById('downloads-container');
     if (!container) {
@@ -422,7 +378,6 @@ async function fetchDownloadableFiles() {
             if (files.length > 0) {
                 container.innerHTML = '';
                 files.forEach(file => {
-                    // Format the date correctly
                     const uploadDate = new Date(file.created_at);
                     const formattedDate = uploadDate.toLocaleDateString();
                     
@@ -448,10 +403,8 @@ async function fetchDownloadableFiles() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Run other initialization functions
     fetchDownloadableFiles();
     fetchTransparencyData();
-    // ... rest of the DOMContentLoaded functions
 });
 
 
@@ -467,7 +420,6 @@ function fetchTransparencyData() {
     const cashInTbody = document.getElementById('cash-in-tbody');
     const cashOutTbody = document.getElementById('cash-out-tbody');
     
-    // Return early if elements don't exist on this page
     if (!cashInTbody || !cashOutTbody) {
         console.log('Transparency tables not found on this page');
         return;
@@ -499,7 +451,6 @@ function fetchTransparencyData() {
         .catch(error => console.error('Error fetching transparency data:', error));
 }
 
-// Define region data
 const regionData = {
     regions: ['Zamboanga Peninsula'],
     provinces: [
@@ -678,14 +629,12 @@ const regionData = {
     }
 };
 
-// Initialize dropdowns
 function initializeAddressDropdowns() {
     const regionSelect = document.getElementById('region');
     const provinceSelect = document.getElementById('province');
     const citySelect = document.getElementById('city');
     const barangaySelect = document.getElementById('barangay');
 
-    // Populate Regions
     regionData.regions.forEach(region => {
         const option = document.createElement('option');
         option.value = region;
@@ -693,7 +642,6 @@ function initializeAddressDropdowns() {
         regionSelect.appendChild(option);
     });
 
-    // Handle Region Change
     regionSelect.addEventListener('change', function () {
         const selectedRegion = regionSelect.value;
         provinceSelect.innerHTML = '<option value="">Select Province</option>';
@@ -710,7 +658,6 @@ function initializeAddressDropdowns() {
         }
     });
 
-    // Handle Province Change
     provinceSelect.addEventListener('change', function () {
         const selectedProvince = provinceSelect.value;
         citySelect.innerHTML = '<option value="">Select City/Municipality</option>';
@@ -726,7 +673,6 @@ function initializeAddressDropdowns() {
         }
     });
 
-    // Handle City Change
     citySelect.addEventListener('change', function () {
         const selectedCity = citySelect.value;
         barangaySelect.innerHTML = '<option value="">Select Barangay</option>';
@@ -742,7 +688,6 @@ function initializeAddressDropdowns() {
     });
 }
 
-// Initialize the dropdowns on page load
 document.addEventListener('DOMContentLoaded', initializeAddressDropdowns);
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -752,7 +697,6 @@ document.addEventListener('DOMContentLoaded', function () {
 function fetchLatestUpdates() {
     const updatesContainer = document.getElementById('updates-container');
     
-    // Return early if the container doesn't exist on this page
     if (!updatesContainer) {
         console.log('Updates container not found on this page');
         return;
@@ -764,7 +708,7 @@ function fetchLatestUpdates() {
             const result = await response.json();
 
             if (result.status === 'success') {
-                updatesContainer.innerHTML = ''; // Clear existing content
+                updatesContainer.innerHTML = ''; 
                 const updates = result.data;
 
                 if (updates.length > 0) {
@@ -793,21 +737,16 @@ function fetchLatestUpdates() {
         }
     }
 
-    // Fetch updates on page load
     loadUpdates();
 
-    // Optionally, poll for updates every 10 seconds
     setInterval(loadUpdates, 5000);
 }
 
 function scrollOfficers(direction) {
-    // This function is now superseded by the event handlers in designuser.js
-    // Prevent default behavior to avoid double-handling
     event.preventDefault();
     return false;
 }
 
-// Function to preview image before upload
 function previewImage(event) {
     const input = event.target;
     if (input.files && input.files[0]) {
@@ -827,7 +766,6 @@ function previewImage(event) {
     }
 }
 
-// Function to remove the image preview
 function removeImage() {
     const fileInput = document.getElementById('cor_file');
     const previewDiv = document.getElementById('image-preview');
@@ -838,11 +776,9 @@ function removeImage() {
     placeholder.style.display = 'flex';
 }
 
-// Function to load programs based on selected college
 function loadProgramsByCollege(collegeId) {
     const programSelect = document.getElementById('program_id');
     
-    // Reset program select
     programSelect.innerHTML = '<option value="">Loading programs...</option>';
     
     if (!collegeId) {
@@ -850,7 +786,6 @@ function loadProgramsByCollege(collegeId) {
         return;
     }
     
-    // Fetch programs from server
     fetch(`../../handler/user/fetchProgramsByCollege.php?college_id=${collegeId}`)
         .then(response => response.json())
         .then(data => {
@@ -873,22 +808,18 @@ function loadProgramsByCollege(collegeId) {
         });
 }
 
-// Create text-only officer card (no image)
 function createTextOnlyOfficerCard(officer, branchName) {
     const officerCard = document.createElement('div');
     officerCard.classList.add('officer-card', 'text-only-card');
     
-    // Create officer name (with middle initial if available)
     let fullName = `${officer.first_name} `;
     if (officer.middle_name) {
         fullName += `${officer.middle_name.charAt(0)}. `;
     }
     fullName += officer.last_name;
     
-    // Convert name to uppercase
     fullName = fullName.toUpperCase();
     
-    // Create card HTML (without image)
     officerCard.innerHTML = `
         <div class="blur-bg"></div>
         <h3 class="officer-name">${fullName}</h3>
@@ -899,27 +830,22 @@ function createTextOnlyOfficerCard(officer, branchName) {
     return officerCard;
 }
 
-// Create officer card with picture
 function createOfficerCard(officer, baseUrl) {
     const officerCard = document.createElement('div');
     officerCard.classList.add('officer-card');
     
-    // Create officer name (with middle initial if available)
     let fullName = `${officer.first_name} `;
     if (officer.middle_name) {
         fullName += `${officer.middle_name.charAt(0)}. `;
     }
     fullName += officer.last_name;
     
-    // Convert name to uppercase
     fullName = fullName.toUpperCase();
     
-    // Determine if mobile for image size
     const isMobile = window.innerWidth < 576;
     const imgSrc = isMobile && officer.picture_small ? 
         officer.picture_small : officer.picture;
     
-    // Create card HTML
     officerCard.innerHTML = `
         <div class="blur-bg"></div>
         <img src="${imgSrc}" alt="${fullName}" class="officer-image" loading="lazy">
@@ -931,14 +857,11 @@ function createOfficerCard(officer, baseUrl) {
     return officerCard;
 }
 
-// Executive Officers Section
 function initializeExecutiveOfficers() {
-    // Check if we're on the right page
     if (!document.querySelector('.executive-officers')) {
         console.warn('Executive officers section not found. Skipping initializeExecutiveOfficers.');
         return;
     }
-    // Set loading state
     const adviserContainer = document.getElementById('adviser-container');
     const maleGrid = document.getElementById('male-officers-grid');
     const wacGrid = document.getElementById('wac-officers-grid');
@@ -948,18 +871,15 @@ function initializeExecutiveOfficers() {
     if (wacGrid) wacGrid.setAttribute('data-loading', 'true');
     if (ilsGrid) ilsGrid.setAttribute('data-loading', 'true');
     
-    // Use variables to track fetch state
     let isFetching = false;
     let debounceTimer = null;
     async function fetchOfficers() {
-        // Prevent duplicate fetches
         if (isFetching) return;
         
         isFetching = true;
         try {
-            // Fetch with priority hint and cache control
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5-second timeout
+            const timeoutId = setTimeout(() => controller.abort(), 5000); 
             
             const response = await fetch('../../handler/user/fetchExecutiveOfficers.php', {
                 method: 'GET',
@@ -1014,23 +934,18 @@ function initializeExecutiveOfficers() {
         if (ilsGrid) ilsGrid.setAttribute('data-loading', 'false');
     }
     function updateOfficersContent(officersByBranch) {
-        // Get base URL from a meta tag or elsewhere in the page
         const baseUrl = document.querySelector('base')?.href || window.location.origin + '/msaconnect/';
         
-        // Process advisers and consultants
         if (adviserContainer && officersByBranch.adviser && officersByBranch.adviser.length > 0) {
             const adviserFragment = document.createDocumentFragment();
             
-            // Sort advisers by position_id (primary) and then by role (secondary)
             const sortedAdvisers = officersByBranch.adviser.sort((a, b) => {
-                // First try to sort by position_id
                 const posA = parseInt(a.position_id) || 999;
                 const posB = parseInt(b.position_id) || 999;
                 if (posA !== posB) {
-                    return posA - posB; // Sort by position_id first
+                    return posA - posB; 
                 }
                 
-                // If position_ids are the same, sort by role (Advisers before Consultants)
                 if (a.position === 'Adviser' && b.position === 'Consultant') return -1;
                 if (a.position === 'Consultant' && b.position === 'Adviser') return 1;
                 return 0;
@@ -1041,33 +956,28 @@ function initializeExecutiveOfficers() {
                 adviserFragment.appendChild(officerCard);
             });
             
-            // Clear and update adviser container
             while (adviserContainer.firstChild) {
                 adviserContainer.removeChild(adviserContainer.firstChild);
             }
             
             adviserContainer.appendChild(adviserFragment);
-            adviserContainer.style.display = 'flex'; // Ensure it's visible
+            adviserContainer.style.display = 'flex'; 
         } else if (adviserContainer) {
             adviserContainer.style.display = 'none';
         }
         
-        // Process male officers
         if (maleGrid) {
             updateBranchOfficers(maleGrid, officersByBranch.male || [], baseUrl);
         }
         
-        // Process WAC officers
         if (wacGrid) {
             updateBranchOfficers(wacGrid, officersByBranch.wac || [], baseUrl);
         }
         
-        // Process ILS officers
         if (ilsGrid) {
             updateBranchOfficers(ilsGrid, officersByBranch.ils || [], baseUrl);
         }
         
-        // Trigger a custom event to notify that officers content has been updated
         const event = new CustomEvent('officersUpdated');
         document.dispatchEvent(event);
     }
@@ -1075,43 +985,33 @@ function initializeExecutiveOfficers() {
     function updateBranchOfficers(gridContainer, officers, baseUrl) {
         const fragment = document.createDocumentFragment();
         const isWAC = gridContainer.id === 'wac-officers-grid';
-        const branchType = gridContainer.id.split('-')[0]; // 'male', 'wac', or 'ils'
-        
+        const branchType = gridContainer.id.split('-')[0]; 
         if (officers && officers.length > 0) {
-            // Sort officers by position_id (where lower numbers come first)
             officers.sort((a, b) => {
-                // Use parseInt to ensure numeric comparison
-                const posA = parseInt(a.position_id) || 999; // Default to a high number if not available
+                const posA = parseInt(a.position_id) || 999; 
                 const posB = parseInt(b.position_id) || 999;
-                return posA - posB; // Lower numbers first
+                return posA - posB; 
             });
             
-            // Determine layout based on viewport width
             const isMobile = window.innerWidth < 576;
             
-            // Check if we're already showing all officers
             const isShowingAll = gridContainer.dataset.showingAll === 'true';
             
-            // For mobile, limit the number of officers shown initially UNLESS we're showing all
             const displayOfficers = (isMobile && !isShowingAll) ? officers.slice(0, 4) : officers;
             
             displayOfficers.forEach(officer => {
                 let officerCard;
                 
-                // Always use text-only cards for WAC
                 if (isWAC) {
                     officerCard = createTextOnlyOfficerCard(officer, "Women's Affairs Committee");
                 } else {
-                    // For other sections, check if there's a real image
                     const hasDefaultImage = officer.picture && officer.picture.includes('default-profile.png');
                     
                     if (hasDefaultImage) {
-                        // Use text-only card for officers without images
                         const branchName = gridContainer.id === 'male-officers-grid' ? 
                             'Executive Officers' : 'ILS';
                         officerCard = createTextOnlyOfficerCard(officer, branchName);
                     } else {
-                        // Use card with image
                         officerCard = createOfficerCard(officer, baseUrl);
                     }
                 }
@@ -1119,7 +1019,6 @@ function initializeExecutiveOfficers() {
                 fragment.appendChild(officerCard);
             });
             
-            // Show or hide the View More button based on mobile and officer count
             const viewMoreContainer = document.querySelector(`#${branchType}-container .view-more-container`);
             const viewMoreButton = viewMoreContainer ? viewMoreContainer.querySelector('.view-more-btn') : null;
             
@@ -1127,12 +1026,10 @@ function initializeExecutiveOfficers() {
                 if (isMobile && officers.length > 4) {
                     viewMoreContainer.style.display = 'block';
                     
-                    // Update button text based on current state
                     if (viewMoreButton) {
                         viewMoreButton.textContent = isShowingAll ? 'Show Less' : 'View All Officers';
                     }
                     
-                    // Initialize data attribute if not set
                     if (!gridContainer.hasAttribute('data-showing-all')) {
                         gridContainer.dataset.showingAll = 'false';
                     }
@@ -1144,7 +1041,6 @@ function initializeExecutiveOfficers() {
             const placeholderCard = document.createElement('div');
             placeholderCard.classList.add('officer-card');
             
-            // Always use text-only placeholder
             placeholderCard.innerHTML = `
                 <div class="blur-bg"></div>
                 <h3 class="officer-name">NO OFFICERS FOUND</h3>
@@ -1154,23 +1050,19 @@ function initializeExecutiveOfficers() {
             
             fragment.appendChild(placeholderCard);
             
-            // Hide view more button when no officers
             const viewMoreContainer = document.querySelector(`#${branchType}-container .view-more-container`);
             if (viewMoreContainer) {
                 viewMoreContainer.style.display = 'none';
             }
         }
         
-        // Clear existing content
         while (gridContainer.firstChild) {
             gridContainer.removeChild(gridContainer.firstChild);
         }
         
-        // Add new content
         gridContainer.appendChild(fragment);
     }
     
-    // Function to fetch data with debounce
     function debouncedFetch() {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
@@ -1178,31 +1070,24 @@ function initializeExecutiveOfficers() {
         }, 100);
     }
     
-    // Add event listeners
     window.addEventListener('orientationchange', debouncedFetch);
 
-    // Start fetch
     fetchOfficers();
     
-    // Poll for updates less frequently
-    setInterval(fetchOfficers, 5000); // Every 5 seconds
+    setInterval(fetchOfficers, 5000); 
 }
 
-// Function to switch between officer tabs
 function switchOfficerTab(branchType) {
-    // Hide all branch containers
     const containers = document.querySelectorAll('.officer-branch-container');
     containers.forEach(container => {
         container.classList.remove('active');
     });
     
-    // Show selected branch container
     const selectedContainer = document.getElementById(`${branchType}-container`);
     if (selectedContainer) {
         selectedContainer.classList.add('active');
     }
     
-    // Update tab buttons
     const tabButtons = document.querySelectorAll('.tab-button');
     tabButtons.forEach(button => {
         button.classList.remove('active');
@@ -1214,9 +1099,7 @@ function switchOfficerTab(branchType) {
     }
 }
 
-// Function to show all officers in a branch tab when view all button is clicked
 function viewAllOfficers(branchType) {
-    // Get the container for this branch
     const gridContainer = document.getElementById(`${branchType}-officers-grid`);
     const viewMoreContainer = document.querySelector(`#${branchType}-container .view-more-container`);
     const viewMoreButton = viewMoreContainer ? viewMoreContainer.querySelector('.view-more-btn') : null;
@@ -1226,15 +1109,11 @@ function viewAllOfficers(branchType) {
         return;
     }
 
-    // Check if we're currently showing all officers or not
     const isShowingAll = gridContainer.dataset.showingAll === 'true';
     
-    // Add loading indicator
     gridContainer.setAttribute('data-loading', 'true');
     
-    // If we're already showing all, collapse back to showing just 4
     if (isShowingAll) {
-        // Fetch the data again to get original view
         fetch('../../handler/user/fetchExecutiveOfficers.php', {
             method: 'GET',
             headers: {
@@ -1248,26 +1127,21 @@ function viewAllOfficers(branchType) {
         })
         .then(result => {
             if (result.status === 'success') {
-                // Get officers for this branch
                 const officers = result.data[branchType] || [];
                 const baseUrl = document.querySelector('base')?.href || window.location.origin + '/msaconnect/';
                 
-                // Sort officers by position_id
                 officers.sort((a, b) => {
                     const posA = parseInt(a.position_id) || 999;
                     const posB = parseInt(b.position_id) || 999;
-                    return posA - posB; // Lower numbers first
+                    return posA - posB; 
                 });
                 
-                // Only show first 4 officers
                 const displayOfficers = officers.slice(0, 4);
                 
-                // Clear grid
                 while (gridContainer.firstChild) {
                     gridContainer.removeChild(gridContainer.firstChild);
                 }
                 
-                // Create and append cards for display officers
                 displayOfficers.forEach(officer => {
                     let officerCard;
                     const isWAC = branchType === 'wac';
@@ -1286,7 +1160,6 @@ function viewAllOfficers(branchType) {
                     gridContainer.appendChild(officerCard);
                 });
                 
-                // Update button text and data attribute
                 viewMoreButton.textContent = 'View All Officers';
                 gridContainer.dataset.showingAll = 'false';
             }
@@ -1296,7 +1169,6 @@ function viewAllOfficers(branchType) {
             gridContainer.setAttribute('data-loading', 'false');
         });
     } else {
-        // Show all officers
         fetch('../../handler/user/fetchExecutiveOfficers.php', {
             method: 'GET',
             headers: {
@@ -1310,23 +1182,19 @@ function viewAllOfficers(branchType) {
         })
         .then(result => {
             if (result.status === 'success') {
-                // Get all officers for this branch
                 const allOfficers = result.data[branchType] || [];
                 const baseUrl = document.querySelector('base')?.href || window.location.origin + '/msaconnect/';
                 
-                // Sort officers by position_id
                 allOfficers.sort((a, b) => {
                     const posA = parseInt(a.position_id) || 999;
                     const posB = parseInt(b.position_id) || 999;
-                    return posA - posB; // Lower numbers first
+                    return posA - posB; 
                 });
                 
-                // Clear grid
                 while (gridContainer.firstChild) {
                     gridContainer.removeChild(gridContainer.firstChild);
                 }
                 
-                // Create and append cards for all officers
                 allOfficers.forEach(officer => {
                     let officerCard;
                     const isWAC = branchType === 'wac';
@@ -1345,7 +1213,6 @@ function viewAllOfficers(branchType) {
                     gridContainer.appendChild(officerCard);
                 });
                 
-                // Update button text and data attribute
                 viewMoreButton.textContent = 'Show Less';
                 gridContainer.dataset.showingAll = 'true';
             }

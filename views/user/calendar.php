@@ -18,14 +18,11 @@ $calendar = $adminObj->fetchDailyPrayers();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calendar</title>
 
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
 
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="../../css/calendar.css">
     <link rel="stylesheet" href="../../css/shared-tables.css">
 </head>
@@ -44,21 +41,17 @@ $calendar = $adminObj->fetchDailyPrayers();
         </div>
     </div>
 
-    <!-- Calendar Section -->
     <div class="calendar-container container my-5">
         <div class="bg-white text-white p-4 rounded shadow">
-            <!-- Navigation Controls -->
             <div class="calendar-navigation d-flex justify-content-between align-items-center mb-4">
                 <button id="prev-month" class="btn btn-light">← Previous Month</button>
                 <h2 id="current-month-year" class="month-year mb-0 fs-3 fw-bold"></h2>
                 <button id="next-month" class="btn btn-light">Next Month →</button>
             </div>
-            <!-- Calendar Grid -->
             <div id="calendar-grid" class="calendar-grid row row-cols-7 g-2"></div>
         </div>
     </div>
 
-    <!-- 5 Prayers of Islam Table Section -->
     <div style="background-color: #f5f5f5; width: 100%; padding: 40px 0;">
         <div class="container" style="max-width: 1140px; margin: 0 auto;">
             <div class="table-section">
@@ -124,10 +117,8 @@ $calendar = $adminObj->fetchDailyPrayers();
         </div>
     </div>
 
-    <!-- Include Footer -->
     <?php include '../../includes/footer.php'; ?>
 
-    <!-- Activity Details Modal - Banner Style -->
     <div class="modal fade" id="activityModal" tabindex="-1" aria-labelledby="activityModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -138,7 +129,6 @@ $calendar = $adminObj->fetchDailyPrayers();
                 <div class="modal-body">
                     <div id="activity-date" class="mb-2 fw-bold"></div>
                     <div id="activity-details-container" class="activity-details-wrapper">
-                        <!-- Activity details will be inserted here dynamically -->
                     </div>
                     <div id="no-activities-message" class="text-center d-none">
                         <p>No activities scheduled for this date.</p>
@@ -151,13 +141,10 @@ $calendar = $adminObj->fetchDailyPrayers();
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Include Calendar JavaScript -->
     <script src="../../js/calendar.js"></script>
     
-    <!-- Table Fix Script -->
     <script src="../../js/table-fix.js"></script>
 </body>
 </html>

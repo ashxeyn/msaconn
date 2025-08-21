@@ -1,5 +1,4 @@
 <?php
-// Start output buffering to ensure headers can be sent
 ob_start();
 
 require_once '../../tools/function.php';
@@ -7,25 +6,21 @@ require_once '../../classes/userClass.php';
 
 session_start();
 
-// Enable error reporting for debugging
 ini_set('display_errors', 0);
 ini_set('display_startup_errors', 0);
 error_reporting(0);
 
-// Initialize User class
 $userObj = new User();
 $programs = $userObj->fetchProgram();
 $colleges = $userObj->fetchColleges();
 
-// Initialize variables
 $registration_type = '';
 $first_name = $middle_name = $last_name = $address = $program = $year_level = $school = $college = $cor_file = '';
 $email = $contact_number = '';
 $first_nameErr = $last_nameErr = $addressErr = $programErr = $collegeErr = $imageErr = '';
 $emailErr = $contactNumberErr = $yearErr = '';
-$college_id = $program_id = ''; // Initialize variables to avoid undefined variable warnings
+$college_id = $program_id = ''; 
 ?>
-<!-- Inline style for fixing sticky header -->
 <style>
 body {
     margin: 0 !important;
@@ -47,7 +42,6 @@ main {
     margin-top: 0 !important;
     padding-top: 0 !important;
 }
-/* Add padding to the form container to prevent it from being hidden behind the header */
 .container {
     padding-top: 150px !important;
 }
@@ -55,15 +49,12 @@ main {
 
 <?php
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Handle the registration type selection
     if (isset($_POST['registration_type'])) {
         $registration_type = clean_input($_POST['registration_type']);
         $_SESSION['registration_type'] = $registration_type;
     }
 
-    // If form is submitted
     if (isset($_POST['submit_registration'])) {
-        // Basic validation
         if (empty($_POST['first_name'])) {
             $first_nameErr = "First name is required";
         } else {
@@ -95,7 +86,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         $classification = clean_input($_POST['registration_type']);
         
-        // Address fields (required for all)
         $region = isset($_POST['region']) ? clean_input($_POST['region']) : '';
         $province = isset($_POST['province']) ? clean_input($_POST['province']) : '';
         $city = isset($_POST['city']) ? clean_input($_POST['city']) : '';
@@ -103,7 +93,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $street = isset($_POST['street']) ? clean_input($_POST['street']) : '';
         $zip_code = isset($_POST['zip_code']) ? clean_input($_POST['zip_code']) : '';
         
-        // For On-site classification
         if ($classification == 'On-site') {
             if (empty($_POST['college_id'])) {
                 $collegeErr = "College is required for On-site registration";
@@ -123,24 +112,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $year_level = clean_input($_POST['year_level']);
             }
             
-            // Address fields are from online fields but should still be required for on-site
             if (empty($region) || empty($province) || empty($city) || empty($barangay) || empty($street) || empty($zip_code)) {
                 $addressErr = "Address information is required";
             }
         } else {
-            // For Online, these are optional
             $college_id = !empty($_POST['college_id']) ? clean_input($_POST['college_id']) : null;
             $program_id = !empty($_POST['program_id']) ? clean_input($_POST['program_id']) : null;
             $year_level = !empty($_POST['year_level']) ? clean_input($_POST['year_level']) : null;
             $school = !empty($_POST['school']) ? clean_input($_POST['school']) : null;
             
-            // Check address for online since they are shown for this mode
             if (empty($region) || empty($province) || empty($city) || empty($barangay) || empty($street) || empty($zip_code)) {
                 $addressErr = "Address information is required for online registration";
             }
         }
 
-        // Handle file upload
         if (!empty($_FILES['cor_file']['name'])) {
             $target_dir = "../../assets/enrollment/";
             
@@ -170,20 +155,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             }
         } else if ($classification == 'On-site') {
-            // COR is required for On-site
             $imageErr = "Please upload your COR screenshot!";
         } else {
-            // For Online, COR is optional
             $cor_file = "";
         }
 
-        // Final validation and processing
         $valid = empty($first_nameErr) && empty($last_nameErr) && empty($emailErr) && empty($contactNumberErr) 
                 && empty($collegeErr) && empty($programErr) && empty($yearErr) && empty($imageErr) && empty($addressErr);
 
         if ($valid) {
             try {
-                // Prepare data for database insertion
                 $data = [
                     'first_name' => $first_name,
                     'middle_name' => $middle_name,
@@ -206,30 +187,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     'cor_path' => $cor_file
                 ];
 
-                // Insert into database and get result
                 $result = $userObj->addMadrasaEnrollment($data);
                 
-                // Log actual result for debugging
                 file_put_contents('registration_debug.log', 'Result value: ' . (is_numeric($result) ? $result : 'false/null') . ' - ' . date('Y-m-d H:i:s') . PHP_EOL, FILE_APPEND);
                 
-                // Consider ANY non-false result as success (including ID=0)
                 if ($result !== false) {
-                    // Log registration success with the ID
                     file_put_contents('registration_debug.log', 'Registration successful! ID: ' . $result . ' - ' . date('Y-m-d H:i:s') . PHP_EOL, FILE_APPEND);
                     
-                    // Important: Set session flag BEFORE any output
                     $_SESSION['madrasa_registration_success'] = true;
                     $_SESSION['registration_message'] = "Your enrollment for Madrasa has been received and will be processed by our team.";
                     
-                    // Use PHP header redirect instead of JavaScript
                     header('Location: registrationmadrasa.php');
                     exit;
                 } else {
-                    // Log when registration fails
                     file_put_contents('registration_debug.log', 'Registration failed - ' . date('Y-m-d H:i:s') . PHP_EOL, FILE_APPEND);
                 }
             } catch (Exception $e) {
-                // Log detailed error message
                 file_put_contents('registration_debug.log', 'Error: ' . $e->getMessage() . ' at ' . date('Y-m-d H:i:s') . PHP_EOL, FILE_APPEND);
             }
         }
@@ -244,7 +217,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Madrasa Registration</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic&display=swap" rel="stylesheet">
-    <!-- Add regVolunteer.css instead of registermadrasa.css but keep all functional CSS -->
     <link rel="stylesheet" href="../../css/regVolunteer.css">
     <?php include '../../includes/header.php'; ?>
     <style>
@@ -258,7 +230,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             box-sizing: border-box;
         }
         
-        /* Header styling from original file */
         header {
             position: fixed !important;
             top: 0 !important;
@@ -273,18 +244,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             width: 100% !important;
         }
         
-        /* Main Content Container - match the regVolunteer structure */
         .main-content {
             width: 100% !important;
             display: flex !important;
             justify-content: center !important;
             align-items: flex-start !important;
-            padding: 20px 0 80px 0 !important; /* Reduced top padding from 80px to 50px */
+            padding: 20px 0 80px 0 !important; 
             box-sizing: border-box !important;
             position: relative !important;
         }
         
-        /* Form styling - match regVolunteer exactly */
         form {
             font-family: 'Noto Naskh Arabic', serif !important;
             max-width: 600px !important;
@@ -295,13 +264,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border-radius: 12px !important;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1) !important;
             overflow: hidden !important;
-            max-height: 80vh !important; /* Keep scrollbar */
+            max-height: 80vh !important; 
             overflow-y: auto !important;
             position: relative !important;
             z-index: 10 !important;
         }
         
-        /* Form columns with exact same dimensions */
         .form-columns {
             display: flex !important;
             flex-direction: column !important;
@@ -310,14 +278,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             gap: 0 !important;
         }
         
-        /* Ensure proper spacing with footer */
         footer {
             margin-top: 50px !important;
             position: relative !important;
             z-index: 5 !important;
         }
         
-        /* Responsive styles */
         @media (max-width: 768px) {
             .form-col {
                 flex: 100% !important;
@@ -352,7 +318,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
         
-        /* Fix dropdown styling */
         select {
             display: block !important;
             width: 100% !important;
@@ -365,27 +330,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-family: 'Noto Naskh Arabic', serif !important;
         }
         
-        /* Styling for disabled select elements */
         select:disabled {
             background-color: #f0f0f0 !important;
             color: #888 !important;
             cursor: not-allowed !important;
         }
         
-        /* Styling for separator options */
         option:disabled {
             color: #1a541c !important;
             font-weight: bold !important;
             background-color: #f0f0f0 !important;
         }
         
-        /* Styling for independent city options */
         option.independent-city {
             font-style: italic !important;
             color: #1a541c !important;
         }
         
-        /* Label styling */
         label {
             display: block !important;
             margin-bottom: 8px !important;
@@ -395,7 +356,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-family: 'Noto Naskh Arabic', serif !important;
         }
         
-        /* Input styling */
         input[type="text"],
         input[type="email"],
         input[type="tel"] {
@@ -409,7 +369,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-family: 'Noto Naskh Arabic', serif !important;
         }
         
-        /* Error message styling */
         .error, .validation-error {
             color: #b33a3a !important;
             font-size: 13px !important;
@@ -419,18 +378,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-style: italic !important;
         }
         
-        /* Remove the negative margin since we want it to appear below the field */
         .validation-error {
             margin-top: 5px !important;
         }
         
-        /* Highlighted border for invalid inputs */
         input.invalid, select.invalid {
             border: 1px solid #b33a3a !important;
             background-color: #fff !important;
         }
         
-        /* Upload container styling */
         .upload-container {
             margin-bottom: 15px !important;
         }
@@ -444,7 +400,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             background-color: #f9f9f9 !important;
         }
         
-        /* Special styling for error on file upload */
         .upload-container .validation-error {
             margin-top: 8px !important;
         }
@@ -455,7 +410,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             opacity: 0.7 !important;
         }
         
-        /* Button styling - exact match to volunteer form */
         button[type="submit"], .back-button {
             flex: 1 !important;
             width: 50% !important;
@@ -482,7 +436,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             color: white !important;
         }
         
-        /* Button container to match volunteer form */
         .button-container {
             display: flex !important;
             gap: 15px !important;
@@ -490,12 +443,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             margin-top: 20px !important;
         }
         
-        /* Form sections */
         .form-section {
             margin-bottom: 20px !important;
         }
         
-        /* Address fields styling */
         .address-fields {
             margin-bottom: 20px !important;
         }
@@ -522,7 +473,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             font-family: 'Noto Naskh Arabic', serif !important;
         }
         
-        /* Custom scrollbar for the form - same as volunteer form */
         form::-webkit-scrollbar {
             width: 10px;
         }
@@ -544,7 +494,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <?php
-    // Show success modal if registration was successful
     if (isset($_SESSION['madrasa_registration_success'])) {
         $modalPath = dirname(dirname(dirname(__FILE__))) . '/views/usermodals/registrationforvolunteermodal.php';
         include $modalPath;
@@ -557,7 +506,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <h2>Madrasa Registration Form</h2>
             <div class="form-columns">
                 <div class="form-col">
-                    <!-- Registration Type -->
                     <div class="form-section">
                         <label for="registration_type">Registration Type:</label>
                         <select id="registration_type" name="registration_type" required onchange="toggleRegistrationTypeFields()">
@@ -566,7 +514,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </select>
                     </div>
 
-                    <!-- Name Fields -->
                     <div class="form-section">
                         <label for="first_name">First Name:</label>
                         <input type="text" id="first_name" name="first_name" placeholder="Enter your first name" required>
@@ -579,7 +526,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         
                     </div>
 
-                    <!-- Contact Information -->
                     <div class="form-section">
                         <label for="email">Email:</label>
                         <input type="email" id="email" name="email" placeholder="Enter your email" required>
@@ -589,7 +535,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         
                     </div>
                     
-                    <!-- Address Fields -->
                     <div class="form-section address-fields">
                         <h3>Address Information</h3>
                         
@@ -622,14 +567,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                 </div>
                 <div class="form-col">
-                    <!-- Optional Fields Indicator (Online Only) -->
                     <div class="form-section online-only" id="optional-indicator" style="display:none;">
                         <p style="color:#1a541c; font-size: 14px; margin-top: 0;">
                             <em>Note: College, Program, Year Level, School fields, and COR are optional for Online registration. Fill them only if you want to provide this information.</em>
                         </p>
                     </div>
 
-                    <!-- College and Program Section -->
                     <div class="form-section onsite-only online-only" id="college-program-section">
                         <label for="college_id">College:</label>
                         <select id="college_id" name="college_id" onchange="loadProgramsByCollege(this.value)">
@@ -646,7 +589,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         
                     </div>
 
-                    <!-- Year Level Section -->
                     <div class="form-section onsite-only online-only" id="year-level-section">
                         <label for="year_level">Year Level:</label>
                         <select id="year_level" name="year_level">
@@ -659,13 +601,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         
                     </div>
 
-                    <!-- School Section (Online Only) -->
                     <div class="form-section online-only" id="school-section">
                         <label for="school">School:</label>
                         <input type="text" id="school" name="school" placeholder="Enter your school">
                     </div>
 
-                    <!-- COR Upload -->
                     <div class="form-section">
                         <label for="cor_file">Upload COR (Certificate of Registration):</label>
                         <div class="upload-container">
@@ -685,7 +625,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                     </div>
 
-                    <!-- Submit Button -->
                     <div class="button-container">
                         <button type="button" class="back-button" onclick="window.location.href='registrationmadrasa'">Back</button>
                         <button type="submit" name="submit_registration" id="submit_button">Submit Registration</button>
@@ -697,11 +636,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <?php include '../../includes/footer.php'; ?>
     
-    <!-- Load only registermadrasaform.js which now uses the Philippine Address API -->
     <script src="../../js/registermadrasaform.js"></script>
 </body>
 </html>
 <?php
-// Flush the output buffer and send all output to the browser
 ob_end_flush();
 ?>

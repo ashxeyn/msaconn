@@ -1,4 +1,3 @@
-// SIDEBAR FUNCTIONS
 function loadProgramSection() {
     $.ajax({
         url: "../admin/schoolConfig2.php",
@@ -348,7 +347,6 @@ function loadUpdatesSection () {
     });
 }
 
-//TOP NAVIGATION 
 function loadArchives () {
     $.ajax({
         url: "../admin/archives.php",
@@ -406,7 +404,6 @@ function loadSettings () {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Sticky dropdown for School Configuration on mobile
     const schoolConfigBtn = document.querySelector('.nav-link.dropdown-toggle');
     const dropdownMenu = document.querySelector('.sidebar .dropdown-menu');
 
@@ -414,14 +411,12 @@ document.addEventListener('DOMContentLoaded', function() {
         schoolConfigBtn.addEventListener('click', function() {
             if (window.innerWidth <= 768) {
                 const rect = schoolConfigBtn.getBoundingClientRect();
-                // Set top to button, left flush with sidebar
                 dropdownMenu.style.setProperty('--dropdown-top', `${rect.top - 10}px`);
                 dropdownMenu.style.setProperty('--dropdown-left', `10px`);
             } else {
                 dropdownMenu.style.removeProperty('--dropdown-top');
             }
         });
-        // Optional: update position on scroll for stickiness
         window.addEventListener('scroll', function() {
             if (window.innerWidth <= 768 && dropdownMenu.classList.contains('show')) {
                 const rect = schoolConfigBtn.getBoundingClientRect();

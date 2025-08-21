@@ -1,5 +1,4 @@
 $(document).ready(function() {
-    // Save initial filter values
     let savedFilters = {
         schoolYearId: $('#filterSchoolYear').val(),
         semester: $('#filterSemester').val(),
@@ -7,20 +6,17 @@ $(document).ready(function() {
         endDate: $('#filterEndDate').val()
     };
     
-    // Initialize DataTables with better column configurations
     if (!$.fn.DataTable.isDataTable('#cashinTable')) {
         $('#cashinTable').DataTable({
             responsive: true,
             order: [[0, 'desc']],
             columnDefs: [
                 {
-                    targets: 0, // Date column
+                    targets: 0, 
                     render: function(data, type, row) {
-                        // For ordering, sorting, etc. use the data-order value
                         if (type === 'sort' || type === 'type') {
                             return $(data).attr('data-order') || '';
                         }
-                        // For display or filter, just return the HTML
                         return data;
                     }
                 },

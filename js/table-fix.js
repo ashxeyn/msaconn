@@ -1,10 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Table fix script loaded');
     
-    // Check if the CSS is loaded
     const cssLoaded = Array.from(document.styleSheets).some(sheet => {
         try {
-            // Check if sheet URL contains our CSS filename
             return sheet.href && sheet.href.includes('shared-tables.css');
         } catch (e) {
             return false;
@@ -13,11 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('Shared table CSS loaded:', cssLoaded);
     
-    // Apply table styles directly if issues persist
     if (!cssLoaded || document.querySelector('.msa-table') && !getComputedStyle(document.querySelector('.msa-table')).backgroundColor) {
         console.log('Applying table styles via JavaScript');
         
-        // Apply styles to all MSA tables
         const tables = document.querySelectorAll('.msa-table');
         tables.forEach(table => {
             table.style.width = '100%';
@@ -26,7 +22,6 @@ document.addEventListener('DOMContentLoaded', function() {
             table.style.fontFamily = "'Noto Naskh Arabic', serif";
             table.style.backgroundColor = '#ffffff';
             
-            // Style table headers
             const headers = table.querySelectorAll('thead th');
             headers.forEach(header => {
                 header.style.backgroundColor = '#1a541c';
@@ -43,7 +38,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 header.style.border = 'none';
             });
             
-            // Style table rows
             const rows = table.querySelectorAll('tbody tr');
             rows.forEach((row, index) => {
                 row.style.transition = 'background-color 0.2s ease';
@@ -54,7 +48,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     row.style.backgroundColor = '#f8f9fa';
                 }
                 
-                // Add hover effect
                 row.addEventListener('mouseover', function() {
                     this.style.backgroundColor = '#f0f7f0';
                 });
@@ -68,7 +61,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
             
-            // Style table cells
             const cells = table.querySelectorAll('tbody td');
             cells.forEach(cell => {
                 cell.style.padding = '15px 20px';
@@ -77,7 +69,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 cell.style.fontSize = '0.95rem';
             });
             
-            // Style total rows
             const totalRows = table.querySelectorAll('tr.total-row');
             totalRows.forEach(row => {
                 row.style.backgroundColor = '#e8f3e8';
@@ -91,7 +82,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
         
-        // Style table containers
         const containers = document.querySelectorAll('.table-container');
         containers.forEach(container => {
             container.style.width = '100%';

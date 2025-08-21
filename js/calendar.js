@@ -4,53 +4,45 @@ document.addEventListener('DOMContentLoaded', function () {
     const prevMonthButton = document.getElementById('prev-month');
     const nextMonthButton = document.getElementById('next-month');
     
-    // Initialize modal with centered position
     const activityModalEl = document.getElementById('activityModal');
     const activityModal = new bootstrap.Modal(activityModalEl, {
-        backdrop: 'static', // Prevent closing on backdrop click for better UX
+        backdrop: 'static', 
         keyboard: true,
         focus: true
     });
     
-    // Configure modal to be fixed in the center of the screen
     activityModalEl.addEventListener('show.bs.modal', function () {
-        // Prevent background scrolling
         document.body.style.overflow = 'hidden';
         
-        // Position modal in center (CSS handles most of this now)
         const modalDialog = activityModalEl.querySelector('.modal-dialog');
         
-        // Apply any additional positioning if needed at runtime
         modalDialog.style.position = 'fixed';
         
-        // Reset any previous inline styles that might interfere
         modalDialog.style.top = '60%';
         modalDialog.style.left = '50%';
         modalDialog.style.transform = 'translate(-50%, -50%)';
     });
     
-    // Restore scrolling when modal is hidden
     activityModalEl.addEventListener('hidden.bs.modal', function () {
         document.body.style.overflow = '';
     });
 
-    let currentDate = new Date(); // Initialize with today's date
+    let currentDate = new Date(); 
     let activities = [];
 
-    // Fetch calendar activities from the server
     async function fetchCalendarActivities() {
         try {
-            const month = currentDate.getMonth() + 1; // Months are 0-based
+            const month = currentDate.getMonth() + 1; 
             const year = currentDate.getFullYear();
 
-            console.log(`Fetching activities for: ${month}-${year}`); // Debugging log
+            console.log(`Fetching activities for: ${month}-${year}`); 
 
             const response = await fetch(`../../handler/user/fetchCalendarActivities.php?month=${month}&year=${year}`);
             const data = await response.json();
 
             if (data.status === 'success') {
                 activities = data.data;
-                updateCalendar(); // Update the calendar after fetching activities
+                updateCalendar(); 
             } else {
                 console.error('Error fetching calendar activities:', data.message);
             }
@@ -59,13 +51,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Update the calendar header and grid
+    
     function updateCalendar() {
         const month = currentDate.toLocaleString('default', { month: 'long' });
         const year = currentDate.getFullYear();
         monthYearElement.textContent = `${month} ${year}`;
 
-        // Clear the calendar grid
+        
         calendarGrid.innerHTML = `
             <div class="col text-center fw-medium">Sun</div>
             <div class="col text-center fw-medium">Mon</div>
@@ -79,14 +71,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const firstDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1).getDay();
         const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
 
-        // Add empty cells for days before the first day of the month
         for (let i = 0; i < firstDay; i++) {
             const emptyCell = document.createElement('div');
             emptyCell.classList.add('col');
             calendarGrid.appendChild(emptyCell);
         }
 
-        // Add cells for each day of the month
         for (let day = 1; day <= daysInMonth; day++) {
             const dayCell = document.createElement('div');
             dayCell.classList.add('col', 'calendar-cell');
@@ -98,7 +88,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const currentDateString = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
             
-            // Get activities for this day (including multi-day events)
             const dayActivities = [];
             
             activities.forEach(activity => {
@@ -106,12 +95,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 const endDate = activity.end_date ? new Date(activity.end_date) : startDate;
                 const currentCellDate = new Date(currentDateString);
                 
-                // Check if this day falls within the activity's date range
                 if (currentCellDate >= startDate && currentCellDate <= endDate) {
-                    // Create a copy of the activity for this day
                     const activityCopy = {...activity};
                     
-                    // Add an indicator if this is a multi-day event
                     if (activity.end_date && activity.activity_date !== currentDateString) {
                         activityCopy.isMultiDay = true;
                         activityCopy.originalStartDate = activity.activity_date;
@@ -124,7 +110,6 @@ document.addEventListener('DOMContentLoaded', function () {
             if (dayActivities.length > 0) {
                 dayCell.classList.add('has-events');
                 
-                // Limit displayed events to 3 and add "..." for more
                 const displayLimit = 3;
                 const displayActivities = dayActivities.slice(0, displayLimit);
                 
@@ -133,7 +118,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     eventBadge.classList.add('event-badge');
                     eventBadge.textContent = activity.title;
                     
-                    // Add a class for multi-day events that are not on their start date
                     if (activity.isMultiDay) {
                         eventBadge.classList.add('continued-event');
                     }
@@ -141,7 +125,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     dayCell.appendChild(eventBadge);
                 });
                 
-                // Add "..." indicator if there are more than 3 events
                 if (dayActivities.length > displayLimit) {
                     const moreEventsIndicator = document.createElement('div');
                     moreEventsIndicator.classList.add('event-badge', 'more-events-indicator');
@@ -149,15 +132,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     dayCell.appendChild(moreEventsIndicator);
                 }
                 
-                // Add the date string as a data attribute
                 dayCell.setAttribute('data-date', currentDateString);
                 
-                // Add click event listener to show the modal
                 dayCell.addEventListener('click', function() {
                     showActivityModal(currentDateString, dayActivities);
                 });
             } else {
-                // Add click event for dates without activities too
                 dayCell.setAttribute('data-date', currentDateString);
                 dayCell.addEventListener('click', function() {
                     showActivityModal(currentDateString, []);
@@ -168,9 +148,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
     
-    // Function to show the activity modal
     function showActivityModal(dateString, activities) {
-        // Format the date for display
         const modalDate = new Date(dateString);
         const formattedDate = modalDate.toLocaleDateString('en-US', {
             weekday: 'long',
@@ -179,26 +157,21 @@ document.addEventListener('DOMContentLoaded', function () {
             day: 'numeric'
         });
         
-        // Set the date in the modal
         document.getElementById('activity-date').textContent = formattedDate;
         
         const detailsContainer = document.getElementById('activity-details-container');
         const noActivitiesMessage = document.getElementById('no-activities-message');
         
-        // Clear previous content
         detailsContainer.innerHTML = '';
         
         if (activities.length > 0) {
-            // Show activities and hide the "no activities" message
             noActivitiesMessage.classList.add('d-none');
             detailsContainer.classList.remove('d-none');
             
-            // Add each activity to the modal
             activities.forEach((activity, index) => {
                 const activityElement = document.createElement('div');
                 activityElement.classList.add('activity-item', 'mb-3', 'p-3', 'border', 'rounded');
                 
-                // Show loading indicator
                 activityElement.innerHTML = `
                     <div class="text-center py-2">
                         <div class="spinner-border text-success" role="status">
@@ -208,7 +181,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 `;
                 detailsContainer.appendChild(activityElement);
                 
-                // Fetch additional details if needed
                 fetch(`../../handler/user/fetchActivityDetails.php?activity_id=${activity.activity_id}`)
                     .then(response => response.json())
                     .then(data => {
@@ -216,7 +188,6 @@ document.addEventListener('DOMContentLoaded', function () {
                             const details = data.data;
                             let multiDayInfo = '';
                             
-                            // Add info for multi-day events showing the start date
                             if (activity.isMultiDay) {
                                 const startDate = formatDate(activity.originalStartDate);
                                 multiDayInfo = `<p class="activity-start-date mb-1 text-event-start"><strong>Started on:</strong> ${startDate}</p>`;
@@ -233,10 +204,8 @@ document.addEventListener('DOMContentLoaded', function () {
                                 </div>
                             `;
                         } else {
-                            // Fallback to basic info if fetch fails
                             let multiDayInfo = '';
                             
-                            // Add info for multi-day events showing the start date
                             if (activity.isMultiDay) {
                                 const startDate = formatDate(activity.originalStartDate);
                                 multiDayInfo = `<p class="activity-start-date mb-1 text-event-start"><strong>Started on:</strong> ${startDate}</p>`;
@@ -254,10 +223,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     })
                     .catch(error => {
                         console.error('Error fetching activity details:', error);
-                        // Fallback to basic info if fetch fails
                         let multiDayInfo = '';
                         
-                        // Add info for multi-day events showing the start date
                         if (activity.isMultiDay) {
                             const startDate = formatDate(activity.originalStartDate);
                             multiDayInfo = `<p class="activity-start-date mb-1 text-event-start"><strong>Started on:</strong> ${startDate}</p>`;
@@ -274,22 +241,18 @@ document.addEventListener('DOMContentLoaded', function () {
                     });
             });
         } else {
-            // Show the "no activities" message and hide the details container
             noActivitiesMessage.classList.remove('d-none');
             detailsContainer.classList.add('d-none');
         }
         
-        // Show the modal
         activityModal.show();
     }
 
-    // Go to the previous month
     function goToPrevMonth() {
         currentDate.setMonth(currentDate.getMonth() - 1);
         fetchCalendarActivities();
     }
 
-    // Format date for display
     function formatDate(dateString) {
         if (!dateString) return 'N/A';
         const date = new Date(dateString);
@@ -301,22 +264,18 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Go to the next month
     function goToNextMonth() {
         currentDate.setMonth(currentDate.getMonth() + 1);
         fetchCalendarActivities();
     }
 
-    // Poll for updates every 10 seconds
     function startPolling() {
-        fetchCalendarActivities(); // Fetch activities initially
-        setInterval(fetchCalendarActivities, 10000); // Poll every 10 seconds
+        fetchCalendarActivities();
+        setInterval(fetchCalendarActivities, 10000); 
     }
 
-    // Add event listeners for navigation buttons
     prevMonthButton.addEventListener('click', goToPrevMonth);
     nextMonthButton.addEventListener('click', goToNextMonth);
 
-    // Initialize the calendar and start polling
     startPolling();
 });

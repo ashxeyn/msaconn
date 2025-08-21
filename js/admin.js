@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// GENERAL FUNCTIONS
 function previewImage(event) {
     const file = event.target.files[0];
     if (file) {
@@ -89,7 +88,6 @@ document.getElementById('searchOrgUpdates').addEventListener('input', function()
     });
 });
 
-// SCHOOL CONFIG FUNCTIONS
 function validateProgramForm() {
     let isValid = true;
     clearProgramValidationErrors();
@@ -394,7 +392,6 @@ function processProgram(programId, action) {
     });
 }
 
-// EVENT FUNCTIONS
 function openEventModal(modalId, eventId, action) {
     $('.modal').modal('hide');
     $('.modal-backdrop').remove(); 
@@ -546,7 +543,6 @@ function processEvent(eventId, action) {
     });
 }
 
-// CALENDAR FUNCTIONS
 function openCalendarModal(modalId, activityId, action) {
     $('.modal').modal('hide');
     $('.modal-backdrop').remove(); 
@@ -736,7 +732,6 @@ function processCalendar(activityId, action) {
         description: $('#editDescription').val()
     };
 
-    // Add reason for delete action
     if (action === 'delete') {
         data.reason = $('#archiveReason').val();
     }
@@ -784,7 +779,6 @@ function processCalendar(activityId, action) {
     });
 }
 
-// PRAYER SCHEDULE FUNCTIONS
 function openPrayerModal(modalId, prayerId, action) {
     $('.modal').modal('hide');
     $('.modal-backdrop').remove(); 
@@ -1011,7 +1005,6 @@ function processPrayer(prayerId, action) {
     });
 }
 
-// TRANSPARENCY FUNCTIONS
 function openTransactionModal(modalId, reportId, action, transactionType) {
     $('.modal').modal('hide'); 
     $('.modal-backdrop').remove();
@@ -1340,7 +1333,6 @@ function processTransaction(reportId, action, type) {
 }
 
 
-// Transparency Filter Functions
 
 function initDatepickers() {
     $('.input-group.date').datepicker({
@@ -1396,7 +1388,6 @@ function loadFilteredTransparencySection(params) {
     });
 }
 
-// FAQS FUNCTIONS
 function openFaqModal(modalId, faqId, action) {
     $('.modal').modal('hide');
     $('.modal-backdrop').remove();
@@ -1589,7 +1580,6 @@ function processFaq(faqId, action) {
     });
 }
 
-// ABOUTS FUNCTIONS
 function openAboutModal(modalId, aboutId, action) {
     $('.modal').modal('hide');
     $('.modal-backdrop').remove(); 
@@ -1761,7 +1751,6 @@ function processAbout(aboutId, action) {
     });
 }
 
-// DOWNLOADS FUNCTIONS
 function openFileModal(modalId, fileId, action) {
     $('.modal').modal('hide');
     $('.modal-backdrop').remove();
@@ -1963,9 +1952,8 @@ function formatFileSize(bytes) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
-// STUDENT FUNCTIONS
 function initAddressDropdowns() {
-    console.log("Initializing address dropdowns..."); // Debug log
+    console.log("Initializing address dropdowns..."); 
 
     $('#addEditStudentModal').on('shown.bs.modal', function() {
         fetchRegions();
@@ -2712,7 +2700,6 @@ const regionData = {
     }
 };
 
-// OFFICER FUNCTIONS
 function openOfficerModal(modalId, officerId, action) {
     $('.modal').modal('hide');
     $('.modal-backdrop').remove(); 
@@ -2948,7 +2935,6 @@ function processOfficer(officerId, action) {
     });
 }
 
-// VOLUNTEER FUNCTIONS
 function openVolunteerModal(modalId, volunteerId, action) {
     $('.modal').modal('hide');
     $('.modal-backdrop').remove(); 
@@ -3189,7 +3175,6 @@ function processVolunteer(volunteerId, action) {
     });
 }
 
-// REGISTRATION FUNCTIONS
 function openModal(modalId, volunteerId, action) {
     $('.modal').modal('hide'); 
     $('.modal-backdrop').remove(); -
@@ -3242,7 +3227,6 @@ function processRegistration(volunteerId, action) {
     });
 }
 
-// ENROLLMENT FUNCTIONS
 function openEnrollmentModal(modalId, enrollmentId, action) {
     $('.modal').modal('hide');
     $('.modal-backdrop').remove();
@@ -3295,7 +3279,6 @@ function processEnrollment(enrollmentId, action) {
     });
 }
 
-// MODERATOR FUNCTIONS
 function openModeratorModal(modalId, moderatorId, action) {
     $('.modal').modal('hide');
     $('.modal-backdrop').remove();
@@ -3564,7 +3547,6 @@ function processModerator(moderatorId, action) {
     });
 }
 
-// UPDATES FUNCTIONS
 function initSearchOrgUpdates() {
     $('#searchOrgUpdates').on('keyup', function() {
         const searchTerm = $(this).val().toLowerCase();
@@ -3917,7 +3899,6 @@ $(document).on('hidden.bs.modal', function () {
     }
 });
 
-// EXECUTIVE POSITION FUNCTIONS
 function openPositionModal(modalId, positionId, action) {
     $('.modal').modal('hide');
     $('.modal-backdrop').remove(); 
@@ -4078,7 +4059,6 @@ function processPosition(positionId, action) {
     });
 }
 
-// SCHOOL YEAR FUNCTIONS
 function openSchoolYearModal(modalId, schoolYearId, action) {
     $('.modal').modal('hide');
     $('.modal-backdrop').remove(); 
@@ -4239,7 +4219,6 @@ function processSchoolYear(schoolYearId, action) {
     });
 }
 
-// SITE MANAGEMENT FUNCTIONS
 function openSiteModal(modalId, pageId, action, isActive) {
     $('.modal').modal('hide');
     $('.modal-backdrop').remove(); 
@@ -4617,7 +4596,6 @@ function validateSiteForm(action) {
             $('#addEditFbLinkError').text('');
         }
     } else {
-        // registration, about, volunteer, calendar, faqs, transparency, home
         const description = $('#addEditDescription').val().trim();
         if (description === '') {
             $('#addEditDescription').addClass('is-invalid');
@@ -4728,7 +4706,6 @@ function processSite(pageId, action) {
     });
 }
 
-// DAILY PRAYER FUNCTIONS
 function openDailyPrayerModal(modalId, prayerId, action) {
     $('.modal').modal('hide');
     $('.modal-backdrop').remove(); 
@@ -4865,7 +4842,6 @@ function validateDailyPrayerForm() {
         $('#editPrayerIqamahError').text('');
     }
 
-    // Location validation
     const location = $('#editLocation').val().trim();
     if (location === '') {
         $('#editLocation').addClass('is-invalid');
